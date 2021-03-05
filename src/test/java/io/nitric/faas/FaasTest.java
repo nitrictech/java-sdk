@@ -1,22 +1,22 @@
 package io.nitric.faas;
 
-import io.nitric.faas.http.HttpHandler;
-import io.nitric.faas.http.HttpRequest;
-import io.nitric.faas.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FaasTest {
 
-    HttpHandler handlerA = new HttpHandler() {
-        public HttpResponse handle(HttpRequest request) {
+    // Avoid default port and potential conflicts when running unit tests
+    private final static int PORT = 9002;
+
+    NitricFunction handlerA = new NitricFunction() {
+        public NitricResponse handle(NitricRequest request) {
             return null;
         }
     };
 
-    HttpHandler handlerB = new HttpHandler() {
-        public HttpResponse handle(HttpRequest request) {
+    NitricFunction handlerB = new NitricFunction() {
+        public NitricResponse handle(NitricRequest request) {
             return null;
         }
     };
@@ -26,17 +26,17 @@ public class FaasTest {
 
         assertEquals(9001, faas.port);
         assertEquals("0.0.0.0", faas.hostname);
-        assertTrue(faas.pathHandlers.isEmpty());
+        assertTrue(faas.pathFunctions.isEmpty());
 
         faas.setHostname("localhost");
         assertEquals("localhost", faas.hostname);
 
-        faas.setPort(1234);
-        assertEquals(1234, faas.port);
+        faas.setPort(PORT);
+        assertEquals(PORT, faas.port);
     }
 
     @Test public void test_start_stop() {
-        var faas = new Faas();
+        var faas = new Faas().setPort(PORT);
         assertNull(faas.httpServer);
 
         faas.start();
@@ -56,8 +56,8 @@ public class FaasTest {
         faas.start(handlerA);
 
         assertNotNull(faas.httpServer);
-        assertEquals(1, faas.pathHandlers.size());
-        assertEquals(handlerA, faas.pathHandlers.get("/"));
+        assertEquals(1, faas.pathFunctions.size());
+        assertEquals(handlerA, faas.pathFunctions.get("/"));
 
         faas.stop();
         assertNull(faas.httpServer);
@@ -65,16 +65,16 @@ public class FaasTest {
 
     @Test public void test_register() {
 
-        var faas = new Faas();
+        var faas = new Faas().setPort(PORT);
 
         faas.register("/rest/", handlerA);
 
-        assertEquals(1, faas.pathHandlers.size());
-        assertEquals(handlerA, faas.pathHandlers.get("/rest/"));
+        assertEquals(1, faas.pathFunctions.size());
+        assertEquals(handlerA, faas.pathFunctions.get("/rest/"));
 
         faas.register("/customers/", handlerB);
-        assertEquals(2, faas.pathHandlers.size());
-        assertEquals(handlerB, faas.pathHandlers.get("/customers/"));
+        assertEquals(2, faas.pathFunctions.size());
+        assertEquals(handlerB, faas.pathFunctions.get("/customers/"));
 
         faas.start();
         faas.stop();

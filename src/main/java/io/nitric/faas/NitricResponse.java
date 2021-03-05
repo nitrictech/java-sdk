@@ -1,60 +1,60 @@
-package io.nitric.faas.http;
+package io.nitric.faas;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable HTTP response class. This class provides static convenience methods for quickly creating
- *     a response and a <code>HttpResponse.Builder</code> class for comprehensive control.
+ *     Provides an immutable function response class. This class provides static convenience methods for quickly creating
+ *     a response and a <code>NitricResponse.Builder</code> class for comprehensive control.
  * </p>
  *
  * <p>
- *     The examples below use the static build methods:
+ *     The HTTP examples below use the static <code>NitricResponse</code> build methods:
  * </p>
  *
  * <code>
 *     // 404 - Not Found response
-*     return HttpResponse.build(404);
+*     return NitricResponse.build(404);
 *
 *     // 200 - JSON message
 *     var json = "{ \"status\": \"online\" }";
-*     return HttpResponse.build(200, json);
+*     return NitricResponse.build(200, json);
 *
 *     // 418 - Error message
-*     return HttpResponse.build(418, "Im a tea pot");
+*     return NitricResponse.build(418, "Im a tea pot");
  * </code>
  *
  * <p>
- *     The example below uses the <code>HttpResponse.Builder</code> class:
+ *     The example below uses the <code>NitricResponse.Builder</code> class:
  * </p>
  *
  * <code>
  *    byte[] data = Files.readAllBytes(path);
  *
- *    return HttpResponse.newBuilder()
- *               .contentType("application/jar")
+ *    return NitricResponse.newBuilder()
+ *               .header("Content-Type", "application/jar")
  *               .body(data)
  *               .build();
  * </code>
  *
- * @see HttpRequest
- * @see HttpHandler
+ * @see NitricRequest
+ * @see NitricFunction
  * @since 1.0
  */
-public class HttpResponse {
+public class NitricResponse {
 
     private static final String CONTENT_TYPE = "Content-Type";
 
-    private final int statusCode;
+    private final int status;
     private final Map<String, List<String>> headers;
     private final byte[] body;
 
     // Private constructor to enforce response builder pattern.
-    private HttpResponse(int statusCode,
-                         Map<String, List<String>> headers,
-                         byte[] body) {
-        this.statusCode = statusCode;
+    private NitricResponse(int status,
+                           Map<String, List<String>> headers,
+                           byte[] body) {
+        this.status = status;
         this.headers = headers;
         this.body = body;
     }
@@ -62,25 +62,25 @@ public class HttpResponse {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return the response HTTP status code, e.g. 200
+     * @return the function response status, e.g. 200 for HTTP OK
      */
-    public int getStatusCode() {
-        return statusCode;
+    public int getStatus() {
+        return status;
     }
 
     /**
-     * @return an immutable map of HTTP response headers
+     * @return an immutable map of function response headers
      */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
     /**
-     * Return the named HTTP header or null if not found.
+     * Return the named response header or null if not found.
      * If the header has multiple values the first value will be returned.
      *
-     * @param name the name of the HTTP header
-     * @return the named HTTP header or null if not found
+     * @param name the name of the Nitric header
+     * @return the named function header or null if not found
      */
     public String getHeader(String name) {
         var values = headers.get(name);
@@ -95,7 +95,7 @@ public class HttpResponse {
     }
 
     /**
-     * @return the HTTP response body length, or -1 if no body present.
+     * @return the function response body length, or -1 if no body present.
      */
     public int getBodyLength() {
         return (body != null) ? body.length : -1;
@@ -106,50 +106,60 @@ public class HttpResponse {
      */
     public String toString() {
         return getClass().getSimpleName() +
-                "[statusCode=" + statusCode +
+                "[status=" + status +
                 ", headers=" + headers +
                 ", body.length=" + ((body != null) ? body.length : 0) +
                 "]";
     }
 
     /**
-     * @return a new HttpResponse builder class.
+     * @return a new function response builder class.
      */
-    public static HttpResponse.Builder newBuilder() {
-        return new HttpResponse.Builder();
+    public static NitricResponse.Builder newBuilder() {
+        return new NitricResponse.Builder();
     }
 
     /**
-     * Return a new HttpResponse object from the given HTTP status code.
+     * Return a new function response object from the given body text.
      *
-     * @param status the HTTP status code
-     * @return a new HttpResponse object
+     * @param body the function response body
+     * @return a new NitricResponse object
      */
-    public static HttpResponse build(int status) {
-        return newBuilder().statusCode(status).build();
+    public static NitricResponse build(String body) {
+        return newBuilder().bodyText(body).build();
     }
 
     /**
-     * Return a new HttpResponse object from the given HTTP status code and body text.
+     * Return a new function response object from the given status.
      *
-     * @param status the HTTP status code
-     * @param bodyText the body text
-     * @return a new HttpResponse object
+     * @param status the function response status
+     * @return a new NitricResponse object
      */
-    public static HttpResponse build(int status, String bodyText) {
-        return newBuilder().statusCode(status).bodyText(bodyText).build();
+    public static NitricResponse build(int status) {
+        return newBuilder().status(status).build();
+    }
+
+    /**
+     * Return a new NitricResponse object from the given Nitric status and body text.
+     *
+     * @param status the response status
+     * @param body the body text
+     * @return a new NitricResponse object
+     */
+    public static NitricResponse build(int status, String body) {
+        return newBuilder().status(status).bodyText(body).build();
     }
 
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a HTTP response builder class.
+     * Provides a Nitric function response builder class.
      *
      * @since 1.0
      */
     public static class Builder {
 
-        private int statusCode = 200;
+        private int status;
         private Map<String, List<String>> headers;
         private byte[] body;
 
@@ -158,18 +168,35 @@ public class HttpResponse {
         }
 
         /**
-         * Set the response HTTP status code, e.g. 200.
-         * @param statusCode the HTTP method
+         * Set the function response status, e.g. 200 for HTTP OK.
+         * @param status the response status
          * @return the response builder instance
          */
-        public Builder statusCode(int statusCode) {
-            this.statusCode = statusCode;
+        public Builder status(int status) {
+            this.status = status;
             return this;
         }
 
         /**
-         * Set the response HTTP headers.
-         * @param headers the response HTTP headers
+         * Set the response header name and value.
+         * @param name the header name (required)
+         * @param value the header value (required)
+         * @return the response builder instance
+         */
+        public Builder header(String name, String value) {
+            Objects.requireNonNull(name, "header name is required");
+            Objects.requireNonNull(name, "header value is required");
+
+            if (headers == null) {
+                headers = new HashMap<String, List<String>>();
+            }
+            headers.put(name, Arrays.asList(value));
+            return this;
+        }
+
+        /**
+         * Set the function response headers.
+         * @param headers the function response headers
          * @return the response builder instance
          */
         public Builder headers(Map<String, List<String>> headers) {
@@ -178,22 +205,7 @@ public class HttpResponse {
         }
 
         /**
-         * Set the response 'ContentType' header value.
-         * @param value the 'ContentType' header value
-         * @return the response builder instance
-         */
-        public Builder contentType(String value) {
-            if (headers == null) {
-                headers = new HashMap<String, List<String>>();
-            }
-            headers.put(CONTENT_TYPE, Arrays.asList(value));
-            return this;
-        }
-
-        // TODO: multi-part file posts
-
-        /**
-         * Set the response body.
+         * Set the function response body.
          * @param body the response body
          * @return the response builder instance.
          */
@@ -203,7 +215,7 @@ public class HttpResponse {
         }
 
         /**
-         * Set the response body text (UTF-8) encoded.
+         * Set the function response body text (UTF-8) encoded.
          * @param body the response body text
          * @return the response builder instance.
          */
@@ -213,12 +225,11 @@ public class HttpResponse {
         }
 
         /**
-         * Return a new HTTP response object. The default status code is 200 and
-         * Content-Type is 'text/json; charset=UTF-8' if no headers are defined.
+         * Return a new function response object.
          *
-         * @return a new HTTP response
+         * @return a new function response object
          */
-        public HttpResponse build() {
+        public NitricResponse build() {
 
             Map<String, List<String>> responseHeaders = (headers != null) ? new HashMap<>(headers) : new HashMap<>();
 
@@ -230,7 +241,7 @@ public class HttpResponse {
                 }
             }
 
-            return new HttpResponse(statusCode, Collections.unmodifiableMap(responseHeaders), body);
+            return new NitricResponse(status, Collections.unmodifiableMap(responseHeaders), body);
         }
 
         // Private Methods ----------------------------------------------------

@@ -1,4 +1,4 @@
-package io.nitric.faas.http;
+package io.nitric.faas;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -7,11 +7,11 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable HTTP request class.
+ *     Provides an immutable Nitric request class.
  * </p>
  *
  * <p>
- *     The example bellow illustrates using the requests object for debugging.
+ *     The example bellow illustrates using the request object for debugging.
  * </p>
  *
  * <code>
@@ -19,62 +19,53 @@ import java.util.*;
  *
  *     public static void main(String[] args) {
  *
- *         new Faas().start(new HttpHandler() {
+ *         new Faas().start((NitricRequest r) -> {
+ *             var logger = System.out;
  *
- *             public HttpResponse handle(HttpRequest request) {
- *                 var logger = System.out;
+ *             logger.printf("request: \n");
+ *             logger.printf("   .path: %s \n", r.getPath());
  *
- *                 var query = (request.getQuery() != null) ? "?" + request.getQuery() : "";
- *                 logger.printf("request: %s %s%s \n", request.getMethod(), request.getPath(), query);
- *
- *                 logger.println("   .headers:");
- *                 for (String name : request.getHeaders().keySet()) {
- *                     logger.printf("      %s: %s \n", name, request.getHeaders().get(name));
- *                 }
- *
- *                 logger.println("   .parameters:");
- *                 for (String name : request.getParameters().keySet()) {
- *                     logger.printf("      %s: %s \n", name, request.getParameters().get(name));
- *
- *                 }
- *
- *                 if (request.getBodyText() != null) {
- *                     logger.printf("   .bodyText: \n");
- *                     logger.printf("      %s \n", request.getBodyText());
- *                 }
- *
- *                 return HttpResponse.build(200);
+ *             logger.printf("   .headers: \n");
+ *             for (String name : r.getHeaders().keySet()) {
+ *                 logger.printf("      %s: %s \n", name, r.getHeaders().get(name));
  *             }
+ *
+ *             logger.printf("   .parameters: \n");
+ *             for (String name : r.getParameters().keySet()) {
+ *                 logger.printf("      %s: %s \n", name, r.getParameters().get(name));
+ *
+ *             }
+ *
+ *             logger.printf("   .body: \n");
+ *             logger.printf("      %s \n", r.getBodyText());
+ *
+ *             return NitricResponse.build(200);
  *         });
  *     }
- * } </code>
+ * }
+ * </code>
  *
+ * @see NitricFunction
+ * @see NitricResponse
+ * @see NitricResponse.Builder
  *
- * @see HttpResponse
- * @see HttpHandler
  * @since 1.0
  */
-public class HttpRequest {
+public class NitricRequest {
 
     private static final String CONTENT_TYPE = "Content-Type";
 
-    private final String method;
     private final String path;
-    private final String query;
     private final Map<String, List<String>> headers;
     private final byte[] body;
     private final Map<String, List<String>> parameters;
 
     // Private constructor to enforce request builder pattern.
-    private HttpRequest(String method,
-                        String path,
-                        String query,
-                        Map<String, List<String>> headers,
-                        byte[] body,
-                        Map<String, List<String>> parameters) {
-        this.method = method;
+    private NitricRequest(String path,
+                          Map<String, List<String>> headers,
+                          byte[] body,
+                          Map<String, List<String>> parameters) {
         this.path = path;
-        this.query = query;
         this.headers = headers;
         this.body = body;
         this.parameters = parameters;
@@ -83,67 +74,25 @@ public class HttpRequest {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return true if a GET request
-     */
-    public boolean isGet() {
-        return "GET".equalsIgnoreCase(method);
-    }
-
-    /**
-     * @return true if a POST request
-     */
-    public boolean isPost() {
-        return "POST".equalsIgnoreCase(method);
-    }
-
-    /**
-     * @return true if a PUT request
-     */
-    public boolean isPut() {
-        return "PUT".equalsIgnoreCase(method);
-    }
-
-    /**
-     * @return true if a DELETE request
-     */
-    public boolean isDelete() {
-        return "DELETE".equalsIgnoreCase(method);
-    }
-
-    /**
-     * @return the request HTTP method ["GET" | "POST" | "PUT" | "DELETE" ].
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * @return the request path.
+     * @return the request path or null if not defined.
      */
     public String getPath() {
         return path;
     }
 
     /**
-     * @return the request URL query.
-     */
-    public String getQuery() {
-        return query;
-    }
-
-    /**
-     * @return an immutable map of HTTP request headers
+     * @return an immutable map of Nitric request headers, an empty map will be returned if there are no headers.
      */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
     /**
-     * Return the named HTTP header or null if not found.
-     * If the header has multiple values the first value will be returned. Please note HTTP headers are case-insensitive
+     * Return the named Nitric header or null if not found.
+     * If the header has multiple values the first value will be returned. Please note Nitric headers are case-insensitive
      *
      * @param name the name of the HTTP header
-     * @return the named HTTP header or null if not found
+     * @return the named Nitric header or null if not found
      */
     public String getHeader(String name) {
         return Builder.getHeaderValue(name, headers);
@@ -174,10 +123,15 @@ public class HttpRequest {
     }
 
     /**
-     * Return map of request parameter values, parsed from GET URL query or POST form encoded values.
-     * Note this method does currently support parsing parameters with form 'multipart/form-data' post requests.
+     * <p>
+     *  Return map of request parameter values, parsed from GET URL query or POST form encoded values Note an empty
+     *  empty map will be returned if there are no headers.
+     * </p>
+     * <p>
+     *  Note this method does currently support parsing parameters with form 'multipart/form-data' post requests.
+     * </p>
      *
-     * @return map of request parameter values, parsed from GET URL query or POST form encoded values.
+     * @return map of request parameter values, or an empty map one are defined.
      */
     public Map<String, List<String>> getParameters() {
         return parameters;
@@ -203,9 +157,7 @@ public class HttpRequest {
      */
     public String toString() {
         return getClass().getSimpleName() +
-                "[method=" + method +
-                ", path=" + path +
-                ", query=" + query +
+                "[path=" + path +
                 ", headers=" + headers +
                 ", parameters=" + parameters +
                 ", body.length=" + ((body != null) ? body.length : 0) +
@@ -213,16 +165,16 @@ public class HttpRequest {
     }
 
     /**
-     * @return a new HttpRequest builder class.
+     * @return a new NitricRequest builder class.
      */
-    public static HttpRequest.Builder newBuilder() {
-        return new HttpRequest.Builder();
+    public static NitricRequest.Builder newBuilder() {
+        return new NitricRequest.Builder();
     }
 
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a HTTP request builder class.
+     * Provides a Nitric request builder class.
      *
      * @since 1.0
      */
@@ -241,8 +193,8 @@ public class HttpRequest {
         }
 
         /**
-         * Set the request HTTP method ["GET" | "POST" | "PUT" | "DELETE" ].
-         * @param method the HTTP method
+         * Set the request method, for example with HTTP this would be ["GET" | "POST" | "PUT" | "DELETE" ].
+         * @param method the request method
          * @return the request builder instance
          */
         public Builder method(String method) {
@@ -252,7 +204,7 @@ public class HttpRequest {
 
         /**
          * Set the request path.
-         * @param path the HTTP request path
+         * @param path the request path
          * @return the request builder instance
          */
         public Builder path(String path) {
@@ -271,8 +223,8 @@ public class HttpRequest {
         }
 
         /**
-         * Set the request HTTP headers.
-         * @param headers the request HTTP headers
+         * Set the request headers.
+         * @param headers the request headers
          * @return the request builder instance
          */
         public Builder headers(Map<String, List<String>> headers) {
@@ -293,10 +245,10 @@ public class HttpRequest {
         }
 
         /**
-         * @return a new HTTP response.
+         * @return a new Nitric response.
          * @throws UnsupportedEncodingException
          */
-        public HttpRequest build() throws UnsupportedEncodingException {
+        public NitricRequest build() throws UnsupportedEncodingException {
             Map<String, List<String>> immutableHeaders =
                     (headers != null) ? Collections.unmodifiableMap(headers) : Collections.emptyMap();
 
@@ -315,7 +267,7 @@ public class HttpRequest {
 
             Map<String, List<String>> params = parseParameters(urlParameters);
 
-            return new HttpRequest(method, path, query, immutableHeaders, body, Collections.unmodifiableMap(params));
+            return new NitricRequest(path, immutableHeaders, body, Collections.unmodifiableMap(params));
         }
 
         // Private Methods ------------------------------------------------------------
