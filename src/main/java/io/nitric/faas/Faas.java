@@ -27,7 +27,7 @@ import java.util.Map.Entry;
  *     public static void main(String[] args) {
  *
  *         new Faas().start((NitricRequest r) -> {
- *             return NitricResponse.build("Hello Nitric");
+ *             return NitricResponse.build("Hello World");
  *         });
  *     }
  * }
@@ -65,7 +65,7 @@ import java.util.Map.Entry;
 public class Faas {
 
     String hostname = "0.0.0.0"; // Use "0.0.0.0" to support accessing WSL2 Linux server from Windows
-    int port = 9001;
+    int port = 8080;
     final Map<String, NitricFunction> pathFunctions = new LinkedHashMap<>();
     HttpServer httpServer;
 
@@ -82,7 +82,7 @@ public class Faas {
     }
 
     /**
-     * Set the server port.
+     * Set the server port. The default port is 8080.
      * @param port the server port
      * @return the Faas server instance
      */
@@ -243,7 +243,7 @@ public class Faas {
 
                     he.getResponseHeaders().putAll(response.getHeaders());
 
-                    var statusCode = (response.getStatus() > 0) ? response.getStatus() : 0;
+                    var statusCode = (response.getStatus() > 0) ? response.getStatus() : 200;
 
                     he.sendResponseHeaders(statusCode, response.getBodyLength());
 

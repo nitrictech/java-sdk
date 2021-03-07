@@ -14,7 +14,7 @@ package io.nitric.faas;
  * public class HelloWorld implements NitricFunction {
  *
  *     public NitricResponse handle(NitricRequest request) {
- *         return NitricResponse.build(200, "Hello World");
+ *         return NitricResponse.build("Hello World");
  *     }
  * }
  * </code>

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FaasTest {
 
     // Avoid default port and potential conflicts when running unit tests
-    private final static int PORT = 9002;
+    private final static int PORT = 8081;
 
     NitricFunction handlerA = new NitricFunction() {
         public NitricResponse handle(NitricRequest request) {
@@ -24,7 +24,7 @@ public class FaasTest {
     @Test public void test_config() {
         var faas = new Faas();
 
-        assertEquals(9001, faas.port);
+        assertEquals(8080, faas.port);
         assertEquals("0.0.0.0", faas.hostname);
         assertTrue(faas.pathFunctions.isEmpty());
 
