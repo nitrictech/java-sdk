@@ -25,7 +25,7 @@ public class FaasTest {
         var faas = new Faas();
 
         assertEquals(8080, faas.port);
-        assertEquals("0.0.0.0", faas.hostname);
+        assertEquals("127.0.0.1", faas.hostname);
         assertTrue(faas.pathFunctions.isEmpty());
 
         faas.setHostname("localhost");
@@ -50,8 +50,8 @@ public class FaasTest {
         } catch (IllegalStateException ise) {
         }
 
-        faas.stop();
-        assertNull(faas.httpServer);
+        faas.httpServer.stop(2);
+        faas.httpServer = null;
 
         faas.start(handlerA);
 
@@ -59,8 +59,7 @@ public class FaasTest {
         assertEquals(1, faas.pathFunctions.size());
         assertEquals(handlerA, faas.pathFunctions.get("/"));
 
-        faas.stop();
-        assertNull(faas.httpServer);
+        faas.httpServer.stop(2);
     }
 
     @Test public void test_register() {
@@ -77,7 +76,7 @@ public class FaasTest {
         assertEquals(handlerB, faas.pathFunctions.get("/customers/"));
 
         faas.start();
-        faas.stop();
+        faas.httpServer.stop(2);
 
         try {
             faas.register("/customers/", handlerA);

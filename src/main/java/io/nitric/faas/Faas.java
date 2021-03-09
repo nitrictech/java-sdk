@@ -64,7 +64,7 @@ import java.util.Map.Entry;
  */
 public class Faas {
 
-    String hostname = "0.0.0.0"; // Use "0.0.0.0" to support accessing WSL2 Linux server from Windows
+    String hostname = "127.0.0.1";
     int port = 8080;
     final Map<String, NitricFunction> pathFunctions = new LinkedHashMap<>();
     HttpServer httpServer;
@@ -136,6 +136,11 @@ public class Faas {
 
         long time = System.currentTimeMillis();
 
+        var childAddress = System.getenv("CHILD_ADDRESS");
+        if (childAddress != null && !childAddress.isBlank()) {
+            hostname = childAddress;
+        }
+
         try {
             httpServer = HttpServer.create(new InetSocketAddress(hostname, port), 0);
 
@@ -173,25 +178,6 @@ public class Faas {
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
-        }
-    }
-
-    /**
-     * <p>
-     *     Stop the function server if currently running.
-     * </p>
-     * <p>
-     *     This method will stop the server by closing the listening socket and disallowing any new exchanges from being
-     *     processed. The method will then block until all current functions have completed or else when approximately
-     *     a 2 second delay seconds has elapsed (whichever happens sooner). Then, all open TCP connections are
-     *     closed, the background thread created by start() exits, and the method returns.
-     * </p>
-     */
-    public void stop() {
-        if (httpServer != null) {
-            httpServer.stop(2);
-            httpServer = null;
-            System.out.printf("%s stopped\n", getClass().getSimpleName(), port);
         }
     }
 
