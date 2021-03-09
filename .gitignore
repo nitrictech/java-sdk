@@ -1,0 +1,9 @@
+# Ignore IDE files
+/.settings/
+/.idea/
+/nitric-sdk.iml
+
+# Ignore build files
+/target/
+
+/todo.md
