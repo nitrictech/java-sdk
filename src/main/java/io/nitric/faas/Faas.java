@@ -1,59 +1,34 @@
 package io.nitric.faas;
 
-import java.io.IOException;
-
-import com.sun.net.httpserver.HttpServer;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.Map.Entry;
 
 /**
  * <p>
- *     Provides a Nitric Function as a Service (FaaS) server.
+ *     Provides a Nitric FaaS (Function as a Service) server.
  * </p>
  *
  * <p>
- *     The example below provides a simple hello world example where all requests are routed to a lambda function
- *     handler.
+ *     The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
  * </p>
  *
  * <code>
- * public class HelloWorld {
+ * public class HelloWorld implements NitricFunction {
  *
- *     public static void main(String[] args) {
- *
- *         new Faas().start((NitricRequest r) -> {
- *             return NitricResponse.build("Hello World");
- *         });
+ *     @Override
+ *     public NitricResponse handle(NitricEvent request) {
+ *         return NitricResponse.build("Hello World");
  *     }
- * }
- * </code>
  *
- * <p>
- *      The example below supports registering separate lambda functions for different routes.
- * </p>
- *
- * <code>
- * public class MultiRoutes {
- *
- *     public static void main(String[] args) {
- *
- *         new Faas()
- *                 .register("/accounts", (NitricRequest r) -> {
- *                     return NitricResponse.newBuilder()
- *                             .bodyText("/accounts: " + r.getParameters())
- *                             .build();
- *                 })
- *                 .register("/products", (NitricRequest r) -> {
- *                     return NitricResponse.newBuilder()
- *                             .bodyText("/products: " + r.getParameters())
- *                             .build();
- *                 })
- *                 .start();
+ *     @Override
+ *     public static void main(String... args) {
+ *         new Faas().start(new HelloWorld());
  *     }
  * }
  * </code>
@@ -66,7 +41,6 @@ public class Faas {
 
     String hostname = "127.0.0.1";
     int port = 8080;
-    final Map<String, NitricFunction> pathFunctions = new LinkedHashMap<>();
     HttpServer httpServer;
 
     // Public Methods -------------------------------------------------------------------
@@ -76,7 +50,7 @@ public class Faas {
      * @param hostname the server hostname
      * @return the Faas server instance
      */
-    public Faas setHostname(String hostname) {
+    public Faas hostname(String hostname) {
         this.hostname = hostname;
         return this;
     }
@@ -86,52 +60,20 @@ public class Faas {
      * @param port the server port
      * @return the Faas server instance
      */
-    public Faas setPort(int port) {
+    public Faas port(int port) {
         this.port = port;
         return this;
     }
 
     /**
-     * Register the function for the given path.
-     *
-     * @param path the function route path (required)
-     * @param function the function to register (required)
-     * @return the Faas server instance
-     */
-    public Faas register(String path, NitricFunction function) {
-        Objects.requireNonNull(path, "null path parameter");
-        Objects.requireNonNull(function, "null function parameter");
-
-        var checkHandler = pathFunctions.get(path);
-        if (checkHandler != null) {
-            var msg = checkHandler.getClass().getName() + " already registered for path: " + path;
-            throw new IllegalArgumentException(msg);
-        }
-
-        pathFunctions.put(path, function);
-        return this;
-    }
-
-    /**
      * Start the FaaS server after configuring the given function  to the path "/".
-     *
      * @param function the function (required)
      */
     public void start(NitricFunction function) {
-        register("/", function);
-        start();
-    }
+        Objects.requireNonNull(function, "null function parameter");
 
-    /**
-     * Start the function server.
-     */
-    public void start() {
         if (httpServer != null) {
             throw new IllegalStateException("server already started");
-        }
-
-        if (pathFunctions.isEmpty()) {
-            System.out.println("WARN No functions registered..");
         }
 
         long time = System.currentTimeMillis();
@@ -144,10 +86,7 @@ public class Faas {
         try {
             httpServer = HttpServer.create(new InetSocketAddress(hostname, port), 0);
 
-            for (String path : pathFunctions.keySet()) {
-                var function = pathFunctions.get(path);
-                httpServer.createContext(path, buildServerHandler(function));
-            }
+            httpServer.createContext("/", buildServerHandler(function));
 
             httpServer.setExecutor(null);
 
@@ -158,23 +97,10 @@ public class Faas {
                     .append(getClass().getSimpleName())
                     .append(" listening on port ")
                     .append(port)
-                    .append(" with ")
-                    .append(pathFunctions.size())
-                    .append(" function");
-
-            if (pathFunctions.size() == 0) {
-                builder.append("s");
-            } else if (pathFunctions.size() > 1) {
-                builder.append("s:");
-            }
+                    .append(" with function: ")
+                    .append(function.getClass().getName());
 
             System.out.println(builder);
-
-            if (pathFunctions.size() > 1) {
-                for (String path : pathFunctions.keySet()) {
-                    System.out.printf("   %s\t-> %s\n", path, pathFunctions.get(path).getClass().getName());
-                }
-            }
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -198,10 +124,7 @@ public class Faas {
                 long start = System.currentTimeMillis();
 
                 try {
-                    var requestBuilder = NitricRequest.newBuilder()
-                            .method(he.getRequestMethod())
-                            .path(he.getRequestURI().getPath())
-                            .query(he.getRequestURI().getQuery());
+                    var eventBuilder = NitricEvent.newBuilder();
 
                     if (!he.getRequestHeaders().isEmpty()) {
                         var requestHeaders = new HashMap<String, List<String>>();
@@ -216,18 +139,22 @@ public class Faas {
                                 headerList.addAll(header.getValue());
                             }
                         }
-                        requestBuilder.headers(requestHeaders);
+                        eventBuilder.headers(requestHeaders);
                     }
 
                     if (he.getRequestBody() != null) {
-                        requestBuilder.body(he.getRequestBody().readAllBytes());
+                        eventBuilder.payload(he.getRequestBody().readAllBytes());
                     }
 
-                    var request = requestBuilder.build();
+                    var event = eventBuilder.build();
 
-                    var response = function.handle(request);
+                    var response = function.handle(event);
 
-                    he.getResponseHeaders().putAll(response.getHeaders());
+                    var responseHeaders = new HashMap<String, List<String>>();
+                    response.getHeaders().forEach((key, value) -> {
+                        responseHeaders.put(key, List.of(value));
+                    });
+                    he.getResponseHeaders().putAll(responseHeaders);
 
                     var statusCode = (response.getStatus() > 0) ? response.getStatus() : 200;
 

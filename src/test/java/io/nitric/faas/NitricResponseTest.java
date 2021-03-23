@@ -22,7 +22,7 @@ public class NitricResponseTest {
 
         assertEquals(301, response.getStatus());
         assertNotNull(response.getHeaders());
-        assertEquals(1, response.getHeaders().size());
+        assertEquals(0, response.getHeaders().size());
         assertNotNull(response.getBody());
         assertEquals(body, response.getBody());
         assertEquals(11, response.getBodyLength());
@@ -34,30 +34,12 @@ public class NitricResponseTest {
         assertEquals(0, response.getStatus());
         assertNotNull(response.getHeaders());
         assertEquals(0, response.getHeaders().size());
-
-        response = NitricResponse.newBuilder().bodyText("{ 'a': 'b' }").build();
-        assertEquals("text/json; charset=UTF-8", response.getHeader("Content-Type"));
-
-        response = NitricResponse.newBuilder().bodyText("[{'a':'b'}]").build();
-        assertEquals("text/json; charset=UTF-8", response.getHeader("Content-Type"));
-
-        response = NitricResponse.newBuilder().bodyText("[{'a':'b'}]").build();
-        assertEquals("text/json; charset=UTF-8", response.getHeader("Content-Type"));
-
-        response = NitricResponse.newBuilder().bodyText("<?xml><body></body>").build();
-        assertEquals("text/xml; charset=UTF-8", response.getHeader("Content-Type"));
-
-        response = NitricResponse.newBuilder().bodyText("<!DOCTYPE html><html></html>").build();
-        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
-
-        response = NitricResponse.newBuilder().bodyText("Hello World").build();
-        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
     }
 
     @Test public void test_headers() {
-        var headers = new HashMap<String, List<String>>();
-        headers.put("Content-length", Arrays.asList("1024"));
-        headers.put("Accept-Charset", Arrays.asList("ISO-8859-1", "utf-8"));
+        var headers = new HashMap<String, String>();
+        headers.put("Content-length", "1024");
+        headers.put("Accept-Charset", "ISO-8859-1");
 
         var response = NitricResponse
                 .newBuilder()
@@ -67,25 +49,31 @@ public class NitricResponseTest {
         assertNotNull(response.getHeaders());
 
         assertNotNull(response.getHeaders().get("Content-length"));
-        assertEquals(1, response.getHeaders().get("Content-length").size());
-        assertEquals("1024", response.getHeader("Content-length"));
+        assertEquals("1024", response.getHeaders().get("Content-length"));
 
         assertNotNull(response.getHeaders().get("Accept-Charset"));
-        assertEquals(2, response.getHeaders().get("Accept-Charset").size());
-        assertEquals("ISO-8859-1", response.getHeader("Accept-Charset"));
+        assertEquals("ISO-8859-1", response.getHeaders().get("Accept-Charset"));
 
         try {
-            response.getHeaders().get("Accept-Charset").add("utf-16");
+            response.getHeaders().put("Accept-Charset", "utf-16");
             assertTrue(false, "Cant modify headers");
 
         } catch (Exception e) {
             assertTrue(true);
         }
+
+        response = NitricResponse
+                .newBuilder()
+                .header("name", "value")
+                .build();
+
+        assertNotNull(response.getHeaders());
+        assertEquals("value", response.getHeaders().get("name"));
     }
 
     @Test public void test_header() {
         var response = NitricResponse.newBuilder().header("Content-Type", "text/html").build();
-        assertEquals("text/html", response.getHeader("Content-Type"));
+        assertEquals("text/html", response.getHeaders().get("Content-Type"));
     }
 
     @Test public void test_bodyText() {
@@ -99,10 +87,11 @@ public class NitricResponseTest {
 
         assertEquals(301, response.getStatus());
         assertNotNull(response.getHeaders());
-        assertEquals(1, response.getHeaders().size());
+        assertEquals(0, response.getHeaders().size());
         assertNotNull(response.getBody());
         assertEquals(body, new String(response.getBody(), StandardCharsets.UTF_8));
         assertEquals(11, response.getBodyLength());
+        assertEquals(body, response.getBodyText());
     }
 
     @Test public void test_toString() {
@@ -115,14 +104,17 @@ public class NitricResponseTest {
     }
 
     @Test public void test_build() {
-        var response = NitricResponse.build(404);
+        var response = NitricResponse.build("Hello Nitric");
+        assertEquals(0, response.getStatus());
+        assertEquals("Hello Nitric", response.getBodyText());
+
+        response = NitricResponse.build(404);
         assertEquals(404, response.getStatus());
         assertEquals(0, response.getHeaders().size());
 
         response = NitricResponse.build(200, "Hello Nitric");
         assertEquals(200, response.getStatus());
-        assertEquals("Hello Nitric", new String(response.getBody(), StandardCharsets.UTF_8));
-        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("Hello Nitric", response.getBodyText());
     }
 
 }

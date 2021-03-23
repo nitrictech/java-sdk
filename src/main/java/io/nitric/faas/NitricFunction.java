@@ -13,7 +13,7 @@ package io.nitric.faas;
  * <code>
  * public class HelloWorld implements NitricFunction {
  *
- *     public NitricResponse handle(NitricRequest request) {
+ *     public NitricResponse handle(NitricEvent request) {
  *         return NitricResponse.build("Hello World");
  *     }
  * }
@@ -23,7 +23,7 @@ package io.nitric.faas;
  *     These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
  * </p>
  *
- * @see NitricRequest
+ * @see NitricEvent
  * @see NitricResponse
  * @see NitricResponse.Builder
  *
@@ -37,6 +37,6 @@ public interface NitricFunction {
      * @param request the function request
      * @return the function response
      */
-    NitricResponse handle(NitricRequest request);
+    NitricResponse handle(NitricEvent request);
 
 }
