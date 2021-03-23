@@ -53,28 +53,25 @@ import java.util.*;
  */
 public class HttpRequest {
 
-    private static final String CONTENT_TYPE = "Content-Type";
+    static final String CONTENT_TYPE = "Content-Type";
 
-    private final String method;
-    private final String path;
-    private final String query;
-    private final Map<String, List<String>> headers;
-    private final byte[] body;
-    private final Map<String, List<String>> parameters;
+    final String method;
+    final String path;
+    final String query;
+    final Map<String, List<String>> headers;
+    final byte[] body;
+    final Map<String, List<String>> parameters;
 
-    // Private constructor to enforce request builder pattern.
-    private HttpRequest(String method,
-                        String path,
-                        String query,
-                        Map<String, List<String>> headers,
-                        byte[] body,
-                        Map<String, List<String>> parameters) {
-        this.method = method;
-        this.path = path;
-        this.query = query;
-        this.headers = headers;
-        this.body = body;
-        this.parameters = parameters;
+    /*
+     * Private constructor to enforce request builder pattern.
+     */
+    private HttpRequest(Builder builder) {
+        this.method = builder.method;
+        this.path = builder.path;
+        this.query = builder.query;
+        this.headers = Collections.unmodifiableMap(builder.headers);
+        this.body = builder.body;
+        this.parameters = Collections.unmodifiableMap(builder.parameters);
     }
 
     // Public Methods ---------------------------------------------------------
@@ -202,16 +199,17 @@ public class HttpRequest {
      */
     public static class Builder {
 
-        private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+        static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-        private String method;
-        private String path;
-        private String query;
-        private Map<String, List<String>> headers;
-        private byte[] body;
+        String method;
+        String path;
+        String query;
+        Map<String, List<String>> headers;
+        Map<String, List<String>> parameters;
+        byte[] body;
 
-        // Private constructor to enforce request builder pattern.
-        private Builder() {
+        // Package Private constructor to enforce request builder pattern.
+        Builder() {
         }
 
         /**
@@ -270,8 +268,7 @@ public class HttpRequest {
          * @return a new HTTP response.
          */
         public HttpRequest build() {
-            Map<String, List<String>> immutableHeaders =
-                    (headers != null) ? Collections.unmodifiableMap(headers) : Collections.emptyMap();
+            headers = (headers != null) ? headers : Collections.emptyMap();
 
             // Parse parameters
             String urlParameters = null;
@@ -286,9 +283,9 @@ public class HttpRequest {
                 urlParameters = query;
             }
 
-            Map<String, List<String>> params = parseParameters(urlParameters);
+            parameters = parseParameters(urlParameters);
 
-            return new HttpRequest(method, path, query, immutableHeaders, body, Collections.unmodifiableMap(params));
+            return new HttpRequest(this);
         }
 
         // Private Methods ------------------------------------------------------------

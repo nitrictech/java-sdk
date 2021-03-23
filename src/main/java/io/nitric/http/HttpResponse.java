@@ -50,13 +50,13 @@ public class HttpResponse {
     private final Map<String, List<String>> headers;
     private final byte[] body;
 
-    // Private constructor to enforce response builder pattern.
-    private HttpResponse(int status,
-                         Map<String, List<String>> headers,
-                         byte[] body) {
-        this.status = status;
-        this.headers = headers;
-        this.body = body;
+    /*
+     * Package Private constructor to enforce response builder pattern.
+     */
+    private HttpResponse(Builder builder) {
+        this.status = builder.status;
+        this.headers = Collections.unmodifiableMap(builder.headers);
+        this.body = builder.body;
     }
 
     // Public Methods ---------------------------------------------------------
@@ -166,12 +166,14 @@ public class HttpResponse {
      */
     public static class Builder {
 
-        private int status;
-        private Map<String, List<String>> headers;
-        private byte[] body;
+        int status;
+        Map<String, List<String>> headers;
+        byte[] body;
 
-        // Private constructor to enforce response builder pattern.
-        private Builder() {
+        /*
+         * Package Private constructor to enforce response builder pattern.
+         */
+        Builder() {
         }
 
         /**
@@ -243,17 +245,17 @@ public class HttpResponse {
          */
         public HttpResponse build() {
 
-            Map<String, List<String>> responseHeaders = (headers != null) ? new HashMap<>(headers) : new HashMap<>();
+            headers = (headers != null) ? headers : new HashMap<>();
 
             // If content type not defined, then attempt to detect and add content type
-            if (getHeaderValue(CONTENT_TYPE, responseHeaders) == null) {
+            if (getHeaderValue(CONTENT_TYPE, headers) == null) {
                 var contentType = detectContentType(body);
                 if (contentType != null) {
-                    responseHeaders.put(CONTENT_TYPE, Arrays.asList(contentType));
+                    headers.put(CONTENT_TYPE, Arrays.asList(contentType));
                 }
             }
 
-            return new HttpResponse(status, Collections.unmodifiableMap(responseHeaders), body);
+            return new HttpResponse(this);
         }
 
         // Private Methods ----------------------------------------------------

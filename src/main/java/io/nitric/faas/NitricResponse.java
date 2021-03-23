@@ -34,12 +34,10 @@ public class NitricResponse {
     private final byte[] body;
 
     // Private constructor to enforce response builder pattern.
-    private NitricResponse(int status,
-                           Map<String, String> headers,
-                           byte[] body) {
-        this.status = status;
-        this.headers = headers;
-        this.body = body;
+    private NitricResponse(Builder builder) {
+        this.status = builder.status;
+        this.headers = Collections.unmodifiableMap(builder.headers);
+        this.body = builder.body;
     }
 
     // Public Methods ---------------------------------------------------------
@@ -137,12 +135,14 @@ public class NitricResponse {
      */
     public static class Builder {
 
-        private int status;
-        private Map<String, String> headers = new HashMap<>();
-        private byte[] body;
+        int status;
+        Map<String, String> headers = new HashMap<>();
+        byte[] body;
 
-        // Private constructor to enforce response builder pattern.
-        private Builder() {
+        /*
+         * Private constructor to enforce response builder pattern.
+         */
+        Builder() {
         }
 
         /**
@@ -208,7 +208,7 @@ public class NitricResponse {
          * @return a new function response object
          */
         public NitricResponse build() {
-            return new NitricResponse(status, Collections.unmodifiableMap(headers), body);
+            return new NitricResponse(this);
         }
     }
 
