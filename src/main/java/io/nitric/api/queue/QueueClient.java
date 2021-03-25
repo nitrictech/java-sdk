@@ -19,7 +19,18 @@ import java.util.stream.Collectors;
  * </p>
  *
  * <pre>
- *  // TODO...
+ *  String orderId = ...
+ *  String serialNumber = ...
+ *
+ *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
+ *  var task = NitricTask.build(payload);
+ *
+ *  // Send a task to the 'shipping' queue client
+ *  var client = QueueClient.build("shipping");
+ *  client.send(task);
+ *
+ *  // Receive a list of tasks from the 'shipping' queue
+ *  List&lg;NitricTask&gt; tasks = client.receive(100);
  * </pre>
  *
  * @see NitricTask
@@ -236,7 +247,7 @@ public class QueueClient {
          * @return build a new QueueClient
          */
         public QueueClient build() {
-            Objects.requireNonNull(queue, "queue parameter not specified");
+            Objects.requireNonNull(queue, "queue parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
                 this.serviceStub = QueueGrpc.newBlockingStub(channel);

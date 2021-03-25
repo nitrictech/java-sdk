@@ -1,6 +1,7 @@
 package io.nitric.api.kv;
 
 import com.google.protobuf.Struct;
+import io.nitric.api.queue.QueueClient;
 import io.nitric.proto.kv.v1.KeyValueDeleteRequest;
 import io.nitric.proto.kv.v1.KeyValueGetRequest;
 import io.nitric.proto.kv.v1.KeyValueGrpc;
@@ -27,7 +28,7 @@ import java.util.Objects;
  *
  * <pre>
  *  // Create a 'customers' collection KV client
- *  var client = KeyValueClient.newBuilder("customers").build();
+ *  var client = KeyValueClient.build("customers");
  *
  *  // Get a customer record
  *  String key = "john.smith@gmail.com";
@@ -122,14 +123,20 @@ public class KeyValueClient {
     }
 
     /**
-     * Create an new KeyValueClient builder for the given collection.
+     * @return new KeyValueClient builder
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    /**
+     * Return a new QueueClient with the specified queue name.
      *
      * @param collection the KV collection (required)
      * @return new KeyValueClient builder
      */
-    public static Builder newBuilder(String collection) {
-        Objects.requireNonNull(collection, "collection parameter is required");
-        return new Builder(collection);
+    public static KeyValueClient build(String collection) {
+        return newBuilder().collection(collection).build();
     }
 
     /**
@@ -156,15 +163,25 @@ public class KeyValueClient {
         /*
          * Enforce builder pattern.
          */
-        Builder(String collection) {
+        Builder() {
+        }
+
+        /**
+         * Set the builder collection.
+         *
+         * @param collection the builder collection (required)
+         * @return the builder object
+         */
+        public Builder collection(String collection) {
             this.collection = collection;
+            return this;
         }
 
         /**
          * Set the GRPC service stub for mock testing.
          *
          * @param serviceStub the GRPC service stub to inject
-         * @return the KeyValueClient builder
+         * @return the builder object
          */
         Builder serviceStub(KeyValueBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
@@ -175,6 +192,7 @@ public class KeyValueClient {
          * @return build a new KeyValueClient
          */
         public KeyValueClient build() {
+            Objects.requireNonNull(collection, "collection parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
                 this.serviceStub = KeyValueGrpc.newBlockingStub(channel);

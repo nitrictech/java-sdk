@@ -17,17 +17,17 @@ public class KeyValueClientTest {
 
     @Test
     public void test_build() {
-        var client = KeyValueClient.newBuilder("customers").build();
+        var client = KeyValueClient.build("customers");
 
         assertNotNull(client);
         assertEquals("customers", client.collection);
         assertNotNull(client.serviceStub);
 
         try {
-            KeyValueClient.newBuilder(null).build();
+            KeyValueClient.newBuilder().build();
             assertTrue(false);
         } catch (NullPointerException npe) {
-            assertTrue(npe.getMessage().contains("collection parameter is required"));
+            assertEquals("collection parameter is required", npe.getMessage());
         }
     }
 
@@ -44,7 +44,10 @@ public class KeyValueClientTest {
             }
         };
 
-        var client = KeyValueClient.newBuilder("customers").serviceStub(mock).build();
+        var client = KeyValueClient.newBuilder()
+                .collection("customers")
+                .serviceStub(mock)
+                .build();
 
         var customer = client.get(KNOWN_KEY);
         assertEquals(KNOWN_MAP, customer);
@@ -70,7 +73,10 @@ public class KeyValueClientTest {
             }
         };
 
-        var client = KeyValueClient.newBuilder("customers").serviceStub(mock).build();
+        var client = KeyValueClient.newBuilder()
+                .collection("customers")
+                .serviceStub(mock)
+                .build();
 
         client.put(KNOWN_KEY, KNOWN_MAP);
 
@@ -99,7 +105,10 @@ public class KeyValueClientTest {
             }
         };
 
-        var client = KeyValueClient.newBuilder("customers").serviceStub(mock).build();
+        var client = KeyValueClient.newBuilder()
+                .collection("customers")
+                .serviceStub(mock)
+                .build();
 
         client.delete(KNOWN_KEY);
 

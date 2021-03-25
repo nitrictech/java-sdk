@@ -1,6 +1,5 @@
 package io.nitric.api.queue;
 
-import io.nitric.api.event.NitricEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
