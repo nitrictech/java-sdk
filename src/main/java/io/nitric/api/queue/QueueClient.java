@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  Provides a Queue API client.git 
+ *  Provides a Queue API client.
  * </p>
  *
  * <p>
