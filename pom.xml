@@ -42,6 +42,7 @@
             <version>6.0.53</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -65,29 +66,39 @@
                 <version>1.6.2</version>
             </extension>
         </extensions>
-        <plugins>
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
-                <configuration>
-                    <protoSourceRoot>contracts/proto</protoSourceRoot>
-                    <outputDirectory>src/main/java</outputDirectory>
-                    <clearOutputDirectory>false</clearOutputDirectory>
-                    <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.36.0:exe:${os.detected.classifier}</pluginArtifact>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
+
+    <!-- To generated proto files run: mvn compile -P proto-gen -->
+    <profiles>
+        <profile>
+            <id>proto-gen</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.xolstice.maven.plugins</groupId>
+                        <artifactId>protobuf-maven-plugin</artifactId>
+                        <version>0.6.1</version>
+                        <configuration>
+                            <protoSourceRoot>contracts/proto</protoSourceRoot>
+                            <outputDirectory>src/main/java</outputDirectory>
+                            <clearOutputDirectory>false</clearOutputDirectory>
+                            <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
+                            <pluginId>grpc-java</pluginId>
+                            <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.36.0:exe:${os.detected.classifier}</pluginArtifact>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile</goal>
+                                    <goal>compile-custom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>

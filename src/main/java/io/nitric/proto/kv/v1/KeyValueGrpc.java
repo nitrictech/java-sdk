@@ -256,8 +256,8 @@ public final class KeyValueGrpc {
    * Services for storage and retrieval of simple JSON keyValue
    * </pre>
    */
-  public static final class KeyValueBlockingStub extends io.grpc.stub.AbstractBlockingStub<KeyValueBlockingStub> {
-    private KeyValueBlockingStub(
+  public static class KeyValueBlockingStub extends io.grpc.stub.AbstractBlockingStub<KeyValueBlockingStub> {
+    KeyValueBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

@@ -8,29 +8,52 @@ import io.nitric.proto.kv.v1.KeyValueGrpc.KeyValueBlockingStub;
 import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.GrpcChannelProvider;
 import io.nitric.util.NitricException;
+import io.nitric.util.ProtoUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 /**
- * Provides a Nitric Key Value API Client class.
+ * <p>
+ *  Provides a Key Value API client.
+ * </p>
+ *
+ * <p>
+ *  The example below illustrates the Key Value API.
+ * </p>
+ *
+ * <pre>
+ *  // Create a 'customers' collection KV client
+ *  var client = KeyValueClient.newBuilder("customers").build();
+ *
+ *  // Get a customer record
+ *  String key = "john.smith@gmail.com";
+ *  Map&lt;String, Object&gt; customer = client.get(key);
+ *
+ *  // Update a customer record
+ *  customer.put("mobile", "0432 321 543");
+ *  client.put(key, value);
+ *
+ *  // Delete a customer record
+ *  client.delete(key);
+ * </pre>
  *
  * @since 1.0
  */
-public class KeyValueClient<T> {
+public class KeyValueClient {
 
     final String collection;
-    final Class<T> type;
-    final KeyValueBlockingStub kvStub;
+    final KeyValueBlockingStub serviceStub;
 
     /*
-     * Provides a package private constructor to enforce builder pattern.
+     * Enforce builder pattern.
      */
     KeyValueClient(Builder builder) {
         this.collection = builder.collection;
-        this.type = builder.type;
-        this.kvStub = builder.kvStub;
+        this.serviceStub = builder.serviceStub;
     }
 
     // Public Methods ---------------------------------------------------------
@@ -39,23 +62,25 @@ public class KeyValueClient<T> {
      * Return the collection value for the given key.
      *
      * @param key the values key in the collection (required)
-     * @return the KV collection value for the given key
+     * @return the collection value for the given key, or null if not found
      */
-    public T get(String key) {
-        Objects.requireNonNull(key, "key parameter is null");
+    public Map<String, Object> get(String key) {
+        Objects.requireNonNull(key, "key parameter is required");
 
         var request = KeyValueGetRequest.newBuilder()
                 .setCollection(collection)
                 .setKey(key)
                 .build();
 
-        var response = kvStub.get(request);
+        var response = serviceStub.get(request);
 
-        // https://www.programcreek.com/java-api-examples/?api=com.google.protobuf.Struct
-        // https://www.programcreek.com/java-api-examples/?code=google%2Frejoiner%2Frejoiner-master%2Frejoiner-grpc%2Fsrc%2Fmain%2Fjava%2Fcom%2Fgoogle%2Fapi%2Fgraphql%2Fgrpc%2FStructUtil.java#
+        if (response.hasValue()) {
+            var struct = response.getValue();
+            return ProtoUtils.toMap(response.getValue());
 
-        // TODO: coerce value
-        return (T)  response.getValue();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -65,56 +90,46 @@ public class KeyValueClient<T> {
      * @param value the value to store for the given collection and key
      * @return the KV collection value for the given key
      */
-    public void put(String key, Object value) {
-        Objects.requireNonNull(key, "key parameter is null");
-        Objects.requireNonNull(key, "value parameter is null");
+    public void put(String key, Map<String, Object> value) {
+        Objects.requireNonNull(key, "key parameter is required");
+        Objects.requireNonNull(value, "value parameter is required");
 
-        try {
-            var data = value.toString().getBytes(StandardCharsets.UTF_8);
-            var struc = Struct.newBuilder().mergeFrom(data).build();
+        var struct = ProtoUtils.toStruct(value);
 
-            var request = KeyValuePutRequest.newBuilder()
-                    .setCollection(collection)
-                    .setKey(key)
-                    .setValue(struc)
-                    .build();
+        var request = KeyValuePutRequest.newBuilder()
+                .setCollection(collection)
+                .setKey(key)
+                .setValue(struct)
+                .build();
 
-            var response = kvStub.put(request);
-
-        } catch (com.google.protobuf.InvalidProtocolBufferException ipbe) {
-            throw NitricException.newBuilder()
-                    .cause(ipbe)
-                    .build();
-        }
+        serviceStub.put(request);
     }
 
     /**
      * Delete the collection value with the given key.
      *
      * @param key the values key in the collection (required)
-     * @return the KV collection value for the given key
      */
     public void delete(String key) {
-        Objects.requireNonNull(collection, "null collection parameter");
-        Objects.requireNonNull(key, "null key parameter");
+        Objects.requireNonNull(key, "key parameter is required");
 
         var request = KeyValueDeleteRequest.newBuilder()
                 .setCollection(collection)
                 .setKey(key)
                 .build();
 
-        var response = kvStub.delete(request);
+        serviceStub.delete(request);
     }
 
     /**
-     * Create an new KeyValueClient builder with the given value type.
+     * Create an new KeyValueClient builder for the given collection.
      *
-     * @param type the collection value type (required)
+     * @param collection the KV collection (required)
      * @return new KeyValueClient builder
      */
-    public static <T> Builder<T> newBuilder(Class<T> type) {
-        Objects.requireNonNull(type, "type parameter is null");
-        return new Builder<T>(type);
+    public static Builder newBuilder(String collection) {
+        Objects.requireNonNull(collection, "collection parameter is required");
+        return new Builder(collection);
     }
 
     /**
@@ -124,8 +139,7 @@ public class KeyValueClient<T> {
     public String toString() {
         return getClass().getSimpleName()
                 + "[collection=" + collection
-                + ", type=" + type.getName()
-                + ", kvStub=" + kvStub
+                + ", serviceStub=" + serviceStub
                 + "]";
     }
 
@@ -134,39 +148,39 @@ public class KeyValueClient<T> {
     /**
      * Provides a KeyValueClient Builder.
      */
-    public static class Builder<K> {
+    public static class Builder {
 
         private String collection;
-        private Class<K> type;
-        private KeyValueBlockingStub kvStub;
+        private KeyValueBlockingStub serviceStub;
 
-        /**
-         * Create a KeyValueClient builder with the given collection value type.
-         * @param type the collection value type
+        /*
+         * Enforce builder pattern.
          */
-        Builder(Class<K> type) {
-            this.type = type;
+        Builder(String collection) {
+            this.collection = collection;
         }
 
         /**
-         * Set the KV collection name.
+         * Set the GRPC service stub for mock testing.
          *
-         * @param collection the KV collection name
+         * @param serviceStub the GRPC service stub to inject
          * @return the KeyValueClient builder
          */
-        public Builder<K> collection(String collection) {
-            this.collection = collection;
+        Builder serviceStub(KeyValueBlockingStub serviceStub) {
+            this.serviceStub = serviceStub;
             return this;
         }
 
         /**
          * @return build a new KeyValueClient
          */
-        public KeyValueClient<K> build() {
-            var channel = GrpcChannelProvider.getChannel();
-            this.kvStub = KeyValueGrpc.newBlockingStub(channel);
+        public KeyValueClient build() {
+            if (serviceStub == null) {
+                var channel = GrpcChannelProvider.getChannel();
+                this.serviceStub = KeyValueGrpc.newBlockingStub(channel);
+            }
 
-            return new KeyValueClient<>(this);
+            return new KeyValueClient(this);
         }
     }
 

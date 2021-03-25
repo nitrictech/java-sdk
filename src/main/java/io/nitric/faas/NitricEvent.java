@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable Nitric Event class.
+ *  Provides an immutable Nitric Event class.
  * </p>
  *
  * @see NitricFunction

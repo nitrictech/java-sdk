@@ -5,24 +5,25 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable function response class. This class provides static convenience methods for quickly creating
- *     a response and a <code>NitricResponse.Builder</code> class for comprehensive control.
+ *  Provides an immutable function response class. This class provides static convenience methods for quickly creating
+ *  a response and a <code>NitricResponse.Builder</code> class for comprehensive control.
  * </p>
  *
  * <p>
- *     The example below uses the <code>NitricResponse.Builder</code> class:
+ *  The example below uses the <code>NitricResponse.Builder</code> class:
  * </p>
  *
- * <code>
+ * <pre>
  *    byte[] data = Files.readAllBytes(path);
  *
  *    return NitricResponse.newBuilder()
  *               .body(data)
  *               .build();
- * </code>
+ * </pre>
  *
  * @see NitricEvent
  * @see NitricFunction
+ *
  * @since 1.0
  */
 public class NitricResponse {

@@ -7,13 +7,13 @@ import java.util.Objects;
 
 /**
  * <p>
- *      Provides a gRPC Managed Channel object by use by Nitric Service Clients.
+ *  Provides a gRPC Managed Channel object by use by Nitric Service Clients.
  * </p>
  *
  * <p>
- *      The default host and port values are '127.0.0.1' and 50051 respectively. To change these
- *      default values set the respective Environment Variables: NITRIC_SERVICE_HOST and
- *      NITRIC_SERVICE_PORT.
+ *  The default host and port values are '127.0.0.1' and 50051 respectively. To change these
+ *  default values set the respective Environment Variables: NITRIC_SERVICE_HOST and
+ *  NITRIC_SERVICE_PORT.
  * </p>
  *
  * @since 1.0
@@ -36,12 +36,12 @@ public class GrpcChannelProvider {
      */
     public static ManagedChannel getChannel() {
 
-        if (channel != null) {
+        if (channel != null && !channel.isShutdown() && !channel.isTerminated()) {
             return channel;
         }
 
         synchronized (LOCK) {
-            if (channel == null) {
+            if (channel == null || channel.isShutdown() || channel.isTerminated()) {
                 var target = getEnvVar(NITRIC_SERVICE_HOST_ENV_VAR_NAME, NITRIC_SERVICE_HOST_DEFAULT)
                         + ":" + getEnvVar(NITRIC_SERVICE_PORT_ENV_VAR_NAME, NITRIC_SERVICE_PORT_DEFAULT);
 

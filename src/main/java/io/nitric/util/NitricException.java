@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 
 /**
  * <p>
- *     Provides an Nitric Exception class which may include additional developer and operations diagnostics.
+ *  Provides an Nitric Exception class which may include additional developer and operations diagnostics.
  * </p>
  *
  * @since 1.0

@@ -156,8 +156,8 @@ public final class EventGrpc {
    * Service for publishing asynchronous event
    * </pre>
    */
-  public static final class EventBlockingStub extends io.grpc.stub.AbstractBlockingStub<EventBlockingStub> {
-    private EventBlockingStub(
+  public static class EventBlockingStub extends io.grpc.stub.AbstractBlockingStub<EventBlockingStub> {
+    EventBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

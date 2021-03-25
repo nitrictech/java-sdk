@@ -2,22 +2,25 @@ package io.nitric.faas;
 
 /**
  * <p>
- *     Provides a Nitric function handler. The <code>NitricFunction</code> interface supports pure function
- *     development with immutable request and response objects.
+ *  Provides a Nitric function handler. The <code>NitricFunction</code> interface supports pure function
+ *  development with immutable request and response objects.
  * </p>
  *
  * <p>
- *     The example below provides a simple Hello World function.
+ *  The example below provides a simple Hello World function.
  * </p>
  *
- * <code>
+ * <pre>
  * public class HelloWorld implements NitricFunction {
  *
  *     public NitricResponse handle(NitricEvent request) {
  *         return NitricResponse.build("Hello World");
  *     }
- * }
- * </code>
+ *
+ *     public static void main(String... args) {
+ *         new Faas().start(new HelloWorld());
+ *     } * }
+ * </pre>
  *
  * <p>
  *     These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.

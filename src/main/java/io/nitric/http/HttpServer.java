@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 /**
  * <p>
- *     Provides a Nitric HTTP Functions Server.
+ *  Provides a Nitric HTTP Functions Server.
  * </p>
  *
  * @see HttpHandler

@@ -11,14 +11,14 @@ import java.util.Map.Entry;
 
 /**
  * <p>
- *     Provides a Nitric FaaS (Function as a Service) server.
+ *  Provides a Nitric FaaS (Function as a Service) server.
  * </p>
  *
  * <p>
- *     The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
+ *  The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
  * </p>
  *
- * <code>
+ * <pre>
  * public class HelloWorld implements NitricFunction {
  *
  *     @Override
@@ -31,7 +31,7 @@ import java.util.Map.Entry;
  *         new Faas().start(new HelloWorld());
  *     }
  * }
- * </code>
+ * </pre>
  *
  * @see NitricFunction
  *
@@ -66,7 +66,7 @@ public class Faas {
     }
 
     /**
-     * Start the FaaS server after configuring the given function  to the path "/".
+     * Start the FaaS server after configuring the given function.
      * @param function the function (required)
      */
     public void start(NitricFunction function) {

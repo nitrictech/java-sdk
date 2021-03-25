@@ -156,8 +156,8 @@ public final class TopicGrpc {
    * Service for management of event topics
    * </pre>
    */
-  public static final class TopicBlockingStub extends io.grpc.stub.AbstractBlockingStub<TopicBlockingStub> {
-    private TopicBlockingStub(
+  public static class TopicBlockingStub extends io.grpc.stub.AbstractBlockingStub<TopicBlockingStub> {
+    TopicBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

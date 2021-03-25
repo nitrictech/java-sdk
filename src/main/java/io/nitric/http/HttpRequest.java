@@ -7,14 +7,14 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable HTTP request class.
+ *  Provides an immutable HTTP request class.
  * </p>
  *
  * <p>
- *     The example bellow illustrates using the request object for debugging.
+ *  The example bellow illustrates using the request object for debugging.
  * </p>
  *
- * <code>
+ * <pre>
  * public class RequestInfo {
  *
  *     public static void main(String[] args) {
@@ -43,7 +43,7 @@ import java.util.*;
  *         });
  *     }
  * }
- * </code>
+ * </pre>
  *
  * @see HttpHandler
  * @see HttpResponse

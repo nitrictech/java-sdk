@@ -5,15 +5,15 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable HTTP response class. This class provides static convenience methods for quickly creating
- *     a response and a <code>HttpResponse.Builder</code> class for comprehensive control.
+ *  Provides an immutable HTTP response class. This class provides static convenience methods for quickly creating
+ *  a response and a <code>HttpResponse.Builder</code> class for comprehensive control.
  * </p>
  *
  * <p>
- *     The HTTP examples below use the static <code>HttpResponse</code> build methods:
+ *  The HTTP examples below use the static <code>HttpResponse</code> build methods:
  * </p>
  *
- * <code>
+ * <pre>
 *     // 404 - Not Found response
 *     return HttpResponse.build(404);
 *
@@ -23,20 +23,20 @@ import java.util.*;
 *
 *     // 418 - Error message
 *     return HttpResponse.build(418, "Im a tea pot");
- * </code>
+ * </pre>
  *
  * <p>
- *     The example below uses the <code>HttpResponse.Builder</code> class:
+ *  The example below uses the <code>HttpResponse.Builder</code> class:
  * </p>
  *
- * <code>
+ * <pre>
  *    byte[] data = Files.readAllBytes(path);
  *
  *    return HttpResponse.newBuilder()
  *               .header("Content-Type", "application/jar")
  *               .body(data)
  *               .build();
- * </code>
+ * </pre>
  *
  * @see HttpRequest
  * @see HttpHandler
