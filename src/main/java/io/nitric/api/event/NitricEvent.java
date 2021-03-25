@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Provides a NitricEvent class.
+ * Provides an Event API event class.
  *
  * @since 1.0
  */

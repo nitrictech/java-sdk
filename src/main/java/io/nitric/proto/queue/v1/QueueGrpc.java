@@ -333,8 +333,8 @@ public final class QueueGrpc {
    * The Nitric Queue Service contract
    * </pre>
    */
-  public static final class QueueBlockingStub extends io.grpc.stub.AbstractBlockingStub<QueueBlockingStub> {
-    private QueueBlockingStub(
+  public static class QueueBlockingStub extends io.grpc.stub.AbstractBlockingStub<QueueBlockingStub> {
+    QueueBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

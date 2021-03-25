@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  Provides a Topic API client.
+ *  Provides an Event API topic client.
  * </p>
  *
  * <p>

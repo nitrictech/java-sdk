@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * <p>
- *  Provides a Event API client.
+ *  Provides a Event API event client.
  * </p>
  *
  * <p>
@@ -48,7 +48,7 @@ public class EventClient {
     /**
      * Publish the NitricEvent to the given topic.
      *
-     * @param topic the topic to publish the event to
+     * @param topic the topic to pubish the event to (required)
      * @param event the even to publish (required)
      */
     public void publish(String topic, NitricEvent event) {
@@ -64,11 +64,11 @@ public class EventClient {
         if (event.getPayloadType() != null) {
             eventBuilder.setPayloadType(event.getPayloadType());
         }
-        var grpcEvent = eventBuilder.build();
+        var protoEvent = eventBuilder.build();
 
         var request = EventPublishRequest.newBuilder()
                 .setTopic(topic)
-                .setEvent(grpcEvent)
+                .setEvent(protoEvent)
                 .build();
 
         serviceStub.publish(request);
@@ -79,8 +79,8 @@ public class EventClient {
      *
      * @return new EventClient builder
      */
-    public static EventClient.Builder newBuilder() {
-        return new EventClient.Builder();
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     /**
@@ -98,7 +98,7 @@ public class EventClient {
      */
     public static class Builder {
 
-        private EventGrpc.EventBlockingStub serviceStub;
+        EventGrpc.EventBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
