@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NitricEventTest {
+public class EventTest {
 
     @Test
     public void test_event() throws Exception {

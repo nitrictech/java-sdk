@@ -36,6 +36,9 @@ public class KeyValueClientTest {
         var mock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValueGetResponse get(KeyValueGetRequest request) {
+                assertNotNull(request);
+                assertNotNull(request.getCollection());
+                assertNotNull(request.getKey());
                 if (request.getKey().equals(KNOWN_KEY)) {
                     return KeyValueGetResponse.newBuilder().setValue(KNOWN_STRUCT).build();
                 } else {
@@ -68,6 +71,10 @@ public class KeyValueClientTest {
         var mock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValuePutResponse put(KeyValuePutRequest request) {
+                assertNotNull(request);
+                assertNotNull(request.getCollection());
+                assertNotNull(request.getKey());
+                assertNotNull(request.getValue());
                 var value = Struct.newBuilder().build();
                 return KeyValuePutResponse.newBuilder().build();
             }
@@ -100,6 +107,9 @@ public class KeyValueClientTest {
         var mock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValueDeleteResponse delete(KeyValueDeleteRequest request) {
+                assertNotNull(request);
+                assertNotNull(request.getCollection());
+                assertNotNull(request.getKey());
                 var value = Struct.newBuilder().build();
                 return KeyValueDeleteResponse.newBuilder().build();
             }

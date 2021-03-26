@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class NitricEventTest {
+public class EventTest {
 
     @Test
     public void test_build() {
         Map<String, Object> payload = Map.of("name", "value");
 
-        var event = NitricEvent.newBuilder()
+        var event = Event.newBuilder()
                 .id("id")
                 .payloadType("payloadType")
                 .payload(payload)
@@ -21,17 +21,17 @@ public class NitricEventTest {
         assertEquals("id", event.getId());
         assertEquals("payloadType", event.getPayloadType());
         assertEquals(payload, event.getPayload());
-        assertEquals("NitricEvent[id=id, payloadType=payloadType, payload={name=value}]", event.toString());
+        assertEquals("Event[id=id, payloadType=payloadType, payload={name=value}]", event.toString());
 
-        event = NitricEvent.build(payload);
+        event = Event.build(payload);
         assertNotNull(event);
         assertNull(event.getId());
         assertNull(event.getPayloadType());
         assertEquals(payload, event.getPayload());
-        assertEquals("NitricEvent[id=null, payloadType=null, payload={name=value}]", event.toString());
+        assertEquals("Event[id=null, payloadType=null, payload={name=value}]", event.toString());
 
         try {
-            NitricEvent.newBuilder().build();
+            Event.newBuilder().build();
             assertTrue(false);
 
         } catch (NullPointerException npe) {
@@ -39,7 +39,7 @@ public class NitricEventTest {
         }
 
         try {
-            NitricEvent.build(null);
+            Event.build(null);
             assertTrue(false);
 
         } catch (NullPointerException npe) {

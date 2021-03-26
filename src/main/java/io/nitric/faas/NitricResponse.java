@@ -14,11 +14,12 @@ import java.util.*;
  * </p>
  *
  * <pre>
- *    byte[] data = Files.readAllBytes(path);
+ * import io.nitric.faas.NitricResponse;
+ * ...
  *
- *    return NitricResponse.newBuilder()
- *               .body(data)
- *               .build();
+ * byte[] data = Files.readAllBytes(path);
+ *
+ * return NitricResponse.build(data);
  * </pre>
  *
  * @see NitricEvent

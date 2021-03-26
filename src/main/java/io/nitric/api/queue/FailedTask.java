@@ -7,14 +7,14 @@ import java.util.Objects;
  *  Provides a Queue API failed task class.
  * </p>
  *
- * @see NitricTask
+ * @see Task
  *
  * @since 1.0
  */
 public class FailedTask {
 
     /** The task that failed to be pushed. */
-    final NitricTask task;
+    final Task task;
 
     /** A message describing the failure. */
     final String message;
@@ -32,7 +32,7 @@ public class FailedTask {
     /**
      * @return the task which failed
      */
-    public NitricTask getTask() {
+    public Task getTask() {
         return task;
     }
 
@@ -67,7 +67,7 @@ public class FailedTask {
      */
     public static class Builder {
 
-        NitricTask task;
+        Task task;
         String message;
 
         /*
@@ -84,7 +84,7 @@ public class FailedTask {
          * @param task the task which failed (required)
          * @return the builder object
          */
-        public Builder task(NitricTask task) {
+        public Builder task(Task task) {
             this.task = task;
             return this;
         }

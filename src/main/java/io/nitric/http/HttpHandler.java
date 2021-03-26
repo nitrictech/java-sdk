@@ -11,6 +11,11 @@ package io.nitric.http;
  * </p>
  *
  * <pre>
+ * import io.nitric.http.HttpHandler;
+ * import io.nitric.http.HttpRequest;
+ * import io.nitric.http.HttpResponse;
+ * ...
+ *
  * public class HelloWorld implements HttpHandler {
  *
  *     public HttpResponse handle(HttpRequest request) {

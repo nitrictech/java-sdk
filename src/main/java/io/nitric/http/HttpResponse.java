@@ -14,15 +14,22 @@ import java.util.*;
  * </p>
  *
  * <pre>
-*     // 404 - Not Found response
-*     return HttpResponse.build(404);
-*
-*     // 200 - JSON message
-*     var json = "{ \"status\": \"online\" }";
-*     return HttpResponse.build(200, json);
-*
-*     // 418 - Error message
-*     return HttpResponse.build(418, "Im a tea pot");
+ * import io.nitric.http.HttpResponse;
+ * ...
+ *
+ * // 404 - Not Found response
+ * return HttpResponse.build(404);
+ *
+ * ...
+ *
+ * // 200 - JSON message
+ * var json = "{ \"status\": \"online\" }";
+ * return HttpResponse.build(200, json);
+ *
+ * ...
+ *
+ * // 418 - Error message
+ * return HttpResponse.build(418, "Im a tea pot");
  * </pre>
  *
  * <p>
@@ -30,12 +37,15 @@ import java.util.*;
  * </p>
  *
  * <pre>
- *    byte[] data = Files.readAllBytes(path);
+ * import io.nitric.http.HttpResponse;
+ * ...
  *
- *    return HttpResponse.newBuilder()
- *               .header("Content-Type", "application/jar")
- *               .body(data)
- *               .build();
+ * byte[] data = Files.readAllBytes(path);
+ *
+ * return HttpResponse.newBuilder()
+ *            .header("Content-Type", "application/jar")
+ *            .body(data)
+ *            .build();
  * </pre>
  *
  * @see HttpRequest

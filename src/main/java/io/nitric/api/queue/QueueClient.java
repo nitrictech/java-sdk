@@ -19,21 +19,25 @@ import java.util.stream.Collectors;
  * </p>
  *
  * <pre>
+ *  import io.nitric.api.queue.QueueClient;
+ *  import io.nitric.api.queue.Task;
+ *  ...
+ *
  *  String orderId = ...
  *  String serialNumber = ...
  *
  *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
- *  var task = NitricTask.build(payload);
+ *  var task = Task.build(payload);
  *
  *  // Send a task to the 'shipping' queue client
  *  var client = QueueClient.build("shipping");
  *  client.send(task);
  *
  *  // Receive a list of tasks from the 'shipping' queue
- *  List&lg;NitricTask&gt; tasks = client.receive(100);
+ *  List&lg;Task&gt; tasks = client.receive(100);
  * </pre>
  *
- * @see NitricTask
+ * @see Task
  * @see FailedTask
  *
  * @since 1.0
@@ -58,7 +62,7 @@ public class QueueClient {
      *
      * @param task the task to send to the queue (required)
      */
-    public void send(NitricTask task) {
+    public void send(Task task) {
         Objects.requireNonNull(task, "task parameter is required");
 
         var protoTask = toProtoTask(task);
@@ -77,7 +81,7 @@ public class QueueClient {
      * @param tasks the list of task to send as a batch (required)
      * @return the list of tasks which failed to send, or an empty list if all were successfully sent
      */
-    public List<FailedTask> sendBatch(List<NitricTask> tasks) {
+    public List<FailedTask> sendBatch(List<Task> tasks) {
         Objects.requireNonNull(tasks, "tasks parameter is required");
 
         if (tasks.isEmpty()) {
@@ -85,7 +89,7 @@ public class QueueClient {
         }
 
         var requestBuilder = QueueSendBatchRequest.newBuilder().setQueue(queue);
-        for (NitricTask task : tasks) {
+        for (Task task : tasks) {
             requestBuilder.addTasks(toProtoTask(task));
         }
         var request = requestBuilder.build();
@@ -104,7 +108,7 @@ public class QueueClient {
      * @param limit the maximum number of tasks to receive from the queue
      * @return the tasks from the client queue
      */
-    public List<NitricTask> receive(int limit) {
+    public List<Task> receive(int limit) {
         var request = QueueReceiveRequest.newBuilder()
                 .setQueue(queue)
                 .setDepth(limit)
@@ -163,7 +167,7 @@ public class QueueClient {
 
     // Package Private Methods ------------------------------------------------
 
-    io.nitric.proto.queue.v1.NitricTask toProtoTask(NitricTask task) {
+    io.nitric.proto.queue.v1.NitricTask toProtoTask(Task task) {
         var struct = ProtoUtils.toStruct(task.payload);
 
         var taskBuilder = io.nitric.proto.queue.v1.NitricTask.newBuilder().setPayload(struct);
@@ -180,8 +184,8 @@ public class QueueClient {
         return taskBuilder.build();
     }
 
-    NitricTask toApiTask(io.nitric.proto.queue.v1.NitricTask task) {
-        return NitricTask.newBuilder()
+    Task toApiTask(io.nitric.proto.queue.v1.NitricTask task) {
+        return Task.newBuilder()
                 .id(task.getId())
                 .leaseId(task.getLeaseId())
                 .payloadType(task.getPayloadType())
@@ -192,7 +196,7 @@ public class QueueClient {
     FailedTask toApiFailedTask(io.nitric.proto.queue.v1.FailedTask protoFailedTask) {
         io.nitric.proto.queue.v1.NitricTask protoTask = protoFailedTask.getTask();
 
-        var task = NitricTask.newBuilder()
+        var task = Task.newBuilder()
                 .id(protoTask.getId())
                 .leaseId(protoTask.getLeaseId())
                 .payloadType(protoTask.getPayloadType())

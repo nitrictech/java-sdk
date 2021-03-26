@@ -22,6 +22,7 @@ public class TopicClientTest {
         var mock = new MockTopicBlockingStub() {
             @Override
             public TopicListResponse list(TopicListRequest request) {
+                assertNotNull(request);
                 return TopicListResponse.newBuilder()
                         .addTopics(NitricTopic.newBuilder().setName("topic1").build())
                         .addTopics(NitricTopic.newBuilder().setName("topic2").build())

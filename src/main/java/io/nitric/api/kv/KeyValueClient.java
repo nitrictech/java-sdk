@@ -1,19 +1,13 @@
 package io.nitric.api.kv;
 
-import com.google.protobuf.Struct;
-import io.nitric.api.queue.QueueClient;
 import io.nitric.proto.kv.v1.KeyValueDeleteRequest;
 import io.nitric.proto.kv.v1.KeyValueGetRequest;
 import io.nitric.proto.kv.v1.KeyValueGrpc;
 import io.nitric.proto.kv.v1.KeyValueGrpc.KeyValueBlockingStub;
 import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.GrpcChannelProvider;
-import io.nitric.util.NitricException;
 import io.nitric.util.ProtoUtils;
 
-import java.lang.reflect.ParameterizedType;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,6 +21,9 @@ import java.util.Objects;
  * </p>
  *
  * <pre>
+ *  import io.nitric.api.kv.KeyValueClient;
+ *  ...
+ *
  *  // Create a 'customers' collection KV client
  *  var client = KeyValueClient.build("customers");
  *

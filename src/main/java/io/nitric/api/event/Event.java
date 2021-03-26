@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * @since 1.0
  */
-public class NitricEvent {
+public class Event {
 
     final String id;
     final String payloadType;
@@ -17,7 +17,7 @@ public class NitricEvent {
     /*
      * Enforce builder pattern.
      */
-    NitricEvent(Builder builder) {
+    Event(Builder builder) {
         this.id = builder.id;
         this.payloadType = builder.payloadType;
         this.payload = builder.payload;
@@ -57,26 +57,26 @@ public class NitricEvent {
     }
 
     /**
-     * @return a new NitricEvent builder object
+     * @return a new Event builder object
      */
     public static Builder newBuilder() {
         return new Builder();
     }
 
     /**
-     * Create a new NitricEvent from the given payload.
+     * Create a new Event from the given payload.
      *
      * @param payload the event payload (required)
      * @return
      */
-    public static NitricEvent build(Map<String, Object> payload) {
+    public static Event build(Map<String, Object> payload) {
         return newBuilder().payload(payload).build();
     }
 
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a NitricEvent builder.
+     * Provides a Event builder.
      *
      * @since 1.0
      */
@@ -126,11 +126,11 @@ public class NitricEvent {
         }
 
         /**
-         * @return a new NitricEvent object
+         * @return a new Event object
          */
-        public NitricEvent build() {
+        public Event build() {
             Objects.requireNonNull(payload, "payload parameter is required");
-            return new NitricEvent(this);
+            return new Event(this);
         }
     }
 

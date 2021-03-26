@@ -1,6 +1,5 @@
 package io.nitric.api.event;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -8,14 +7,14 @@ import java.util.Objects;
  *
  * @since 1.0
  */
-public class NitricTopic {
+public class Topic {
 
     final String name;
 
     /*
      * Enforce builder pattern.
      */
-    NitricTopic(Builder builder) {
+    Topic(Builder builder) {
         this.name = builder.name;
     }
 
@@ -35,26 +34,26 @@ public class NitricTopic {
     }
 
     /**
-     * @return a new NitricTopic builder object
+     * @return a new Topic builder object
      */
     public static Builder newBuilder() {
         return new Builder();
     }
 
     /**
-     * Create a new NitricTopic for the given name.
+     * Create a new Topic for the given name.
      *
      * @param name the topic name (required)
-     * @return a new NitricTopic for the given name
+     * @return a new Topic for the given name
      */
-    public static NitricTopic build(String name) {
+    public static Topic build(String name) {
         return new Builder().name(name).build();
     }
 
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a NitricTopic builder.
+     * Provides a Topic builder.
      *
      * @since 1.0
      */
@@ -80,11 +79,11 @@ public class NitricTopic {
         }
 
         /**
-         * @return a new NitricEvent object
+         * @return a new Event object
          */
-        public NitricTopic build() {
+        public Topic build() {
             Objects.requireNonNull(name, "name parameter is required");
-            return new NitricTopic(this);
+            return new Topic(this);
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @since 1.0
  */
-public class NitricTask {
+public class Task {
 
     final String id;
     final String leaseId;
@@ -22,7 +22,7 @@ public class NitricTask {
     /*
      * Enforce builder pattern.
      */
-    NitricTask(Builder builder) {
+    Task(Builder builder) {
         this.id = builder.id;
         this.leaseId = builder.leaseId;
         this.payloadType = builder.payloadType;
@@ -62,7 +62,7 @@ public class NitricTask {
     }
 
     /**
-     * @return a new NitricTask builder
+     * @return a new Task builder
      */
     public static Builder newBuilder() {
         return new Builder();
@@ -84,7 +84,7 @@ public class NitricTask {
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a NitricTask builder class.
+     * Provides a Task builder class.
      *
      * @since 1.0
      */
@@ -148,11 +148,11 @@ public class NitricTask {
         }
 
         /**
-         * @return a new NitricTask
+         * @return a new Task
          */
-        public NitricTask build() {
+        public Task build() {
             Objects.requireNonNull(payload, "payload parameter is required");
-            return new NitricTask(this);
+            return new Task(this);
         }
     }
 }

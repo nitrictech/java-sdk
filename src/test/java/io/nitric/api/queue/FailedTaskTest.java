@@ -12,7 +12,7 @@ public class FailedTaskTest {
     public void test_build() {
         Map<String, Object> payload = Map.of("name", "value");
 
-        var task = NitricTask.newBuilder()
+        var task = Task.newBuilder()
                 .payload(payload)
                 .build();
 
@@ -26,7 +26,7 @@ public class FailedTaskTest {
         assertNotNull(failedTask);
         assertEquals(task, failedTask.getTask());
         assertEquals("message", failedTask.getMessage());
-        assertEquals("FailedTask[task=NitricTask[id=null, leaseId=null, payloadType=null, payload={name=value}], message=message]",
+        assertEquals("FailedTask[task=Task[id=null, leaseId=null, payloadType=null, payload={name=value}], message=message]",
                 failedTask.toString());
 
         try {

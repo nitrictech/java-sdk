@@ -15,14 +15,21 @@ import java.util.*;
  * </p>
  *
  * <pre>
+ * import io.nitric.http.HttpHandler;
+ * import io.nitric.http.HttpRequest;
+ * import io.nitric.http.HttpResponse;
+ * import io.nitric.http.HttpServer;
+ * ...
+ *
  * public class RequestInfo {
  *
- *     public static void main(String[] args) {
+ *     public static void main(String... args) {
  *
- *         new Faas().start((HttpRequest r) -> {
+ *         new HttpServer().start((HttpRequest r) -> {
  *             var logger = System.out;
  *
  *             logger.printf("request: \n");
+ *             logger.printf("   .method: %s \n", r.getMethod());
  *             logger.printf("   .path: %s \n", r.getPath());
  *
  *             logger.printf("   .headers: \n");

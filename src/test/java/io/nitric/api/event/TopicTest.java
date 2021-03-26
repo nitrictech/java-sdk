@@ -4,22 +4,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NitricTopicTest {
+public class TopicTest {
 
     @Test
     public void test_build() {
-        var topic = NitricTopic.newBuilder().name("topic").build();
+        var topic = Topic.newBuilder().name("topic").build();
 
         assertNotNull(topic);
         assertEquals("topic", topic.getName());
-        assertEquals("NitricTopic[name=topic]", topic.toString());
+        assertEquals("Topic[name=topic]", topic.toString());
 
-        topic = NitricTopic.build("topic2");
+        topic = Topic.build("topic2");
         assertEquals("topic2", topic.getName());
-        assertEquals("NitricTopic[name=topic2]", topic.toString());
+        assertEquals("Topic[name=topic2]", topic.toString());
 
         try {
-            NitricTopic.newBuilder().build();
+            Topic.newBuilder().build();
             assertTrue(false);
 
         } catch (NullPointerException npe) {
@@ -27,7 +27,7 @@ public class NitricTopicTest {
         }
 
         try {
-            NitricTopic.build(null);
+            Topic.build(null);
             assertTrue(false);
 
         } catch (NullPointerException npe) {

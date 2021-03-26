@@ -19,10 +19,18 @@ public class EventClientTest {
     }
 
     @Test public void test_publish() {
-        var mock = new MockEventBlockingStub();
+        var mock = new MockEventBlockingStub() {
+            @Override
+            public EventPublishResponse publish(EventPublishRequest request) {
+                assertNotNull(request);
+                assertNotNull(request.getEvent());
+                assertNotNull(request.getTopic());
+                return null;
+            }
+        };
         var client = EventClient.newBuilder().serviceStub(mock).build();
 
-        var event = NitricEvent.build(Map.of("name", "value"));
+        var event = Event.build(Map.of("name", "value"));
 
         client.publish("topic", event);
 

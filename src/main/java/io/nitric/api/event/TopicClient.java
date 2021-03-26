@@ -17,13 +17,17 @@ import java.util.stream.Collectors;
  * </p>
  *
  * <pre>
+ *  import io.nitric.api.Topic;
+ *  import io.nitric.api.TopicClient;
+ *  ...
+ *
  *  var client = TopicClient.newBuilder().build();
  *
- *  List&lt;NitricTopic&gt; topics = client.list();
+ *  List&lt;Topic&gt; topics = client.list();
  * </pre>
  *
- * @see NitricTopic
- * @see NitricEvent
+ * @see Topic
+ * @see Event
  * @see EventClient
  *
  * @since 1.0
@@ -46,7 +50,7 @@ public class TopicClient {
      *
      * @return the list of available topics
      */
-    public List<NitricTopic> list() {
+    public List<Topic> list() {
 
         var request = TopicListRequest.newBuilder().build();
 
@@ -54,7 +58,7 @@ public class TopicClient {
 
         return response.getTopicsList()
                 .stream()
-                .map(topic -> NitricTopic.build(topic.getName()))
+                .map(topic -> Topic.build(topic.getName()))
                 .collect(Collectors.toList());
     }
 

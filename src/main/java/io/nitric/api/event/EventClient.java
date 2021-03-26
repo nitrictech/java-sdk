@@ -17,17 +17,21 @@ import java.util.Objects;
  * </p>
  *
  * <pre>
+ *  import io.nitric.api.Event;
+ *  import io.nitric.api.EventClient;
+ *  ..
+ *
  *  // Create an order completed event
  *  var payload = Map.of("id", id, "status", "completed");
- *  var event = NitricEvent.build(payload);
+ *  var event = Event.build(payload);
  *
  *  // Publish the event to the orders topic
  *  var client = EventClient.newBuilder().build();
  *  client.publish("orders", event);
  * </pre>
  *
- * @see NitricEvent
- * @see NitricTopic
+ * @see Event
+ * @see Topic
  * @see TopicClient
  *
  * @since 1.0
@@ -46,12 +50,12 @@ public class EventClient {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * Publish the NitricEvent to the given topic.
+     * Publish the Event to the given topic.
      *
      * @param topic the topic to pubish the event to (required)
      * @param event the even to publish (required)
      */
-    public void publish(String topic, NitricEvent event) {
+    public void publish(String topic, Event event) {
         Objects.requireNonNull(topic, "topic parameter is required");
         Objects.requireNonNull(event, "event parameter is required");
 

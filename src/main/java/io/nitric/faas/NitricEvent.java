@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * <p>
- *  Provides an immutable Nitric Event class.
+ *  Provides an immutable FaaS Nitric Event class.
  * </p>
  *
  * @see NitricFunction
@@ -59,7 +59,7 @@ public class NitricEvent {
     }
 
     /**
-     * @return a new NitricEvent builder class.
+     * @return a new Event builder class.
      */
     public static NitricEvent.Builder newBuilder() {
         return new NitricEvent.Builder();
@@ -113,7 +113,7 @@ public class NitricEvent {
     }
 
     /**
-     * Provides a NitricEvent builder class.
+     * Provides a Event builder class.
      *
      * @since 1.0
      */
