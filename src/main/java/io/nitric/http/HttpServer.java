@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -161,7 +162,11 @@ public class HttpServer {
 
             if (pathFunctions.size() > 1) {
                 for (String path : pathFunctions.keySet()) {
-                    System.out.printf("   %s\t-> %s\n", path, pathFunctions.get(path).getClass().getName());
+                    var functionClass = pathFunctions.get(path).getClass();
+                    var functionClassName = !functionClass.getSimpleName().isEmpty()
+                            ? functionClass.getSimpleName() : functionClass.getName();
+
+                    System.out.printf("   %s\t-> %s\n", path, functionClassName);
                 }
             }
 
@@ -228,10 +233,18 @@ public class HttpServer {
                     }
 
                 } catch (Throwable t) {
-                    System.err.printf("Error occurred handling request %s with %s \n",
+                    // Log error
+                    System.err.printf("Error occurred handling request %s %s with handler: %s \n",
+                            he.getRequestMethod(),
                             he.getRequestURI(),
-                            function.getClass().getSimpleName());
+                            function.getClass().getName());
                     t.printStackTrace();
+
+                    // Write HTTP error response
+                    var msg = "An error occurred, please see logs for details.\n";
+                    he.sendResponseHeaders(500, msg.length());
+                    he.getResponseBody().write(msg.getBytes(StandardCharsets.UTF_8));
+                    he.getResponseBody().close();
                 }
             }
         };

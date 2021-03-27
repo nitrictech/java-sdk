@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -103,8 +104,13 @@ public class Faas {
                     .append(getClass().getSimpleName())
                     .append(" listening on port ")
                     .append(port)
-                    .append(" with function: ")
-                    .append(function.getClass().getName());
+                    .append(" with function: ");
+
+            if (!function.getClass().getSimpleName().isEmpty()) {
+                builder.append(function.getClass().getSimpleName());
+            } else {
+                builder.append(function.getClass().getName());
+            }
 
             System.out.println(builder);
 
@@ -172,10 +178,18 @@ public class Faas {
                     }
 
                 } catch (Throwable t) {
-                    System.err.printf("Error occurred handling request %s with %s \n",
+                    // Log error
+                    System.err.printf("Error occurred handling request %s %s with function: %s \n",
+                            he.getRequestMethod(),
                             he.getRequestURI(),
-                            function.getClass().getSimpleName());
+                            function.getClass().getName());
                     t.printStackTrace();
+
+                    // Write HTTP error response
+                    var msg = "An error occurred, please see logs for details.\n";
+                    he.sendResponseHeaders(500, msg.length());
+                    he.getResponseBody().write(msg.getBytes(StandardCharsets.UTF_8));
+                    he.getResponseBody().close();
                 }
             }
         };
