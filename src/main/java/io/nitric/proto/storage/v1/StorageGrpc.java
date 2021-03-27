@@ -274,8 +274,8 @@ public final class StorageGrpc {
    * Services for storage and retrieval of files in the form of byte arrays, such as text and binary files.
    * </pre>
    */
-  public static final class StorageBlockingStub extends io.grpc.stub.AbstractBlockingStub<StorageBlockingStub> {
-    private StorageBlockingStub(
+  public static class StorageBlockingStub extends io.grpc.stub.AbstractBlockingStub<StorageBlockingStub> {
+    StorageBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

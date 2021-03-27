@@ -1,5 +1,22 @@
 package io.nitric.api.storage;
 
+import com.google.protobuf.ByteString;
+import io.nitric.api.queue.FailedTask;
+import io.nitric.api.queue.QueueClient;
+import io.nitric.api.queue.Task;
+import io.nitric.proto.queue.v1.*;
+import io.nitric.proto.storage.v1.StorageDeleteRequest;
+import io.nitric.proto.storage.v1.StorageGrpc;
+import io.nitric.proto.storage.v1.StorageReadRequest;
+import io.nitric.proto.storage.v1.StorageWriteRequest;
+import io.nitric.util.GrpcChannelProvider;
+import io.nitric.util.ProtoUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 /**
  * <p>
  *  Provides a Storage API client.
@@ -10,10 +27,182 @@ package io.nitric.api.storage;
  * </p>
  *
  * <pre>
- *  // TODO...
+ *  import io.nitric.api.storage.StorageClient;
+ *  ...
+ *
+ *  // Create a client with for the 'inspection-images' storage bucket
+ *  var client = StorageClient.build("inspection-images");
+ *
+ *  // Store an image file
+ *  String imageKey = "582764-front-elevation.jpg"
+ *  byte[] imageData = ...
+ *  client.write(imageKey, imageData);
+ *
+ *  ...
+ *
+ *  // Load an image file
+ *  imageKey = "582764-side-elevation.jpg"
+ *  imageData = client.read(imageKey, imageData);
+ *
+ *  ...
+ *
+ *  // Delete an image file
+ *  imageKey = "582764-rear-elevation.jpg"
+ *  client.delete(imageKey);
  * </pre>
  *
  * @since 1.0
  */
 public class StorageClient {
+
+    final String bucketName;
+    final StorageGrpc.StorageBlockingStub serviceStub;
+
+    /*
+     * Enforce builder pattern.
+     */
+    StorageClient(StorageClient.Builder builder) {
+        this.bucketName = builder.bucketName;
+        this.serviceStub = builder.serviceStub;
+    }
+
+    // Public Methods ---------------------------------------------------------
+
+    /**
+     * Retrieve an item from a bucket with the given key if it exists.
+     *
+     * @param key the access key for the storage bucket item (required)
+     * @return the storage item data is it exists, or null otherwise
+     */
+    public byte[] read(String key) {
+        Objects.requireNonNull(key, "key parameter is required");
+
+        var request = StorageReadRequest.newBuilder()
+                .setBucketName(bucketName)
+                .setKey(key)
+                .build();
+
+        var response = serviceStub.read(request);
+
+        var body = response.getBody();
+
+        return (!body.isEmpty()) ? body.toByteArray() : null;
+    }
+
+    /**
+     * Store an item to a bucket with the given key. This operation will perform a create or update depending upon
+     * whether an item already exists in the bucket for the given key.
+     *
+     * @param key the key for the bucket item (required)
+     * @param data the item data
+     */
+    public void write(String key, byte[] data) {
+        Objects.requireNonNull(key, "key parameter is required");
+        Objects.requireNonNull(data, "data parameter is required");
+
+        var body = ByteString.copyFrom(data);
+
+        var request = StorageWriteRequest.newBuilder()
+                .setBucketName(bucketName)
+                .setKey(key)
+                .setBody(body)
+                .build();
+
+        serviceStub.write(request);
+    }
+
+    /**
+     * Delete an item from a bucket with the given key if it exists.
+     *
+     * @param key the key for the bucket item (required)
+     */
+    public void delete(String key) {
+        Objects.requireNonNull(key, "key parameter is required");
+
+        var request = StorageDeleteRequest.newBuilder()
+                .setBucketName(bucketName)
+                .setKey(key)
+                .build();
+
+        serviceStub.delete(request);
+    }
+
+    /**
+     * Create an new StorageClient builder.
+     *
+     * @return new StorageClient builder
+     */
+    public static StorageClient.Builder newBuilder() {
+        return new StorageClient.Builder();
+    }
+
+    /**
+     * Return a new StorageClient with the specified bucket name.
+     *
+     * @param bucket the bucket name (required)
+     * @return a new StorageClient with the specified bucket name
+     */
+    public static StorageClient build(String bucket) {
+        return newBuilder().bucket(bucket).build();
+    }
+
+    /**
+     * @return the string representation of this object
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[bucketName=" + bucketName + ", serviceStub=" + serviceStub + "]";
+    }
+
+    // Inner Classes ----------------------------------------------------------
+
+    /**
+     * Provides a StorageClient Builder.
+     */
+    public static class Builder {
+
+        String bucketName;
+        StorageGrpc.StorageBlockingStub serviceStub;
+
+        /*
+         * Enforce builder pattern.
+         */
+        Builder() {
+        }
+
+        /**
+         * Set the bucket name.
+         *
+         * @param bucketName the bucket name (required)
+         * @return the builder object
+         */
+        public StorageClient.Builder bucket(String bucketName) {
+            this.bucketName = bucketName;
+            return this;
+        }
+
+        /**
+         * Set  the GRPC service stub for mock testing.
+         *
+         * @param serviceStub the GRPC service stub to inject
+         * @return the builder object
+         */
+        StorageClient.Builder serviceStub(StorageGrpc.StorageBlockingStub serviceStub) {
+            this.serviceStub = serviceStub;
+            return this;
+        }
+
+        /**
+         * @return build a new StorageClient
+         */
+        public StorageClient build() {
+            Objects.requireNonNull(bucketName, "bucketName parameter is required");
+            if (serviceStub == null) {
+                var channel = GrpcChannelProvider.getChannel();
+                this.serviceStub = StorageGrpc.newBlockingStub(channel);
+            }
+
+            return new StorageClient(this);
+        }
+    }
 }
