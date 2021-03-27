@@ -1,21 +1,13 @@
 package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
-import io.nitric.api.queue.FailedTask;
-import io.nitric.api.queue.QueueClient;
-import io.nitric.api.queue.Task;
-import io.nitric.proto.queue.v1.*;
 import io.nitric.proto.storage.v1.StorageDeleteRequest;
 import io.nitric.proto.storage.v1.StorageGrpc;
 import io.nitric.proto.storage.v1.StorageReadRequest;
 import io.nitric.proto.storage.v1.StorageWriteRequest;
 import io.nitric.util.GrpcChannelProvider;
-import io.nitric.util.ProtoUtils;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -30,7 +22,7 @@ import java.util.stream.Collectors;
  *  import io.nitric.api.storage.StorageClient;
  *  ...
  *
- *  // Create a client with for the 'inspection-images' storage bucket
+ *  // Create a storage client with the bucket name 'inspection-images'
  *  var client = StorageClient.build("inspection-images");
  *
  *  // Store an image file
@@ -143,7 +135,7 @@ public class StorageClient {
      * @return a new StorageClient with the specified bucket name
      */
     public static StorageClient build(String bucket) {
-        return newBuilder().bucket(bucket).build();
+        return newBuilder().bucketName(bucket).build();
     }
 
     /**
@@ -176,7 +168,7 @@ public class StorageClient {
          * @param bucketName the bucket name (required)
          * @return the builder object
          */
-        public StorageClient.Builder bucket(String bucketName) {
+        public StorageClient.Builder bucketName(String bucketName) {
             this.bucketName = bucketName;
             return this;
         }

@@ -48,7 +48,7 @@ public class StorageClientTest {
                 }
             }
         };
-        var client = StorageClient.newBuilder().bucket("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
 
         byte[] data = client.read(KNOWN_KEY);
         assertNotNull(data);
@@ -77,7 +77,7 @@ public class StorageClientTest {
                 return StorageWriteResponse.newBuilder().build();
             }
         };
-        var client = StorageClient.newBuilder().bucket("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
 
         byte[] data = "this data".getBytes(StandardCharsets.UTF_8);
         client.write("this key", data);
@@ -109,7 +109,7 @@ public class StorageClientTest {
                 return StorageDeleteResponse.newBuilder().build();
             }
         };
-        var client = StorageClient.newBuilder().bucket("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
 
         client.delete(KNOWN_KEY);
 

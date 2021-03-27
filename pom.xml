@@ -51,6 +51,7 @@
         </dependency>
     </dependencies>
 
+    <!-- TODO: remove once published -->
     <distributionManagement>
         <repository>
             <id>snapshots</id>
