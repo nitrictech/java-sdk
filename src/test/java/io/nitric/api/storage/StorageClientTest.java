@@ -16,17 +16,17 @@ public class StorageClientTest {
 
     @Test
     public void test_build() {
-        var client = StorageClient.build("bucketName");
+        var client = StorageClient.build("bucket");
 
         assertNotNull(client);
-        assertEquals("bucketName", client.bucketName);
+        assertEquals("bucket", client.bucket);
         assertNotNull(client.serviceStub);
 
         try {
             StorageClient.newBuilder().build();
             assertTrue(false);
         } catch (NullPointerException npe) {
-            assertEquals("bucketName parameter is required", npe.getMessage());
+            assertEquals("bucket parameter is required", npe.getMessage());
         }
     }
 
@@ -48,7 +48,7 @@ public class StorageClientTest {
                 }
             }
         };
-        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
 
         byte[] data = client.read(KNOWN_KEY);
         assertNotNull(data);
@@ -77,7 +77,7 @@ public class StorageClientTest {
                 return StorageWriteResponse.newBuilder().build();
             }
         };
-        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
 
         byte[] data = "this data".getBytes(StandardCharsets.UTF_8);
         client.write("this key", data);
@@ -109,7 +109,7 @@ public class StorageClientTest {
                 return StorageDeleteResponse.newBuilder().build();
             }
         };
-        var client = StorageClient.newBuilder().bucketName("bucketName").serviceStub(mock).build();
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
 
         client.delete(KNOWN_KEY);
 

@@ -47,14 +47,14 @@ import java.util.Objects;
  */
 public class StorageClient {
 
-    final String bucketName;
+    final String bucket;
     final StorageGrpc.StorageBlockingStub serviceStub;
 
     /*
      * Enforce builder pattern.
      */
     StorageClient(StorageClient.Builder builder) {
-        this.bucketName = builder.bucketName;
+        this.bucket = builder.bucket;
         this.serviceStub = builder.serviceStub;
     }
 
@@ -70,7 +70,7 @@ public class StorageClient {
         Objects.requireNonNull(key, "key parameter is required");
 
         var request = StorageReadRequest.newBuilder()
-                .setBucketName(bucketName)
+                .setBucketName(bucket)
                 .setKey(key)
                 .build();
 
@@ -95,7 +95,7 @@ public class StorageClient {
         var body = ByteString.copyFrom(data);
 
         var request = StorageWriteRequest.newBuilder()
-                .setBucketName(bucketName)
+                .setBucketName(bucket)
                 .setKey(key)
                 .setBody(body)
                 .build();
@@ -112,7 +112,7 @@ public class StorageClient {
         Objects.requireNonNull(key, "key parameter is required");
 
         var request = StorageDeleteRequest.newBuilder()
-                .setBucketName(bucketName)
+                .setBucketName(bucket)
                 .setKey(key)
                 .build();
 
@@ -135,7 +135,7 @@ public class StorageClient {
      * @return a new StorageClient with the specified bucket name
      */
     public static StorageClient build(String bucket) {
-        return newBuilder().bucketName(bucket).build();
+        return newBuilder().bucket(bucket).build();
     }
 
     /**
@@ -143,7 +143,7 @@ public class StorageClient {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[bucketName=" + bucketName + ", serviceStub=" + serviceStub + "]";
+        return getClass().getSimpleName() + "[bucket=" + bucket + ", serviceStub=" + serviceStub + "]";
     }
 
     // Inner Classes ----------------------------------------------------------
@@ -153,7 +153,7 @@ public class StorageClient {
      */
     public static class Builder {
 
-        String bucketName;
+        String bucket;
         StorageGrpc.StorageBlockingStub serviceStub;
 
         /*
@@ -165,11 +165,11 @@ public class StorageClient {
         /**
          * Set the bucket name.
          *
-         * @param bucketName the bucket name (required)
+         * @param bucket the bucket name (required)
          * @return the builder object
          */
-        public StorageClient.Builder bucketName(String bucketName) {
-            this.bucketName = bucketName;
+        public StorageClient.Builder bucket(String bucket) {
+            this.bucket = bucket;
             return this;
         }
 
@@ -188,7 +188,7 @@ public class StorageClient {
          * @return build a new StorageClient
          */
         public StorageClient build() {
-            Objects.requireNonNull(bucketName, "bucketName parameter is required");
+            Objects.requireNonNull(bucket, "bucket parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
                 this.serviceStub = StorageGrpc.newBlockingStub(channel);
