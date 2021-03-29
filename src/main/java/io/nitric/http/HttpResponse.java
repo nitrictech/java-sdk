@@ -93,8 +93,7 @@ public class HttpResponse {
      * @return the named function header or null if not found
      */
     public String getHeader(String name) {
-        var values = headers.get(name);
-        return (values != null) ? values.get(0) : null;
+        return Builder.getHeaderValue(name, headers);
     }
 
     /**
@@ -166,6 +165,8 @@ public class HttpResponse {
     public static HttpResponse build(int status, String body) {
         return newBuilder().status(status).bodyText(body).build();
     }
+
+    // Package Private Methods ------------------------------------------------
 
     // Inner Classes ----------------------------------------------------------
 
@@ -268,12 +269,13 @@ public class HttpResponse {
             return new HttpResponse(this);
         }
 
-        // Private Methods ----------------------------------------------------
+        // Package Private Methods --------------------------------------------
 
-        private String detectContentType(byte[] body) {
+        String detectContentType(byte[] body) {
 
-            if (body != null && body.length > 1) {
-                var bodyText = new String(body, StandardCharsets.UTF_8);
+            // If body defined and less than 1MB attempt to detect content type
+            if (body != null && body.length > 1 && body.length < 1_048_576L) {
+                var bodyText = new String(body, StandardCharsets.UTF_8).trim();
 
                 if ((bodyText.startsWith("{") && bodyText.endsWith("}"))
                     || (bodyText.startsWith("[") && bodyText.endsWith("]"))) {
@@ -282,14 +284,19 @@ public class HttpResponse {
                 if (bodyText.startsWith("<?xml") && bodyText.endsWith(">")) {
                     return "text/xml; charset=UTF-8";
                 }
-
-                return "text/html; charset=UTF-8";
+                if ((bodyText.startsWith("<!doctype html>") || bodyText.startsWith("<!DOCTYPE html>"))
+                    && bodyText.endsWith("</html>")) {
+                    return "text/html; charset=UTF-8";
+                }
             }
 
             return null;
         }
 
-        private String getHeaderValue(String name, Map<String, List<String>> headers) {
+        static String getHeaderValue(String name, Map<String, List<String>> headers) {
+            if (headers == null || headers.isEmpty()) {
+                return null;
+            }
 
             for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
                 if (entry.getKey().equalsIgnoreCase(name)) {

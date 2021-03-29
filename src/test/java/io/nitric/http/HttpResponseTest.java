@@ -22,7 +22,7 @@ public class HttpResponseTest {
 
         assertEquals(301, response.getStatus());
         assertNotNull(response.getHeaders());
-        assertEquals(1, response.getHeaders().size());
+        assertEquals(0, response.getHeaders().size());
         assertNotNull(response.getBody());
         assertEquals(body, response.getBody());
         assertEquals(11, response.getBodyLength());
@@ -49,9 +49,14 @@ public class HttpResponseTest {
 
         response = HttpResponse.newBuilder().bodyText("<!DOCTYPE html><html></html>").build();
         assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("text/html; charset=UTF-8", response.getHeader("content-type"));
+
+        response = HttpResponse.newBuilder().bodyText(" <!doctype html><html></html> ").build();
+        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
+        assertEquals("text/html; charset=UTF-8", response.getHeader("content-type"));
 
         response = HttpResponse.newBuilder().bodyText("Hello World").build();
-        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
+        assertNull(response.getHeader("Content-Type"));
     }
 
     @Test public void test_headers() {
@@ -99,7 +104,7 @@ public class HttpResponseTest {
 
         assertEquals(301, response.getStatus());
         assertNotNull(response.getHeaders());
-        assertEquals(1, response.getHeaders().size());
+        assertEquals(0, response.getHeaders().size());
         assertNotNull(response.getBody());
         assertEquals(body, new String(response.getBody(), StandardCharsets.UTF_8));
         assertEquals(11, response.getBodyLength());
@@ -122,7 +127,7 @@ public class HttpResponseTest {
         response = HttpResponse.build(200, "Hello Nitric");
         assertEquals(200, response.getStatus());
         assertEquals("Hello Nitric", new String(response.getBody(), StandardCharsets.UTF_8));
-        assertEquals("text/html; charset=UTF-8", response.getHeader("Content-Type"));
+        assertNull(response.getHeader("Content-Type"));
     }
 
 }

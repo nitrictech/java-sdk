@@ -295,9 +295,9 @@ public class HttpRequest {
             return new HttpRequest(this);
         }
 
-        // Private Methods ------------------------------------------------------------
+        // Package Private Methods --------------------------------------------
 
-        private Map<String, List<String>> parseParameters(String urlParameters) {
+        Map<String, List<String>> parseParameters(String urlParameters) {
             Map<String, List<String>> params = new HashMap<>();
 
             if (urlParameters != null && urlParameters.length() > 2) {
@@ -322,7 +322,7 @@ public class HttpRequest {
             return params;
         }
 
-        private static String getHeaderValue(String name, Map<String, List<String>> headers) {
+        static String getHeaderValue(String name, Map<String, List<String>> headers) {
             if (headers == null || headers.isEmpty()) {
                 return null;
             }
