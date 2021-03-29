@@ -46,7 +46,9 @@ import java.util.Map.Entry;
  */
 public class Faas {
 
-    String hostname = "127.0.0.1";
+    static final String DEFAULT_HOSTNAME = "127.0.0.1";
+
+    String hostname = DEFAULT_HOSTNAME;
     int port = 8080;
     HttpServer httpServer;
 
@@ -100,11 +102,14 @@ public class Faas {
             // Start the server
             httpServer.start();
 
-            var builder = new StringBuilder()
-                    .append(getClass().getSimpleName())
-                    .append(" listening on port ")
-                    .append(port)
-                    .append(" with function: ");
+            var builder = new StringBuilder().append(getClass().getSimpleName());
+            if (DEFAULT_HOSTNAME.equals(hostname)) {
+                builder.append(" listening on port ").append(port);
+
+            } else {
+                builder.append(" listening on ").append(hostname).append(":").append(port);
+            }
+            builder.append(" with function: ");
 
             if (!function.getClass().getSimpleName().isEmpty()) {
                 builder.append(function.getClass().getSimpleName());

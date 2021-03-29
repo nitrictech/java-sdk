@@ -43,7 +43,9 @@ import java.util.Map.Entry;
  */
 public class HttpServer {
 
-    String hostname = "127.0.0.1";
+    static final String DEFAULT_HOSTNAME = "127.0.0.1";
+
+    String hostname = DEFAULT_HOSTNAME;
     int port = 8080;
     final Map<String, HttpHandler> pathFunctions = new LinkedHashMap<>();
     com.sun.net.httpserver.HttpServer httpServer;
@@ -113,10 +115,6 @@ public class HttpServer {
             throw new IllegalStateException("server already started");
         }
 
-        if (pathFunctions.isEmpty()) {
-            System.out.println("WARN No functions registered..");
-        }
-
         long time = System.currentTimeMillis();
 
         var childAddress = System.getenv("CHILD_ADDRESS");
@@ -144,23 +142,25 @@ public class HttpServer {
             // Start the server
             httpServer.start();
 
-            var builder = new StringBuilder()
-                    .append(getClass().getSimpleName())
-                    .append(" listening on port ")
-                    .append(port)
-                    .append(" with ")
-                    .append(pathFunctions.size())
-                    .append(" function");
+            var builder = new StringBuilder().append(getClass().getSimpleName());
+            if (DEFAULT_HOSTNAME.equals(hostname)) {
+                builder.append(" listening on port ").append(port);
+
+            } else {
+                builder.append(" listening on ").append(hostname).append(":").append(port);
+            }
 
             if (pathFunctions.size() == 0) {
-                builder.append("s");
+                builder.append(" - WARN No functions registered");
+            } else if (pathFunctions.size() == 1) {
+                builder.append(" with function:");
             } else if (pathFunctions.size() > 1) {
-                builder.append("s:");
+                builder.append(" with functions:");
             }
 
             System.out.println(builder);
 
-            if (pathFunctions.size() > 1) {
+            if (pathFunctions.size() > 0) {
                 for (String path : pathFunctions.keySet()) {
                     var functionClass = pathFunctions.get(path).getClass();
                     var functionClassName = !functionClass.getSimpleName().isEmpty()
