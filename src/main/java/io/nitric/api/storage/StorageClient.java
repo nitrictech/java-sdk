@@ -174,12 +174,12 @@ public class StorageClient {
         }
 
         /**
-         * Set  the GRPC service stub for mock testing.
+         * Set  the GRPC service stub.
          *
          * @param serviceStub the GRPC service stub to inject
          * @return the builder object
          */
-        StorageClient.Builder serviceStub(StorageGrpc.StorageBlockingStub serviceStub) {
+        public StorageClient.Builder serviceStub(StorageGrpc.StorageBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }

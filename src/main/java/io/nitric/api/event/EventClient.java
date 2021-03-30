@@ -43,7 +43,7 @@ public class EventClient {
     /*
      * Enforce builder pattern.
      */
-    EventClient(EventClient.Builder builder) {
+    protected EventClient(EventClient.Builder builder) {
         this.serviceStub = builder.serviceStub;
     }
 
@@ -111,12 +111,12 @@ public class EventClient {
         }
 
         /**
-         * Set  the GRPC service stub for mock testing.
+         * Set  the GRPC service stub.
          *
          * @param serviceStub the GRPC service stub to inject
          * @return the EventClient builder
          */
-        EventClient.Builder serviceStub(EventGrpc.EventBlockingStub serviceStub) {
+        public EventClient.Builder serviceStub(EventGrpc.EventBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }

@@ -257,7 +257,7 @@ public final class KeyValueGrpc {
    * </pre>
    */
   public static class KeyValueBlockingStub extends io.grpc.stub.AbstractBlockingStub<KeyValueBlockingStub> {
-    KeyValueBlockingStub(
+    protected KeyValueBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

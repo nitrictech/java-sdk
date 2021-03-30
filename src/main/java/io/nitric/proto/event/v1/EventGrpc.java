@@ -157,7 +157,7 @@ public final class EventGrpc {
    * </pre>
    */
   public static class EventBlockingStub extends io.grpc.stub.AbstractBlockingStub<EventBlockingStub> {
-    EventBlockingStub(
+    protected EventBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

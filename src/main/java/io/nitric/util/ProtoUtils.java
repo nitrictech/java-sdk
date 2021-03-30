@@ -8,6 +8,8 @@ import com.google.protobuf.Value;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -36,14 +38,14 @@ public class ProtoUtils {
      * @return a Map object.
      */
     public static Map<String, Object> toMap(Struct struct) {
-        Objects.requireNonNull(struct, "struct parameter is null");
+        Objects.requireNonNull(struct, "struct parameter is required");
 
         return struct
                 .getFieldsMap()
                 .entrySet()
                 .stream()
                 .collect(
-                        Collectors.toMap(
+                        toMapNullFriendly(
                                 entry -> entry.getKey(),
                                 entry -> {
                                     Value value = entry.getValue();
@@ -62,14 +64,20 @@ public class ProtoUtils {
     /**
      * Return a new Struct built from the given Map.
      *
-     * @param map the map object
+     * @param map the map object (required)
      * @return a new protobuf Struct object
      */
     public static Struct toStruct(Map<String, Object> map) {
+        Objects.requireNonNull(map, "map parameter is required");
+
         return mapToStructBuilder(map).build();
     }
 
     // Package Private Methods ------------------------------------------------
+
+    static Struct toStructNullFriendly(Map<String, Object> map) {
+        return mapToStructBuilder(map).build();
+    }
 
     static Object getScalarValue(Value value) {
         switch (value.getKindCase()) {
@@ -84,6 +92,8 @@ public class ProtoUtils {
                 return value.getNumberValue();
             case STRING_VALUE:
                 return value.getStringValue();
+            case NULL_VALUE:
+                return null;
             default:
                 break;
         }
@@ -113,7 +123,7 @@ public class ProtoUtils {
         if (value instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> map = (Map<String, Object>) value;
-            return Value.newBuilder().setStructValue(toStruct(map)).build();
+            return Value.newBuilder().setStructValue(toStructNullFriendly(map)).build();
 
         } else if (value instanceof Value) {
             return (Value) value;
@@ -147,6 +157,20 @@ public class ProtoUtils {
             listValue.addValues(value(item));
         }
         return Value.newBuilder().setListValue(listValue.build()).build();
+    }
+
+    static <T, K, U> Collector<T, ?, Map<K, U>> toMapNullFriendly(
+            Function<? super T, ? extends K> keyMapper,
+            Function<? super T, ? extends U> valueMapper) {
+
+        @SuppressWarnings("unchecked")
+        U none = (U) new Object();
+        return Collectors.collectingAndThen(
+                Collectors.<T, K, U> toMap(keyMapper,
+                        valueMapper.andThen(v -> v == null ? none : v)), map -> {
+                    map.replaceAll((k, v) -> v == none ? null : v);
+                    return map;
+                });
     }
 
 }

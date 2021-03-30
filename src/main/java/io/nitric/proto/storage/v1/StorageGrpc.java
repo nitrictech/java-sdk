@@ -275,7 +275,7 @@ public final class StorageGrpc {
    * </pre>
    */
   public static class StorageBlockingStub extends io.grpc.stub.AbstractBlockingStub<StorageBlockingStub> {
-    StorageBlockingStub(
+    protected StorageBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

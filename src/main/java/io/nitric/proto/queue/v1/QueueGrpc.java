@@ -334,7 +334,7 @@ public final class QueueGrpc {
    * </pre>
    */
   public static class QueueBlockingStub extends io.grpc.stub.AbstractBlockingStub<QueueBlockingStub> {
-    QueueBlockingStub(
+    protected QueueBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }

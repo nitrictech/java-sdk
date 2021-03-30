@@ -157,7 +157,7 @@ public final class TopicGrpc {
    * </pre>
    */
   public static class TopicBlockingStub extends io.grpc.stub.AbstractBlockingStub<TopicBlockingStub> {
-    TopicBlockingStub(
+    protected TopicBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
