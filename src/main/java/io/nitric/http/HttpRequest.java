@@ -1,4 +1,4 @@
-package io.nitric.faas;
+package io.nitric.http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -7,22 +7,29 @@ import java.util.*;
 
 /**
  * <p>
- *     Provides an immutable Nitric request class.
+ *  Provides an immutable HTTP request class.
  * </p>
  *
  * <p>
- *     The example bellow illustrates using the request object for debugging.
+ *  The example bellow illustrates using the request object for debugging.
  * </p>
  *
- * <code>
+ * <pre>
+ * import io.nitric.http.HttpHandler;
+ * import io.nitric.http.HttpRequest;
+ * import io.nitric.http.HttpResponse;
+ * import io.nitric.http.HttpServer;
+ * ...
+ *
  * public class RequestInfo {
  *
- *     public static void main(String[] args) {
+ *     public static void main(String... args) {
  *
- *         new Faas().start((NitricRequest r) -> {
+ *         new HttpServer().start((HttpRequest r) -> {
  *             var logger = System.out;
  *
  *             logger.printf("request: \n");
+ *             logger.printf("   .method: %s \n", r.getMethod());
  *             logger.printf("   .path: %s \n", r.getPath());
  *
  *             logger.printf("   .headers: \n");
@@ -39,39 +46,49 @@ import java.util.*;
  *             logger.printf("   .body: \n");
  *             logger.printf("      %s \n", r.getBodyText());
  *
- *             return NitricResponse.build(200);
+ *             return HttpResponse.build(200);
  *         });
  *     }
  * }
- * </code>
+ * </pre>
  *
- * @see NitricFunction
- * @see NitricResponse
- * @see NitricResponse.Builder
+ * @see HttpHandler
+ * @see HttpResponse
+ * @see HttpResponse.Builder
  *
  * @since 1.0
  */
-public class NitricRequest {
+public class HttpRequest {
 
-    private static final String CONTENT_TYPE = "Content-Type";
+    static final String CONTENT_TYPE = "Content-Type";
 
-    private final String path;
-    private final Map<String, List<String>> headers;
-    private final byte[] body;
-    private final Map<String, List<String>> parameters;
+    final String method;
+    final String path;
+    final String query;
+    final Map<String, List<String>> headers;
+    final byte[] body;
+    final Map<String, List<String>> parameters;
 
-    // Private constructor to enforce request builder pattern.
-    private NitricRequest(String path,
-                          Map<String, List<String>> headers,
-                          byte[] body,
-                          Map<String, List<String>> parameters) {
-        this.path = path;
-        this.headers = headers;
-        this.body = body;
-        this.parameters = parameters;
+    /*
+     * Private constructor to enforce request builder pattern.
+     */
+    private HttpRequest(Builder builder) {
+        this.method = builder.method;
+        this.path = builder.path;
+        this.query = builder.query;
+        this.headers = Collections.unmodifiableMap(builder.headers);
+        this.body = builder.body;
+        this.parameters = Collections.unmodifiableMap(builder.parameters);
     }
 
     // Public Methods ---------------------------------------------------------
+
+    /**
+     * @return the HTTP operation method [ GET, POST, PUT, DELETE ].
+     */
+    public String getMethod() {
+        return method;
+    }
 
     /**
      * @return the request path or null if not defined.
@@ -81,18 +98,25 @@ public class NitricRequest {
     }
 
     /**
-     * @return an immutable map of Nitric request headers, an empty map will be returned if there are no headers.
+     * @return the GET request query string value.
+     */
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * @return an immutable map of HTTP request headers, an empty map will be returned if there are no headers.
      */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
     /**
-     * Return the named Nitric header or null if not found.
+     * Return the named HTTP header or null if not found.
      * If the header has multiple values the first value will be returned. Please note Nitric headers are case-insensitive
      *
      * @param name the name of the HTTP header
-     * @return the named Nitric header or null if not found
+     * @return the named HTTP header or null if not found
      */
     public String getHeader(String name) {
         return Builder.getHeaderValue(name, headers);
@@ -157,7 +181,9 @@ public class NitricRequest {
      */
     public String toString() {
         return getClass().getSimpleName() +
-                "[path=" + path +
+                "[method=" + method +
+                ", path=" + path +
+                ", query=" + query +
                 ", headers=" + headers +
                 ", parameters=" + parameters +
                 ", body.length=" + ((body != null) ? body.length : 0) +
@@ -165,10 +191,10 @@ public class NitricRequest {
     }
 
     /**
-     * @return a new NitricRequest builder class.
+     * @return a new HttpRequest builder class.
      */
-    public static NitricRequest.Builder newBuilder() {
-        return new NitricRequest.Builder();
+    public static HttpRequest.Builder newBuilder() {
+        return new HttpRequest.Builder();
     }
 
     // Inner Classes ----------------------------------------------------------
@@ -180,16 +206,17 @@ public class NitricRequest {
      */
     public static class Builder {
 
-        private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+        static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-        private String method;
-        private String path;
-        private String query;
-        private Map<String, List<String>> headers;
-        private byte[] body;
+        String method;
+        String path;
+        String query;
+        Map<String, List<String>> headers;
+        Map<String, List<String>> parameters;
+        byte[] body;
 
-        // Private constructor to enforce request builder pattern.
-        private Builder() {
+        // Package Private constructor to enforce request builder pattern.
+        Builder() {
         }
 
         /**
@@ -245,12 +272,10 @@ public class NitricRequest {
         }
 
         /**
-         * @return a new Nitric response.
-         * @throws UnsupportedEncodingException
+         * @return a new HTTP response.
          */
-        public NitricRequest build() throws UnsupportedEncodingException {
-            Map<String, List<String>> immutableHeaders =
-                    (headers != null) ? Collections.unmodifiableMap(headers) : Collections.emptyMap();
+        public HttpRequest build() {
+            headers = (headers != null) ? headers : Collections.emptyMap();
 
             // Parse parameters
             String urlParameters = null;
@@ -265,14 +290,14 @@ public class NitricRequest {
                 urlParameters = query;
             }
 
-            Map<String, List<String>> params = parseParameters(urlParameters);
+            parameters = parseParameters(urlParameters);
 
-            return new NitricRequest(path, immutableHeaders, body, Collections.unmodifiableMap(params));
+            return new HttpRequest(this);
         }
 
-        // Private Methods ------------------------------------------------------------
+        // Package Private Methods --------------------------------------------
 
-        private Map<String, List<String>> parseParameters(String urlParameters) {
+        Map<String, List<String>> parseParameters(String urlParameters) {
             Map<String, List<String>> params = new HashMap<>();
 
             if (urlParameters != null && urlParameters.length() > 2) {
@@ -297,7 +322,7 @@ public class NitricRequest {
             return params;
         }
 
-        private static String getHeaderValue(String name, Map<String, List<String>> headers) {
+        static String getHeaderValue(String name, Map<String, List<String>> headers) {
             if (headers == null || headers.isEmpty()) {
                 return null;
             }
