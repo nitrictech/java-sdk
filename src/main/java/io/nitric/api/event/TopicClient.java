@@ -86,7 +86,7 @@ public class TopicClient {
      */
     public static class Builder {
 
-        private TopicGrpc.TopicBlockingStub serviceStub;
+        TopicGrpc.TopicBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
@@ -95,12 +95,12 @@ public class TopicClient {
         }
 
         /**
-         * Set  the GRPC service stub for mock testing.
+         * Set  the GRPC service stub.
          *
          * @param serviceStub the GRPC service stub to inject
          * @return the TopicClient builder
          */
-        TopicClient.Builder serviceStub(TopicGrpc.TopicBlockingStub serviceStub) {
+        public TopicClient.Builder serviceStub(TopicGrpc.TopicBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }

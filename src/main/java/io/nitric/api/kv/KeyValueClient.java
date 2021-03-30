@@ -1,5 +1,6 @@
 package io.nitric.api.kv;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nitric.proto.kv.v1.KeyValueDeleteRequest;
 import io.nitric.proto.kv.v1.KeyValueGetRequest;
 import io.nitric.proto.kv.v1.KeyValueGrpc;
@@ -8,6 +9,7 @@ import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.GrpcChannelProvider;
 import io.nitric.util.ProtoUtils;
 
+import java.security.Key;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,8 +18,26 @@ import java.util.Objects;
  *  Provides a Key Value API client.
  * </p>
  *
+ * <h3>Collections</h3>
+ *
  * <p>
- *  The example below illustrates the Key Value API.
+ *  The Key Value API supports collections, which is typically used to store similar types of data.
+ *  This is a common pattern used in Document stores, and in the SQL relational world this equates to tables.
+ * </p>
+ *
+ * <h3>Object Mapping</h3>
+ *
+ * <p>
+ *  The Key Value Client supports mapping data plain old Java objects (POJO) into and out of the KV service.
+ *  POJO classes should follow the Java bean type pattern with public getters and setters for properties and a
+ *  default or no-args constructor.
+ * </p>
+ *
+ * <h3>Examples</h3>
+ *
+ * <p>
+ *  The example below illustrates the Key Value API with a 'customers' collection and an object mapping to the Java
+ *  <code>Map</code> type.
  * </p>
  *
  * <pre>
@@ -25,7 +45,7 @@ import java.util.Objects;
  *  ...
  *
  *  // Create a 'customers' collection KV client
- *  var client = KeyValueClient.build("customers");
+ *  var client = KeyValueClient.build(Map.class, "customers");
  *
  *  // Get a customer record
  *  String key = "john.smith@gmail.com";
@@ -39,11 +59,89 @@ import java.util.Objects;
  *  client.delete(key);
  * </pre>
  *
+ * <p>
+ *  The example below illustrates type mapping with a custom POJO class.
+ * </p>
+ *
+ * <pre>
+ *  package com.example.entity;
+ *
+ *  public class Account {
+ *
+ *      private String mobile;
+ *      privat Boolean active;
+ *      ...
+ *
+ *      public String getMobile() {
+ *          return mobile;
+ *      }
+ *      public void setMobile(String mobile) {
+ *          this.mobile = mobile;
+ *      }
+ *      ...
+ *  }
+ *
+ *  // Example usage
+ *  import com.example.entity.Account;
+ *  import io.nitric.api.kv.KeyValueClient;
+ *  ...
+ *
+ *  // Create a Account KV client for the 'accounts' collection
+ *  var client = KeyValueClient.build(Account.class, "accounts");
+ *
+ *  // Get an account record
+ *  Integer key = 4927339;
+ *  Account account = client.get(key);
+ *
+ *  // Update an account record
+ *  account.setMobile("0432 321 543");
+ *  account.setActive(false);
+ *
+ *  client.put(key, account);
+ * </pre>
+ *
+ * <h3>Native Builds</h3>
+ *
+ * <p>
+ *  When building a native function using GraalVM compiler you will need to a reflection configuration file
+ *  so that your custom POJO class is supported. To do this simply add the JSON file to your build path:
+ * </p>
+ *
+ * <pre>
+ * src/main/resources/META-INF/native-image/reflect-config.json </pre>
+ *
+ * <p>
+ *  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
+ * </p>
+ *
+ * <pre>
+ * [
+ *    {
+ *       "name" : "com.example.entity.Account",
+ *       "allDeclaredConstructors" : true,
+ *       "allPublicConstructors" : true,
+ *       "allDeclaredMethods" : true,
+ *       "allPublicMethods" : true,
+ *       "allDeclaredFields" : true,
+ *       "allPublicFields" : true
+ *    }
+ * ] </pre>
+ *
+ * <p>
+ *  If you forget to do this, you may get a runtime error like this:
+ * </p>
+ *
+ * <pre>
+ * java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Account and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS)
+ *         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
+ * </pre>
+ *
  * @since 1.0
  */
-public class KeyValueClient {
+public class KeyValueClient<T> {
 
     final String collection;
+    final Class<T> type;
     final KeyValueBlockingStub serviceStub;
 
     /*
@@ -51,6 +149,7 @@ public class KeyValueClient {
      */
     KeyValueClient(Builder builder) {
         this.collection = builder.collection;
+        this.type = builder.type;
         this.serviceStub = builder.serviceStub;
     }
 
@@ -62,19 +161,27 @@ public class KeyValueClient {
      * @param key the values key in the collection (required)
      * @return the collection value for the given key, or null if not found
      */
-    public Map<String, Object> get(String key) {
+    public T get(Object key) {
         Objects.requireNonNull(key, "key parameter is required");
 
         var request = KeyValueGetRequest.newBuilder()
                 .setCollection(collection)
-                .setKey(key)
+                .setKey(key.toString())
                 .build();
 
         var response = serviceStub.get(request);
 
         if (response.hasValue()) {
             var struct = response.getValue();
-            return ProtoUtils.toMap(response.getValue());
+            Map map = ProtoUtils.toMap(response.getValue());
+
+            if (map.getClass().isAssignableFrom(type)) {
+                return (T) map;
+
+            } else {
+                var objectMapper = new ObjectMapper();
+                return (T) objectMapper.convertValue(map, type);
+            }
 
         } else {
             return null;
@@ -88,15 +195,25 @@ public class KeyValueClient {
      * @param value the value to store for the given collection and key
      * @return the KV collection value for the given key
      */
-    public void put(String key, Map<String, Object> value) {
+    public void put(Object key, T value) {
         Objects.requireNonNull(key, "key parameter is required");
         Objects.requireNonNull(value, "value parameter is required");
 
-        var struct = ProtoUtils.toStruct(value);
+        Map valueMap = null;
+
+        if (value instanceof Map) {
+            valueMap = (Map) value;
+
+        } else {
+            var objectMapper = new ObjectMapper();
+            valueMap = objectMapper.convertValue(value, Map.class);
+        }
+
+        var struct = ProtoUtils.toStruct(valueMap);
 
         var request = KeyValuePutRequest.newBuilder()
                 .setCollection(collection)
-                .setKey(key)
+                .setKey(key.toString())
                 .setValue(struct)
                 .build();
 
@@ -108,32 +225,39 @@ public class KeyValueClient {
      *
      * @param key the values key in the collection (required)
      */
-    public void delete(String key) {
+    public void delete(Object key) {
         Objects.requireNonNull(key, "key parameter is required");
 
         var request = KeyValueDeleteRequest.newBuilder()
                 .setCollection(collection)
-                .setKey(key)
+                .setKey(key.toString())
                 .build();
 
         serviceStub.delete(request);
     }
 
     /**
+     * Return a new KeyValueClient Builder for the given type.
+     *
+     * @param type the type object mapping type (required)
      * @return new KeyValueClient builder
      */
-    public static Builder newBuilder() {
-        return new Builder();
+    public static <T> Builder<T> newBuilder(Class<T> type) {
+        Objects.requireNonNull(type, "type parameter is required");
+        return new Builder<T>(type);
     }
 
     /**
-     * Return a new QueueClient with the specified queue name.
+     * Return a new KeyValueClient for the given type and collection.
      *
-     * @param collection the KV collection (required)
+     * @param type the object mapping type (required)
+     * @param collection the name of the collection (required)
      * @return new KeyValueClient builder
      */
-    public static KeyValueClient build(String collection) {
-        return newBuilder().collection(collection).build();
+    public static <T> KeyValueClient<T> build(Class<T> type, String collection) {
+        return newBuilder(type)
+                .collection(collection)
+                .build();
     }
 
     /**
@@ -143,6 +267,7 @@ public class KeyValueClient {
     public String toString() {
         return getClass().getSimpleName()
                 + "[collection=" + collection
+                + ", type=" + type
                 + ", serviceStub=" + serviceStub
                 + "]";
     }
@@ -152,35 +277,37 @@ public class KeyValueClient {
     /**
      * Provides a KeyValueClient Builder.
      */
-    public static class Builder {
+    public static class Builder<K> {
 
-        private String collection;
-        private KeyValueBlockingStub serviceStub;
+        String collection;
+        Class<K> type;
+        KeyValueBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
          */
-        Builder() {
+        Builder(Class<K> type) {
+            this.type = type;
         }
 
         /**
-         * Set the builder collection.
+         * Set the collection name.
          *
-         * @param collection the builder collection (required)
+         * @param collection the collection name (required)
          * @return the builder object
          */
-        public Builder collection(String collection) {
+        public Builder<K> collection(String collection) {
             this.collection = collection;
             return this;
         }
 
         /**
-         * Set the GRPC service stub for mock testing.
+         * Set the GRPC service stub.
          *
          * @param serviceStub the GRPC service stub to inject
          * @return the builder object
          */
-        Builder serviceStub(KeyValueBlockingStub serviceStub) {
+        public Builder<K> serviceStub(KeyValueBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
@@ -188,7 +315,7 @@ public class KeyValueClient {
         /**
          * @return build a new KeyValueClient
          */
-        public KeyValueClient build() {
+        public KeyValueClient<K> build() {
             Objects.requireNonNull(collection, "collection parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();

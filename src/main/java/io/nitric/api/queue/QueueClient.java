@@ -237,12 +237,12 @@ public class QueueClient {
         }
 
         /**
-         * Set  the GRPC service stub for mock testing.
+         * Set  the GRPC service stub.
          *
          * @param serviceStub the GRPC service stub to inject
          * @return the builder object
          */
-        Builder serviceStub(QueueGrpc.QueueBlockingStub serviceStub) {
+        public Builder serviceStub(QueueGrpc.QueueBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
