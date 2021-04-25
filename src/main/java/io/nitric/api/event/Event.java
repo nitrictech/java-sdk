@@ -48,7 +48,7 @@ public class Event {
      * @return the string representation of this object
      */
     @Override
-    public String toString( ) {
+    public String toString() {
         return getClass().getSimpleName()
                 + "[id=" + id
                 + ", payloadType=" + payloadType
