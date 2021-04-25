@@ -1,9 +1,12 @@
 package io.nitric.http;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -112,8 +115,8 @@ public class HttpRequest {
     }
 
     /**
-     * Return the named HTTP header or null if not found.
-     * If the header has multiple values the first value will be returned. Please note Nitric headers are case-insensitive
+     * Return the named HTTP header or null if not found. If the header has multiple values the first value will be
+     * returned. Please note Nitric headers are case-insensitive
      *
      * @param name the name of the HTTP header
      * @return the named HTTP header or null if not found
@@ -180,14 +183,14 @@ public class HttpRequest {
      * @return the string representation of this object
      */
     public String toString() {
-        return getClass().getSimpleName() +
-                "[method=" + method +
-                ", path=" + path +
-                ", query=" + query +
-                ", headers=" + headers +
-                ", parameters=" + parameters +
-                ", body.length=" + ((body != null) ? body.length : 0) +
-                "]";
+        return getClass().getSimpleName()
+                + "[method=" + method
+                + ", path=" + path
+                + ", query=" + query
+                + ", headers=" + headers
+                + ", parameters=" + parameters
+                + ", body.length=" + ((body != null) ? body.length : 0)
+                + "]";
     }
 
     /**
@@ -215,12 +218,15 @@ public class HttpRequest {
         Map<String, List<String>> parameters;
         byte[] body;
 
-        // Package Private constructor to enforce request builder pattern.
+        /*
+         * Package Private constructor to enforce request builder pattern.
+         */
         Builder() {
         }
 
         /**
          * Set the request method, for example with HTTP this would be ["GET" | "POST" | "PUT" | "DELETE" ].
+         *
          * @param method the request method
          * @return the request builder instance
          */
@@ -231,6 +237,7 @@ public class HttpRequest {
 
         /**
          * Set the request path.
+         *
          * @param path the request path
          * @return the request builder instance
          */
@@ -241,6 +248,7 @@ public class HttpRequest {
 
         /**
          * Set the request URL query.
+         *
          * @param query the request URL query
          * @return the request builder instance
          */
@@ -251,6 +259,7 @@ public class HttpRequest {
 
         /**
          * Set the request headers.
+         *
          * @param headers the request headers
          * @return the request builder instance
          */
@@ -259,10 +268,9 @@ public class HttpRequest {
             return this;
         }
 
-        // TODO: multi-part file posts
-
         /**
          * Set the request body.
+         *
          * @param body the request body
          * @return the request builder instance.
          */

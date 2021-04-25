@@ -49,8 +49,8 @@ public class Event {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() +
-                "[id=" + id
+        return getClass().getSimpleName()
+                + "[id=" + id
                 + ", payloadType=" + payloadType
                 + ", payload=" + payload
                 + "]";
@@ -67,7 +67,7 @@ public class Event {
      * Create a new Event from the given payload.
      *
      * @param payload the event payload (required)
-     * @return
+     * @return a new event object
      */
     public static Event build(Map<String, Object> payload) {
         return newBuilder().payload(payload).build();
