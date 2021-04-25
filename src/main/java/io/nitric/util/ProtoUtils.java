@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  Provides protobuf utility functions.
+ * Provides protobuf utility functions.
  * </p>
  *
  * <p>
- *  This class has code derived from method in the <code>com.google.api.graphql.grpc</code> library
+ * This class has code derived from method in the <code>com.google.api.graphql.grpc</code> library
  * </p>
  *
  * @since 1.0
@@ -105,8 +105,8 @@ public class ProtoUtils {
                 .getValuesList()
                 .stream()
                 .map(value -> Value.KindCase.STRUCT_VALUE.equals(value.getKindCase())
-                                ? toMap(value.getStructValue())
-                                : getScalarValue(value))
+                        ? toMap(value.getStructValue())
+                        : getScalarValue(value))
                 .collect(Collectors.toList());
     }
 
@@ -166,7 +166,7 @@ public class ProtoUtils {
         @SuppressWarnings("unchecked")
         U none = (U) new Object();
         return Collectors.collectingAndThen(
-                Collectors.<T, K, U> toMap(keyMapper,
+                Collectors.<T, K, U>toMap(keyMapper,
                         valueMapper.andThen(v -> v == null ? none : v)), map -> {
                     map.replaceAll((k, v) -> v == none ? null : v);
                     return map;

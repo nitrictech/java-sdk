@@ -16,32 +16,32 @@ public final class Events {
   }
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_EventPublishRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_EventPublishRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_EventPublishResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_EventPublishResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_TopicListRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_TopicListRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_TopicListResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_TopicListResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_NitricTopic_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_NitricTopic_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_event_v1_NitricEvent_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_event_v1_NitricEvent_fieldAccessorTable;
 

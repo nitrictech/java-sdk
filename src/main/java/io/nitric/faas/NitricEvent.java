@@ -1,7 +1,8 @@
 package io.nitric.faas;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -19,7 +20,9 @@ public class NitricEvent {
     private final NitricContext context;
     private final byte[] payload;
 
-    // Private constructor to enforce request builder pattern.
+    /*
+     * Private constructor to enforce request builder pattern.
+     */
     private NitricEvent(NitricContext context, byte[] payload) {
         this.context = context;
         this.payload = payload;
@@ -52,10 +55,10 @@ public class NitricEvent {
      * @return the string representation of this object
      */
     public String toString() {
-        return getClass().getSimpleName() +
-                "[context=" + context +
-                ", payload.length=" + ((payload != null) ? payload.length : 0) +
-                "]";
+        return getClass().getSimpleName()
+                + "[context=" + context
+                + ", payload.length=" + ((payload != null) ? payload.length : 0)
+                + "]";
     }
 
     /**
@@ -103,8 +106,8 @@ public class NitricEvent {
          * @return the string representation of this object.
          */
         public String toString() {
-            return getClass().getSimpleName() +
-                    "[requestId=" + requestID
+            return getClass().getSimpleName()
+                    + "[requestId=" + requestID
                     + ",sourceType=" + sourceType
                     + ",source=" + source
                     + ",payloadType=" + payloadType
@@ -128,6 +131,7 @@ public class NitricEvent {
 
         /**
          * Set the event headers.
+         *
          * @param headers the event headers
          * @return the event builder instance
          */
@@ -138,6 +142,7 @@ public class NitricEvent {
 
         /**
          * Set the event payload.
+         *
          * @param payload the event payload
          * @return the event builder instance.
          */

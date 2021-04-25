@@ -1,6 +1,10 @@
 package io.nitric.api.queue;
 
-import io.nitric.proto.queue.v1.*;
+import io.nitric.proto.queue.v1.QueueCompleteRequest;
+import io.nitric.proto.queue.v1.QueueGrpc;
+import io.nitric.proto.queue.v1.QueueReceiveRequest;
+import io.nitric.proto.queue.v1.QueueSendBatchRequest;
+import io.nitric.proto.queue.v1.QueueSendRequest;
 import io.nitric.util.GrpcChannelProvider;
 import io.nitric.util.ProtoUtils;
 

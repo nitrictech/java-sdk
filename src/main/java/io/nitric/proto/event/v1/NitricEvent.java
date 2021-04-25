@@ -123,7 +123,7 @@ private static final long serialVersionUID = 0L;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
-      com.google.protobuf.ByteString bs = 
+      com.google.protobuf.ByteString bs =
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       id_ = s;
@@ -139,7 +139,7 @@ private static final long serialVersionUID = 0L;
       getIdBytes() {
     java.lang.Object ref = id_;
     if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
+      com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       id_ = b;
@@ -161,7 +161,7 @@ private static final long serialVersionUID = 0L;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
-      com.google.protobuf.ByteString bs = 
+      com.google.protobuf.ByteString bs =
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       payloadType_ = s;
@@ -177,7 +177,7 @@ private static final long serialVersionUID = 0L;
       getPayloadTypeBytes() {
     java.lang.Object ref = payloadType_;
     if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
+      com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       payloadType_ = b;
@@ -591,7 +591,7 @@ private static final long serialVersionUID = 0L;
         getIdBytes() {
       java.lang.Object ref = id_;
       if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         id_ = b;
@@ -610,7 +610,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       id_ = value;
       onChanged();
       return this;
@@ -620,7 +620,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearId() {
-      
+
       id_ = getDefaultInstance().getId();
       onChanged();
       return this;
@@ -636,7 +636,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+
       id_ = value;
       onChanged();
       return this;
@@ -667,7 +667,7 @@ private static final long serialVersionUID = 0L;
         getPayloadTypeBytes() {
       java.lang.Object ref = payloadType_;
       if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         payloadType_ = b;
@@ -686,7 +686,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       payloadType_ = value;
       onChanged();
       return this;
@@ -696,7 +696,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearPayloadType() {
-      
+
       payloadType_ = getDefaultInstance().getPayloadType();
       onChanged();
       return this;
@@ -712,7 +712,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+
       payloadType_ = value;
       onChanged();
       return this;
@@ -805,7 +805,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public com.google.protobuf.Struct.Builder getPayloadBuilder() {
-      
+
       onChanged();
       return getPayloadFieldBuilder().getBuilder();
     }
@@ -824,7 +824,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> 
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
         getPayloadFieldBuilder() {
       if (payloadBuilder_ == null) {
         payloadBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<

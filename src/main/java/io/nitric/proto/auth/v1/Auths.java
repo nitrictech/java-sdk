@@ -16,12 +16,12 @@ public final class Auths {
   }
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_auth_v1_UserCreateRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_auth_v1_UserCreateRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_auth_v1_UserCreateResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_auth_v1_UserCreateResponse_fieldAccessorTable;
 

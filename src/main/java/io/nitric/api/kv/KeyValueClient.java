@@ -132,7 +132,7 @@ import java.util.Objects;
  * </p>
  *
  * <pre>
- * java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Account and no properties discovered to create BeanSerializer (to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS)
+ * java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Account and no properties ...
  *         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
  * </pre>
  *
@@ -193,7 +193,6 @@ public class KeyValueClient<T> {
      *
      * @param key the values key in the collection (required)
      * @param value the value to store for the given collection and key
-     * @return the KV collection value for the given key
      */
     public void put(Object key, T value) {
         Objects.requireNonNull(key, "key parameter is required");

@@ -115,7 +115,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .nitric.queue.v1.NitricTask tasks = 1;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+  public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder>
       getTasksOrBuilderList() {
     return tasks_;
   }
@@ -458,7 +458,7 @@ private static final long serialVersionUID = 0L;
             tasksBuilder_ = null;
             tasks_ = other.tasks_;
             bitField0_ = (bitField0_ & ~0x00000001);
-            tasksBuilder_ = 
+            tasksBuilder_ =
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTasksFieldBuilder() : null;
           } else {
@@ -751,7 +751,7 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.queue.v1.NitricTask tasks = 1;</code>
      */
-    public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+    public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder>
          getTasksOrBuilderList() {
       if (tasksBuilder_ != null) {
         return tasksBuilder_.getMessageOrBuilderList();
@@ -789,12 +789,12 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.queue.v1.NitricTask tasks = 1;</code>
      */
-    public java.util.List<io.nitric.proto.queue.v1.NitricTask.Builder> 
+    public java.util.List<io.nitric.proto.queue.v1.NitricTask.Builder>
          getTasksBuilderList() {
       return getTasksFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        io.nitric.proto.queue.v1.NitricTask, io.nitric.proto.queue.v1.NitricTask.Builder, io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+        io.nitric.proto.queue.v1.NitricTask, io.nitric.proto.queue.v1.NitricTask.Builder, io.nitric.proto.queue.v1.NitricTaskOrBuilder>
         getTasksFieldBuilder() {
       if (tasksBuilder_ == null) {
         tasksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<

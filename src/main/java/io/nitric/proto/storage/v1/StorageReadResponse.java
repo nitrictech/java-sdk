@@ -437,7 +437,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       body_ = value;
       onChanged();
       return this;
@@ -451,7 +451,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearBody() {
-      
+
       body_ = getDefaultInstance().getBody();
       onChanged();
       return this;

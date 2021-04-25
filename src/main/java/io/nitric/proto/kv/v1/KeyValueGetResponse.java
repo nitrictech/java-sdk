@@ -561,7 +561,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct value = 1;</code>
      */
     public com.google.protobuf.Struct.Builder getValueBuilder() {
-      
+
       onChanged();
       return getValueFieldBuilder().getBuilder();
     }
@@ -588,7 +588,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct value = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> 
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
         getValueFieldBuilder() {
       if (valueBuilder_ == null) {
         valueBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<

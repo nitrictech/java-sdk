@@ -16,32 +16,32 @@ public final class Storages {
   }
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageWriteRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageWriteRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageWriteResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageWriteResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageReadRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageReadRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageReadResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageReadResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageDeleteRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageDeleteRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_storage_v1_StorageDeleteResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_storage_v1_StorageDeleteResponse_fieldAccessorTable;
 
