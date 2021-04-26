@@ -1,6 +1,8 @@
 # See: https://docs.github.com/en/actions/guides/building-and-testing-java-with-maven
 name: tests
+
 on: pull_request
+
 jobs:
   run_tests:
     runs-on: ubuntu-latest
