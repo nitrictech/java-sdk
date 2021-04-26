@@ -14,7 +14,7 @@ public interface TopicListResponseOrBuilder extends
    *
    * <code>repeated .nitric.event.v1.NitricTopic topics = 1;</code>
    */
-  java.util.List<io.nitric.proto.event.v1.NitricTopic> 
+  java.util.List<io.nitric.proto.event.v1.NitricTopic>
       getTopicsList();
   /**
    * <pre>
@@ -39,7 +39,7 @@ public interface TopicListResponseOrBuilder extends
    *
    * <code>repeated .nitric.event.v1.NitricTopic topics = 1;</code>
    */
-  java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder> 
+  java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder>
       getTopicsOrBuilderList();
   /**
    * <pre>

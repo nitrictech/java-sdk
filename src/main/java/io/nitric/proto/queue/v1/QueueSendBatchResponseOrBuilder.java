@@ -10,7 +10,7 @@ public interface QueueSendBatchResponseOrBuilder extends
   /**
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
-  java.util.List<io.nitric.proto.queue.v1.FailedTask> 
+  java.util.List<io.nitric.proto.queue.v1.FailedTask>
       getFailedTasksList();
   /**
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
@@ -23,7 +23,7 @@ public interface QueueSendBatchResponseOrBuilder extends
   /**
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
-  java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder> 
+  java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder>
       getFailedTasksOrBuilderList();
   /**
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>

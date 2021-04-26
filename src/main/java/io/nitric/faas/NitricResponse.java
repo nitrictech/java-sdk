@@ -1,7 +1,10 @@
 package io.nitric.faas;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -35,7 +38,9 @@ public class NitricResponse {
     private final Map<String, String> headers;
     private final byte[] body;
 
-    // Private constructor to enforce response builder pattern.
+    /*
+     * Private constructor to enforce response builder pattern.
+     */
     private NitricResponse(Builder builder) {
         this.status = builder.status;
         this.headers = Collections.unmodifiableMap(builder.headers);
@@ -83,11 +88,11 @@ public class NitricResponse {
      * @return the string representation of this object
      */
     public String toString() {
-        return getClass().getSimpleName() +
-                "[status=" + status +
-                ", headers=" + headers +
-                ", body.length=" + ((body != null) ? body.length : 0) +
-                "]";
+        return getClass().getSimpleName()
+                + "[status=" + status
+                + ", headers=" + headers
+                + ", body.length=" + ((body != null) ? body.length : 0)
+                + "]";
     }
 
     /**

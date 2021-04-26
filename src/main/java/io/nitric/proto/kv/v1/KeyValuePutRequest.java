@@ -123,7 +123,7 @@ private static final long serialVersionUID = 0L;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
-      com.google.protobuf.ByteString bs = 
+      com.google.protobuf.ByteString bs =
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       collection_ = s;
@@ -143,7 +143,7 @@ private static final long serialVersionUID = 0L;
       getCollectionBytes() {
     java.lang.Object ref = collection_;
     if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
+      com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       collection_ = b;
@@ -169,7 +169,7 @@ private static final long serialVersionUID = 0L;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
-      com.google.protobuf.ByteString bs = 
+      com.google.protobuf.ByteString bs =
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       key_ = s;
@@ -189,7 +189,7 @@ private static final long serialVersionUID = 0L;
       getKeyBytes() {
     java.lang.Object ref = key_;
     if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
+      com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       key_ = b;
@@ -619,7 +619,7 @@ private static final long serialVersionUID = 0L;
         getCollectionBytes() {
       java.lang.Object ref = collection_;
       if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         collection_ = b;
@@ -642,7 +642,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       collection_ = value;
       onChanged();
       return this;
@@ -656,7 +656,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCollection() {
-      
+
       collection_ = getDefaultInstance().getCollection();
       onChanged();
       return this;
@@ -676,7 +676,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+
       collection_ = value;
       onChanged();
       return this;
@@ -715,7 +715,7 @@ private static final long serialVersionUID = 0L;
         getKeyBytes() {
       java.lang.Object ref = key_;
       if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         key_ = b;
@@ -738,7 +738,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       key_ = value;
       onChanged();
       return this;
@@ -752,7 +752,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearKey() {
-      
+
       key_ = getDefaultInstance().getKey();
       onChanged();
       return this;
@@ -772,7 +772,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+
       key_ = value;
       onChanged();
       return this;
@@ -893,7 +893,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct value = 3;</code>
      */
     public com.google.protobuf.Struct.Builder getValueBuilder() {
-      
+
       onChanged();
       return getValueFieldBuilder().getBuilder();
     }
@@ -920,7 +920,7 @@ private static final long serialVersionUID = 0L;
      * <code>.google.protobuf.Struct value = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> 
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
         getValueFieldBuilder() {
       if (valueBuilder_ == null) {
         valueBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<

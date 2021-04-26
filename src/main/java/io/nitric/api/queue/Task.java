@@ -39,7 +39,8 @@ public class Task {
     }
 
     /**
-     * Return the lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
+     * Return the lease id unique to the pop request, this must be used to complete, extend the lease or release the
+     * task.
      *
      * @return the task lease id, unique to the pop request.
      */

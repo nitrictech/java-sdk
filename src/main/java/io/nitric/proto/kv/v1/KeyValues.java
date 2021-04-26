@@ -16,32 +16,32 @@ public final class KeyValues {
   }
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueGetRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueGetResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueGetResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValuePutRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValuePutRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValuePutResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValuePutResponse_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueDeleteRequest_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueDeleteRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueDeleteResponse_descriptor;
-  static final 
+  static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueDeleteResponse_fieldAccessorTable;
 

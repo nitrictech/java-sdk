@@ -76,7 +76,7 @@ public class GrpcChannelProvider {
         Objects.requireNonNull(varName, "varName parameter is required");
         Objects.requireNonNull(defaultValue, "defaultValue parameter is required");
 
-        return (System.getenv(varName) != null)? System.getenv(varName) : defaultValue;
+        return (System.getenv(varName) != null) ? System.getenv(varName) : defaultValue;
     }
 
 }

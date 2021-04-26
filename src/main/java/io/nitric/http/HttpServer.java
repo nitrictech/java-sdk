@@ -1,13 +1,17 @@
 package io.nitric.http;
 
-import java.io.IOException;
-
 import com.sun.net.httpserver.HttpExchange;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * <p>
@@ -183,6 +187,7 @@ public class HttpServer {
 
             /**
              * Implements the JDK HTTP server handler.
+             *
              * @param he the HTTP exchange object
              * @throws IOException if an I/O error occurs
              */

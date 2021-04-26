@@ -115,7 +115,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .nitric.event.v1.NitricTopic topics = 1;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder> 
+  public java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder>
       getTopicsOrBuilderList() {
     return topics_;
   }
@@ -458,7 +458,7 @@ private static final long serialVersionUID = 0L;
             topicsBuilder_ = null;
             topics_ = other.topics_;
             bitField0_ = (bitField0_ & ~0x00000001);
-            topicsBuilder_ = 
+            topicsBuilder_ =
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTopicsFieldBuilder() : null;
           } else {
@@ -751,7 +751,7 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.event.v1.NitricTopic topics = 1;</code>
      */
-    public java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder> 
+    public java.util.List<? extends io.nitric.proto.event.v1.NitricTopicOrBuilder>
          getTopicsOrBuilderList() {
       if (topicsBuilder_ != null) {
         return topicsBuilder_.getMessageOrBuilderList();
@@ -789,12 +789,12 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.event.v1.NitricTopic topics = 1;</code>
      */
-    public java.util.List<io.nitric.proto.event.v1.NitricTopic.Builder> 
+    public java.util.List<io.nitric.proto.event.v1.NitricTopic.Builder>
          getTopicsBuilderList() {
       return getTopicsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        io.nitric.proto.event.v1.NitricTopic, io.nitric.proto.event.v1.NitricTopic.Builder, io.nitric.proto.event.v1.NitricTopicOrBuilder> 
+        io.nitric.proto.event.v1.NitricTopic, io.nitric.proto.event.v1.NitricTopic.Builder, io.nitric.proto.event.v1.NitricTopicOrBuilder>
         getTopicsFieldBuilder() {
       if (topicsBuilder_ == null) {
         topicsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<

@@ -14,7 +14,7 @@ public interface QueueReceiveResponseOrBuilder extends
    *
    * <code>repeated .nitric.queue.v1.NitricTask tasks = 1;</code>
    */
-  java.util.List<io.nitric.proto.queue.v1.NitricTask> 
+  java.util.List<io.nitric.proto.queue.v1.NitricTask>
       getTasksList();
   /**
    * <pre>
@@ -39,7 +39,7 @@ public interface QueueReceiveResponseOrBuilder extends
    *
    * <code>repeated .nitric.queue.v1.NitricTask tasks = 1;</code>
    */
-  java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+  java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder>
       getTasksOrBuilderList();
   /**
    * <pre>

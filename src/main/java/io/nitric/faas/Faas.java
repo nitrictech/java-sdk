@@ -7,8 +7,11 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * <p>
@@ -28,12 +31,10 @@ import java.util.Map.Entry;
  *
  * public class HelloWorld implements NitricFunction {
  *
- *     @Override
  *     public NitricResponse handle(NitricEvent request) {
  *         return NitricResponse.build("Hello World");
  *     }
  *
- *     @Override
  *     public static void main(String... args) {
  *         new Faas().start(new HelloWorld());
  *     }
@@ -56,6 +57,7 @@ public class Faas {
 
     /**
      * Set the server hostname.
+     *
      * @param hostname the server hostname
      * @return the Faas server instance
      */
@@ -66,6 +68,7 @@ public class Faas {
 
     /**
      * Set the server port. The default port is 8080.
+     *
      * @param port the server port
      * @return the Faas server instance
      */
@@ -76,6 +79,7 @@ public class Faas {
 
     /**
      * Start the FaaS server after configuring the given function.
+     *
      * @param function the function (required)
      */
     public void start(NitricFunction function) {
@@ -132,6 +136,7 @@ public class Faas {
 
             /**
              * Implements the JDK HTTP server handler.
+             *
              * @param he the HTTP exchange object
              * @throws IOException if an I/O error occurs
              */

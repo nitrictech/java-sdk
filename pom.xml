@@ -72,6 +72,52 @@
                 <version>1.6.2</version>
             </extension>
         </extensions>
+        <plugins>
+            <plugin>
+                <artifactId>whitespace-maven-plugin</artifactId>
+                <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
+                <version>1.0.4</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>trim</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>8.41.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <excludes>**/proto/**</excludes>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnViolation>true</failsOnViolation>
+                    <failsOnError>true</failsOnError>
+                    <violationSeverity>info</violationSeverity>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <!-- To generated proto files run: mvn compile -P proto-gen -->

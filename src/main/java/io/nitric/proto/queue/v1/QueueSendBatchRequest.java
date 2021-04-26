@@ -118,7 +118,7 @@ private static final long serialVersionUID = 0L;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
-      com.google.protobuf.ByteString bs = 
+      com.google.protobuf.ByteString bs =
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       queue_ = s;
@@ -139,7 +139,7 @@ private static final long serialVersionUID = 0L;
       getQueueBytes() {
     java.lang.Object ref = queue_;
     if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
+      com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
       queue_ = b;
@@ -170,7 +170,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .nitric.queue.v1.NitricTask tasks = 2;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+  public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder>
       getTasksOrBuilderList() {
     return tasks_;
   }
@@ -530,7 +530,7 @@ private static final long serialVersionUID = 0L;
             tasksBuilder_ = null;
             tasks_ = other.tasks_;
             bitField0_ = (bitField0_ & ~0x00000001);
-            tasksBuilder_ = 
+            tasksBuilder_ =
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getTasksFieldBuilder() : null;
           } else {
@@ -603,7 +603,7 @@ private static final long serialVersionUID = 0L;
         getQueueBytes() {
       java.lang.Object ref = queue_;
       if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
+        com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         queue_ = b;
@@ -627,7 +627,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  
+
       queue_ = value;
       onChanged();
       return this;
@@ -642,7 +642,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearQueue() {
-      
+
       queue_ = getDefaultInstance().getQueue();
       onChanged();
       return this;
@@ -663,7 +663,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      
+
       queue_ = value;
       onChanged();
       return this;
@@ -924,7 +924,7 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.queue.v1.NitricTask tasks = 2;</code>
      */
-    public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+    public java.util.List<? extends io.nitric.proto.queue.v1.NitricTaskOrBuilder>
          getTasksOrBuilderList() {
       if (tasksBuilder_ != null) {
         return tasksBuilder_.getMessageOrBuilderList();
@@ -962,12 +962,12 @@ private static final long serialVersionUID = 0L;
      *
      * <code>repeated .nitric.queue.v1.NitricTask tasks = 2;</code>
      */
-    public java.util.List<io.nitric.proto.queue.v1.NitricTask.Builder> 
+    public java.util.List<io.nitric.proto.queue.v1.NitricTask.Builder>
          getTasksBuilderList() {
       return getTasksFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        io.nitric.proto.queue.v1.NitricTask, io.nitric.proto.queue.v1.NitricTask.Builder, io.nitric.proto.queue.v1.NitricTaskOrBuilder> 
+        io.nitric.proto.queue.v1.NitricTask, io.nitric.proto.queue.v1.NitricTask.Builder, io.nitric.proto.queue.v1.NitricTaskOrBuilder>
         getTasksFieldBuilder() {
       if (tasksBuilder_ == null) {
         tasksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<

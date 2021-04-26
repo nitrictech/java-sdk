@@ -114,7 +114,7 @@ private static final long serialVersionUID = 0L;
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder> 
+  public java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder>
       getFailedTasksOrBuilderList() {
     return failedTasks_;
   }
@@ -452,7 +452,7 @@ private static final long serialVersionUID = 0L;
             failedTasksBuilder_ = null;
             failedTasks_ = other.failedTasks_;
             bitField0_ = (bitField0_ & ~0x00000001);
-            failedTasksBuilder_ = 
+            failedTasksBuilder_ =
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getFailedTasksFieldBuilder() : null;
           } else {
@@ -685,7 +685,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
-    public java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder> 
+    public java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder>
          getFailedTasksOrBuilderList() {
       if (failedTasksBuilder_ != null) {
         return failedTasksBuilder_.getMessageOrBuilderList();
@@ -711,12 +711,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
-    public java.util.List<io.nitric.proto.queue.v1.FailedTask.Builder> 
+    public java.util.List<io.nitric.proto.queue.v1.FailedTask.Builder>
          getFailedTasksBuilderList() {
       return getFailedTasksFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        io.nitric.proto.queue.v1.FailedTask, io.nitric.proto.queue.v1.FailedTask.Builder, io.nitric.proto.queue.v1.FailedTaskOrBuilder> 
+        io.nitric.proto.queue.v1.FailedTask, io.nitric.proto.queue.v1.FailedTask.Builder, io.nitric.proto.queue.v1.FailedTaskOrBuilder>
         getFailedTasksFieldBuilder() {
       if (failedTasksBuilder_ == null) {
         failedTasksBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
