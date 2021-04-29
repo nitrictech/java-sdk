@@ -117,6 +117,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <licenseName>apache_v2</licenseName>
+                    <licenseResolver>${project.baseUri}/src/license</licenseResolver>
+                    <inceptionYear>2021</inceptionYear>
+                    <organizationName>Nitric Pty Ltd</organizationName>
+                    <projectName>Nitric Java SDK</projectName>
+                    <failOnMissingHeader>true</failOnMissingHeader>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check-file-header</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
