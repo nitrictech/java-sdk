@@ -128,6 +128,9 @@
                     <organizationName>Nitric Pty Ltd</organizationName>
                     <projectName>Nitric Java SDK</projectName>
                     <failOnMissingHeader>true</failOnMissingHeader>
+                    <excludedScopes>test,provided</excludedScopes>
+                    <includedLicenses>Apache 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|The MIT License|MIT license|Apache License, Version 2.0|Apache-2.0|3-Clause BSD License</includedLicenses>
+                    <failOnBlacklist>true</failOnBlacklist>
                 </configuration>
                 <executions>
                     <execution>
@@ -135,6 +138,7 @@
                         <phase>validate</phase>
                         <goals>
                             <goal>check-file-header</goal>
+                            <goal>add-third-party</goal>
                         </goals>
                     </execution>
                 </executions>
