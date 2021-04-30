@@ -162,6 +162,7 @@
                         <version>1.4</version>
                     </docletArtifact>
                     <destDir>.</destDir>
+                    <excludePackageNames>io.nitric.proto.*</excludePackageNames>
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
