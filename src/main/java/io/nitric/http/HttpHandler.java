@@ -30,7 +30,7 @@ package io.nitric.http;
  *  The example below provides a simple Hello World HTTP handler.
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.http.HttpHandler;
  * import io.nitric.http.HttpRequest;
  * import io.nitric.http.HttpResponse;
@@ -42,7 +42,7 @@ package io.nitric.http;
  *         return HttpResponse.build("Hello World");
  *     }
  * }
- * </pre>
+ * ```
  *
  * <p>
  *  These functions return an immutable <code>HttpResponse</code> objects created using the static builder methods.

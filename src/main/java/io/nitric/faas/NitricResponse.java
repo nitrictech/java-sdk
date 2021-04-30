@@ -36,14 +36,14 @@ import java.util.Objects;
  *  The example below uses the <code>NitricResponse.Builder</code> class:
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.faas.NitricResponse;
  * ...
  *
  * byte[] data = Files.readAllBytes(path);
  *
  * return NitricResponse.build(data);
- * </pre>
+ * ```
  *
  * @see NitricEvent
  * @see NitricFunction

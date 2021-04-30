@@ -42,7 +42,7 @@ import java.util.Objects;
  *  The example below starts a HTTP server with a Hello World handler for the path "/".
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.http.HttpHandler;
  * import io.nitric.http.HttpRequest;
  * import io.nitric.http.HttpResponse;
@@ -59,7 +59,7 @@ import java.util.Objects;
  *         new HttpServer().start(new HelloWorld());
  *     }
  * }
- * </pre>
+ * ```
  *
  * @see HttpHandler
  *

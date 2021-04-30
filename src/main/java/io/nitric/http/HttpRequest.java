@@ -37,12 +37,12 @@ import java.util.Map;
  *  The example bellow illustrates using the request object for debugging.
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.http.HttpHandler;
  * import io.nitric.http.HttpRequest;
  * import io.nitric.http.HttpResponse;
  * import io.nitric.http.HttpServer;
- * ...
+ *
  *
  * public class RequestInfo {
  *
@@ -73,7 +73,7 @@ import java.util.Map;
  *         });
  *     }
  * }
- * </pre>
+ * ```
  *
  * @see HttpHandler
  * @see HttpResponse

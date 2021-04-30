@@ -42,7 +42,7 @@ import java.util.Objects;
  *  The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.faas.Faas;
  * import io.nitric.faas.NitricEvent;
  * import io.nitric.faas.NitricFunction;
@@ -59,7 +59,7 @@ import java.util.Objects;
  *         new Faas().start(new HelloWorld());
  *     }
  * }
- * </pre>
+ * ```
  *
  * @see NitricFunction
  *

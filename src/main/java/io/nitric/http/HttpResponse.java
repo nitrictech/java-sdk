@@ -38,7 +38,7 @@ import java.util.Objects;
  *  The HTTP examples below use the static <code>HttpResponse</code> build methods:
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.http.HttpResponse;
  * ...
  *
@@ -55,13 +55,13 @@ import java.util.Objects;
  *
  * // 418 - Error message
  * return HttpResponse.build(418, "Im a tea pot");
- * </pre>
+ * ```
  *
  * <p>
  *  The example below uses the <code>HttpResponse.Builder</code> class:
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.http.HttpResponse;
  * ...
  *
@@ -71,7 +71,7 @@ import java.util.Objects;
  *            .header("Content-Type", "application/jar")
  *            .body(data)
  *            .build();
- * </pre>
+ * ```
  *
  * @see HttpRequest
  * @see HttpHandler

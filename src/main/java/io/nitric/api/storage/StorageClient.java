@@ -38,7 +38,7 @@ import java.util.Objects;
  *  The example below illustrates the Storage API.
  * </p>
  *
- * <pre>
+ * ```java
  *  import io.nitric.api.storage.StorageClient;
  *  ...
  *
@@ -61,7 +61,7 @@ import java.util.Objects;
  *  // Delete an image file
  *  imageKey = "582764-rear-elevation.jpg"
  *  client.delete(imageKey);
- * </pre>
+ * ```
  *
  * @since 1.0
  */

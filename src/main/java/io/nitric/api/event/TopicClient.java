@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  *  The example below illustrates the Topic API.
  * </p>
  *
- * <pre>
+ * ```java
  *  import io.nitric.api.Topic;
  *  import io.nitric.api.TopicClient;
  *  ...
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  *  var client = TopicClient.newBuilder().build();
  *
  *  List&lt;Topic&gt; topics = client.list();
- * </pre>
+ * ```
  *
  * @see Topic
  * @see Event

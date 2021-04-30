@@ -60,7 +60,7 @@ import java.util.Objects;
  *  <code>Map</code> type.
  * </p>
  *
- * <pre>
+ * ```java
  *  import io.nitric.api.kv.KeyValueClient;
  *  ...
  *
@@ -77,13 +77,13 @@ import java.util.Objects;
  *
  *  // Delete a customer record
  *  client.delete(key);
- * </pre>
+ * ```
  *
  * <p>
  *  The example below illustrates type mapping with a custom POJO class.
  * </p>
  *
- * <pre>
+ * ```java
  *  package com.example.entity;
  *
  *  public class Account {
@@ -118,7 +118,7 @@ import java.util.Objects;
  *  account.setActive(false);
  *
  *  client.put(key, account);
- * </pre>
+ * ```
  *
  * <h3>Native Builds</h3>
  *
@@ -134,7 +134,7 @@ import java.util.Objects;
  *  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
  * </p>
  *
- * <pre>
+ * ```json
  * [
  *    {
  *       "name" : "com.example.entity.Account",
@@ -145,7 +145,8 @@ import java.util.Objects;
  *       "allDeclaredFields" : true,
  *       "allPublicFields" : true
  *    }
- * ] </pre>
+ * ]
+ * ```
  *
  * <p>
  *  If you forget to do this, you may get a runtime error like this:
