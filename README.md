@@ -2,7 +2,7 @@
   <img src="./docs/assets/dot-matrix-logo-java.png" alt="Nitric Logo"/>
 </p>
 
-# Nitric Java SDK (io.nitric.sdk)
+# Nitric Java SDK
 The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) framework with Java 11.
 > The SDK is in early stage development and APIs and interfaces are still subject to breaking changes
 
