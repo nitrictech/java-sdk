@@ -117,43 +117,42 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <p>
  The example bellow illustrates using the request object for debugging.
 </p>
-<pre>
-import io.nitric.http.HttpHandler;
+<pre><code class="java">import io.nitric.http.HttpHandler;
 import io.nitric.http.HttpRequest;
 import io.nitric.http.HttpResponse;
 import io.nitric.http.HttpServer;
-...
+
 
 public class RequestInfo {
 
     public static void main(String... args) {
 
-        new HttpServer().start((HttpRequest r) -> {
+        new HttpServer().start((HttpRequest r) -&gt; {
             var logger = System.out;
 
-            logger.printf("request: \n");
-            logger.printf("   .method: %s \n", r.getMethod());
-            logger.printf("   .path: %s \n", r.getPath());
+            logger.printf(&quot;request: \n&quot;);
+            logger.printf(&quot;   .method: %s \n&quot;, r.getMethod());
+            logger.printf(&quot;   .path: %s \n&quot;, r.getPath());
 
-            logger.printf("   .headers: \n");
+            logger.printf(&quot;   .headers: \n&quot;);
             for (String name : r.getHeaders().keySet()) {
-                logger.printf("      %s: %s \n", name, r.getHeaders().get(name));
+                logger.printf(&quot;      %s: %s \n&quot;, name, r.getHeaders().get(name));
             }
 
-            logger.printf("   .parameters: \n");
+            logger.printf(&quot;   .parameters: \n&quot;);
             for (String name : r.getParameters().keySet()) {
-                logger.printf("      %s: %s \n", name, r.getParameters().get(name));
+                logger.printf(&quot;      %s: %s \n&quot;, name, r.getParameters().get(name));
 
             }
 
-            logger.printf("   .body: \n");
-            logger.printf("      %s \n", r.getBodyText());
+            logger.printf(&quot;   .body: \n&quot;);
+            logger.printf(&quot;      %s \n&quot;, r.getBodyText());
 
             return HttpResponse.build(200);
         });
     }
 }
-</pre></div>
+</code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>

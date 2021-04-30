@@ -109,23 +109,23 @@ var activeTableTab = "activeTableTab";
 <p>
  The example below provides a simple Hello World function.
 </p>
-<pre>
-import io.nitric.faas.Faas;
+<pre><code class="java">import io.nitric.faas.Faas;
 import io.nitric.faas.NitricEvent;
 import io.nitric.faas.NitricFunction;
 import io.nitric.faas.NitricResponse;
-...
+
 
 public class HelloWorld implements NitricFunction {
 
     public NitricResponse handle(NitricEvent request) {
-        return NitricResponse.build("Hello World");
+        return NitricResponse.build(&quot;Hello World&quot;);
     }
 
     public static void main(String... args) {
         new Faas().start(new HelloWorld());
-    } * }
-</pre>
+    }
+}
+</code></pre>
 <p>
     These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
 </p></div>

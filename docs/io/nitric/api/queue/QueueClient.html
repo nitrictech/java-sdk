@@ -117,24 +117,23 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <p>
  The example below illustrates the Queue API.
 </p>
-<pre>
- import io.nitric.api.queue.QueueClient;
+<pre><code class="java"> import io.nitric.api.queue.QueueClient;
  import io.nitric.api.queue.Task;
  ...
 
  String orderId = ...
  String serialNumber = ...
 
- var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
+ var payload = Map.of(&quot;orderId&quot;, orderId, &quot;serialNumber&quot;, serialNumber);
  var task = Task.build(payload);
 
- // Send a task to the 'shipping' queue client
- var client = QueueClient.build("shipping");
+ // Send a task to the &#39;shipping&#39; queue client
+ var client = QueueClient.build(&quot;shipping&quot;);
  client.send(task);
 
- // Receive a list of tasks from the 'shipping' queue
- List&lg;Task&gt; tasks = client.receive(100);
-</pre></div>
+ // Receive a list of tasks from the &#39;shipping&#39; queue
+ List&amp;lg;Task&amp;gt; tasks = client.receive(100);
+</code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>

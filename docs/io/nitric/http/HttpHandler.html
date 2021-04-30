@@ -109,8 +109,7 @@ var activeTableTab = "activeTableTab";
 <p>
  The example below provides a simple Hello World HTTP handler.
 </p>
-<pre>
-import io.nitric.http.HttpHandler;
+<pre><code class="java">import io.nitric.http.HttpHandler;
 import io.nitric.http.HttpRequest;
 import io.nitric.http.HttpResponse;
 ...
@@ -118,10 +117,10 @@ import io.nitric.http.HttpResponse;
 public class HelloWorld implements HttpHandler {
 
     public HttpResponse handle(HttpRequest request) {
-        return HttpResponse.build("Hello World");
+        return HttpResponse.build(&quot;Hello World&quot;);
     }
 }
-</pre>
+</code></pre>
 <p>
  These functions return an immutable <code>HttpResponse</code> objects created using the static builder methods.
 </p></div>

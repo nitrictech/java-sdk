@@ -117,30 +117,29 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <p>
  The example below illustrates the Storage API.
 </p>
-<pre>
- import io.nitric.api.storage.StorageClient;
+<pre><code class="java"> import io.nitric.api.storage.StorageClient;
  ...
 
- // Create a storage client with the bucket name 'inspection-images'
- var client = StorageClient.build("inspection-images");
+ // Create a storage client with the bucket name &#39;inspection-images&#39;
+ var client = StorageClient.build(&quot;inspection-images&quot;);
 
  // Store an image file
- String imageKey = "582764-front-elevation.jpg"
+ String imageKey = &quot;582764-front-elevation.jpg&quot;
  byte[] imageData = ...
  client.write(imageKey, imageData);
 
  ...
 
  // Load an image file
- imageKey = "582764-side-elevation.jpg"
+ imageKey = &quot;582764-side-elevation.jpg&quot;
  imageData = client.read(imageKey, imageData);
 
  ...
 
  // Delete an image file
- imageKey = "582764-rear-elevation.jpg"
+ imageKey = &quot;582764-rear-elevation.jpg&quot;
  client.delete(imageKey);
-</pre></div>
+</code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>

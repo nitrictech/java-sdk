@@ -130,29 +130,27 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  The example below illustrates the Key Value API with a 'customers' collection and an object mapping to the Java
  <code>Map</code> type.
 </p>
-<pre>
- import io.nitric.api.kv.KeyValueClient;
+<pre><code class="java"> import io.nitric.api.kv.KeyValueClient;
  ...
 
- // Create a 'customers' collection KV client
- var client = KeyValueClient.build(Map.class, "customers");
+ // Create a &#39;customers&#39; collection KV client
+ var client = KeyValueClient.build(Map.class, &quot;customers&quot;);
 
  // Get a customer record
- String key = "john.smith&#64;gmail.com";
- Map&lt;String, Object&gt; customer = client.get(key);
+ String key = &quot;john.smith&#64;gmail.com&quot;;
+ Map&amp;lt;String, Object&amp;gt; customer = client.get(key);
 
  // Update a customer record
- customer.put("mobile", "0432 321 543");
+ customer.put(&quot;mobile&quot;, &quot;0432 321 543&quot;);
  client.put(key, value);
 
  // Delete a customer record
  client.delete(key);
-</pre>
+</code></pre>
 <p>
  The example below illustrates type mapping with a custom POJO class.
 </p>
-<pre>
- package com.example.entity;
+<pre><code class="java"> package com.example.entity;
 
  public class Account {
 
@@ -174,19 +172,19 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
  import io.nitric.api.kv.KeyValueClient;
  ...
 
- // Create a Account KV client for the 'accounts' collection
- var client = KeyValueClient.build(Account.class, "accounts");
+ // Create a Account KV client for the &#39;accounts&#39; collection
+ var client = KeyValueClient.build(Account.class, &quot;accounts&quot;);
 
  // Get an account record
  Integer key = 4927339;
  Account account = client.get(key);
 
  // Update an account record
- account.setMobile("0432 321 543");
+ account.setMobile(&quot;0432 321 543&quot;);
  account.setActive(false);
 
  client.put(key, account);
-</pre>
+</code></pre>
 <h3>Native Builds</h3>
 <p>
  When building a native function using GraalVM compiler you will need to a reflection configuration file
@@ -197,18 +195,18 @@ src/main/resources/META-INF/native-image/reflect-config.json </pre>
 <p>
  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
 </p>
-<pre>
-[
+<pre><code class="json">[
    {
-      "name" : "com.example.entity.Account",
-      "allDeclaredConstructors" : true,
-      "allPublicConstructors" : true,
-      "allDeclaredMethods" : true,
-      "allPublicMethods" : true,
-      "allDeclaredFields" : true,
-      "allPublicFields" : true
+      &quot;name&quot; : &quot;com.example.entity.Account&quot;,
+      &quot;allDeclaredConstructors&quot; : true,
+      &quot;allPublicConstructors&quot; : true,
+      &quot;allDeclaredMethods&quot; : true,
+      &quot;allPublicMethods&quot; : true,
+      &quot;allDeclaredFields&quot; : true,
+      &quot;allPublicFields&quot; : true
    }
-] </pre>
+]
+</code></pre>
 <p>
  If you forget to do this, you may get a runtime error like this:
 </p>

@@ -117,8 +117,7 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <p>
  The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
 </p>
-<pre>
-import io.nitric.faas.Faas;
+<pre><code class="java">import io.nitric.faas.Faas;
 import io.nitric.faas.NitricEvent;
 import io.nitric.faas.NitricFunction;
 import io.nitric.faas.NitricResponse;
@@ -127,14 +126,14 @@ import io.nitric.faas.NitricResponse;
 public class HelloWorld implements NitricFunction {
 
     public NitricResponse handle(NitricEvent request) {
-        return NitricResponse.build("Hello World");
+        return NitricResponse.build(&quot;Hello World&quot;);
     }
 
     public static void main(String... args) {
         new Faas().start(new HelloWorld());
     }
 }
-</pre></div>
+</code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0.0</dd>
