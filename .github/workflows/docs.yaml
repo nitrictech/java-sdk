@@ -1,4 +1,4 @@
-name: tests
+name: docs
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - 'main'
 
 jobs:
-  run_tests:
+  gen_docs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the repository
