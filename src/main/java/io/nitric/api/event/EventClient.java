@@ -36,10 +36,9 @@ import java.util.Objects;
  *  The example below illustrates the Event API.
  * </p>
  *
- * <pre>
+ * ```java
  *  import io.nitric.api.Event;
  *  import io.nitric.api.EventClient;
- *  ..
  *
  *  // Create an order completed event
  *  var payload = Map.of("id", id, "status", "completed");
@@ -48,7 +47,7 @@ import java.util.Objects;
  *  // Publish the event to the orders topic
  *  var client = EventClient.newBuilder().build();
  *  client.publish("orders", event);
- * </pre>
+ * ```
  *
  * @see Event
  * @see Topic

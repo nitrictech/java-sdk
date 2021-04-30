@@ -30,12 +30,12 @@ package io.nitric.faas;
  *  The example below provides a simple Hello World function.
  * </p>
  *
- * <pre>
+ * ```java
  * import io.nitric.faas.Faas;
  * import io.nitric.faas.NitricEvent;
  * import io.nitric.faas.NitricFunction;
  * import io.nitric.faas.NitricResponse;
- * ...
+ *
  *
  * public class HelloWorld implements NitricFunction {
  *
@@ -45,8 +45,9 @@ package io.nitric.faas;
  *
  *     public static void main(String... args) {
  *         new Faas().start(new HelloWorld());
- *     } * }
- * </pre>
+ *     }
+ * }
+ * ```
  *
  * <p>
  *     These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.

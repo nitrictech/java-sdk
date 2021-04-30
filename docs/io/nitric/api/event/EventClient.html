@@ -117,19 +117,17 @@ extends <a href="http://docs.oracle.com/javase/7/docs/api/java/lang/Object.html?
 <p>
  The example below illustrates the Event API.
 </p>
-<pre>
- import io.nitric.api.Event;
+<pre><code class="java"> import io.nitric.api.Event;
  import io.nitric.api.EventClient;
- ..
 
  // Create an order completed event
- var payload = Map.of("id", id, "status", "completed");
+ var payload = Map.of(&quot;id&quot;, id, &quot;status&quot;, &quot;completed&quot;);
  var event = Event.build(payload);
 
  // Publish the event to the orders topic
  var client = EventClient.newBuilder().build();
- client.publish("orders", event);
-</pre></div>
+ client.publish(&quot;orders&quot;, event);
+</code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>

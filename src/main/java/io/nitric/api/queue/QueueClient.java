@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  *  The example below illustrates the Queue API.
  * </p>
  *
- * <pre>
+ * ```java
  *  import io.nitric.api.queue.QueueClient;
  *  import io.nitric.api.queue.Task;
  *  ...
@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
  *
  *  // Receive a list of tasks from the 'shipping' queue
  *  List&lg;Task&gt; tasks = client.receive(100);
- * </pre>
+ * ```
  *
  * @see Task
  * @see FailedTask
