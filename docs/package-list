@@ -1,0 +1,12 @@
+io.nitric.api.event
+io.nitric.api.kv
+io.nitric.api.queue
+io.nitric.api.storage
+io.nitric.faas
+io.nitric.http
+io.nitric.proto.auth.v1
+io.nitric.proto.event.v1
+io.nitric.proto.kv.v1
+io.nitric.proto.queue.v1
+io.nitric.proto.storage.v1
+io.nitric.util
