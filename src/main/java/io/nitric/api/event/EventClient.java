@@ -9,9 +9,9 @@ package io.nitric.api.event;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,14 @@ import java.util.Objects;
 
 /**
  * <p>
- *  Provides a Event API event client.
+ *  Provides a Event API client.
  * </p>
  *
  * <p>
  *  The example below illustrates the Event API.
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  *  import io.nitric.api.Event;
  *  import io.nitric.api.EventClient;
  *
@@ -47,7 +47,7 @@ import java.util.Objects;
  *  // Publish the event to the orders topic
  *  var client = EventClient.newBuilder().build();
  *  client.publish("orders", event);
- * ```
+ *  </code></pre>
  *
  * @see Event
  * @see Topic

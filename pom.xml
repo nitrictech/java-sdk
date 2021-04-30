@@ -150,19 +150,20 @@
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>3.2.0</version>
                 <configuration>
-                    <doclet>ch.raffael.mddoclet.MarkdownDoclet</doclet>
-                    <docletArtifact>
-                        <groupId>ch.raffael.markdown-doclet</groupId>
-                        <artifactId>markdown-doclet</artifactId>
-                        <version>1.4</version>
-                    </docletArtifact>
                     <destDir>.</destDir>
                     <notimestamp>true</notimestamp>
                     <excludePackageNames>io.nitric.proto.*</excludePackageNames>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
+                    <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
+                    <header><![CDATA[
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs.min.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+                        <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+                    ]]></header>
                 </configuration>
             </plugin>
         </plugins>
@@ -199,6 +200,5 @@
             </build>
         </profile>
     </profiles>
-
 
 </project>

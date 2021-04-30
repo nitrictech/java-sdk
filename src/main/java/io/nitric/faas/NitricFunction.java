@@ -9,9 +9,9 @@ package io.nitric.faas;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,11 @@ package io.nitric.faas;
  *  The example below provides a simple Hello World function.
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  * import io.nitric.faas.Faas;
  * import io.nitric.faas.NitricEvent;
  * import io.nitric.faas.NitricFunction;
  * import io.nitric.faas.NitricResponse;
- *
  *
  * public class HelloWorld implements NitricFunction {
  *
@@ -47,10 +46,10 @@ package io.nitric.faas;
  *         new Faas().start(new HelloWorld());
  *     }
  * }
- * ```
+ * </code></pre>
  *
  * <p>
- *     These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
+ *  These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
  * </p>
  *
  * @see NitricEvent

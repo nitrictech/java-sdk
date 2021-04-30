@@ -9,9 +9,9 @@ package io.nitric.api.kv;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ import java.util.Objects;
  *  <code>Map</code> type.
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  *  import io.nitric.api.kv.KeyValueClient;
  *  ...
  *
@@ -77,20 +77,19 @@ import java.util.Objects;
  *
  *  // Delete a customer record
  *  client.delete(key);
- * ```
+ * </code></pre>
  *
  * <p>
  *  The example below illustrates type mapping with a custom POJO class.
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  *  package com.example.entity;
  *
  *  public class Account {
  *
  *      private String mobile;
- *      privat Boolean active;
- *      ...
+ *      private Boolean active;
  *
  *      public String getMobile() {
  *          return mobile;
@@ -98,27 +97,44 @@ import java.util.Objects;
  *      public void setMobile(String mobile) {
  *          this.mobile = mobile;
  *      }
- *      ...
+ *
+ *      public Boolean getActive() {
+ *          return active;
+ *      }
+ *      public void setActive(Boolean active) {
+ *          this.active = active;
+ *      }
  *  }
  *
- *  // Example usage
+ *  package com.example.function;
+ *
  *  import com.example.entity.Account;
+ *
  *  import io.nitric.api.kv.KeyValueClient;
- *  ...
+ *  import io.nitric.http.HttpHandler;
+ *  import io.nitric.http.HttpRequest;
+ *  import io.nitric.http.HttpResponse;
  *
- *  // Create a Account KV client for the 'accounts' collection
- *  var client = KeyValueClient.build(Account.class, "accounts");
+ *  public class AccountFunction implements HttpHandler {
  *
- *  // Get an account record
- *  Integer key = 4927339;
- *  Account account = client.get(key);
+ *      public HttpResponse handle(HttpRequest request) {
+ *          // Create a Account KV client for the 'accounts' collection
+ *          var client = KeyValueClient.build(Account.class, "accounts");
  *
- *  // Update an account record
- *  account.setMobile("0432 321 543");
- *  account.setActive(false);
+ *          // Get an account record
+ *          String id = request.getParameter("id");
+ *          Account account = client.get(id);
  *
- *  client.put(key, account);
- * ```
+ *          // Update an account record
+ *          account.setMobile("0432 321 543");
+ *          account.setActive(false);
+ *
+ *          client.put(id, account);
+ *
+ *          return HttpResponse.build("OK");
+ *      }
+ *  }
+ * </code></pre>
  *
  * <h3>Native Builds</h3>
  *
@@ -127,14 +143,15 @@ import java.util.Objects;
  *  so that your custom POJO class is supported. To do this simply add the JSON file to your build path:
  * </p>
  *
- * <pre>
- * src/main/resources/META-INF/native-image/reflect-config.json </pre>
+ * <pre class="code">
+ * src/main/resources/META-INF/native-image/reflect-config.json
+ * </pre>
  *
  * <p>
  *  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
  * </p>
  *
- * ```json
+ * <pre class="code">
  * [
  *    {
  *       "name" : "com.example.entity.Account",
@@ -146,13 +163,13 @@ import java.util.Objects;
  *       "allPublicFields" : true
  *    }
  * ]
- * ```
+ * </pre>
  *
  * <p>
  *  If you forget to do this, you may get a runtime error like this:
  * </p>
  *
- * <pre>
+ * <pre class="code">
  * java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Account and no properties ...
  *         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
  * </pre>
@@ -259,6 +276,7 @@ public class KeyValueClient<T> {
     /**
      * Return a new KeyValueClient Builder for the given type.
      *
+     * @param <T> the key value collection object type
      * @param type the type object mapping type (required)
      * @return new KeyValueClient builder
      */
@@ -270,6 +288,7 @@ public class KeyValueClient<T> {
     /**
      * Return a new KeyValueClient for the given type and collection.
      *
+     * @param <T> the key value collection object type
      * @param type the object mapping type (required)
      * @param collection the name of the collection (required)
      * @return new KeyValueClient builder

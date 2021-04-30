@@ -9,9 +9,9 @@ package io.nitric.http;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,12 +42,13 @@ import java.util.Objects;
  *  The example below starts a HTTP server with a Hello World handler for the path "/".
  * </p>
  *
- * ```java
+ * <pre><code class="code">
+ * package com.example;
+ *
  * import io.nitric.http.HttpHandler;
  * import io.nitric.http.HttpRequest;
  * import io.nitric.http.HttpResponse;
  * import io.nitric.http.HttpServer;
- * ...
  *
  * public class HelloWorld implements HttpHandler {
  *
@@ -59,7 +60,7 @@ import java.util.Objects;
  *         new HttpServer().start(new HelloWorld());
  *     }
  * }
- * ```
+ * </code></pre>
  *
  * @see HttpHandler
  *
