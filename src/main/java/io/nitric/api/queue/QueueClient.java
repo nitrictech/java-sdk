@@ -9,9 +9,9 @@ package io.nitric.api.queue;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  *  The example below illustrates the Queue API.
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  *  import io.nitric.api.queue.QueueClient;
  *  import io.nitric.api.queue.Task;
  *  ...
@@ -58,8 +58,8 @@ import java.util.stream.Collectors;
  *  client.send(task);
  *
  *  // Receive a list of tasks from the 'shipping' queue
- *  List&lg;Task&gt; tasks = client.receive(100);
- * ```
+ *  List&lt;Task&gt; tasks = client.receive(100);
+ * </code></pre>
  *
  * @see Task
  * @see FailedTask

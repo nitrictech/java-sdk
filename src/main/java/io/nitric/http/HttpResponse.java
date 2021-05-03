@@ -9,9 +9,9 @@ package io.nitric.http;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,37 +31,33 @@ import java.util.Objects;
 /**
  * <p>
  *  Provides an immutable HTTP response class. This class provides static convenience methods for quickly creating
- *  a response and a <code>HttpResponse.Builder</code> class for comprehensive control.
+ *  a response and a <code>HttpResponse.Builder</code> class for fine grained control.
  * </p>
  *
  * <p>
  *  The HTTP examples below use the static <code>HttpResponse</code> build methods:
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  * import io.nitric.http.HttpResponse;
  * ...
  *
  * // 404 - Not Found response
  * return HttpResponse.build(404);
  *
- * ...
- *
  * // 200 - JSON message
  * var json = "{ \"status\": \"online\" }";
  * return HttpResponse.build(200, json);
  *
- * ...
- *
  * // 418 - Error message
  * return HttpResponse.build(418, "Im a tea pot");
- * ```
+ * </code></pre>
  *
  * <p>
  *  The example below uses the <code>HttpResponse.Builder</code> class:
  * </p>
  *
- * ```java
+ * <pre><code class="code">
  * import io.nitric.http.HttpResponse;
  * ...
  *
@@ -71,7 +67,7 @@ import java.util.Objects;
  *            .header("Content-Type", "application/jar")
  *            .body(data)
  *            .build();
- * ```
+ * </code></pre>
  *
  * @see HttpRequest
  * @see HttpHandler
