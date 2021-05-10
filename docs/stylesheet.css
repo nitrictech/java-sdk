@@ -363,7 +363,7 @@ ul.blockList li.blockList h2 {
 .contentContainer .description dl dd, .contentContainer .details dl dd, .serializedFormContainer dl dd {
     margin:5px 0 10px 0px;
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+/*    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif; */
 }
 .serializedFormContainer dl.nameValue dt {
     margin-left:1px;
@@ -650,7 +650,7 @@ ul.blockList ul.blockList ul.blockList li.blockList h3 {
 }
 div.block {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+/*     font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif; */
 }
 td.colLast div {
     padding-top:0px;
@@ -686,7 +686,7 @@ h1.hidden {
 }
 .deprecationBlock {
     font-size:14px;
-    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+/*    font-family:'DejaVu Serif', Georgia, "Times New Roman", Times, serif; */
     border-style:solid;
     border-width:thin;
     border-radius:10px;
@@ -935,4 +935,37 @@ pre.code {
     border-radius:4px;
     padding: 0.75em;
     padding-bottom: 0em;
+}
+
+/* Javadoc Table */
+table.simple {
+	border-collapse: collapse;
+    font-family:'DejaVu Sans', Arial, Helvetica, sans-serif;
+}
+
+table.simple th {
+	padding: 2px 8px 2px 8px !important;
+	text-align: left;
+	vertical-align: top;
+}
+
+table.simple td {
+	padding: 2px 8px 2px 8px !important;
+	text-align: left;
+	vertical-align: baseline;
+}
+
+/** Individual Styles **/
+
+/* simple style */
+table.simple thead tr {
+    color: #333;
+	background-color: buttonface;
+}
+table.simple, table.simple td, table.simple th {
+	border: 1px solid #808080;
+}
+table.simple td.codeCenter {
+    font-family: 'DejaVu Sans Mono', monospace;
+    text-align: center;
 }

@@ -32,9 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class KeyValueClientTest {
 
-    static final String KNOWN_KEY = "john.smith@gmail.com";
+    static final String KNOWN_KEY_VALUE = "john.smith@gmail.com";
+    static final Map<String, Object> KNOWN_KEY = Map.of(KeyValueClient.DEFAULT_KEY_NAME, KNOWN_KEY_VALUE);
     static final Map<String, Object> KNOWN_MAP = Map.of("name", "John Smith");
     static final Struct KNOWN_STRUCT = ProtoUtils.toStruct(KNOWN_MAP);
+
+    static final Map<String, Object> UNKNOWN_KEY = Map.of("key", "unknown");
 
     @Test
     public void test_newBuilder() {
@@ -43,8 +46,8 @@ public class KeyValueClientTest {
                 .build();
 
         assertNotNull(client);
-        assertEquals("customers", client.collection);
-        assertNotNull(client.serviceStub);
+        assertEquals("customers", client.builder.collection);
+        assertNotNull(client.builder.serviceStub);
 
         try {
             KeyValueClient.newBuilder(null);
@@ -66,9 +69,9 @@ public class KeyValueClientTest {
         var client = KeyValueClient.build(Map.class, "customers");
 
         assertNotNull(client);
-        assertEquals("customers", client.collection);
-        assertEquals(Map.class, client.type);
-        assertNotNull(client.serviceStub);
+        assertEquals("customers", client.builder.collection);
+        assertEquals(Map.class, client.builder.type);
+        assertNotNull(client.builder.serviceStub);
 
         try {
             KeyValueClient.build(Map.class, null);
@@ -93,7 +96,8 @@ public class KeyValueClientTest {
                 assertNotNull(request);
                 assertNotNull(request.getCollection());
                 assertNotNull(request.getKey());
-                if (request.getKey().equals(KNOWN_KEY)) {
+                Map<String, Object> keyMap = ProtoUtils.toMap(request.getKey());
+                if (keyMap.equals(KNOWN_KEY)) {
                     return KeyValueGetResponse.newBuilder().setValue(KNOWN_STRUCT).build();
                 } else {
                     return KeyValueGetResponse.newBuilder().build();
@@ -107,24 +111,31 @@ public class KeyValueClientTest {
                 .serviceStub(mock)
                 .build();
 
-        var customer = mapClient.get(KNOWN_KEY);
+        var customer = mapClient.newGet()
+                .key(KNOWN_KEY_VALUE)
+                .get();
         assertEquals(KNOWN_MAP, customer);
 
-        customer = mapClient.get("unknown key");
+        customer = mapClient.newGet()
+                .key("01234")
+                .get();
         assertNull(customer);
 
         try {
-            mapClient.get(null);
+            mapClient.newGet().get();
             assertTrue(false);
         } catch (NullPointerException npe) {
             assertTrue(npe.getMessage().contains("key parameter is required"));
         }
 
         // Typed client
+        final Map<String, Object> key2 = Map.of("key", 12345.0);
+
         var typedMock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValueGetResponse get(KeyValueGetRequest request) {
-                if (request.getKey().equals("12345")) {
+                Map<String, Object> keyMap = ProtoUtils.toMap(request.getKey());
+                if (keyMap.equals(key2)) {
                     Account account = createAccount();
                     Map map = new ObjectMapper().convertValue(account, Map.class);
                     var struct = ProtoUtils.toStruct(map);
@@ -140,11 +151,16 @@ public class KeyValueClientTest {
                 .collection("account")
                 .build();
 
-        Account account = typedClient.get(12345);
+        Account account = typedClient.newGet()
+                .key(12345.0)
+                .get();
         assertNotNull(account);
         assertEquals(createAccount(), account);
 
-        Account account2 = typedClient.get("00000");
+        Map<String, Object> wrongKey = Map.of("key", "00000");
+        Account account2 = typedClient.newGet()
+                .key("00000")
+                .get();
         assertNull(account2);
     }
 
@@ -193,17 +209,24 @@ public class KeyValueClientTest {
                 .serviceStub(mock)
                 .build();
 
-        mapClient.put(KNOWN_KEY, KNOWN_MAP);
+        mapClient.newPut()
+            .key(KNOWN_KEY_VALUE)
+            .value(KNOWN_MAP)
+            .put();
 
         try {
-            mapClient.put(null, KNOWN_MAP);
+            mapClient.newPut()
+                    .value(KNOWN_MAP)
+                    .put();
             assertTrue(false);
         } catch (NullPointerException npe) {
             assertTrue(npe.getMessage().contains("key parameter is required"));
         }
 
         try {
-            mapClient.put(KNOWN_KEY, null);
+            mapClient.newPut()
+                    .key(KNOWN_KEY_VALUE)
+                    .put();
             assertTrue(false);
         } catch (NullPointerException npe) {
             assertTrue(npe.getMessage().contains("value parameter is required"));
@@ -219,11 +242,14 @@ public class KeyValueClientTest {
         account.setType("wholesale");
         account.setActive(true);
 
-        typeClient.put(account.getId(), account);
+        typeClient.newPut()
+                .key(account.getId())
+                .value(account)
+                .put();
     }
 
     @Test
-    public void test_delete() {
+    public void test_new_delete() {
         var mock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValueDeleteResponse delete(KeyValueDeleteRequest request) {
@@ -240,10 +266,13 @@ public class KeyValueClientTest {
                 .serviceStub(mock)
                 .build();
 
-        client.delete(KNOWN_KEY);
+        client.newDelete()
+                .key(123)
+                .delete();
 
         try {
-            client.delete(null);
+            client.newDelete()
+                    .delete();
             assertTrue(false);
         } catch (NullPointerException npe) {
             assertTrue(npe.getMessage().contains("key parameter is required"));

@@ -1,30 +1,10 @@
 package io.nitric.proto.kv.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Services for storage and retrieval of simple JSON keyValue
+ * Service for storage and retrieval of simple JSON keyValue
  * </pre>
  */
 @javax.annotation.Generated(
@@ -130,6 +110,37 @@ public final class KeyValueGrpc {
     return getDeleteMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<io.nitric.proto.kv.v1.KeyValueQueryRequest,
+      io.nitric.proto.kv.v1.KeyValueQueryResponse> getQueryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "Query",
+      requestType = io.nitric.proto.kv.v1.KeyValueQueryRequest.class,
+      responseType = io.nitric.proto.kv.v1.KeyValueQueryResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<io.nitric.proto.kv.v1.KeyValueQueryRequest,
+      io.nitric.proto.kv.v1.KeyValueQueryResponse> getQueryMethod() {
+    io.grpc.MethodDescriptor<io.nitric.proto.kv.v1.KeyValueQueryRequest, io.nitric.proto.kv.v1.KeyValueQueryResponse> getQueryMethod;
+    if ((getQueryMethod = KeyValueGrpc.getQueryMethod) == null) {
+      synchronized (KeyValueGrpc.class) {
+        if ((getQueryMethod = KeyValueGrpc.getQueryMethod) == null) {
+          KeyValueGrpc.getQueryMethod = getQueryMethod =
+              io.grpc.MethodDescriptor.<io.nitric.proto.kv.v1.KeyValueQueryRequest, io.nitric.proto.kv.v1.KeyValueQueryResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Query"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.nitric.proto.kv.v1.KeyValueQueryRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  io.nitric.proto.kv.v1.KeyValueQueryResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new KeyValueMethodDescriptorSupplier("Query"))
+              .build();
+        }
+      }
+    }
+    return getQueryMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -176,12 +187,15 @@ public final class KeyValueGrpc {
 
   /**
    * <pre>
-   * Services for storage and retrieval of simple JSON keyValue
+   * Service for storage and retrieval of simple JSON keyValue
    * </pre>
    */
   public static abstract class KeyValueImplBase implements io.grpc.BindableService {
 
     /**
+     * <pre>
+     * Get an existing key
+     * </pre>
      */
     public void get(io.nitric.proto.kv.v1.KeyValueGetRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueGetResponse> responseObserver) {
@@ -189,6 +203,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Create a new or overwrite and existing key
+     * </pre>
      */
     public void put(io.nitric.proto.kv.v1.KeyValuePutRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValuePutResponse> responseObserver) {
@@ -196,10 +213,23 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Delete an existing
+     * </pre>
      */
     public void delete(io.nitric.proto.kv.v1.KeyValueDeleteRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueDeleteResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Query the collection
+     * </pre>
+     */
+    public void query(io.nitric.proto.kv.v1.KeyValueQueryRequest request,
+        io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueQueryResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getQueryMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -225,13 +255,20 @@ public final class KeyValueGrpc {
                 io.nitric.proto.kv.v1.KeyValueDeleteRequest,
                 io.nitric.proto.kv.v1.KeyValueDeleteResponse>(
                   this, METHODID_DELETE)))
+          .addMethod(
+            getQueryMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                io.nitric.proto.kv.v1.KeyValueQueryRequest,
+                io.nitric.proto.kv.v1.KeyValueQueryResponse>(
+                  this, METHODID_QUERY)))
           .build();
     }
   }
 
   /**
    * <pre>
-   * Services for storage and retrieval of simple JSON keyValue
+   * Service for storage and retrieval of simple JSON keyValue
    * </pre>
    */
   public static final class KeyValueStub extends io.grpc.stub.AbstractAsyncStub<KeyValueStub> {
@@ -247,6 +284,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Get an existing key
+     * </pre>
      */
     public void get(io.nitric.proto.kv.v1.KeyValueGetRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueGetResponse> responseObserver) {
@@ -255,6 +295,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Create a new or overwrite and existing key
+     * </pre>
      */
     public void put(io.nitric.proto.kv.v1.KeyValuePutRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValuePutResponse> responseObserver) {
@@ -263,21 +306,35 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Delete an existing
+     * </pre>
      */
     public void delete(io.nitric.proto.kv.v1.KeyValueDeleteRequest request,
         io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueDeleteResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Query the collection
+     * </pre>
+     */
+    public void query(io.nitric.proto.kv.v1.KeyValueQueryRequest request,
+        io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueQueryResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getQueryMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
    * <pre>
-   * Services for storage and retrieval of simple JSON keyValue
+   * Service for storage and retrieval of simple JSON keyValue
    * </pre>
    */
   public static class KeyValueBlockingStub extends io.grpc.stub.AbstractBlockingStub<KeyValueBlockingStub> {
-    protected KeyValueBlockingStub(
+    KeyValueBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
@@ -289,6 +346,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Get an existing key
+     * </pre>
      */
     public io.nitric.proto.kv.v1.KeyValueGetResponse get(io.nitric.proto.kv.v1.KeyValueGetRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -296,6 +356,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Create a new or overwrite and existing key
+     * </pre>
      */
     public io.nitric.proto.kv.v1.KeyValuePutResponse put(io.nitric.proto.kv.v1.KeyValuePutRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -303,16 +366,29 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Delete an existing
+     * </pre>
      */
     public io.nitric.proto.kv.v1.KeyValueDeleteResponse delete(io.nitric.proto.kv.v1.KeyValueDeleteRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * Query the collection
+     * </pre>
+     */
+    public io.nitric.proto.kv.v1.KeyValueQueryResponse query(io.nitric.proto.kv.v1.KeyValueQueryRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getQueryMethod(), getCallOptions(), request);
+    }
   }
 
   /**
    * <pre>
-   * Services for storage and retrieval of simple JSON keyValue
+   * Service for storage and retrieval of simple JSON keyValue
    * </pre>
    */
   public static final class KeyValueFutureStub extends io.grpc.stub.AbstractFutureStub<KeyValueFutureStub> {
@@ -328,6 +404,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Get an existing key
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<io.nitric.proto.kv.v1.KeyValueGetResponse> get(
         io.nitric.proto.kv.v1.KeyValueGetRequest request) {
@@ -336,6 +415,9 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Create a new or overwrite and existing key
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<io.nitric.proto.kv.v1.KeyValuePutResponse> put(
         io.nitric.proto.kv.v1.KeyValuePutRequest request) {
@@ -344,17 +426,32 @@ public final class KeyValueGrpc {
     }
 
     /**
+     * <pre>
+     * Delete an existing
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<io.nitric.proto.kv.v1.KeyValueDeleteResponse> delete(
         io.nitric.proto.kv.v1.KeyValueDeleteRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Query the collection
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<io.nitric.proto.kv.v1.KeyValueQueryResponse> query(
+        io.nitric.proto.kv.v1.KeyValueQueryRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getQueryMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET = 0;
   private static final int METHODID_PUT = 1;
   private static final int METHODID_DELETE = 2;
+  private static final int METHODID_QUERY = 3;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -384,6 +481,10 @@ public final class KeyValueGrpc {
         case METHODID_DELETE:
           serviceImpl.delete((io.nitric.proto.kv.v1.KeyValueDeleteRequest) request,
               (io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueDeleteResponse>) responseObserver);
+          break;
+        case METHODID_QUERY:
+          serviceImpl.query((io.nitric.proto.kv.v1.KeyValueQueryRequest) request,
+              (io.grpc.stub.StreamObserver<io.nitric.proto.kv.v1.KeyValueQueryResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -449,6 +550,7 @@ public final class KeyValueGrpc {
               .addMethod(getGetMethod())
               .addMethod(getPutMethod())
               .addMethod(getDeleteMethod())
+              .addMethod(getQueryMethod())
               .build();
         }
       }

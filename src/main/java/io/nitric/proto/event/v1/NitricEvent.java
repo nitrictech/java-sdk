@@ -3,29 +3,9 @@
 
 package io.nitric.proto.event.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * <pre>
- *Represents a nitric event
+ * Nitric Event Model
  * </pre>
  *
  * Protobuf type {@code nitric.event.v1.NitricEvent}
@@ -134,6 +114,10 @@ private static final long serialVersionUID = 0L;
   public static final int ID_FIELD_NUMBER = 1;
   private volatile java.lang.Object id_;
   /**
+   * <pre>
+   * A Unique ID for the Nitric Event
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The id.
    */
@@ -151,6 +135,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * A Unique ID for the Nitric Event
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The bytes for id.
    */
@@ -172,6 +160,10 @@ private static final long serialVersionUID = 0L;
   public static final int PAYLOADTYPE_FIELD_NUMBER = 2;
   private volatile java.lang.Object payloadType_;
   /**
+   * <pre>
+   * A content hint for the events payload
+   * </pre>
+   *
    * <code>string payloadType = 2;</code>
    * @return The payloadType.
    */
@@ -189,6 +181,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * A content hint for the events payload
+   * </pre>
+   *
    * <code>string payloadType = 2;</code>
    * @return The bytes for payloadType.
    */
@@ -210,6 +206,10 @@ private static final long serialVersionUID = 0L;
   public static final int PAYLOAD_FIELD_NUMBER = 3;
   private com.google.protobuf.Struct payload_;
   /**
+   * <pre>
+   * The payload of the event
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 3;</code>
    * @return Whether the payload field is set.
    */
@@ -218,6 +218,10 @@ private static final long serialVersionUID = 0L;
     return payload_ != null;
   }
   /**
+   * <pre>
+   * The payload of the event
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 3;</code>
    * @return The payload.
    */
@@ -226,6 +230,10 @@ private static final long serialVersionUID = 0L;
     return payload_ == null ? com.google.protobuf.Struct.getDefaultInstance() : payload_;
   }
   /**
+   * <pre>
+   * The payload of the event
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 3;</code>
    */
   @java.lang.Override
@@ -415,7 +423,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *Represents a nitric event
+   * Nitric Event Model
    * </pre>
    *
    * Protobuf type {@code nitric.event.v1.NitricEvent}
@@ -588,6 +596,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object id_ = "";
     /**
+     * <pre>
+     * A Unique ID for the Nitric Event
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return The id.
      */
@@ -604,6 +616,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A Unique ID for the Nitric Event
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return The bytes for id.
      */
@@ -621,6 +637,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A Unique ID for the Nitric Event
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @param value The id to set.
      * @return This builder for chaining.
@@ -636,6 +656,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A Unique ID for the Nitric Event
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return This builder for chaining.
      */
@@ -646,6 +670,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A Unique ID for the Nitric Event
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @param value The bytes for id to set.
      * @return This builder for chaining.
@@ -664,6 +692,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object payloadType_ = "";
     /**
+     * <pre>
+     * A content hint for the events payload
+     * </pre>
+     *
      * <code>string payloadType = 2;</code>
      * @return The payloadType.
      */
@@ -680,6 +712,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A content hint for the events payload
+     * </pre>
+     *
      * <code>string payloadType = 2;</code>
      * @return The bytes for payloadType.
      */
@@ -697,6 +733,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A content hint for the events payload
+     * </pre>
+     *
      * <code>string payloadType = 2;</code>
      * @param value The payloadType to set.
      * @return This builder for chaining.
@@ -712,6 +752,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A content hint for the events payload
+     * </pre>
+     *
      * <code>string payloadType = 2;</code>
      * @return This builder for chaining.
      */
@@ -722,6 +766,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A content hint for the events payload
+     * </pre>
+     *
      * <code>string payloadType = 2;</code>
      * @param value The bytes for payloadType to set.
      * @return This builder for chaining.
@@ -742,6 +790,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> payloadBuilder_;
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      * @return Whether the payload field is set.
      */
@@ -749,6 +801,10 @@ private static final long serialVersionUID = 0L;
       return payloadBuilder_ != null || payload_ != null;
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      * @return The payload.
      */
@@ -760,6 +816,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public Builder setPayload(com.google.protobuf.Struct value) {
@@ -776,6 +836,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public Builder setPayload(
@@ -790,6 +854,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public Builder mergePayload(com.google.protobuf.Struct value) {
@@ -808,6 +876,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public Builder clearPayload() {
@@ -822,6 +894,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public com.google.protobuf.Struct.Builder getPayloadBuilder() {
@@ -830,6 +906,10 @@ private static final long serialVersionUID = 0L;
       return getPayloadFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     public com.google.protobuf.StructOrBuilder getPayloadOrBuilder() {
@@ -841,6 +921,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * The payload of the event
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<

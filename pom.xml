@@ -128,6 +128,9 @@
                     <organizationName>Nitric Pty Ltd</organizationName>
                     <projectName>Nitric Java SDK</projectName>
                     <failOnMissingHeader>true</failOnMissingHeader>
+                    <excludes>
+                        <exclude>**/proto/**</exclude>
+                    </excludes>
                     <excludedScopes>test,provided</excludedScopes>
                     <includedLicenses>Apache 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|The MIT License|MIT license|Apache License, Version 2.0|Apache-2.0|3-Clause BSD License</includedLicenses>
                     <failOnBlacklist>true</failOnBlacklist>
@@ -159,6 +162,7 @@
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
+                    <doclint>none</doclint>
                     <header><![CDATA[
                         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs.min.css">
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>

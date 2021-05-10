@@ -20,22 +20,15 @@ package io.nitric.api.kv;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.nitric.proto.kv.v1.KeyValueDeleteRequest;
-import io.nitric.proto.kv.v1.KeyValueGetRequest;
 import io.nitric.proto.kv.v1.KeyValueGrpc;
 import io.nitric.proto.kv.v1.KeyValueGrpc.KeyValueBlockingStub;
-import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.GrpcChannelProvider;
-import io.nitric.util.ProtoUtils;
 
-import java.security.Key;
-import java.util.Map;
 import java.util.Objects;
 
 /**
  * <p>
- *  Provides a Key Value API client.
+ *  Provides a Key Value Service client class.
  * </p>
  *
  * <h3>Collections</h3>
@@ -69,14 +62,21 @@ import java.util.Objects;
  *
  *  // Get a customer record
  *  String key = "john.smith@gmail.com";
- *  Map&lt;String, Object&gt; customer = client.get(key);
+ *  Map&lt;String, Object&gt; customer = client.newGet()
+ *      .key(key)
+ *      .get();
  *
  *  // Update a customer record
  *  customer.put("mobile", "0432 321 543");
- *  client.put(key, value);
+ *  client.newPut()
+ *      .key(key)
+ *      .value(value)
+ *      .put();
  *
  *  // Delete a customer record
- *  client.delete(key);
+ *  client.newDelete()
+ *      .key(key)
+ *      .delete();
  * </code></pre>
  *
  * <p>
@@ -123,13 +123,18 @@ import java.util.Objects;
  *
  *          // Get an account record
  *          String id = request.getParameter("id");
- *          Account account = client.get(id);
+ *          Account account = client.newGet()
+ *              .key(id)
+ *              .get();
  *
  *          // Update an account record
  *          account.setMobile("0432 321 543");
  *          account.setActive(false);
  *
- *          client.put(id, account);
+ *          client.newPut()
+ *              .key(id)
+ *              .value(account)
+ *              .put();
  *
  *          return HttpResponse.build("OK");
  *      }
@@ -174,104 +179,28 @@ import java.util.Objects;
  *         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
  * </pre>
  *
+ * @see Get
+ * @see Query
+ * @see Put
+ * @see Delete
+ *
  * @since 1.0
  */
 public class KeyValueClient<T> {
 
-    final String collection;
-    final Class<T> type;
-    final KeyValueBlockingStub serviceStub;
+    /** The default key name: 'key'. */
+    public static final String DEFAULT_KEY_NAME = "key";
+
+    final Builder builder;
 
     /*
      * Enforce builder pattern.
      */
     KeyValueClient(Builder builder) {
-        this.collection = builder.collection;
-        this.type = builder.type;
-        this.serviceStub = builder.serviceStub;
+        this.builder = builder;
     }
 
     // Public Methods ---------------------------------------------------------
-
-    /**
-     * Return the collection value for the given key.
-     *
-     * @param key the values key in the collection (required)
-     * @return the collection value for the given key, or null if not found
-     */
-    public T get(Object key) {
-        Objects.requireNonNull(key, "key parameter is required");
-
-        var request = KeyValueGetRequest.newBuilder()
-                .setCollection(collection)
-                .setKey(key.toString())
-                .build();
-
-        var response = serviceStub.get(request);
-
-        if (response.hasValue()) {
-            var struct = response.getValue();
-            Map map = ProtoUtils.toMap(response.getValue());
-
-            if (map.getClass().isAssignableFrom(type)) {
-                return (T) map;
-
-            } else {
-                var objectMapper = new ObjectMapper();
-                return (T) objectMapper.convertValue(map, type);
-            }
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Store the value in the collection with the given key.
-     *
-     * @param key the values key in the collection (required)
-     * @param value the value to store for the given collection and key
-     */
-    public void put(Object key, T value) {
-        Objects.requireNonNull(key, "key parameter is required");
-        Objects.requireNonNull(value, "value parameter is required");
-
-        Map valueMap = null;
-
-        if (value instanceof Map) {
-            valueMap = (Map) value;
-
-        } else {
-            var objectMapper = new ObjectMapper();
-            valueMap = objectMapper.convertValue(value, Map.class);
-        }
-
-        var struct = ProtoUtils.toStruct(valueMap);
-
-        var request = KeyValuePutRequest.newBuilder()
-                .setCollection(collection)
-                .setKey(key.toString())
-                .setValue(struct)
-                .build();
-
-        serviceStub.put(request);
-    }
-
-    /**
-     * Delete the collection value with the given key.
-     *
-     * @param key the values key in the collection (required)
-     */
-    public void delete(Object key) {
-        Objects.requireNonNull(key, "key parameter is required");
-
-        var request = KeyValueDeleteRequest.newBuilder()
-                .setCollection(collection)
-                .setKey(key.toString())
-                .build();
-
-        serviceStub.delete(request);
-    }
 
     /**
      * Return a new KeyValueClient Builder for the given type.
@@ -300,21 +229,57 @@ public class KeyValueClient<T> {
     }
 
     /**
+     * Return a new Get operation.
+     *
+     * @return a new Get operation
+     */
+    public Get<T> newGet() {
+        return new Get<T>(builder);
+    }
+
+    /**
+     * Return a new Query operation.
+     *
+     * @return a new Query operation
+     */
+    public Query<T> newQuery() {
+        return new Query<T>(builder);
+    }
+
+    /**
+     * Return a new Put operation.
+     *
+     * @return a new Put operation
+     */
+    public Put<T> newPut() {
+        return new Put<T>(builder);
+    }
+
+    /**
+     * Return a new Delete operation.
+     *
+     * @return a new Delete operation
+     */
+    public Delete<T> newDelete() {
+        return new Delete<T>(builder);
+    }
+
+    /**
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         return getClass().getSimpleName()
-                + "[collection=" + collection
-                + ", type=" + type
-                + ", serviceStub=" + serviceStub
+                + "[collection=" + builder.collection
+                + ", type=" + builder.type
+                + ", serviceStub=" + builder.serviceStub
                 + "]";
     }
 
     // Inner Classes ----------------------------------------------------------
 
     /**
-     * Provides a KeyValueClient Builder.
+     * Provides a KeyValueClient builder class.
      */
     public static class Builder<K> {
 
@@ -362,6 +327,18 @@ public class KeyValueClient<T> {
             }
 
             return new KeyValueClient(this);
+        }
+
+        /**
+         * @return the string representation of this object
+         */
+        @Override
+        public String toString() {
+            return getClass().getSimpleName()
+                    + "[collection=" + collection
+                    + ", type=" + type
+                    + ", serviceStub=" + serviceStub
+                    + "]";
         }
     }
 

@@ -3,26 +3,6 @@
 
 package io.nitric.proto.kv.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public interface KeyValueGetRequestOrBuilder extends
     // @@protoc_insertion_point(interface_extends:nitric.kv.v1.KeyValueGetRequest)
     com.google.protobuf.MessageOrBuilder {
@@ -52,18 +32,25 @@ public interface KeyValueGetRequestOrBuilder extends
    * The unique key of the keyValue to retrieve
    * </pre>
    *
-   * <code>string key = 2;</code>
-   * @return The key.
+   * <code>.google.protobuf.Struct key = 2;</code>
+   * @return Whether the key field is set.
    */
-  java.lang.String getKey();
+  boolean hasKey();
   /**
    * <pre>
    * The unique key of the keyValue to retrieve
    * </pre>
    *
-   * <code>string key = 2;</code>
-   * @return The bytes for key.
+   * <code>.google.protobuf.Struct key = 2;</code>
+   * @return The key.
    */
-  com.google.protobuf.ByteString
-      getKeyBytes();
+  com.google.protobuf.Struct getKey();
+  /**
+   * <pre>
+   * The unique key of the keyValue to retrieve
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct key = 2;</code>
+   */
+  com.google.protobuf.StructOrBuilder getKeyOrBuilder();
 }

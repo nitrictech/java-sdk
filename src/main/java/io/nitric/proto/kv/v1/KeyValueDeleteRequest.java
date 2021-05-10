@@ -3,26 +3,6 @@
 
 package io.nitric.proto.kv.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * Protobuf type {@code nitric.kv.v1.KeyValueDeleteRequest}
  */
@@ -37,7 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private KeyValueDeleteRequest() {
     collection_ = "";
-    key_ = "";
   }
 
   @java.lang.Override
@@ -77,9 +56,16 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
+            com.google.protobuf.Struct.Builder subBuilder = null;
+            if (key_ != null) {
+              subBuilder = key_.toBuilder();
+            }
+            key_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(key_);
+              key_ = subBuilder.buildPartial();
+            }
 
-            key_ = s;
             break;
           }
           default: {
@@ -161,49 +147,41 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int KEY_FIELD_NUMBER = 2;
-  private volatile java.lang.Object key_;
+  private com.google.protobuf.Struct key_;
   /**
    * <pre>
    * The unique key of the keyValue to delete
    * </pre>
    *
-   * <code>string key = 2;</code>
-   * @return The key.
+   * <code>.google.protobuf.Struct key = 2;</code>
+   * @return Whether the key field is set.
    */
   @java.lang.Override
-  public java.lang.String getKey() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs =
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      key_ = s;
-      return s;
-    }
+  public boolean hasKey() {
+    return key_ != null;
   }
   /**
    * <pre>
    * The unique key of the keyValue to delete
    * </pre>
    *
-   * <code>string key = 2;</code>
-   * @return The bytes for key.
+   * <code>.google.protobuf.Struct key = 2;</code>
+   * @return The key.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getKeyBytes() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      key_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.google.protobuf.Struct getKey() {
+    return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
+  }
+  /**
+   * <pre>
+   * The unique key of the keyValue to delete
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct key = 2;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
+    return getKey();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -223,8 +201,8 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, collection_);
     }
-    if (!getKeyBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
+    if (key_ != null) {
+      output.writeMessage(2, getKey());
     }
     unknownFields.writeTo(output);
   }
@@ -238,8 +216,9 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, collection_);
     }
-    if (!getKeyBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
+    if (key_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getKey());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -258,8 +237,11 @@ private static final long serialVersionUID = 0L;
 
     if (!getCollection()
         .equals(other.getCollection())) return false;
-    if (!getKey()
-        .equals(other.getKey())) return false;
+    if (hasKey() != other.hasKey()) return false;
+    if (hasKey()) {
+      if (!getKey()
+          .equals(other.getKey())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -273,8 +255,10 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + COLLECTION_FIELD_NUMBER;
     hash = (53 * hash) + getCollection().hashCode();
-    hash = (37 * hash) + KEY_FIELD_NUMBER;
-    hash = (53 * hash) + getKey().hashCode();
+    if (hasKey()) {
+      hash = (37 * hash) + KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getKey().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -410,8 +394,12 @@ private static final long serialVersionUID = 0L;
       super.clear();
       collection_ = "";
 
-      key_ = "";
-
+      if (keyBuilder_ == null) {
+        key_ = null;
+      } else {
+        key_ = null;
+        keyBuilder_ = null;
+      }
       return this;
     }
 
@@ -439,7 +427,11 @@ private static final long serialVersionUID = 0L;
     public io.nitric.proto.kv.v1.KeyValueDeleteRequest buildPartial() {
       io.nitric.proto.kv.v1.KeyValueDeleteRequest result = new io.nitric.proto.kv.v1.KeyValueDeleteRequest(this);
       result.collection_ = collection_;
-      result.key_ = key_;
+      if (keyBuilder_ == null) {
+        result.key_ = key_;
+      } else {
+        result.key_ = keyBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -492,9 +484,8 @@ private static final long serialVersionUID = 0L;
         collection_ = other.collection_;
         onChanged();
       }
-      if (!other.getKey().isEmpty()) {
-        key_ = other.key_;
-        onChanged();
+      if (other.hasKey()) {
+        mergeKey(other.getKey());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -621,25 +612,33 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object key_ = "";
+    private com.google.protobuf.Struct key_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> keyBuilder_;
     /**
      * <pre>
      * The unique key of the keyValue to delete
      * </pre>
      *
-     * <code>string key = 2;</code>
+     * <code>.google.protobuf.Struct key = 2;</code>
+     * @return Whether the key field is set.
+     */
+    public boolean hasKey() {
+      return keyBuilder_ != null || key_ != null;
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to delete
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
      * @return The key.
      */
-    public java.lang.String getKey() {
-      java.lang.Object ref = key_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        key_ = s;
-        return s;
+    public com.google.protobuf.Struct getKey() {
+      if (keyBuilder_ == null) {
+        return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
       } else {
-        return (java.lang.String) ref;
+        return keyBuilder_.getMessage();
       }
     }
     /**
@@ -647,39 +646,37 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to delete
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @return The bytes for key.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
-    public com.google.protobuf.ByteString
-        getKeyBytes() {
-      java.lang.Object ref = key_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        key_ = b;
-        return b;
+    public Builder setKey(com.google.protobuf.Struct value) {
+      if (keyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        key_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        keyBuilder_.setMessage(value);
       }
+
+      return this;
     }
     /**
      * <pre>
      * The unique key of the keyValue to delete
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @param value The key to set.
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
     public Builder setKey(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
+        com.google.protobuf.Struct.Builder builderForValue) {
+      if (keyBuilder_ == null) {
+        key_ = builderForValue.build();
+        onChanged();
+      } else {
+        keyBuilder_.setMessage(builderForValue.build());
+      }
 
-      key_ = value;
-      onChanged();
       return this;
     }
     /**
@@ -687,13 +684,39 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to delete
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    public Builder mergeKey(com.google.protobuf.Struct value) {
+      if (keyBuilder_ == null) {
+        if (key_ != null) {
+          key_ =
+            com.google.protobuf.Struct.newBuilder(key_).mergeFrom(value).buildPartial();
+        } else {
+          key_ = value;
+        }
+        onChanged();
+      } else {
+        keyBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to delete
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
     public Builder clearKey() {
+      if (keyBuilder_ == null) {
+        key_ = null;
+        onChanged();
+      } else {
+        key_ = null;
+        keyBuilder_ = null;
+      }
 
-      key_ = getDefaultInstance().getKey();
-      onChanged();
       return this;
     }
     /**
@@ -701,20 +724,47 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to delete
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @param value The bytes for key to set.
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
-    public Builder setKeyBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+    public com.google.protobuf.Struct.Builder getKeyBuilder() {
 
-      key_ = value;
       onChanged();
-      return this;
+      return getKeyFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to delete
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
+      if (keyBuilder_ != null) {
+        return keyBuilder_.getMessageOrBuilder();
+      } else {
+        return key_ == null ?
+            com.google.protobuf.Struct.getDefaultInstance() : key_;
+      }
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to delete
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
+        getKeyFieldBuilder() {
+      if (keyBuilder_ == null) {
+        keyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
+                getKey(),
+                getParentForChildren(),
+                isClean());
+        key_ = null;
+      }
+      return keyBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

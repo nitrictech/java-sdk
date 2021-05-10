@@ -3,26 +3,6 @@
 
 package io.nitric.proto.kv.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * Protobuf type {@code nitric.kv.v1.KeyValuePutRequest}
  */
@@ -37,7 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private KeyValuePutRequest() {
     collection_ = "";
-    key_ = "";
   }
 
   @java.lang.Override
@@ -77,12 +56,32 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
+            com.google.protobuf.Struct.Builder subBuilder = null;
+            if (key_ != null) {
+              subBuilder = key_.toBuilder();
+            }
+            key_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(key_);
+              key_ = subBuilder.buildPartial();
+            }
 
-            key_ = s;
             break;
           }
           case 26: {
+            com.google.protobuf.Struct.Builder subBuilder = null;
+            if (attributes_ != null) {
+              subBuilder = attributes_.toBuilder();
+            }
+            attributes_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(attributes_);
+              attributes_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 34: {
             com.google.protobuf.Struct.Builder subBuilder = null;
             if (value_ != null) {
               subBuilder = value_.toBuilder();
@@ -174,59 +173,89 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int KEY_FIELD_NUMBER = 2;
-  private volatile java.lang.Object key_;
+  private com.google.protobuf.Struct key_;
   /**
    * <pre>
    * The unique key of the keyValue to put
    * </pre>
    *
-   * <code>string key = 2;</code>
+   * <code>.google.protobuf.Struct key = 2;</code>
+   * @return Whether the key field is set.
+   */
+  @java.lang.Override
+  public boolean hasKey() {
+    return key_ != null;
+  }
+  /**
+   * <pre>
+   * The unique key of the keyValue to put
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct key = 2;</code>
    * @return The key.
    */
   @java.lang.Override
-  public java.lang.String getKey() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs =
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      key_ = s;
-      return s;
-    }
+  public com.google.protobuf.Struct getKey() {
+    return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
   }
   /**
    * <pre>
    * The unique key of the keyValue to put
    * </pre>
    *
-   * <code>string key = 2;</code>
-   * @return The bytes for key.
+   * <code>.google.protobuf.Struct key = 2;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString
-      getKeyBytes() {
-    java.lang.Object ref = key_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      key_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
+    return getKey();
   }
 
-  public static final int VALUE_FIELD_NUMBER = 3;
+  public static final int ATTRIBUTES_FIELD_NUMBER = 3;
+  private com.google.protobuf.Struct attributes_;
+  /**
+   * <pre>
+   * The top level attributes to put (optional)
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct attributes = 3;</code>
+   * @return Whether the attributes field is set.
+   */
+  @java.lang.Override
+  public boolean hasAttributes() {
+    return attributes_ != null;
+  }
+  /**
+   * <pre>
+   * The top level attributes to put (optional)
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct attributes = 3;</code>
+   * @return The attributes.
+   */
+  @java.lang.Override
+  public com.google.protobuf.Struct getAttributes() {
+    return attributes_ == null ? com.google.protobuf.Struct.getDefaultInstance() : attributes_;
+  }
+  /**
+   * <pre>
+   * The top level attributes to put (optional)
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct attributes = 3;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.StructOrBuilder getAttributesOrBuilder() {
+    return getAttributes();
+  }
+
+  public static final int VALUE_FIELD_NUMBER = 4;
   private com.google.protobuf.Struct value_;
   /**
    * <pre>
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 3;</code>
+   * <code>.google.protobuf.Struct value = 4;</code>
    * @return Whether the value field is set.
    */
   @java.lang.Override
@@ -238,7 +267,7 @@ private static final long serialVersionUID = 0L;
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 3;</code>
+   * <code>.google.protobuf.Struct value = 4;</code>
    * @return The value.
    */
   @java.lang.Override
@@ -250,7 +279,7 @@ private static final long serialVersionUID = 0L;
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 3;</code>
+   * <code>.google.protobuf.Struct value = 4;</code>
    */
   @java.lang.Override
   public com.google.protobuf.StructOrBuilder getValueOrBuilder() {
@@ -274,11 +303,14 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, collection_);
     }
-    if (!getKeyBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, key_);
+    if (key_ != null) {
+      output.writeMessage(2, getKey());
+    }
+    if (attributes_ != null) {
+      output.writeMessage(3, getAttributes());
     }
     if (value_ != null) {
-      output.writeMessage(3, getValue());
+      output.writeMessage(4, getValue());
     }
     unknownFields.writeTo(output);
   }
@@ -292,12 +324,17 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, collection_);
     }
-    if (!getKeyBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, key_);
+    if (key_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getKey());
+    }
+    if (attributes_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(3, getAttributes());
     }
     if (value_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getValue());
+        .computeMessageSize(4, getValue());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -316,8 +353,16 @@ private static final long serialVersionUID = 0L;
 
     if (!getCollection()
         .equals(other.getCollection())) return false;
-    if (!getKey()
-        .equals(other.getKey())) return false;
+    if (hasKey() != other.hasKey()) return false;
+    if (hasKey()) {
+      if (!getKey()
+          .equals(other.getKey())) return false;
+    }
+    if (hasAttributes() != other.hasAttributes()) return false;
+    if (hasAttributes()) {
+      if (!getAttributes()
+          .equals(other.getAttributes())) return false;
+    }
     if (hasValue() != other.hasValue()) return false;
     if (hasValue()) {
       if (!getValue()
@@ -336,8 +381,14 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + COLLECTION_FIELD_NUMBER;
     hash = (53 * hash) + getCollection().hashCode();
-    hash = (37 * hash) + KEY_FIELD_NUMBER;
-    hash = (53 * hash) + getKey().hashCode();
+    if (hasKey()) {
+      hash = (37 * hash) + KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getKey().hashCode();
+    }
+    if (hasAttributes()) {
+      hash = (37 * hash) + ATTRIBUTES_FIELD_NUMBER;
+      hash = (53 * hash) + getAttributes().hashCode();
+    }
     if (hasValue()) {
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
       hash = (53 * hash) + getValue().hashCode();
@@ -477,8 +528,18 @@ private static final long serialVersionUID = 0L;
       super.clear();
       collection_ = "";
 
-      key_ = "";
-
+      if (keyBuilder_ == null) {
+        key_ = null;
+      } else {
+        key_ = null;
+        keyBuilder_ = null;
+      }
+      if (attributesBuilder_ == null) {
+        attributes_ = null;
+      } else {
+        attributes_ = null;
+        attributesBuilder_ = null;
+      }
       if (valueBuilder_ == null) {
         value_ = null;
       } else {
@@ -512,7 +573,16 @@ private static final long serialVersionUID = 0L;
     public io.nitric.proto.kv.v1.KeyValuePutRequest buildPartial() {
       io.nitric.proto.kv.v1.KeyValuePutRequest result = new io.nitric.proto.kv.v1.KeyValuePutRequest(this);
       result.collection_ = collection_;
-      result.key_ = key_;
+      if (keyBuilder_ == null) {
+        result.key_ = key_;
+      } else {
+        result.key_ = keyBuilder_.build();
+      }
+      if (attributesBuilder_ == null) {
+        result.attributes_ = attributes_;
+      } else {
+        result.attributes_ = attributesBuilder_.build();
+      }
       if (valueBuilder_ == null) {
         result.value_ = value_;
       } else {
@@ -570,9 +640,11 @@ private static final long serialVersionUID = 0L;
         collection_ = other.collection_;
         onChanged();
       }
-      if (!other.getKey().isEmpty()) {
-        key_ = other.key_;
-        onChanged();
+      if (other.hasKey()) {
+        mergeKey(other.getKey());
+      }
+      if (other.hasAttributes()) {
+        mergeAttributes(other.getAttributes());
       }
       if (other.hasValue()) {
         mergeValue(other.getValue());
@@ -702,25 +774,33 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.lang.Object key_ = "";
+    private com.google.protobuf.Struct key_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> keyBuilder_;
     /**
      * <pre>
      * The unique key of the keyValue to put
      * </pre>
      *
-     * <code>string key = 2;</code>
+     * <code>.google.protobuf.Struct key = 2;</code>
+     * @return Whether the key field is set.
+     */
+    public boolean hasKey() {
+      return keyBuilder_ != null || key_ != null;
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to put
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
      * @return The key.
      */
-    public java.lang.String getKey() {
-      java.lang.Object ref = key_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        key_ = s;
-        return s;
+    public com.google.protobuf.Struct getKey() {
+      if (keyBuilder_ == null) {
+        return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
       } else {
-        return (java.lang.String) ref;
+        return keyBuilder_.getMessage();
       }
     }
     /**
@@ -728,39 +808,37 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to put
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @return The bytes for key.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
-    public com.google.protobuf.ByteString
-        getKeyBytes() {
-      java.lang.Object ref = key_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        key_ = b;
-        return b;
+    public Builder setKey(com.google.protobuf.Struct value) {
+      if (keyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        key_ = value;
+        onChanged();
       } else {
-        return (com.google.protobuf.ByteString) ref;
+        keyBuilder_.setMessage(value);
       }
+
+      return this;
     }
     /**
      * <pre>
      * The unique key of the keyValue to put
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @param value The key to set.
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
     public Builder setKey(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
+        com.google.protobuf.Struct.Builder builderForValue) {
+      if (keyBuilder_ == null) {
+        key_ = builderForValue.build();
+        onChanged();
+      } else {
+        keyBuilder_.setMessage(builderForValue.build());
+      }
 
-      key_ = value;
-      onChanged();
       return this;
     }
     /**
@@ -768,13 +846,39 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to put
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    public Builder mergeKey(com.google.protobuf.Struct value) {
+      if (keyBuilder_ == null) {
+        if (key_ != null) {
+          key_ =
+            com.google.protobuf.Struct.newBuilder(key_).mergeFrom(value).buildPartial();
+        } else {
+          key_ = value;
+        }
+        onChanged();
+      } else {
+        keyBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to put
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
     public Builder clearKey() {
+      if (keyBuilder_ == null) {
+        key_ = null;
+        onChanged();
+      } else {
+        key_ = null;
+        keyBuilder_ = null;
+      }
 
-      key_ = getDefaultInstance().getKey();
-      onChanged();
       return this;
     }
     /**
@@ -782,20 +886,202 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to put
      * </pre>
      *
-     * <code>string key = 2;</code>
-     * @param value The bytes for key to set.
-     * @return This builder for chaining.
+     * <code>.google.protobuf.Struct key = 2;</code>
      */
-    public Builder setKeyBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+    public com.google.protobuf.Struct.Builder getKeyBuilder() {
 
-      key_ = value;
       onChanged();
+      return getKeyFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to put
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
+      if (keyBuilder_ != null) {
+        return keyBuilder_.getMessageOrBuilder();
+      } else {
+        return key_ == null ?
+            com.google.protobuf.Struct.getDefaultInstance() : key_;
+      }
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to put
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct key = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
+        getKeyFieldBuilder() {
+      if (keyBuilder_ == null) {
+        keyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
+                getKey(),
+                getParentForChildren(),
+                isClean());
+        key_ = null;
+      }
+      return keyBuilder_;
+    }
+
+    private com.google.protobuf.Struct attributes_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> attributesBuilder_;
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     * @return Whether the attributes field is set.
+     */
+    public boolean hasAttributes() {
+      return attributesBuilder_ != null || attributes_ != null;
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     * @return The attributes.
+     */
+    public com.google.protobuf.Struct getAttributes() {
+      if (attributesBuilder_ == null) {
+        return attributes_ == null ? com.google.protobuf.Struct.getDefaultInstance() : attributes_;
+      } else {
+        return attributesBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public Builder setAttributes(com.google.protobuf.Struct value) {
+      if (attributesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        attributes_ = value;
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(value);
+      }
+
       return this;
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public Builder setAttributes(
+        com.google.protobuf.Struct.Builder builderForValue) {
+      if (attributesBuilder_ == null) {
+        attributes_ = builderForValue.build();
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public Builder mergeAttributes(com.google.protobuf.Struct value) {
+      if (attributesBuilder_ == null) {
+        if (attributes_ != null) {
+          attributes_ =
+            com.google.protobuf.Struct.newBuilder(attributes_).mergeFrom(value).buildPartial();
+        } else {
+          attributes_ = value;
+        }
+        onChanged();
+      } else {
+        attributesBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public Builder clearAttributes() {
+      if (attributesBuilder_ == null) {
+        attributes_ = null;
+        onChanged();
+      } else {
+        attributes_ = null;
+        attributesBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public com.google.protobuf.Struct.Builder getAttributesBuilder() {
+
+      onChanged();
+      return getAttributesFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    public com.google.protobuf.StructOrBuilder getAttributesOrBuilder() {
+      if (attributesBuilder_ != null) {
+        return attributesBuilder_.getMessageOrBuilder();
+      } else {
+        return attributes_ == null ?
+            com.google.protobuf.Struct.getDefaultInstance() : attributes_;
+      }
+    }
+    /**
+     * <pre>
+     * The top level attributes to put (optional)
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct attributes = 3;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
+        getAttributesFieldBuilder() {
+      if (attributesBuilder_ == null) {
+        attributesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
+                getAttributes(),
+                getParentForChildren(),
+                isClean());
+        attributes_ = null;
+      }
+      return attributesBuilder_;
     }
 
     private com.google.protobuf.Struct value_;
@@ -806,7 +1092,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      * @return Whether the value field is set.
      */
     public boolean hasValue() {
@@ -817,7 +1103,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      * @return The value.
      */
     public com.google.protobuf.Struct getValue() {
@@ -832,7 +1118,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public Builder setValue(com.google.protobuf.Struct value) {
       if (valueBuilder_ == null) {
@@ -852,7 +1138,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public Builder setValue(
         com.google.protobuf.Struct.Builder builderForValue) {
@@ -870,7 +1156,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public Builder mergeValue(com.google.protobuf.Struct value) {
       if (valueBuilder_ == null) {
@@ -892,7 +1178,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public Builder clearValue() {
       if (valueBuilder_ == null) {
@@ -910,7 +1196,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public com.google.protobuf.Struct.Builder getValueBuilder() {
 
@@ -922,7 +1208,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     public com.google.protobuf.StructOrBuilder getValueOrBuilder() {
       if (valueBuilder_ != null) {
@@ -937,7 +1223,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 3;</code>
+     * <code>.google.protobuf.Struct value = 4;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>

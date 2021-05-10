@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10};
+var data = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,13 +90,13 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -135,7 +135,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">KeyValueClient&lt;T&gt;</span>
 extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block"><p>
-  Provides a Key Value API client.
+  Provides a Key Value Service client class.
  </p>
 
  <h3>Collections</h3>
@@ -169,14 +169,21 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 
   // Get a customer record
   String key = "john.smith@gmail.com";
-  Map&lt;String, Object&gt; customer = client.get(key);
+  Map&lt;String, Object&gt; customer = client.newGet()
+      .key(key)
+      .get();
 
   // Update a customer record
   customer.put("mobile", "0432 321 543");
-  client.put(key, value);
+  client.newPut()
+      .key(key)
+      .value(value)
+      .put();
 
   // Delete a customer record
-  client.delete(key);
+  client.newDelete()
+      .key(key)
+      .delete();
  </code></pre>
 
  <p>
@@ -223,13 +230,18 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 
           // Get an account record
           String id = request.getParameter("id");
-          Account account = client.get(id);
+          Account account = client.newGet()
+              .key(id)
+              .get();
 
           // Update an account record
           account.setMobile("0432 321 543");
           account.setActive(false);
 
-          client.put(id, account);
+          client.newPut()
+              .key(id)
+              .value(account)
+              .put();
 
           return HttpResponse.build("OK");
       }
@@ -276,6 +288,11 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="Get.html" title="class in io.nitric.api.kv"><code>Get</code></a>, 
+<a href="Query.html" title="class in io.nitric.api.kv"><code>Query</code></a>, 
+<a href="Put.html" title="class in io.nitric.api.kv"><code>Put</code></a>, 
+<a href="Delete.html" title="class in io.nitric.api.kv"><code>Delete</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -301,7 +318,32 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="KeyValueClient.Builder.html" title="class in io.nitric.api.kv">KeyValueClient.Builder</a>&lt;<a href="KeyValueClient.Builder.html" title="type parameter in KeyValueClient.Builder">K</a>&gt;</span></code></th>
 <td class="colLast">
-<div class="block">Provides a KeyValueClient Builder.</div>
+<div class="block">Provides a KeyValueClient builder class.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
+<!-- =========== FIELD SUMMARY =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Field</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DEFAULT_KEY_NAME">DEFAULT_KEY_NAME</a></span></code></th>
+<td class="colLast">
+<div class="block">The default key name: 'key'.</div>
 </td>
 </tr>
 </table>
@@ -331,35 +373,41 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#delete(java.lang.Object)">delete</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key)</code></th>
-<td class="colLast">
-<div class="block">Delete the collection value with the given key.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#get(java.lang.Object)">get</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key)</code></th>
-<td class="colLast">
-<div class="block">Return the collection value for the given key.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="KeyValueClient.Builder.html" title="class in io.nitric.api.kv">KeyValueClient.Builder</a>&lt;T&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#newBuilder(java.lang.Class)">newBuilder</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Class.html?is-external=true" title="class or interface in java.lang" class="externalLink">Class</a>&lt;T&gt;&nbsp;type)</code></th>
 <td class="colLast">
 <div class="block">Return a new KeyValueClient Builder for the given type.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#put(java.lang.Object,T)">put</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key,
-   <a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&nbsp;value)</code></th>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="Delete.html" title="class in io.nitric.api.kv">Delete</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#newDelete()">newDelete</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Store the value in the collection with the given key.</div>
+<div class="block">Return a new Delete operation.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="Get.html" title="class in io.nitric.api.kv">Get</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#newGet()">newGet</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Return a new Get operation.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#newPut()">newPut</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Return a new Put operation.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="Query.html" title="class in io.nitric.api.kv">Query</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#newQuery()">newQuery</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Return a new Query operation.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -381,6 +429,30 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a id="DEFAULT_KEY_NAME">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>DEFAULT_KEY_NAME</h4>
+<pre>public static final&nbsp;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a> DEFAULT_KEY_NAME</pre>
+<div class="block">The default key name: 'key'.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#io.nitric.api.kv.KeyValueClient.DEFAULT_KEY_NAME">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ============ METHOD DETAIL ========== -->
 <section role="region">
 <ul class="blockList">
@@ -388,54 +460,6 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="get(java.lang.Object)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>get</h4>
-<pre class="methodSignature">public&nbsp;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&nbsp;get&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key)</pre>
-<div class="block">Return the collection value for the given key.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>key</code> - the values key in the collection (required)</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the collection value for the given key, or null if not found</dd>
-</dl>
-</li>
-</ul>
-<a id="put(java.lang.Object,java.lang.Object)">
-<!--   -->
-</a><a id="put(java.lang.Object,T)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>put</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;put&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key,
-                <a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&nbsp;value)</pre>
-<div class="block">Store the value in the collection with the given key.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>key</code> - the values key in the collection (required)</dd>
-<dd><code>value</code> - the value to store for the given collection and key</dd>
-</dl>
-</li>
-</ul>
-<a id="delete(java.lang.Object)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>delete</h4>
-<pre class="methodSignature">public&nbsp;void&nbsp;delete&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;key)</pre>
-<div class="block">Delete the collection value with the given key.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>key</code> - the values key in the collection (required)</dd>
-</dl>
-</li>
-</ul>
 <a id="newBuilder(java.lang.Class)">
 <!--   -->
 </a>
@@ -471,6 +495,62 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <dd><code>collection</code> - the name of the collection (required)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>new KeyValueClient builder</dd>
+</dl>
+</li>
+</ul>
+<a id="newGet()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newGet</h4>
+<pre class="methodSignature">public&nbsp;<a href="Get.html" title="class in io.nitric.api.kv">Get</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;&nbsp;newGet()</pre>
+<div class="block">Return a new Get operation.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new Get operation</dd>
+</dl>
+</li>
+</ul>
+<a id="newQuery()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newQuery</h4>
+<pre class="methodSignature">public&nbsp;<a href="Query.html" title="class in io.nitric.api.kv">Query</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;&nbsp;newQuery()</pre>
+<div class="block">Return a new Query operation.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new Query operation</dd>
+</dl>
+</li>
+</ul>
+<a id="newPut()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newPut</h4>
+<pre class="methodSignature">public&nbsp;<a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;&nbsp;newPut()</pre>
+<div class="block">Return a new Put operation.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new Put operation</dd>
+</dl>
+</li>
+</ul>
+<a id="newDelete()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newDelete</h4>
+<pre class="methodSignature">public&nbsp;<a href="Delete.html" title="class in io.nitric.api.kv">Delete</a>&lt;<a href="KeyValueClient.html" title="type parameter in KeyValueClient">T</a>&gt;&nbsp;newDelete()</pre>
+<div class="block">Return a new Delete operation.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new Delete operation</dd>
 </dl>
 </li>
 </ul>
@@ -543,13 +623,13 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
