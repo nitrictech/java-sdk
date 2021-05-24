@@ -1,5 +1,37 @@
 /**
- * Provides the Key Value Service API.
+ * <p>
+ *  Provides the Key Value Service API.
+ * </p>
+ *
+ * <p>
+ *  The example below illustrates using the Key Value API.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import io.nitric.api.kv.KeyValueClient;
+ *  ...
+ *
+ *  // Create a 'customers' collection KV client
+ *  var client = KeyValueClient.build(Map.class, "customers");
+ *
+ *  // Get a customer record
+ *  var key = "john.smith@gmail.com";
+ *  Map&lt;String, Object&gt; customer = client.newGet()
+ *      .key(key)
+ *      .get();
+ *
+ *  // Update a customer record
+ *  customer.put("mobile", "0432 321 543");
+ *  client.newPut()
+ *      .key(key)
+ *      .value(value)
+ *      .put();
+ *
+ *  // Delete a customer record
+ *  client.newDelete()
+ *      .key(key)
+ *      .delete();
+ * </code></pre>
  *
  * @since 1.0
  */

@@ -55,8 +55,7 @@ import java.util.Objects;
  *  </code></pre>
  *
  * <p>
- * The example below illustrates single table design Put operation with a top level <code>"created"</code> attribute
- * which can be used for query filtering.
+ * The example below illustrates single table design Put operation with composite partition key (pk) and sort key (sk).
  * </p>
  *
  * <pre><code class="code">
@@ -72,7 +71,6 @@ import java.util.Objects;
  *  client.newPut()
  *     .key("pk", "Customer#" + customer.getId())
  *     .key("sk", "Order#" + order.getId())
- *     .attribute("created", order.getCreatedAt())
  *     .value(order)
  *     .put();
  *  </code></pre>
@@ -83,7 +81,6 @@ public class Put<T> {
 
     final KeyValueClient.Builder builder;
     final Map<String, Object> key = new HashMap<>();
-    final Map<String, Object> attributes = new HashMap<>();
     T value;
 
     /*
@@ -155,23 +152,6 @@ public class Put<T> {
     }
 
     /**
-     * Set the collection attribute name and value pair. A attribute is a top level collection field which can
-     * be used for query filtering purposes. Attributes are not returned with a Key Value Get or Query operation, but
-     * are used to improve query performance and design patterns like single table design.
-     *
-     * @param name  the attribute name (required)
-     * @param value the attribute value (required)
-     * @return the Put operation
-     */
-    public Put<T> attribute(String name, Object value) {
-        Objects.requireNonNull(name, "name parameter is required");
-        Objects.requireNonNull(value, "value parameter is required");
-
-        this.attributes.put(name, value);
-        return this;
-    }
-
-    /**
      * Set the put operation value.
      *
      * @param value the value (required)
@@ -204,13 +184,11 @@ public class Put<T> {
         }
 
         var keyStruct = ProtoUtils.toStruct(key);
-        var attributesStruct = ProtoUtils.toStruct(attributes);
         var valueStruct = ProtoUtils.toStruct(valueMap);
 
         var requestBuilder = KeyValuePutRequest.newBuilder()
                 .setCollection(builder.collection)
                 .setKey(keyStruct)
-                .setAttributes(attributesStruct)
                 .setValue(valueStruct);
 
         var request = requestBuilder.build();
@@ -226,7 +204,6 @@ public class Put<T> {
         return getClass().getSimpleName()
                 + "[builder=" + builder
                 + ", key=" + key
-                + ", attributes=" + attributes
                 + ", value=" + value
                 + "]";
     }

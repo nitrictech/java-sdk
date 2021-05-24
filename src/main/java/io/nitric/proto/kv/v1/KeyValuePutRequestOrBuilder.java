@@ -56,37 +56,10 @@ public interface KeyValuePutRequestOrBuilder extends
 
   /**
    * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   * @return Whether the attributes field is set.
-   */
-  boolean hasAttributes();
-  /**
-   * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   * @return The attributes.
-   */
-  com.google.protobuf.Struct getAttributes();
-  /**
-   * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   */
-  com.google.protobuf.StructOrBuilder getAttributesOrBuilder();
-
-  /**
-   * <pre>
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    * @return Whether the value field is set.
    */
   boolean hasValue();
@@ -95,7 +68,7 @@ public interface KeyValuePutRequestOrBuilder extends
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    * @return The value.
    */
   com.google.protobuf.Struct getValue();
@@ -104,7 +77,7 @@ public interface KeyValuePutRequestOrBuilder extends
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    */
   com.google.protobuf.StructOrBuilder getValueOrBuilder();
 }

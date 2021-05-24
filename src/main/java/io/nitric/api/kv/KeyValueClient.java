@@ -28,29 +28,30 @@ import java.util.Objects;
 
 /**
  * <p>
- *  Provides a Key Value Service client class.
+ *  Provides a Key Value Service client class. Features of the Key Value API are provided below.
  * </p>
  *
  * <h3>Collections</h3>
  *
  * <p>
- *  The Key Value API supports collections, which is typically used to store similar types of data.
- *  This is a common pattern used in Document stores, and in the SQL relational world this equates to tables.
+ *  The Key Value API supports collections, which is typically used to store similar types of data. For example
+ *  you may have separate 'customers' and 'orders' collections for different types of data. In the SQL relational world
+ *  collections equate to tables.
  * </p>
  *
  * <h3>Object Mapping</h3>
  *
  * <p>
- *  The Key Value Client supports mapping data plain old Java objects (POJO) into and out of the KV service.
+ *  The Key Value API supports mapping data plain old Java objects (POJO) into and out of the KV service.
  *  POJO classes should follow the Java bean type pattern with public getters and setters for properties and a
- *  default or no-args constructor.
+ *  default or no-args constructor. Internally this package uses the Jackson Databind library for object mapping.
  * </p>
  *
  * <h3>Examples</h3>
  *
  * <p>
- *  The example below illustrates the Key Value API with a 'customers' collection and an object mapping to the Java
- *  <code>Map</code> type.
+ *  The example below illustrates using the Key Value API with a 'customers' collection and an object mapping to the
+ *  Java <code>Map</code> type.
  * </p>
  *
  * <pre><code class="code">
@@ -61,7 +62,7 @@ import java.util.Objects;
  *  var client = KeyValueClient.build(Map.class, "customers");
  *
  *  // Get a customer record
- *  String key = "john.smith@gmail.com";
+ *  var key = "john.smith@gmail.com";
  *  Map&lt;String, Object&gt; customer = client.newGet()
  *      .key(key)
  *      .get();

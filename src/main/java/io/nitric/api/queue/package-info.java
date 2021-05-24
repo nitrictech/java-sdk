@@ -1,5 +1,30 @@
 /**
- * Provides the Queue Service API.
+ * <p>
+ *  Provides the Queue Service API.
+ * </p>
+ *
+ * <p>
+ *  The example below illustrates using the Queue API.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import io.nitric.api.queue.QueueClient;
+ *  import io.nitric.api.queue.Task;
+ *  ...
+ *
+ *  String orderId = ...
+ *  String serialNumber = ...
+ *
+ *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
+ *  var task = Task.build(payload);
+ *
+ *  // Send a task to the 'shipping' queue client
+ *  var client = QueueClient.build("shipping");
+ *  client.send(task);
+ *
+ *  // Receive a list of tasks from the 'shipping' queue
+ *  List&lt;Task&gt; tasks = client.receive(100);
+ * </code></pre>
  *
  * @since 1.0
  */

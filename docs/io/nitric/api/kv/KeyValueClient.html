@@ -156,8 +156,8 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
  <h3>Examples</h3>
 
  <p>
-  The example below illustrates the Key Value API with a 'customers' collection and an object mapping to the Java
-  <code>Map</code> type.
+  The example below illustrates using the Key Value API with a 'customers' collection and an object mapping to the
+  Java <code>Map</code> type.
  </p>
 
  <pre><code class="code">
@@ -168,7 +168,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
   var client = KeyValueClient.build(Map.class, "customers");
 
   // Get a customer record
-  String key = "john.smith@gmail.com";
+  var key = "john.smith@gmail.com";
   Map&lt;String, Object&gt; customer = client.newGet()
       .key(key)
       .get();

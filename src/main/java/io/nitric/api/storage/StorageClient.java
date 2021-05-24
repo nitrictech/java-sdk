@@ -35,7 +35,7 @@ import java.util.Objects;
  * </p>
  *
  * <p>
- *  The example below illustrates the Storage API.
+ *  The example below illustrates using the Storage API.
  * </p>
  *
  * <pre><code class="code">

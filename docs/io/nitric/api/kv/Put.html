@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -160,8 +160,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
   </code></pre>
 
  <p>
- The example below illustrates single table design Put operation with a top level <code>"created"</code> attribute
- which can be used for query filtering.
+ The example below illustrates single table design Put operation with composite partition key (pk) and sort key (sk).
  </p>
 
  <pre><code class="code">
@@ -177,7 +176,6 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
   client.newPut()
      .key("pk", "Customer#" + customer.getId())
      .key("sk", "Order#" + order.getId())
-     .attribute("created", order.getCreatedAt())
      .value(order)
      .put();
   </code></pre></div>
@@ -207,27 +205,19 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#attribute(java.lang.String,java.lang.Object)">attribute</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;name,
-         <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
-<td class="colLast">
-<div class="block">Set the collection attribute name and value pair.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#key(java.lang.Number)">key</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Number.html?is-external=true" title="class or interface in java.lang" class="externalLink">Number</a>&nbsp;keyValue)</code></th>
 <td class="colLast">
 <div class="block">Set the default keyValue.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#key(java.lang.String)">key</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;keyValue)</code></th>
 <td class="colLast">
 <div class="block">Set the default key value.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#key(java.lang.String,java.lang.Object)">key</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;key,
    <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</code></th>
@@ -235,7 +225,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <div class="block">Set the custom key name and key value pair.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#key(java.lang.String,java.lang.Object,java.lang.String,java.lang.Object)">key</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;key1,
    <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value1,
@@ -245,19 +235,19 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <div class="block">Set the custom key name and key value pairs.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#put()">put</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Store the value in the collection with the specified key and value.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#value(T)">value</a></span>&#8203;(<a href="Put.html" title="type parameter in Put">T</a>&nbsp;value)</code></th>
 <td class="colLast">
@@ -355,26 +345,6 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <dd><code>value1</code> - the custom key 1 value (required)</dd>
 <dd><code>key2</code> - the custom key 2 name (required)</dd>
 <dd><code>value2</code> - the custom key 2 value (required)</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the Put operation</dd>
-</dl>
-</li>
-</ul>
-<a id="attribute(java.lang.String,java.lang.Object)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>attribute</h4>
-<pre class="methodSignature">public&nbsp;<a href="Put.html" title="class in io.nitric.api.kv">Put</a>&lt;<a href="Put.html" title="type parameter in Put">T</a>&gt;&nbsp;attribute&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;name,
-                        <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&nbsp;value)</pre>
-<div class="block">Set the collection attribute name and value pair. A attribute is a top level collection field which can
- be used for query filtering purposes. Attributes are not returned with a Key Value Get or Query operation, but
- are used to improve query performance and design patterns like single table design.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>name</code> - the attribute name (required)</dd>
-<dd><code>value</code> - the attribute value (required)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the Put operation</dd>
 </dl>

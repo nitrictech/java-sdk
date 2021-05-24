@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * </p>
  *
  * <p>
- *  The example below illustrates the Queue API.
+ *  The example below illustrates using the Queue API.
  * </p>
  *
  * <pre><code class="code">

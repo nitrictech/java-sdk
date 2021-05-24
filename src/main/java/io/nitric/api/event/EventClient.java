@@ -33,7 +33,7 @@ import java.util.Objects;
  * </p>
  *
  * <p>
- *  The example below illustrates the Event API.
+ *  The example below illustrates using the Event API.
  * </p>
  *
  * <pre><code class="code">

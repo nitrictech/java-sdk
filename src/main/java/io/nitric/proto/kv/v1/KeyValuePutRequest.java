@@ -70,19 +70,6 @@ private static final long serialVersionUID = 0L;
           }
           case 26: {
             com.google.protobuf.Struct.Builder subBuilder = null;
-            if (attributes_ != null) {
-              subBuilder = attributes_.toBuilder();
-            }
-            attributes_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(attributes_);
-              attributes_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 34: {
-            com.google.protobuf.Struct.Builder subBuilder = null;
             if (value_ != null) {
               subBuilder = value_.toBuilder();
             }
@@ -210,52 +197,14 @@ private static final long serialVersionUID = 0L;
     return getKey();
   }
 
-  public static final int ATTRIBUTES_FIELD_NUMBER = 3;
-  private com.google.protobuf.Struct attributes_;
-  /**
-   * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   * @return Whether the attributes field is set.
-   */
-  @java.lang.Override
-  public boolean hasAttributes() {
-    return attributes_ != null;
-  }
-  /**
-   * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   * @return The attributes.
-   */
-  @java.lang.Override
-  public com.google.protobuf.Struct getAttributes() {
-    return attributes_ == null ? com.google.protobuf.Struct.getDefaultInstance() : attributes_;
-  }
-  /**
-   * <pre>
-   * The top level attributes to put (optional)
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct attributes = 3;</code>
-   */
-  @java.lang.Override
-  public com.google.protobuf.StructOrBuilder getAttributesOrBuilder() {
-    return getAttributes();
-  }
-
-  public static final int VALUE_FIELD_NUMBER = 4;
+  public static final int VALUE_FIELD_NUMBER = 3;
   private com.google.protobuf.Struct value_;
   /**
    * <pre>
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    * @return Whether the value field is set.
    */
   @java.lang.Override
@@ -267,7 +216,7 @@ private static final long serialVersionUID = 0L;
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    * @return The value.
    */
   @java.lang.Override
@@ -279,7 +228,7 @@ private static final long serialVersionUID = 0L;
    * A simple JSON object
    * </pre>
    *
-   * <code>.google.protobuf.Struct value = 4;</code>
+   * <code>.google.protobuf.Struct value = 3;</code>
    */
   @java.lang.Override
   public com.google.protobuf.StructOrBuilder getValueOrBuilder() {
@@ -306,11 +255,8 @@ private static final long serialVersionUID = 0L;
     if (key_ != null) {
       output.writeMessage(2, getKey());
     }
-    if (attributes_ != null) {
-      output.writeMessage(3, getAttributes());
-    }
     if (value_ != null) {
-      output.writeMessage(4, getValue());
+      output.writeMessage(3, getValue());
     }
     unknownFields.writeTo(output);
   }
@@ -328,13 +274,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getKey());
     }
-    if (attributes_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(3, getAttributes());
-    }
     if (value_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(4, getValue());
+        .computeMessageSize(3, getValue());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -358,11 +300,6 @@ private static final long serialVersionUID = 0L;
       if (!getKey()
           .equals(other.getKey())) return false;
     }
-    if (hasAttributes() != other.hasAttributes()) return false;
-    if (hasAttributes()) {
-      if (!getAttributes()
-          .equals(other.getAttributes())) return false;
-    }
     if (hasValue() != other.hasValue()) return false;
     if (hasValue()) {
       if (!getValue()
@@ -384,10 +321,6 @@ private static final long serialVersionUID = 0L;
     if (hasKey()) {
       hash = (37 * hash) + KEY_FIELD_NUMBER;
       hash = (53 * hash) + getKey().hashCode();
-    }
-    if (hasAttributes()) {
-      hash = (37 * hash) + ATTRIBUTES_FIELD_NUMBER;
-      hash = (53 * hash) + getAttributes().hashCode();
     }
     if (hasValue()) {
       hash = (37 * hash) + VALUE_FIELD_NUMBER;
@@ -534,12 +467,6 @@ private static final long serialVersionUID = 0L;
         key_ = null;
         keyBuilder_ = null;
       }
-      if (attributesBuilder_ == null) {
-        attributes_ = null;
-      } else {
-        attributes_ = null;
-        attributesBuilder_ = null;
-      }
       if (valueBuilder_ == null) {
         value_ = null;
       } else {
@@ -577,11 +504,6 @@ private static final long serialVersionUID = 0L;
         result.key_ = key_;
       } else {
         result.key_ = keyBuilder_.build();
-      }
-      if (attributesBuilder_ == null) {
-        result.attributes_ = attributes_;
-      } else {
-        result.attributes_ = attributesBuilder_.build();
       }
       if (valueBuilder_ == null) {
         result.value_ = value_;
@@ -642,9 +564,6 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasKey()) {
         mergeKey(other.getKey());
-      }
-      if (other.hasAttributes()) {
-        mergeAttributes(other.getAttributes());
       }
       if (other.hasValue()) {
         mergeValue(other.getValue());
@@ -929,161 +848,6 @@ private static final long serialVersionUID = 0L;
       return keyBuilder_;
     }
 
-    private com.google.protobuf.Struct attributes_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> attributesBuilder_;
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     * @return Whether the attributes field is set.
-     */
-    public boolean hasAttributes() {
-      return attributesBuilder_ != null || attributes_ != null;
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     * @return The attributes.
-     */
-    public com.google.protobuf.Struct getAttributes() {
-      if (attributesBuilder_ == null) {
-        return attributes_ == null ? com.google.protobuf.Struct.getDefaultInstance() : attributes_;
-      } else {
-        return attributesBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public Builder setAttributes(com.google.protobuf.Struct value) {
-      if (attributesBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        attributes_ = value;
-        onChanged();
-      } else {
-        attributesBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public Builder setAttributes(
-        com.google.protobuf.Struct.Builder builderForValue) {
-      if (attributesBuilder_ == null) {
-        attributes_ = builderForValue.build();
-        onChanged();
-      } else {
-        attributesBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public Builder mergeAttributes(com.google.protobuf.Struct value) {
-      if (attributesBuilder_ == null) {
-        if (attributes_ != null) {
-          attributes_ =
-            com.google.protobuf.Struct.newBuilder(attributes_).mergeFrom(value).buildPartial();
-        } else {
-          attributes_ = value;
-        }
-        onChanged();
-      } else {
-        attributesBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public Builder clearAttributes() {
-      if (attributesBuilder_ == null) {
-        attributes_ = null;
-        onChanged();
-      } else {
-        attributes_ = null;
-        attributesBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public com.google.protobuf.Struct.Builder getAttributesBuilder() {
-
-      onChanged();
-      return getAttributesFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    public com.google.protobuf.StructOrBuilder getAttributesOrBuilder() {
-      if (attributesBuilder_ != null) {
-        return attributesBuilder_.getMessageOrBuilder();
-      } else {
-        return attributes_ == null ?
-            com.google.protobuf.Struct.getDefaultInstance() : attributes_;
-      }
-    }
-    /**
-     * <pre>
-     * The top level attributes to put (optional)
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct attributes = 3;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
-        getAttributesFieldBuilder() {
-      if (attributesBuilder_ == null) {
-        attributesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
-                getAttributes(),
-                getParentForChildren(),
-                isClean());
-        attributes_ = null;
-      }
-      return attributesBuilder_;
-    }
-
     private com.google.protobuf.Struct value_;
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> valueBuilder_;
@@ -1092,7 +856,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      * @return Whether the value field is set.
      */
     public boolean hasValue() {
@@ -1103,7 +867,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      * @return The value.
      */
     public com.google.protobuf.Struct getValue() {
@@ -1118,7 +882,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public Builder setValue(com.google.protobuf.Struct value) {
       if (valueBuilder_ == null) {
@@ -1138,7 +902,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public Builder setValue(
         com.google.protobuf.Struct.Builder builderForValue) {
@@ -1156,7 +920,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public Builder mergeValue(com.google.protobuf.Struct value) {
       if (valueBuilder_ == null) {
@@ -1178,7 +942,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public Builder clearValue() {
       if (valueBuilder_ == null) {
@@ -1196,7 +960,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public com.google.protobuf.Struct.Builder getValueBuilder() {
 
@@ -1208,7 +972,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     public com.google.protobuf.StructOrBuilder getValueOrBuilder() {
       if (valueBuilder_ != null) {
@@ -1223,7 +987,7 @@ private static final long serialVersionUID = 0L;
      * A simple JSON object
      * </pre>
      *
-     * <code>.google.protobuf.Struct value = 4;</code>
+     * <code>.google.protobuf.Struct value = 3;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>

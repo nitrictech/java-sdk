@@ -132,7 +132,7 @@ private static final long serialVersionUID = 0L;
 
     /**
      * <pre>
-     * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+     * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
      * </pre>
      *
      * <code>string operator = 2;</code>
@@ -141,7 +141,7 @@ private static final long serialVersionUID = 0L;
     java.lang.String getOperator();
     /**
      * <pre>
-     * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+     * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
      * </pre>
      *
      * <code>string operator = 2;</code>
@@ -318,7 +318,7 @@ private static final long serialVersionUID = 0L;
     private volatile java.lang.Object operator_;
     /**
      * <pre>
-     * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+     * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
      * </pre>
      *
      * <code>string operator = 2;</code>
@@ -339,7 +339,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+     * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
      * </pre>
      *
      * <code>string operator = 2;</code>
@@ -841,7 +841,7 @@ private static final long serialVersionUID = 0L;
       private java.lang.Object operator_ = "";
       /**
        * <pre>
-       * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+       * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
        * </pre>
        *
        * <code>string operator = 2;</code>
@@ -861,7 +861,7 @@ private static final long serialVersionUID = 0L;
       }
       /**
        * <pre>
-       * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+       * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
        * </pre>
        *
        * <code>string operator = 2;</code>
@@ -882,7 +882,7 @@ private static final long serialVersionUID = 0L;
       }
       /**
        * <pre>
-       * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+       * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
        * </pre>
        *
        * <code>string operator = 2;</code>
@@ -901,7 +901,7 @@ private static final long serialVersionUID = 0L;
       }
       /**
        * <pre>
-       * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+       * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
        * </pre>
        *
        * <code>string operator = 2;</code>
@@ -915,7 +915,7 @@ private static final long serialVersionUID = 0L;
       }
       /**
        * <pre>
-       * The query operator [= | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
+       * The query operator [ = | &lt; | &lt;= | &gt; | &gt;= | startsWith ]
        * </pre>
        *
        * <code>string operator = 2;</code>
