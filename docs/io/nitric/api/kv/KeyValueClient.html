@@ -135,22 +135,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <pre>public class <span class="typeNameLabel">KeyValueClient&lt;T&gt;</span>
 extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a></pre>
 <div class="block"><p>
-  Provides a Key Value Service client class.
+  Provides a Key Value Service client class. Features of the Key Value API are provided below.
  </p>
 
  <h3>Collections</h3>
 
  <p>
-  The Key Value API supports collections, which is typically used to store similar types of data.
-  This is a common pattern used in Document stores, and in the SQL relational world this equates to tables.
+  The Key Value API supports collections, which is typically used to store similar types of data. For example
+  you may have separate 'customers' and 'orders' collections for different types of data. In the SQL relational world
+  collections equate to tables.
  </p>
 
  <h3>Object Mapping</h3>
 
  <p>
-  The Key Value Client supports mapping data plain old Java objects (POJO) into and out of the KV service.
+  The Key Value API supports mapping data plain old Java objects (POJO) into and out of the KV service.
   POJO classes should follow the Java bean type pattern with public getters and setters for properties and a
-  default or no-args constructor.
+  default or no-args constructor. Internally this package uses the Jackson Databind library for object mapping.
  </p>
 
  <h3>Examples</h3>

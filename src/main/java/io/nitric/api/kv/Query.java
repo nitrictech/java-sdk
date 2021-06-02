@@ -45,13 +45,14 @@ import java.util.Set;
  *
  * <pre><code class="code">
  *  import io.nitric.api.kv.KeyValueClient;
+ *  import java.util.List;
  *  import java.util.Map;
  *  ...
  *
- *  var client = KeyValueClient.build(Map.class, "customers");
+ *  KeyValueClient client = KeyValueClient.build(Map.class, "customers");
  *
- *  var customers = client.newQuery()
- *      .where("email", "=", "john.smith@gmail.com")
+ *  List&lt;Map&gt; customers = client.newQuery()
+ *      .where("status", "=", "active")
  *      .fetch();
  *  </code></pre>
  *
@@ -62,11 +63,12 @@ import java.util.Set;
  * </p>
  *
  * <pre><code class="code">
- *  import io.nitric.api.kv.KeyValueClient;
  *  import com.example.model.Order;
+ *  import io.nitric.api.kv.KeyValueClient;
+ *  import java.util.List;
  *  ...
  *
- *  var client = KeyValueClient.build(Order.class, "application");
+ *  KeyValueClient client = KeyValueClient.build(Order.class, "application");
  *
  *  // Fetch the first 500 Orders this month
  *  List&lt;Order&gt; results = client.newQuery()

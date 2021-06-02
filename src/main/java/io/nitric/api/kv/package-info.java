@@ -9,13 +9,15 @@
  *
  * <pre><code class="code">
  *  import io.nitric.api.kv.KeyValueClient;
+ *  import java.util.List;
+ *  import java.util.Map;
  *  ...
  *
  *  // Create a 'customers' collection KV client
- *  var client = KeyValueClient.build(Map.class, "customers");
+ *  KeyValueClient client = KeyValueClient.build(Map.class, "customers");
  *
  *  // Get a customer record
- *  var key = "john.smith@gmail.com";
+ *  String key = "john.smith@gmail.com";
  *  Map&lt;String, Object&gt; customer = client.newGet()
  *      .key(key)
  *      .get();
@@ -31,6 +33,12 @@
  *  client.newDelete()
  *      .key(key)
  *      .delete();
+ *
+ *  // Fetch first 100 customer records with an active status
+ *  List&lt;Map&gt; customers = client.newQuery()
+ *      .where("status", "==", "active")
+ *      .limit(100)
+ *      .fetch();
  * </code></pre>
  *
  * @since 1.0
