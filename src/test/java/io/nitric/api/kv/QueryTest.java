@@ -31,11 +31,11 @@ public class QueryTest {
         var builder = KeyValueClient.newBuilder(Account.class);
         var query = new Query<Account>(builder);
 
-        query.where("key", "=", "value");
+        query.where("key", "==", "value");
         assertEquals(1, query.expressions.size());
         var expression = query.expressions.get(0);
         assertEquals("key", expression.operand);
-        assertEquals("=", expression.operator);
+        assertEquals("==", expression.operator);
         assertEquals("value", expression.value);
 
         query.where("range", ">", "123");
@@ -47,7 +47,7 @@ public class QueryTest {
 
         query.expressions.clear();
         try {
-            query.where("", "=", "value");
+            query.where("", "==", "value");
             assertTrue(false);
         } catch (IllegalArgumentException iae) {
             assertEquals("non blank operand parameter is required", iae.getMessage());
@@ -67,14 +67,6 @@ public class QueryTest {
             assertTrue(false);
         } catch (IllegalArgumentException iae) {
             assertEquals("non blank value parameter is required", iae.getMessage());
-        }
-
-        query.expressions.clear();
-        try {
-            query.where("key", "<>", "value");
-            assertTrue(false);
-        } catch (IllegalArgumentException iae) {
-            assertEquals("operator '<>' is not supported", iae.getMessage());
         }
     }
 

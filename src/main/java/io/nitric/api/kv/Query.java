@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * <p>
@@ -52,7 +51,7 @@ import java.util.Set;
  *  KeyValueClient client = KeyValueClient.build(Map.class, "customers");
  *
  *  List&lt;Map&gt; customers = client.newQuery()
- *      .where("status", "=", "active")
+ *      .where("status", "==", "active")
  *      .fetch();
  *  </code></pre>
  *
@@ -70,11 +69,11 @@ import java.util.Set;
  *
  *  KeyValueClient client = KeyValueClient.build(Order.class, "application");
  *
- *  // Fetch the first 500 Orders this month
+ *  // Fetch the first ten orders of the specified customer
  *  List&lt;Order&gt; results = client.newQuery()
+ *      .where("pk", "==", "Customer#" + customerId)
  *      .where("sk", "startsWith", "Order#")
- *      .where("created", "&gt;=", startDate)
- *      .limit(500)
+ *      .limit(100)
  *      .fetch();
  *  </code></pre>
  *
@@ -95,9 +94,9 @@ import java.util.Set;
  *  </thead>
  *  <tbody>
  *   <tr>
- *    <td class="codeCenter">=</td>
+ *    <td class="codeCenter">==</td>
  *    <td>equality</td>
- *    <td><code>.where("id", "=", customer.getId())</code></td>
+ *    <td><code>.where("id", "==", customer.getId())</code></td>
  *   </tr>
  *   <tr>
  *    <td class="codeCenter">&lt;</td>
@@ -131,6 +130,30 @@ import java.util.Set;
  * Queries with multiple <code>where()</code> expressions are implicitly AND together when executed.
  * </p>
  *
+ * <h3>Query Restrictions</h3>
+ *
+ * <p>
+ * To ensure multi-cloud portability we have the following additional query restrictions. Please note these may be
+ * removed in future releases.
+ * </p>
+ *
+ * <ol>
+ *  <li style="padding-bottom:0.5em;">
+ *   Only one property can have an inequality expression ( <code>&lt;, &gt;, &lt;=, &gt;=, startsWith</code> ). <br/>
+ *   For example: <code>where("id", "==", id).where("number", ">", "10)</code> <br/>
+ *   This is a Firestore composite indexes restriction.
+ *  </li>
+ *  <li>
+ *   Single property range expressions are limited to the operators <code>&gt;=</code> and <code>&lt;=</code>. <br/>
+ *   For example: <code>where("id", "==", id).where("number", ">=", "10).where("number", "<=", "20)</code> <br/>
+ *   This is a DynamoDB <code>BETWEEN</code> function mapping restriction.
+ *  </li>
+ * </ol>
+ *
+ * <p>
+ * Please note these restrictions may be removed in future releases.
+ * </p>
+ *
  * @see KeyValueClient
  */
 public class Query<T> {
@@ -138,8 +161,6 @@ public class Query<T> {
     final KeyValueClient.Builder builder;
     final List<Expression> expressions = new ArrayList<>();
     int limit;
-
-    static final Set VALID_OPERATORS = Set.of("=", "<", ">", "<=", ">=", "startsWith");
 
     /*
      * Enforce builder pattern.
@@ -153,7 +174,7 @@ public class Query<T> {
     /**
      * <p>
      * Add a where expression to the query. Valid expression operators include:
-     * <code> = , &lt; , &gt; , &lt;= , &gt;= , startsWith</code>
+     * <code> == , &lt; , &gt; , &lt;= , &gt;= , startsWith</code>
      * </p>
      *
      * <p>
@@ -178,9 +199,6 @@ public class Query<T> {
         }
         if (value.isBlank()) {
             throw new IllegalArgumentException("non blank value parameter is required");
-        }
-        if (!VALID_OPERATORS.contains(operator)) {
-            throw new IllegalArgumentException("operator '" + operator + "' is not supported");
         }
 
         expressions.add(new Expression(operand, operator, value));
