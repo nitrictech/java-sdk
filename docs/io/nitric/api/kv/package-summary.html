@@ -110,7 +110,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 
  <pre><code class="code">
   import io.nitric.api.kv.KeyValueClient;
-  import java.util.List;
+  import io.nitric.api.kv.Query.QueryResult;
   import java.util.Map;
   ...
 
@@ -136,10 +136,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
       .delete();
 
   // Fetch first 100 customer records with an active status
-  List&lt;Map&gt; customers = client.newQuery()
+  QueryResult results = client.newQuery()
       .where("status", "==", "active")
       .limit(100)
       .fetch();
+
+  results.foreach(customer -&gt; {
+      // Process customer...
+  });
  </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
@@ -194,6 +198,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <td class="colLast">
 <div class="block">
  Provides a Query operation class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="Query.QueryResult.html" title="class in io.nitric.api.kv">Query.QueryResult</a>&lt;T&gt;</th>
+<td class="colLast">
+<div class="block">Provides a query result class.</div>
 </td>
 </tr>
 </tbody>

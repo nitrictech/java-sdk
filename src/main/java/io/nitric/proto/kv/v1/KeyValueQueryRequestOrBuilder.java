@@ -80,4 +80,31 @@ public interface KeyValueQueryRequestOrBuilder extends
    * @return The limit.
    */
   int getLimit();
+
+  /**
+   * <pre>
+   * The query paging continuation token
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 4;</code>
+   * @return Whether the pagingToken field is set.
+   */
+  boolean hasPagingToken();
+  /**
+   * <pre>
+   * The query paging continuation token
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 4;</code>
+   * @return The pagingToken.
+   */
+  com.google.protobuf.Struct getPagingToken();
+  /**
+   * <pre>
+   * The query paging continuation token
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 4;</code>
+   */
+  com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder();
 }

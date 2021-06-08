@@ -59,6 +59,19 @@ private static final long serialVersionUID = 0L;
                 input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry));
             break;
           }
+          case 18: {
+            com.google.protobuf.Struct.Builder subBuilder = null;
+            if (pagingToken_ != null) {
+              subBuilder = pagingToken_.toBuilder();
+            }
+            pagingToken_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(pagingToken_);
+              pagingToken_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -154,6 +167,44 @@ private static final long serialVersionUID = 0L;
     return values_.get(index);
   }
 
+  public static final int PAGINGTOKEN_FIELD_NUMBER = 2;
+  private com.google.protobuf.Struct pagingToken_;
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   * @return Whether the pagingToken field is set.
+   */
+  @java.lang.Override
+  public boolean hasPagingToken() {
+    return pagingToken_ != null;
+  }
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   * @return The pagingToken.
+   */
+  @java.lang.Override
+  public com.google.protobuf.Struct getPagingToken() {
+    return pagingToken_ == null ? com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
+  }
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   */
+  @java.lang.Override
+  public com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder() {
+    return getPagingToken();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -171,6 +222,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < values_.size(); i++) {
       output.writeMessage(1, values_.get(i));
     }
+    if (pagingToken_ != null) {
+      output.writeMessage(2, getPagingToken());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -183,6 +237,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < values_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, values_.get(i));
+    }
+    if (pagingToken_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getPagingToken());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -201,6 +259,11 @@ private static final long serialVersionUID = 0L;
 
     if (!getValuesList()
         .equals(other.getValuesList())) return false;
+    if (hasPagingToken() != other.hasPagingToken()) return false;
+    if (hasPagingToken()) {
+      if (!getPagingToken()
+          .equals(other.getPagingToken())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -215,6 +278,10 @@ private static final long serialVersionUID = 0L;
     if (getValuesCount() > 0) {
       hash = (37 * hash) + VALUES_FIELD_NUMBER;
       hash = (53 * hash) + getValuesList().hashCode();
+    }
+    if (hasPagingToken()) {
+      hash = (37 * hash) + PAGINGTOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getPagingToken().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -356,6 +423,12 @@ private static final long serialVersionUID = 0L;
       } else {
         valuesBuilder_.clear();
       }
+      if (pagingTokenBuilder_ == null) {
+        pagingToken_ = null;
+      } else {
+        pagingToken_ = null;
+        pagingTokenBuilder_ = null;
+      }
       return this;
     }
 
@@ -391,6 +464,11 @@ private static final long serialVersionUID = 0L;
         result.values_ = values_;
       } else {
         result.values_ = valuesBuilder_.build();
+      }
+      if (pagingTokenBuilder_ == null) {
+        result.pagingToken_ = pagingToken_;
+      } else {
+        result.pagingToken_ = pagingTokenBuilder_.build();
       }
       onBuilt();
       return result;
@@ -465,6 +543,9 @@ private static final long serialVersionUID = 0L;
             valuesBuilder_.addAllMessages(other.values_);
           }
         }
+      }
+      if (other.hasPagingToken()) {
+        mergePagingToken(other.getPagingToken());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -806,6 +887,161 @@ private static final long serialVersionUID = 0L;
         values_ = null;
       }
       return valuesBuilder_;
+    }
+
+    private com.google.protobuf.Struct pagingToken_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> pagingTokenBuilder_;
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * @return Whether the pagingToken field is set.
+     */
+    public boolean hasPagingToken() {
+      return pagingTokenBuilder_ != null || pagingToken_ != null;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * @return The pagingToken.
+     */
+    public com.google.protobuf.Struct getPagingToken() {
+      if (pagingTokenBuilder_ == null) {
+        return pagingToken_ == null ? com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
+      } else {
+        return pagingTokenBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public Builder setPagingToken(com.google.protobuf.Struct value) {
+      if (pagingTokenBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        pagingToken_ = value;
+        onChanged();
+      } else {
+        pagingTokenBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public Builder setPagingToken(
+        com.google.protobuf.Struct.Builder builderForValue) {
+      if (pagingTokenBuilder_ == null) {
+        pagingToken_ = builderForValue.build();
+        onChanged();
+      } else {
+        pagingTokenBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public Builder mergePagingToken(com.google.protobuf.Struct value) {
+      if (pagingTokenBuilder_ == null) {
+        if (pagingToken_ != null) {
+          pagingToken_ =
+            com.google.protobuf.Struct.newBuilder(pagingToken_).mergeFrom(value).buildPartial();
+        } else {
+          pagingToken_ = value;
+        }
+        onChanged();
+      } else {
+        pagingTokenBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public Builder clearPagingToken() {
+      if (pagingTokenBuilder_ == null) {
+        pagingToken_ = null;
+        onChanged();
+      } else {
+        pagingToken_ = null;
+        pagingTokenBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public com.google.protobuf.Struct.Builder getPagingTokenBuilder() {
+
+      onChanged();
+      return getPagingTokenFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    public com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder() {
+      if (pagingTokenBuilder_ != null) {
+        return pagingTokenBuilder_.getMessageOrBuilder();
+      } else {
+        return pagingToken_ == null ?
+            com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
+      }
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
+        getPagingTokenFieldBuilder() {
+      if (pagingTokenBuilder_ == null) {
+        pagingTokenBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
+                getPagingToken(),
+                getParentForChildren(),
+                isClean());
+        pagingToken_ = null;
+      }
+      return pagingTokenBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

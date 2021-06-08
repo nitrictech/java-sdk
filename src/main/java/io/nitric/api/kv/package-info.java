@@ -9,7 +9,7 @@
  *
  * <pre><code class="code">
  *  import io.nitric.api.kv.KeyValueClient;
- *  import java.util.List;
+ *  import io.nitric.api.kv.Query.QueryResult;
  *  import java.util.Map;
  *  ...
  *
@@ -35,10 +35,14 @@
  *      .delete();
  *
  *  // Fetch first 100 customer records with an active status
- *  List&lt;Map&gt; customers = client.newQuery()
+ *  QueryResult results = client.newQuery()
  *      .where("status", "==", "active")
  *      .limit(100)
  *      .fetch();
+ *
+ *  results.foreach(customer -&gt; {
+ *      // Process customer...
+ *  });
  * </code></pre>
  *
  * @since 1.0

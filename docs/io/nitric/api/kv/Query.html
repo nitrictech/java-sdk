@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -89,7 +89,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -148,37 +148,62 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 
  <pre><code class="code">
   import io.nitric.api.kv.KeyValueClient;
-  import java.util.List;
   import java.util.Map;
   ...
 
   KeyValueClient client = KeyValueClient.build(Map.class, "customers");
 
-  List&lt;Map&gt; customers = client.newQuery()
+  client.newQuery().fetch().foreach(customer -&gt; {
+      // Process customer...
+  });
+ </code></pre>
+
+ <p>
+  Extending our example we are now filtering our results to only include active customers and we also set
+  a fetch limit to return a maximum of 100 items.
+ </p>
+
+ <pre><code class="code">
+  import io.nitric.api.kv.KeyValueClient;
+  import io.nitric.api.kv.Query.QueryResult;
+  import java.util.Map;
+  ...
+
+  KeyValueClient client = KeyValueClient.build(Map.class, "customers");
+
+  QueryResult results = client.newQuery()
       .where("status", "==", "active")
+      .limit(100)
       .fetch();
-  </code></pre>
+
+  results.foreach(customer -&gt; {
+      // Process customer...
+  });
+ </code></pre>
 
  <p>
  The example below illustrates a Query operation with a single table design. In this example we have a single
- <code>"application"</code> collection which can support multiple data types. The example here maps the collection
- items to a custom <code>Order</code> class.
+ <code>"application"</code> collection which can support multiple data types. This example maps the collection
+ items to a custom <code>Order</code> POJO class.
  </p>
 
  <pre><code class="code">
   import com.example.model.Order;
   import io.nitric.api.kv.KeyValueClient;
-  import java.util.List;
   ...
 
-  KeyValueClient client = KeyValueClient.build(Order.class, "application");
+  var client = KeyValueClient.build(Order.class, "application");
 
   // Fetch the first ten orders of the specified customer
-  List&lt;Order&gt; results = client.newQuery()
+  var results = client.newQuery()
       .where("pk", "==", "Customer#" + customerId)
       .where("sk", "startsWith", "Order#")
       .limit(100)
       .fetch();
+
+  results.foreach(order -&gt; {
+     // Process order...
+  });
   </code></pre>
 
  <h3>Where Expression Operators</h3>
@@ -214,12 +239,12 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
    </tr>
    <tr>
     <td class="codeCenter">&lt;=</td>
-    <td>less than or equal</td>
+    <td>less than or equal to</td>
     <td><code>.where("created", "&lt;=", customer.getDate())</code></td>
    </tr>
    <tr>
     <td class="codeCenter">&gt;=</td>
-    <td>greater than or equal</td>
+    <td>greater than or equal to</td>
     <td><code>.where("amount", "&gt;=", product.getRetail())</code></td>
    </tr>
    <tr>
@@ -244,19 +269,60 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
  <ol>
   <li style="padding-bottom:0.5em;">
    Only one property can have an inequality expression ( <code>&lt;, &gt;, &lt;=, &gt;=, startsWith</code> ). <br/>
-   For example: <code>where("id", "==", id).where("number", ">", "10)</code> <br/>
+   For example: <code>where("id", "==", id).where("number", "&gt;", "10)</code> <br/>
    This is a Firestore composite indexes restriction.
   </li>
   <li>
    Single property range expressions are limited to the operators <code>&gt;=</code> and <code>&lt;=</code>. <br/>
-   For example: <code>where("id", "==", id).where("number", ">=", "10).where("number", "<=", "20)</code> <br/>
+   For example: <code>where("id", "==", id).where("number", "&gt;=", "10).where("number", "&lt;=", "20)</code> <br/>
    This is a DynamoDB <code>BETWEEN</code> function mapping restriction.
   </li>
  </ol>
 
  <p>
  Please note these restrictions may be removed in future releases.
- </p></div>
+ </p>
+
+ <h3>Query Pagination</h3>
+
+ <p>
+   Support for query pagination is provided when using the <code>limit</code> and <code>pagingToken</code> attributes.
+   To perform query paging first set a maximum query page size with the <code>limit</code> attribute.
+   Once the first query has executed and processed, if there are more results available in the KV database the
+   <code>QueryResult.getPagingToken()</code> will be defined. This value should then be used to set the
+   <code>Query.pagingFrom()</code> in the next <code>Query.fetch()</code> call.
+ </p>
+
+ <pre><code class="code">
+  import com.example.model.Customer;
+  import io.nitric.api.kv.KeyValueClient;
+  ...
+
+  var client = KeyValueClient.build(Customer.class, "customer");
+
+  var query = client.newQuery()
+          .where("active", "==", "true")
+          .limit(100);
+
+  var results = query.fetch();
+
+  // Process the first page of results
+  results.forEach(customer -&gt; {
+      // Process customer record...
+  });
+
+  // Continue querying from the last pagingToken until none returned
+  while (results.getPagingToken() != null) {
+
+      results = query
+          .pagingFrom(result.getPagingToken())
+          .fetch();
+
+      results.forEach(customer -&gt; {
+          // Process customer record...
+      });
+  }
+ </code></pre></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="KeyValueClient.html" title="class in io.nitric.api.kv"><code>KeyValueClient</code></a></dd>
@@ -267,6 +333,31 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Class</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="Query.QueryResult.html" title="class in io.nitric.api.kv">Query.QueryResult</a>&lt;<a href="Query.QueryResult.html" title="type parameter in Query.QueryResult">T</a>&gt;</span></code></th>
+<td class="colLast">
+<div class="block">Provides a query result class.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 <!-- ========== METHOD SUMMARY =========== -->
 <section role="region">
 <ul class="blockList">
@@ -282,7 +373,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;</code></td>
+<td class="colFirst"><code><a href="Query.QueryResult.html" title="class in io.nitric.api.kv">Query.QueryResult</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fetch()">fetch</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Perform the Query operation and return the fetched results.</div>
@@ -296,11 +387,18 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="Query.html" title="class in io.nitric.api.kv">Query</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#pagingFrom(java.util.Map)">pagingFrom</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;pagingToken)</code></th>
+<td class="colLast">
+<div class="block">Set the query paging continuation token.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="Query.html" title="class in io.nitric.api.kv">Query</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#where(java.lang.String,java.lang.String,java.lang.String)">where</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;operand,
      <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;operator,
@@ -377,13 +475,29 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 </dl>
 </li>
 </ul>
+<a id="pagingFrom(java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>pagingFrom</h4>
+<pre class="methodSignature">public&nbsp;<a href="Query.html" title="class in io.nitric.api.kv">Query</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;&nbsp;pagingFrom&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Map.html?is-external=true" title="class or interface in java.util" class="externalLink">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>,&#8203;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html?is-external=true" title="class or interface in java.lang" class="externalLink">Object</a>&gt;&nbsp;pagingToken)</pre>
+<div class="block">Set the query paging continuation token.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>pagingToken</code> - the query paging continuation token</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the Query operation</dd>
+</dl>
+</li>
+</ul>
 <a id="fetch()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>fetch</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html?is-external=true" title="class or interface in java.util" class="externalLink">List</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;&nbsp;fetch()</pre>
+<pre class="methodSignature">public&nbsp;<a href="Query.QueryResult.html" title="class in io.nitric.api.kv">Query.QueryResult</a>&lt;<a href="Query.html" title="type parameter in Query">T</a>&gt;&nbsp;fetch()</pre>
 <div class="block">Perform the Query operation and return the fetched results.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -459,7 +573,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

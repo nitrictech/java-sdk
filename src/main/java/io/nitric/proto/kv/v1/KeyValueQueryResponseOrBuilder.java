@@ -50,4 +50,31 @@ public interface KeyValueQueryResponseOrBuilder extends
    */
   com.google.protobuf.StructOrBuilder getValuesOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   * @return Whether the pagingToken field is set.
+   */
+  boolean hasPagingToken();
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   * @return The pagingToken.
+   */
+  com.google.protobuf.Struct getPagingToken();
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   */
+  com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder();
 }
