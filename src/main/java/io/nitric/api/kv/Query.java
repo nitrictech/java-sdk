@@ -22,6 +22,7 @@ package io.nitric.api.kv;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nitric.proto.kv.v1.KeyValueQueryRequest;
+import io.nitric.proto.kv.v1.KeyValueQueryResponse;
 import io.nitric.util.ProtoUtils;
 
 import java.util.ArrayList;
@@ -317,34 +318,15 @@ public class Query<T> {
         });
 
         if (pagingToken != null) {
-            var tokenStruct = ProtoUtils.toStruct(pagingToken);
-            requestBuilder.setPagingToken(tokenStruct);
+            var pagingStruct = ProtoUtils.toStruct(pagingToken);
+            requestBuilder.setPagingToken(pagingStruct);
         }
 
         var request = requestBuilder.build();
 
         var response = builder.serviceStub.query(request);
 
-        var resultList = new ArrayList<T>(response.getValuesCount());
-
-        var objectMapper = new ObjectMapper();
-
-        response.getValuesList().forEach(struct -> {
-            Map map = ProtoUtils.toMap(struct);
-
-            if (map.getClass().isAssignableFrom(builder.type)) {
-                resultList.add((T) map);
-
-            } else {
-                var value = (T) objectMapper.convertValue(map, builder.type);
-                resultList.add(value);
-            }
-        });
-
-        Map<String, Object> resultPagingToken = (response.getPagingToken() != null)
-                ? ProtoUtils.toMap(response.getPagingToken()) : null;
-
-        return new QueryResult<T>(resultList, resultPagingToken);
+        return new QueryResult<T>(this, response);
     }
 
     /**
@@ -397,12 +379,33 @@ public class Query<T> {
         /**
          * Create a QueryResult object.
          *
-         * @param results the query results
-         * @param pagingToken the query paging continuation token
+         * @parma query the query to continue
+         * @param response the query response
          */
-        QueryResult(List<T> results, Map<String, Object> pagingToken) {
-            this.results = results;
-            this.pagingToken = (pagingToken != null && !pagingToken.isEmpty()) ? pagingToken : null;
+        QueryResult(Query query, KeyValueQueryResponse response) {
+
+            this.results = new ArrayList<T>(response.getValuesCount());
+
+            var objectMapper = new ObjectMapper();
+
+            response.getValuesList().forEach(struct -> {
+                Map map = ProtoUtils.toMap(struct);
+
+                if (map.getClass().isAssignableFrom(query.builder.type)) {
+                    results.add((T) map);
+
+                } else {
+                    var value = (T) objectMapper.convertValue(map, query.builder.type);
+                    results.add(value);
+                }
+            });
+
+            // Get the paging token
+            Map<String, Object> resultPagingToken = (response.getPagingToken() != null)
+                    ? ProtoUtils.toMap(response.getPagingToken()) : null;
+
+            this.pagingToken = (resultPagingToken != null && !resultPagingToken.isEmpty())
+                    ? resultPagingToken : null;
         }
 
         /**

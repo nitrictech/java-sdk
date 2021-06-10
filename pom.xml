@@ -56,14 +56,6 @@
         </dependency>
     </dependencies>
 
-    <!-- TODO: remove once published -->
-    <distributionManagement>
-        <repository>
-            <id>snapshots</id>
-            <url>https://repo.deps.co/medgar/snapshots</url>
-        </repository>
-    </distributionManagement>
-
     <build>
         <extensions>
             <extension>
