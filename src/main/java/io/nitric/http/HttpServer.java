@@ -140,8 +140,6 @@ public class HttpServer {
             throw new IllegalStateException("server already started");
         }
 
-        long time = System.currentTimeMillis();
-
         var childAddress = System.getenv("CHILD_ADDRESS");
         if (childAddress != null && !childAddress.isBlank()) {
             hostname = childAddress;
@@ -214,8 +212,6 @@ public class HttpServer {
              */
             @Override
             public void handle(HttpExchange he) throws IOException {
-
-                long start = System.currentTimeMillis();
 
                 try {
                     var requestBuilder = HttpRequest.newBuilder()

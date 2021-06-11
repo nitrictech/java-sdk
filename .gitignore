@@ -7,3 +7,5 @@
 # Ignore build files
 /target/
 /dependency-reduced-pom.xml
+.classpath
+.project

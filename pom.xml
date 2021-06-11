@@ -199,6 +199,7 @@
                     <notimestamp>true</notimestamp>
                     <excludePackageNames>io.nitric.proto.*</excludePackageNames>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
                     <destDir>${project.basedir}/docs</destDir>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>

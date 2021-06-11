@@ -21,9 +21,6 @@ package io.nitric.proto.queue.v1;
  */
 
 import io.grpc.CallOptions;
-import io.nitric.proto.event.v1.EventGrpc;
-import io.nitric.proto.event.v1.EventPublishRequest;
-import io.nitric.proto.event.v1.EventPublishResponse;
 import io.nitric.util.GrpcChannelProvider;
 
 public class MockQueueBlockingStub extends QueueGrpc.QueueBlockingStub {
