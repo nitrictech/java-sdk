@@ -184,7 +184,7 @@ import java.util.Objects;
  * <h3>Query Pagination</h3>
  *
  * <p>
- *   Support for query pagination is provided when using the <code>limit</code> and <code>pagingToken</code> attributes.
+ *   Query pagination support is provided with the <code>limit</code> and <code>pagingToken</code> attributes.
  *   To perform query paging first set a maximum query page size with the <code>limit</code> attribute.
  *   Once the first query has executed and processed, if there are more results available in the KV database the
  *   <code>QueryResult.getPagingToken()</code> will be defined. This value should then be used to set the
@@ -222,19 +222,51 @@ import java.util.Objects;
  *  }
  * </code></pre>
  *
+ * <h3>Query Fetch All</h3>
+ * 
+ * <p>
+ * For processing large paginated result use the <code>fetchAll()</code> method 
+ * which provides an QueryResult iterator which automatically performs query 
+ * pagination for you. The equivalent code using the <code>fetchAll()</code> is
+ * provided below.
+ * </p>
+ * 
+ * <pre><code class="code">
+ *  import com.example.model.Customer;
+ *  import io.nitric.api.kv.KeyValueClient;
+ *  ...
+ *
+ *  var client = KeyValueClient.build(Customer.class, "customer");
+ *
+ *  var query = client.newQuery()
+ *          .where("active", "==", "true")
+ *          .limit(100);
+ *
+ *  // Process all the customer records
+ *  query.fetchAll().forEach(customer -&gt; {
+ *      // Process customer...
+ *  });
+ * </code></pre>
+ *
+ * <p>
+ * Note processing upbounded results sets may lead to out of memory errors, so 
+ * please use stream procesing style design patterns and do not accumulate large
+ * amounts of objects.
+ * </p>
+ * 
  * @see KeyValueClient
  */
 public class Query<T> {
 
-    final KeyValueClient.Builder builder;
-    final List<Expression> expressions = new ArrayList<>();
+    final KeyValueClient.Builder<T> builder;
+    final List<Expression> expressions = new ArrayList<Expression>();
     Map<String, Object> pagingToken;
     int limit;
 
     /*
      * Enforce builder pattern.
      */
-    Query(KeyValueClient.Builder builder) {
+    Query(KeyValueClient.Builder<T> builder) {
         this.builder = builder;
     }
 
@@ -298,35 +330,29 @@ public class Query<T> {
     }
 
     /**
-     * Perform the Query operation and return the fetched results.
+     * Perform the Query operation and return the fetched results. If a fetch limit is specified then only the
+     * specified number of items will be returned. If a pagingToken is also specified then the results will be for the
+     * next page of results from the token offset.
      *
      * @return the Query operations fetched results.
      */
     public QueryResult<T> fetch() {
+        return new QueryResult<T>(this, false);
+    }
 
-        var requestBuilder = KeyValueQueryRequest.newBuilder()
-                .setCollection(builder.collection)
-                .setLimit(limit);
-
-        expressions.forEach(e -> {
-            var exp = KeyValueQueryRequest.Expression.newBuilder()
-                    .setOperand(e.operand)
-                    .setOperator(e.operator)
-                    .setValue(e.value)
-                    .build();
-            requestBuilder.addExpressions(exp);
-        });
-
-        if (pagingToken != null) {
-            var pagingStruct = ProtoUtils.toStruct(pagingToken);
-            requestBuilder.setPagingToken(pagingStruct);
+    /**
+     * Perform the Query operation and return all the fetched results. The QueryResult iterator will continue to process
+     * all the pages of results until no more are available from the server. If no fetch limit is specified, this
+     * method will set the query fetch limit to 1000.
+     *
+     * @return the Query operations fetched results.
+     */
+    public QueryResult<T> fetchAll() {
+        if (this.limit <= 0) {
+            this.limit = 1000;
         }
 
-        var request = requestBuilder.build();
-
-        var response = builder.serviceStub.query(request);
-
-        return new QueryResult<T>(this, response);
+        return new QueryResult<T>(this, true);
     }
 
     /**
@@ -373,39 +399,28 @@ public class Query<T> {
      */
     public static class QueryResult<T> implements Iterable<T> {
 
-        private final Map<String, Object> pagingToken;
-        private final List<T> results;
+        final Query<T> query;
+        final boolean paginateAll;
+        Map<String, Object> pagingToken;
+        List<T> queryData;
 
         /**
          * Create a QueryResult object.
          *
          * @parma query the query to continue
-         * @param response the query response
+         * @param paginateAll specify whether the iterator paginate through all results
          */
-        QueryResult(Query query, KeyValueQueryResponse response) {
+        QueryResult(Query<T> query, boolean paginateAll) {
 
-            this.results = new ArrayList<T>(response.getValuesCount());
+            this.query = query;
+            this.pagingToken = query.pagingToken;
+            this.paginateAll = paginateAll;
 
-            var objectMapper = new ObjectMapper();
+            // Perform initial query
+            var request = buildKeyValueRequest(this.query.expressions);
+            var response = this.query.builder.serviceStub.query(request);
 
-            response.getValuesList().forEach(struct -> {
-                Map map = ProtoUtils.toMap(struct);
-
-                if (map.getClass().isAssignableFrom(query.builder.type)) {
-                    results.add((T) map);
-
-                } else {
-                    var value = (T) objectMapper.convertValue(map, query.builder.type);
-                    results.add(value);
-                }
-            });
-
-            // Get the paging token
-            Map<String, Object> resultPagingToken = (response.getPagingToken() != null)
-                    ? ProtoUtils.toMap(response.getPagingToken()) : null;
-
-            this.pagingToken = (resultPagingToken != null && !resultPagingToken.isEmpty())
-                    ? resultPagingToken : null;
+            loadPageData(response);
         }
 
         /**
@@ -413,7 +428,12 @@ public class Query<T> {
          */
         @Override
         public Iterator<T> iterator() {
-            return results.iterator();
+            if (!paginateAll) {
+                return queryData.iterator();
+
+            } else {
+                return new PagingIterator<T>(this);
+            }
         }
 
         /**
@@ -426,23 +446,107 @@ public class Query<T> {
             return pagingToken;
         }
 
+        // Protected Methods --------------------------------------------------
+
         /**
-         * @return the string representation of this object
+         * Build a KeyValueQueryRequest for this query.
+         *
+         * @return the KeyValueQueryRequest for this query
          */
-        @Override
-        public String toString() {
-            return getClass().getSimpleName()
-                    + "[results.size=" + results.size()
-                    + ", pagingToken=" + pagingToken
-                    + "]";
+        protected KeyValueQueryRequest buildKeyValueRequest(List<Expression> expressions) {
+            var requestBuilder = KeyValueQueryRequest.newBuilder()
+                    .setCollection(this.query.builder.collection)
+                    .setLimit(this.query.limit);
+
+            expressions.forEach(e -> {
+                var exp = KeyValueQueryRequest.Expression.newBuilder()
+                        .setOperand(e.operand)
+                        .setOperator(e.operator)
+                        .setValue(e.value)
+                        .build();
+                requestBuilder.addExpressions(exp);
+            });
+
+            if (this.pagingToken != null) {
+                var pagingStruct = ProtoUtils.toStruct(this.pagingToken);
+                requestBuilder.setPagingToken(pagingStruct);
+            }
+
+            return requestBuilder.build();
+        }
+
+        protected void loadPageData(KeyValueQueryResponse response) {
+
+            // Marshall response data
+            queryData = new ArrayList<T>(response.getValuesCount());
+
+            var objectMapper = new ObjectMapper();
+
+            response.getValuesList().forEach(struct -> {
+                var map = ProtoUtils.toMap(struct);
+
+                if (map.getClass().isAssignableFrom(query.builder.type)) {
+                    queryData.add((T) map);
+
+                } else {
+                    var value = (T) objectMapper.convertValue(map, query.builder.type);
+                    queryData.add(value);
+                }
+            });
+
+            // Marshal the response paging token
+            Map<String, Object> resultPagingToken = (response.getPagingToken() != null)
+                    ? ProtoUtils.toMap(response.getPagingToken()) : null;
+
+            this.pagingToken = (resultPagingToken != null && !resultPagingToken.isEmpty())
+                    ? resultPagingToken : null;
         }
     }
 
-    /**
-     * <p>
-     *  Provides a Query expression class.
-     * </p>
-     */
+    // Package Private Classes ------------------------------------------------
+
+    static class PagingIterator<T> implements Iterator<T> {
+
+        private QueryResult<T> queryResult;
+        private int index = 0;
+
+        public PagingIterator(QueryResult<T> queryResult) {
+            this.queryResult = queryResult;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (index < queryResult.queryData.size()) {
+                return true;
+
+            } else if (index == queryResult.queryData.size()) {
+
+                if (queryResult.pagingToken != null) {
+                    index = 0;
+
+                    // Load next page of data
+                    var request = queryResult.buildKeyValueRequest(queryResult.query.expressions);
+                    var response = queryResult.query.builder.serviceStub.query(request);
+
+                    queryResult.loadPageData(response);
+
+                    return queryResult.queryData.size() > 0;
+
+                } else {
+                    return false;
+                }
+
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public T next() {
+            return queryResult.queryData.get(index++);
+        }
+    }
+
     static class Expression {
         final String operand;
         final String operator;
@@ -454,9 +558,6 @@ public class Query<T> {
             this.value = value;
         }
 
-        /**
-         * @return the string representation of this object
-         */
         @Override
         public String toString() {
             return getClass().getSimpleName()

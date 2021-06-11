@@ -4,8 +4,56 @@
 
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+    <name>nitric-java-sdk</name>
+    <description>Nitric Java SDK</description>
     <url>https://github.com/nitrictech/java-sdk</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Malcolm Edgar</name>
+            <email>malcolm.edgar@nitric.io</email>
+            <organization>Nitric</organization>
+            <organizationUrl>https://nitric.io</organizationUrl>
+        </developer>
+        <developer>
+            <name>Tim Holm</name>
+            <email>tim.holm@nitric.io</email>
+            <organization>Nitric</organization>
+            <organizationUrl>https://nitric.io</organizationUrl>
+        </developer>
+        <developer>
+            <name>Jye Cusch</name>
+            <email>jye.cusch@nitric.io</email>
+            <organization>Nitric</organization>
+            <organizationUrl>https://nitric.io</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git@github.com:nitrictech/java-sdk.git</connection>
+        <developerConnection>scm:git@github.com:nitrictech/java-sdk.git</developerConnection>
+        <url>https://github.com/nitrictech/java-sdk</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <io.grpc.version>1.36.0</io.grpc.version>
@@ -152,6 +200,7 @@
                     <excludePackageNames>io.nitric.proto.*</excludePackageNames>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
+                    <destDir>${project.basedir}/docs</destDir>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
                     <doclint>none</doclint>
@@ -160,6 +209,59 @@
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
                         <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
                     ]]></header>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
