@@ -56,13 +56,13 @@ import java.util.Objects;
  */
 public class Get<T> {
 
-    final KeyValueClient.Builder builder;
+    final KeyValueClient.Builder<T> builder;
     final Map<String, Object> key = new HashMap<>();
 
     /*
      * Enforce builder pattern.
      */
-    Get(KeyValueClient.Builder builder) {
+    Get(KeyValueClient.Builder<T> builder) {
         this.builder = builder;
     }
 
@@ -147,8 +147,7 @@ public class Get<T> {
         var response = builder.serviceStub.get(request);
 
         if (response.hasValue()) {
-            var struct = response.getValue();
-            Map map = ProtoUtils.toMap(response.getValue());
+            var map = ProtoUtils.toMap(response.getValue());
 
             if (map.getClass().isAssignableFrom(builder.type)) {
                 return (T) map;

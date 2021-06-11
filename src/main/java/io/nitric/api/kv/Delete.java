@@ -56,13 +56,13 @@ import java.util.Objects;
  */
 public class Delete<T> {
 
-    final KeyValueClient.Builder builder;
+    final KeyValueClient.Builder<T> builder;
     final Map<String, Object> key = new HashMap<>();
 
     /*
      * Enforce builder pattern.
      */
-    Delete(KeyValueClient.Builder builder) {
+    Delete(KeyValueClient.Builder<T> builder) {
         this.builder = builder;
     }
 

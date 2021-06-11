@@ -52,8 +52,6 @@ import java.util.Objects;
  */
 public class NitricResponse {
 
-    private static final String CONTENT_TYPE = "Content-Type";
-
     private final int status;
     private final Map<String, String> headers;
     private final byte[] body;

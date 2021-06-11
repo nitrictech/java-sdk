@@ -192,12 +192,12 @@ public class KeyValueClient<T> {
     /** The default key name: 'key'. */
     public static final String DEFAULT_KEY_NAME = "key";
 
-    final Builder builder;
+    final Builder<T> builder;
 
     /*
      * Enforce builder pattern.
      */
-    KeyValueClient(Builder builder) {
+    KeyValueClient(Builder<T> builder) {
         this.builder = builder;
     }
 
@@ -327,7 +327,7 @@ public class KeyValueClient<T> {
                 this.serviceStub = KeyValueGrpc.newBlockingStub(channel);
             }
 
-            return new KeyValueClient(this);
+            return new KeyValueClient<K>(this);
         }
 
         /**

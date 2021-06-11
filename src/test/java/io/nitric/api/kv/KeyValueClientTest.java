@@ -256,7 +256,6 @@ public class KeyValueClientTest {
                 assertNotNull(request);
                 assertNotNull(request.getCollection());
                 assertNotNull(request.getKey());
-                var value = Struct.newBuilder().build();
                 return KeyValueDeleteResponse.newBuilder().build();
             }
         };

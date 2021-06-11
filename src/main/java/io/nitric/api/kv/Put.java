@@ -79,14 +79,14 @@ import java.util.Objects;
  */
 public class Put<T> {
 
-    final KeyValueClient.Builder builder;
+    final KeyValueClient.Builder<T> builder;
     final Map<String, Object> key = new HashMap<>();
     T value;
 
     /*
      * Enforce builder pattern.
      */
-    Put(KeyValueClient.Builder builder) {
+    Put(KeyValueClient.Builder<T> builder) {
         this.builder = builder;
     }
 
