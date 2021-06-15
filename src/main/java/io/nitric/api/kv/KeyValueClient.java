@@ -29,7 +29,6 @@ import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.GrpcChannelProvider;
 import io.nitric.util.ProtoUtils;
 
-import java.security.Key;
 import java.util.Map;
 import java.util.Objects;
 
@@ -185,7 +184,7 @@ public class KeyValueClient<T> {
     /*
      * Enforce builder pattern.
      */
-    KeyValueClient(Builder builder) {
+    KeyValueClient(Builder<T> builder) {
         this.collection = builder.collection;
         this.type = builder.type;
         this.serviceStub = builder.serviceStub;
@@ -210,8 +209,7 @@ public class KeyValueClient<T> {
         var response = serviceStub.get(request);
 
         if (response.hasValue()) {
-            var struct = response.getValue();
-            Map map = ProtoUtils.toMap(response.getValue());
+            var map = ProtoUtils.toMap(response.getValue());
 
             if (map.getClass().isAssignableFrom(type)) {
                 return (T) map;
@@ -361,7 +359,7 @@ public class KeyValueClient<T> {
                 this.serviceStub = KeyValueGrpc.newBlockingStub(channel);
             }
 
-            return new KeyValueClient(this);
+            return new KeyValueClient<K>(this);
         }
     }
 
