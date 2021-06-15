@@ -15,10 +15,20 @@ public final class KeyValues {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_Key_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_Key_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor;
   static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueGetRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueGetResponse_descriptor;
   static final
@@ -30,6 +40,11 @@ public final class KeyValues {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValuePutRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_KeyValuePutRequest_KeyEntry_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_KeyValuePutRequest_KeyEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValuePutResponse_descriptor;
   static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -39,6 +54,11 @@ public final class KeyValues {
   static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueDeleteRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_KeyValueDeleteRequest_KeyEntry_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_KeyValueDeleteRequest_KeyEntry_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueDeleteResponse_descriptor;
   static final
@@ -55,10 +75,20 @@ public final class KeyValues {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueQueryRequest_Expression_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_KeyValueQueryRequest_PagingTokenEntry_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_KeyValueQueryRequest_PagingTokenEntry_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor;
   static final
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_nitric_kv_v1_KeyValueQueryResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_descriptor;
+  static final
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -69,81 +99,117 @@ public final class KeyValues {
   static {
     java.lang.String[] descriptorData = {
       "\n\016kv/v1/kv.proto\022\014nitric.kv.v1\032\034google/p" +
-      "rotobuf/struct.proto\"N\n\022KeyValueGetReque" +
-      "st\022\022\n\ncollection\030\001 \001(\t\022$\n\003key\030\002 \001(\0132\027.go" +
-      "ogle.protobuf.Struct\"=\n\023KeyValueGetRespo" +
-      "nse\022&\n\005value\030\001 \001(\0132\027.google.protobuf.Str" +
-      "uct\"v\n\022KeyValuePutRequest\022\022\n\ncollection\030" +
-      "\001 \001(\t\022$\n\003key\030\002 \001(\0132\027.google.protobuf.Str" +
-      "uct\022&\n\005value\030\003 \001(\0132\027.google.protobuf.Str" +
-      "uct\"\025\n\023KeyValuePutResponse\"Q\n\025KeyValueDe" +
-      "leteRequest\022\022\n\ncollection\030\001 \001(\t\022$\n\003key\030\002" +
-      " \001(\0132\027.google.protobuf.Struct\"\030\n\026KeyValu" +
-      "eDeleteResponse\"\353\001\n\024KeyValueQueryRequest" +
-      "\022\022\n\ncollection\030\001 \001(\t\022B\n\013expressions\030\002 \003(" +
-      "\0132-.nitric.kv.v1.KeyValueQueryRequest.Ex" +
-      "pression\022\r\n\005limit\030\003 \001(\005\022,\n\013pagingToken\030\004" +
-      " \001(\0132\027.google.protobuf.Struct\032>\n\nExpress" +
-      "ion\022\017\n\007operand\030\001 \001(\t\022\020\n\010operator\030\002 \001(\t\022\r" +
-      "\n\005value\030\003 \001(\t\"n\n\025KeyValueQueryResponse\022\'" +
-      "\n\006values\030\001 \003(\0132\027.google.protobuf.Struct\022" +
-      ",\n\013pagingToken\030\002 \001(\0132\027.google.protobuf.S" +
-      "truct2\311\002\n\010KeyValue\022J\n\003Get\022 .nitric.kv.v1" +
-      ".KeyValueGetRequest\032!.nitric.kv.v1.KeyVa" +
-      "lueGetResponse\022J\n\003Put\022 .nitric.kv.v1.Key" +
-      "ValuePutRequest\032!.nitric.kv.v1.KeyValueP" +
-      "utResponse\022S\n\006Delete\022#.nitric.kv.v1.KeyV" +
-      "alueDeleteRequest\032$.nitric.kv.v1.KeyValu" +
-      "eDeleteResponse\022P\n\005Query\022\".nitric.kv.v1." +
-      "KeyValueQueryRequest\032#.nitric.kv.v1.KeyV" +
-      "alueQueryResponseBh\n\025io.nitric.proto.kv." +
-      "v1B\tKeyValuesP\001Z\014nitric/v1;v1\252\002\030Nitric.P" +
-      "roto.KeyValue.v1\312\002\030Nitric\\Proto\\KeyValue" +
-      "\\V1b\006proto3"
+      "rotobuf/struct.proto\"0\n\003Key\022\020\n\006string\030\001 " +
+      "\001(\tH\000\022\020\n\006number\030\002 \001(\003H\000B\005\n\003key\"\237\001\n\022KeyVa" +
+      "lueGetRequest\022\022\n\ncollection\030\001 \001(\t\0226\n\003key" +
+      "\030\002 \003(\0132).nitric.kv.v1.KeyValueGetRequest" +
+      ".KeyEntry\032=\n\010KeyEntry\022\013\n\003key\030\001 \001(\t\022 \n\005va" +
+      "lue\030\002 \001(\0132\021.nitric.kv.v1.Key:\0028\001\"=\n\023KeyV" +
+      "alueGetResponse\022&\n\005value\030\001 \001(\0132\027.google." +
+      "protobuf.Struct\"\307\001\n\022KeyValuePutRequest\022\022" +
+      "\n\ncollection\030\001 \001(\t\0226\n\003key\030\002 \003(\0132).nitric" +
+      ".kv.v1.KeyValuePutRequest.KeyEntry\022&\n\005va" +
+      "lue\030\003 \001(\0132\027.google.protobuf.Struct\032=\n\010Ke" +
+      "yEntry\022\013\n\003key\030\001 \001(\t\022 \n\005value\030\002 \001(\0132\021.nit" +
+      "ric.kv.v1.Key:\0028\001\"\025\n\023KeyValuePutResponse" +
+      "\"\245\001\n\025KeyValueDeleteRequest\022\022\n\ncollection" +
+      "\030\001 \001(\t\0229\n\003key\030\002 \003(\0132,.nitric.kv.v1.KeyVa" +
+      "lueDeleteRequest.KeyEntry\032=\n\010KeyEntry\022\013\n" +
+      "\003key\030\001 \001(\t\022 \n\005value\030\002 \001(\0132\021.nitric.kv.v1" +
+      ".Key:\0028\001\"\030\n\026KeyValueDeleteResponse\"\316\002\n\024K" +
+      "eyValueQueryRequest\022\022\n\ncollection\030\001 \001(\t\022" +
+      "B\n\013expressions\030\002 \003(\0132-.nitric.kv.v1.KeyV" +
+      "alueQueryRequest.Expression\022\r\n\005limit\030\003 \001" +
+      "(\005\022H\n\013pagingToken\030\004 \003(\01323.nitric.kv.v1.K" +
+      "eyValueQueryRequest.PagingTokenEntry\032>\n\n" +
+      "Expression\022\017\n\007operand\030\001 \001(\t\022\020\n\010operator\030" +
+      "\002 \001(\t\022\r\n\005value\030\003 \001(\t\032E\n\020PagingTokenEntry" +
+      "\022\013\n\003key\030\001 \001(\t\022 \n\005value\030\002 \001(\0132\021.nitric.kv" +
+      ".v1.Key:\0028\001\"\322\001\n\025KeyValueQueryResponse\022\'\n" +
+      "\006values\030\001 \003(\0132\027.google.protobuf.Struct\022I" +
+      "\n\013pagingToken\030\002 \003(\01324.nitric.kv.v1.KeyVa" +
+      "lueQueryResponse.PagingTokenEntry\032E\n\020Pag" +
+      "ingTokenEntry\022\013\n\003key\030\001 \001(\t\022 \n\005value\030\002 \001(" +
+      "\0132\021.nitric.kv.v1.Key:\0028\0012\311\002\n\010KeyValue\022J\n" +
+      "\003Get\022 .nitric.kv.v1.KeyValueGetRequest\032!" +
+      ".nitric.kv.v1.KeyValueGetResponse\022J\n\003Put" +
+      "\022 .nitric.kv.v1.KeyValuePutRequest\032!.nit" +
+      "ric.kv.v1.KeyValuePutResponse\022S\n\006Delete\022" +
+      "#.nitric.kv.v1.KeyValueDeleteRequest\032$.n" +
+      "itric.kv.v1.KeyValueDeleteResponse\022P\n\005Qu" +
+      "ery\022\".nitric.kv.v1.KeyValueQueryRequest\032" +
+      "#.nitric.kv.v1.KeyValueQueryResponseBh\n\025" +
+      "io.nitric.proto.kv.v1B\tKeyValuesP\001Z\014nitr" +
+      "ic/v1;v1\252\002\030Nitric.Proto.KeyValue.v1\312\002\030Ni" +
+      "tric\\Proto\\KeyValue\\V1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.google.protobuf.StructProto.getDescriptor(),
         });
-    internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor =
+    internal_static_nitric_kv_v1_Key_descriptor =
       getDescriptor().getMessageTypes().get(0);
+    internal_static_nitric_kv_v1_Key_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_Key_descriptor,
+        new java.lang.String[] { "String", "Number", "Key", });
+    internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor =
+      getDescriptor().getMessageTypes().get(1);
     internal_static_nitric_kv_v1_KeyValueGetRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor,
         new java.lang.String[] { "Collection", "Key", });
+    internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_descriptor =
+      internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor.getNestedTypes().get(0);
+    internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_nitric_kv_v1_KeyValueGetResponse_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(2);
     internal_static_nitric_kv_v1_KeyValueGetResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueGetResponse_descriptor,
         new java.lang.String[] { "Value", });
     internal_static_nitric_kv_v1_KeyValuePutRequest_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_nitric_kv_v1_KeyValuePutRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValuePutRequest_descriptor,
         new java.lang.String[] { "Collection", "Key", "Value", });
+    internal_static_nitric_kv_v1_KeyValuePutRequest_KeyEntry_descriptor =
+      internal_static_nitric_kv_v1_KeyValuePutRequest_descriptor.getNestedTypes().get(0);
+    internal_static_nitric_kv_v1_KeyValuePutRequest_KeyEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_KeyValuePutRequest_KeyEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_nitric_kv_v1_KeyValuePutResponse_descriptor =
-      getDescriptor().getMessageTypes().get(3);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_nitric_kv_v1_KeyValuePutResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValuePutResponse_descriptor,
         new java.lang.String[] { });
     internal_static_nitric_kv_v1_KeyValueDeleteRequest_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_nitric_kv_v1_KeyValueDeleteRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueDeleteRequest_descriptor,
         new java.lang.String[] { "Collection", "Key", });
+    internal_static_nitric_kv_v1_KeyValueDeleteRequest_KeyEntry_descriptor =
+      internal_static_nitric_kv_v1_KeyValueDeleteRequest_descriptor.getNestedTypes().get(0);
+    internal_static_nitric_kv_v1_KeyValueDeleteRequest_KeyEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_KeyValueDeleteRequest_KeyEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_nitric_kv_v1_KeyValueDeleteResponse_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_nitric_kv_v1_KeyValueDeleteResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueDeleteResponse_descriptor,
         new java.lang.String[] { });
     internal_static_nitric_kv_v1_KeyValueQueryRequest_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_nitric_kv_v1_KeyValueQueryRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueQueryRequest_descriptor,
@@ -154,12 +220,24 @@ public final class KeyValues {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueQueryRequest_Expression_descriptor,
         new java.lang.String[] { "Operand", "Operator", "Value", });
+    internal_static_nitric_kv_v1_KeyValueQueryRequest_PagingTokenEntry_descriptor =
+      internal_static_nitric_kv_v1_KeyValueQueryRequest_descriptor.getNestedTypes().get(1);
+    internal_static_nitric_kv_v1_KeyValueQueryRequest_PagingTokenEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_KeyValueQueryRequest_PagingTokenEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_nitric_kv_v1_KeyValueQueryResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor,
         new java.lang.String[] { "Values", "PagingToken", });
+    internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_descriptor =
+      internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor.getNestedTypes().get(0);
+    internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     com.google.protobuf.StructProto.getDescriptor();
   }
 

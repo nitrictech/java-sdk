@@ -223,14 +223,14 @@ import java.util.Objects;
  * </code></pre>
  *
  * <h3>Query Fetch All</h3>
- * 
+ *
  * <p>
- * For processing large paginated result use the <code>fetchAll()</code> method 
- * which provides an QueryResult iterator which automatically performs query 
+ * For processing large paginated result use the <code>fetchAll()</code> method
+ * which provides an QueryResult iterator which automatically performs query
  * pagination for you. The equivalent code using the <code>fetchAll()</code> is
  * provided below.
  * </p>
- * 
+ *
  * <pre><code class="code">
  *  import com.example.model.Customer;
  *  import io.nitric.api.kv.KeyValueClient;
@@ -249,11 +249,11 @@ import java.util.Objects;
  * </code></pre>
  *
  * <p>
- * Note processing upbounded results sets may lead to out of memory errors, so 
+ * Note processing upbounded results sets may lead to out of memory errors, so
  * please use stream procesing style design patterns and do not accumulate large
  * amounts of objects.
  * </p>
- * 
+ *
  * @see KeyValueClient
  */
 public class Query<T> {
@@ -448,11 +448,6 @@ public class Query<T> {
 
         // Protected Methods --------------------------------------------------
 
-        /**
-         * Build a KeyValueQueryRequest for this query.
-         *
-         * @return the KeyValueQueryRequest for this query
-         */
         protected KeyValueQueryRequest buildKeyValueRequest(List<Expression> expressions) {
             var requestBuilder = KeyValueQueryRequest.newBuilder()
                     .setCollection(this.query.builder.collection)
@@ -468,13 +463,14 @@ public class Query<T> {
             });
 
             if (this.pagingToken != null) {
-                var pagingStruct = ProtoUtils.toStruct(this.pagingToken);
-                requestBuilder.setPagingToken(pagingStruct);
+                var pagingMap = ProtoUtils.toKeyMap(this.pagingToken);
+                requestBuilder.putAllPagingToken(pagingMap);
             }
 
             return requestBuilder.build();
         }
 
+        @SuppressWarnings({"unchecked"})
         protected void loadPageData(KeyValueQueryResponse response) {
 
             // Marshall response data
@@ -495,11 +491,7 @@ public class Query<T> {
             });
 
             // Marshal the response paging token
-            Map<String, Object> resultPagingToken = (response.getPagingToken() != null)
-                    ? ProtoUtils.toMap(response.getPagingToken()) : null;
-
-            this.pagingToken = (resultPagingToken != null && !resultPagingToken.isEmpty())
-                    ? resultPagingToken : null;
+            this.pagingToken = ProtoUtils.fromKeyMap(response.getPagingTokenMap());
         }
     }
 

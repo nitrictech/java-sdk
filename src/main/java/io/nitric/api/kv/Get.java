@@ -69,7 +69,7 @@ public class Get<T> {
     /**
      * Set the default key.
      *
-     * @param key the key in the collection (required)
+     * @param key the values key in the collection (required)
      * @return the Get operation
      */
     public Get<T> key(String key) {
@@ -85,7 +85,7 @@ public class Get<T> {
      * @param key the values key in the collection (required)
      * @return the Get operation
      */
-    public Get<T> key(Number key) {
+    public Get<T> key(Long key) {
         Objects.requireNonNull(key, "key parameter is required");
 
         this.key.put(KeyValueClient.DEFAULT_KEY_NAME, key);
@@ -132,16 +132,17 @@ public class Get<T> {
      *
      * @return the collection value for the specified key, or null if not found
      */
+    @SuppressWarnings({"unchecked", "raw"})
     public T get() {
         if (key.isEmpty()) {
             throw new NullPointerException("key parameter is required");
         }
 
-        var keyStruct = ProtoUtils.toStruct(key);
+        var keyMap = ProtoUtils.toKeyMap(key);
 
         var request = KeyValueGetRequest.newBuilder()
                 .setCollection(builder.collection)
-                .setKey(keyStruct)
+                .putAllKey(keyMap)
                 .build();
 
         var response = builder.serviceStub.get(request);

@@ -86,25 +86,52 @@ public interface KeyValueQueryRequestOrBuilder extends
    * The query paging continuation token
    * </pre>
    *
-   * <code>.google.protobuf.Struct pagingToken = 4;</code>
-   * @return Whether the pagingToken field is set.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 4;</code>
    */
-  boolean hasPagingToken();
+  int getPagingTokenCount();
   /**
    * <pre>
    * The query paging continuation token
    * </pre>
    *
-   * <code>.google.protobuf.Struct pagingToken = 4;</code>
-   * @return The pagingToken.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 4;</code>
    */
-  com.google.protobuf.Struct getPagingToken();
+  boolean containsPagingToken(
+      java.lang.String key);
+  /**
+   * Use {@link #getPagingTokenMap()} instead.
+   */
+  @java.lang.Deprecated
+  java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+  getPagingToken();
   /**
    * <pre>
    * The query paging continuation token
    * </pre>
    *
-   * <code>.google.protobuf.Struct pagingToken = 4;</code>
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 4;</code>
    */
-  com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder();
+  java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+  getPagingTokenMap();
+  /**
+   * <pre>
+   * The query paging continuation token
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 4;</code>
+   */
+
+  io.nitric.proto.kv.v1.Key getPagingTokenOrDefault(
+      java.lang.String key,
+      io.nitric.proto.kv.v1.Key defaultValue);
+  /**
+   * <pre>
+   * The query paging continuation token
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 4;</code>
+   */
+
+  io.nitric.proto.kv.v1.Key getPagingTokenOrThrow(
+      java.lang.String key);
 }

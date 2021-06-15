@@ -85,7 +85,7 @@ public class Delete<T> {
      * @param key the values key in the collection (required)
      * @return the Delete operation
      */
-    public Delete<T> key(Number key) {
+    public Delete<T> key(Long key) {
         Objects.requireNonNull(key, "key parameter is required");
 
         this.key.put(KeyValueClient.DEFAULT_KEY_NAME, key);
@@ -135,11 +135,11 @@ public class Delete<T> {
             throw new NullPointerException("key parameter is required");
         }
 
-        var keyStruct = ProtoUtils.toStruct(key);
+        var keyMap = ProtoUtils.toKeyMap(key);
 
         var request = KeyValueDeleteRequest.newBuilder()
                 .setCollection(builder.collection)
-                .setKey(keyStruct)
+                .putAllKey(keyMap)
                 .build();
 
         builder.serviceStub.delete(request);

@@ -24,11 +24,62 @@ import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 import org.junit.jupiter.api.Test;
 
+import io.nitric.proto.kv.v1.Key;
+
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProtoUtilsTest {
+
+    @Test
+    public void test_toKeyMap() {
+        try {
+            ProtoUtils.toKeyMap(null);
+            assertTrue(false);
+
+        } catch (NullPointerException npe) {
+            assertEquals("key parameter is required", npe.getMessage());
+        }
+
+        var keyMap = ProtoUtils.toKeyMap(Collections.emptyMap());
+        assertNotNull(keyMap);
+        assertTrue(keyMap.isEmpty());
+
+        keyMap = ProtoUtils.toKeyMap(Map.of("key", "john.smith@server.com"));
+        Key key = keyMap.get("key");
+        assertNotNull(key);
+        assertEquals("john.smith@server.com", key.getString());
+        assertEquals(0, key.getNumber());
+
+        keyMap = ProtoUtils.toKeyMap(Map.of("key", 12345));
+        key = keyMap.get("key");
+        assertNotNull(key);
+        assertEquals("", key.getString());
+        assertEquals(12345, key.getNumber());
+    }
+
+    public void test_fromKeyMap() {
+        var keyMap = ProtoUtils.fromKeyMap(null);
+        assertNull(keyMap);
+
+        keyMap = ProtoUtils.fromKeyMap(Collections.emptyMap());
+        assertNull(keyMap);
+
+        var stringKey = Key.newBuilder().setString("string").build();
+        var numberKey = Key.newBuilder().setNumber(1234567890L).build();
+
+        var protoMap = Map.of("key", stringKey);
+        keyMap = ProtoUtils.fromKeyMap(protoMap);
+        assertNotNull(keyMap);
+        assertEquals("string", keyMap.get("key"));
+
+        protoMap = Map.of("key", numberKey);
+        keyMap = ProtoUtils.fromKeyMap(protoMap);
+        assertNotNull(keyMap);
+        assertEquals(1234567890L, keyMap.get("key"));
+    }
 
     @Test
     public void test_toStruct() {

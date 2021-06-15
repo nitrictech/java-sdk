@@ -39,6 +39,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -56,16 +57,16 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 18: {
-            com.google.protobuf.Struct.Builder subBuilder = null;
-            if (key_ != null) {
-              subBuilder = key_.toBuilder();
+            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+              key_ = com.google.protobuf.MapField.newMapField(
+                  KeyDefaultEntryHolder.defaultEntry);
+              mutable_bitField0_ |= 0x00000001;
             }
-            key_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(key_);
-              key_ = subBuilder.buildPartial();
-            }
-
+            com.google.protobuf.MapEntry<java.lang.String, io.nitric.proto.kv.v1.Key>
+            key__ = input.readMessage(
+                KeyDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            key_.getMutableMap().put(
+                key__.getKey(), key__.getValue());
             break;
           }
           default: {
@@ -92,6 +93,18 @@ private static final long serialVersionUID = 0L;
     return io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor;
   }
 
+  @SuppressWarnings({"rawtypes"})
+  @java.lang.Override
+  protected com.google.protobuf.MapField internalGetMapField(
+      int number) {
+    switch (number) {
+      case 2:
+        return internalGetKey();
+      default:
+        throw new RuntimeException(
+            "Invalid map field number: " + number);
+    }
+  }
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
@@ -147,41 +160,100 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int KEY_FIELD_NUMBER = 2;
-  private com.google.protobuf.Struct key_;
-  /**
-   * <pre>
-   * The unique key of the keyValue to retrieve
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct key = 2;</code>
-   * @return Whether the key field is set.
-   */
-  @java.lang.Override
-  public boolean hasKey() {
-    return key_ != null;
+  private static final class KeyDefaultEntryHolder {
+    static final com.google.protobuf.MapEntry<
+        java.lang.String, io.nitric.proto.kv.v1.Key> defaultEntry =
+            com.google.protobuf.MapEntry
+            .<java.lang.String, io.nitric.proto.kv.v1.Key>newDefaultInstance(
+                io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueGetRequest_KeyEntry_descriptor,
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "",
+                com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                io.nitric.proto.kv.v1.Key.getDefaultInstance());
+  }
+  private com.google.protobuf.MapField<
+      java.lang.String, io.nitric.proto.kv.v1.Key> key_;
+  private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+  internalGetKey() {
+    if (key_ == null) {
+      return com.google.protobuf.MapField.emptyMapField(
+          KeyDefaultEntryHolder.defaultEntry);
+    }
+    return key_;
+  }
+
+  public int getKeyCount() {
+    return internalGetKey().getMap().size();
   }
   /**
    * <pre>
    * The unique key of the keyValue to retrieve
    * </pre>
    *
-   * <code>.google.protobuf.Struct key = 2;</code>
-   * @return The key.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+   */
+
+  @java.lang.Override
+  public boolean containsKey(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    return internalGetKey().getMap().containsKey(key);
+  }
+  /**
+   * Use {@link #getKeyMap()} instead.
    */
   @java.lang.Override
-  public com.google.protobuf.Struct getKey() {
-    return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
+  @java.lang.Deprecated
+  public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getKey() {
+    return getKeyMap();
   }
   /**
    * <pre>
    * The unique key of the keyValue to retrieve
    * </pre>
    *
-   * <code>.google.protobuf.Struct key = 2;</code>
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
-    return getKey();
+
+  public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getKeyMap() {
+    return internalGetKey().getMap();
+  }
+  /**
+   * <pre>
+   * The unique key of the keyValue to retrieve
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+   */
+  @java.lang.Override
+
+  public io.nitric.proto.kv.v1.Key getKeyOrDefault(
+      java.lang.String key,
+      io.nitric.proto.kv.v1.Key defaultValue) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+        internalGetKey().getMap();
+    return map.containsKey(key) ? map.get(key) : defaultValue;
+  }
+  /**
+   * <pre>
+   * The unique key of the keyValue to retrieve
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+   */
+  @java.lang.Override
+
+  public io.nitric.proto.kv.v1.Key getKeyOrThrow(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+        internalGetKey().getMap();
+    if (!map.containsKey(key)) {
+      throw new java.lang.IllegalArgumentException();
+    }
+    return map.get(key);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -201,9 +273,12 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, collection_);
     }
-    if (key_ != null) {
-      output.writeMessage(2, getKey());
-    }
+    com.google.protobuf.GeneratedMessageV3
+      .serializeStringMapTo(
+        output,
+        internalGetKey(),
+        KeyDefaultEntryHolder.defaultEntry,
+        2);
     unknownFields.writeTo(output);
   }
 
@@ -216,9 +291,15 @@ private static final long serialVersionUID = 0L;
     if (!getCollectionBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, collection_);
     }
-    if (key_ != null) {
+    for (java.util.Map.Entry<java.lang.String, io.nitric.proto.kv.v1.Key> entry
+         : internalGetKey().getMap().entrySet()) {
+      com.google.protobuf.MapEntry<java.lang.String, io.nitric.proto.kv.v1.Key>
+      key__ = KeyDefaultEntryHolder.defaultEntry.newBuilderForType()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue())
+          .build();
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getKey());
+          .computeMessageSize(2, key__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -237,11 +318,8 @@ private static final long serialVersionUID = 0L;
 
     if (!getCollection()
         .equals(other.getCollection())) return false;
-    if (hasKey() != other.hasKey()) return false;
-    if (hasKey()) {
-      if (!getKey()
-          .equals(other.getKey())) return false;
-    }
+    if (!internalGetKey().equals(
+        other.internalGetKey())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -255,9 +333,9 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + COLLECTION_FIELD_NUMBER;
     hash = (53 * hash) + getCollection().hashCode();
-    if (hasKey()) {
+    if (!internalGetKey().getMap().isEmpty()) {
       hash = (37 * hash) + KEY_FIELD_NUMBER;
-      hash = (53 * hash) + getKey().hashCode();
+      hash = (53 * hash) + internalGetKey().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -366,6 +444,28 @@ private static final long serialVersionUID = 0L;
       return io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueGetRequest_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetKey();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMutableMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetMutableKey();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -394,12 +494,7 @@ private static final long serialVersionUID = 0L;
       super.clear();
       collection_ = "";
 
-      if (keyBuilder_ == null) {
-        key_ = null;
-      } else {
-        key_ = null;
-        keyBuilder_ = null;
-      }
+      internalGetMutableKey().clear();
       return this;
     }
 
@@ -426,12 +521,10 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public io.nitric.proto.kv.v1.KeyValueGetRequest buildPartial() {
       io.nitric.proto.kv.v1.KeyValueGetRequest result = new io.nitric.proto.kv.v1.KeyValueGetRequest(this);
+      int from_bitField0_ = bitField0_;
       result.collection_ = collection_;
-      if (keyBuilder_ == null) {
-        result.key_ = key_;
-      } else {
-        result.key_ = keyBuilder_.build();
-      }
+      result.key_ = internalGetKey();
+      result.key_.makeImmutable();
       onBuilt();
       return result;
     }
@@ -484,9 +577,8 @@ private static final long serialVersionUID = 0L;
         collection_ = other.collection_;
         onChanged();
       }
-      if (other.hasKey()) {
-        mergeKey(other.getKey());
-      }
+      internalGetMutableKey().mergeFrom(
+          other.internalGetKey());
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -515,6 +607,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private java.lang.Object collection_ = "";
     /**
@@ -612,111 +705,106 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private com.google.protobuf.Struct key_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> keyBuilder_;
-    /**
-     * <pre>
-     * The unique key of the keyValue to retrieve
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct key = 2;</code>
-     * @return Whether the key field is set.
-     */
-    public boolean hasKey() {
-      return keyBuilder_ != null || key_ != null;
-    }
-    /**
-     * <pre>
-     * The unique key of the keyValue to retrieve
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct key = 2;</code>
-     * @return The key.
-     */
-    public com.google.protobuf.Struct getKey() {
-      if (keyBuilder_ == null) {
-        return key_ == null ? com.google.protobuf.Struct.getDefaultInstance() : key_;
-      } else {
-        return keyBuilder_.getMessage();
+    private com.google.protobuf.MapField<
+        java.lang.String, io.nitric.proto.kv.v1.Key> key_;
+    private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+    internalGetKey() {
+      if (key_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            KeyDefaultEntryHolder.defaultEntry);
       }
+      return key_;
     }
-    /**
-     * <pre>
-     * The unique key of the keyValue to retrieve
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct key = 2;</code>
-     */
-    public Builder setKey(com.google.protobuf.Struct value) {
-      if (keyBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        key_ = value;
-        onChanged();
-      } else {
-        keyBuilder_.setMessage(value);
+    private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+    internalGetMutableKey() {
+      onChanged();;
+      if (key_ == null) {
+        key_ = com.google.protobuf.MapField.newMapField(
+            KeyDefaultEntryHolder.defaultEntry);
       }
+      if (!key_.isMutable()) {
+        key_ = key_.copy();
+      }
+      return key_;
+    }
 
-      return this;
+    public int getKeyCount() {
+      return internalGetKey().getMap().size();
     }
     /**
      * <pre>
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
-    public Builder setKey(
-        com.google.protobuf.Struct.Builder builderForValue) {
-      if (keyBuilder_ == null) {
-        key_ = builderForValue.build();
-        onChanged();
-      } else {
-        keyBuilder_.setMessage(builderForValue.build());
-      }
 
-      return this;
+    @java.lang.Override
+    public boolean containsKey(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetKey().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getKeyMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getKey() {
+      return getKeyMap();
     }
     /**
      * <pre>
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
-    public Builder mergeKey(com.google.protobuf.Struct value) {
-      if (keyBuilder_ == null) {
-        if (key_ != null) {
-          key_ =
-            com.google.protobuf.Struct.newBuilder(key_).mergeFrom(value).buildPartial();
-        } else {
-          key_ = value;
-        }
-        onChanged();
-      } else {
-        keyBuilder_.mergeFrom(value);
-      }
+    @java.lang.Override
 
-      return this;
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getKeyMap() {
+      return internalGetKey().getMap();
     }
     /**
      * <pre>
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
+    @java.lang.Override
+
+    public io.nitric.proto.kv.v1.Key getKeyOrDefault(
+        java.lang.String key,
+        io.nitric.proto.kv.v1.Key defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+          internalGetKey().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * The unique key of the keyValue to retrieve
+     * </pre>
+     *
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+     */
+    @java.lang.Override
+
+    public io.nitric.proto.kv.v1.Key getKeyOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+          internalGetKey().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     public Builder clearKey() {
-      if (keyBuilder_ == null) {
-        key_ = null;
-        onChanged();
-      } else {
-        key_ = null;
-        keyBuilder_ = null;
-      }
-
+      internalGetMutableKey().getMutableMap()
+          .clear();
       return this;
     }
     /**
@@ -724,47 +812,53 @@ private static final long serialVersionUID = 0L;
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
-    public com.google.protobuf.Struct.Builder getKeyBuilder() {
 
-      onChanged();
-      return getKeyFieldBuilder().getBuilder();
+    public Builder removeKey(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableKey().getMutableMap()
+          .remove(key);
+      return this;
+    }
+    /**
+     * Use alternate mutation accessors instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+    getMutableKey() {
+      return internalGetMutableKey().getMutableMap();
     }
     /**
      * <pre>
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
-    public com.google.protobuf.StructOrBuilder getKeyOrBuilder() {
-      if (keyBuilder_ != null) {
-        return keyBuilder_.getMessageOrBuilder();
-      } else {
-        return key_ == null ?
-            com.google.protobuf.Struct.getDefaultInstance() : key_;
-      }
+    public Builder putKey(
+        java.lang.String key,
+        io.nitric.proto.kv.v1.Key value) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      if (value == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutableKey().getMutableMap()
+          .put(key, value);
+      return this;
     }
     /**
      * <pre>
      * The unique key of the keyValue to retrieve
      * </pre>
      *
-     * <code>.google.protobuf.Struct key = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
-        getKeyFieldBuilder() {
-      if (keyBuilder_ == null) {
-        keyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
-                getKey(),
-                getParentForChildren(),
-                isClean());
-        key_ = null;
-      }
-      return keyBuilder_;
+
+    public Builder putAllKey(
+        java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> values) {
+      internalGetMutableKey().getMutableMap()
+          .putAll(values);
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

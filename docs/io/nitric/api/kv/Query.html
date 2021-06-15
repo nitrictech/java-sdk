@@ -286,7 +286,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
  <h3>Query Pagination</h3>
 
  <p>
-   Support for query pagination is provided when using the <code>limit</code> and <code>pagingToken</code> attributes.
+   Query pagination support is provided with the <code>limit</code> and <code>pagingToken</code> attributes.
    To perform query paging first set a maximum query page size with the <code>limit</code> attribute.
    Once the first query has executed and processed, if there are more results available in the KV database the
    <code>QueryResult.getPagingToken()</code> will be defined. This value should then be used to set the
@@ -325,10 +325,10 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
  </code></pre>
 
  <h3>Query Fetch All</h3>
- 
+
  <p>
- For processing large paginated result use the <code>fetchAll()</code> method 
- which provides an QueryResult iterator which automaticall performs query 
+ For processing large paginated result use the <code>fetchAll()</code> method
+ which provides an QueryResult iterator which automatically performs query
  pagination for you. The equivalent code using the <code>fetchAll()</code> is
  provided below.
  </p>
@@ -348,7 +348,13 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
   query.fetchAll().forEach(customer -&gt; {
       // Process customer...
   });
- </code></pre></div>
+ </code></pre>
+
+ <p>
+ Note processing upbounded results sets may lead to out of memory errors, so
+ please use stream procesing style design patterns and do not accumulate large
+ amounts of objects.
+ </p></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="KeyValueClient.html" title="class in io.nitric.api.kv"><code>KeyValueClient</code></a></dd>

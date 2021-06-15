@@ -21,6 +21,7 @@ package io.nitric.api.kv;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Objects;
 import com.google.protobuf.Struct;
 import io.nitric.proto.kv.v1.*;
 import io.nitric.util.ProtoUtils;
@@ -95,8 +96,8 @@ public class KeyValueClientTest {
             public KeyValueGetResponse get(KeyValueGetRequest request) {
                 assertNotNull(request);
                 assertNotNull(request.getCollection());
-                assertNotNull(request.getKey());
-                Map<String, Object> keyMap = ProtoUtils.toMap(request.getKey());
+                assertNotNull(request.getKeyMap());
+                Map<String, Object> keyMap = ProtoUtils.fromKeyMap(request.getKeyMap());
                 if (keyMap.equals(KNOWN_KEY)) {
                     return KeyValueGetResponse.newBuilder().setValue(KNOWN_STRUCT).build();
                 } else {
@@ -129,13 +130,14 @@ public class KeyValueClientTest {
         }
 
         // Typed client
-        final Map<String, Object> key2 = Map.of("key", 12345.0);
+        final Map<String, Object> key2 = Map.of("key", 12345);
 
         var typedMock = new MockKeyValueBlockingStub() {
             @Override
             public KeyValueGetResponse get(KeyValueGetRequest request) {
-                Map<String, Object> keyMap = ProtoUtils.toMap(request.getKey());
-                if (keyMap.equals(key2)) {
+                Map<String, Object> keyMap = ProtoUtils.fromKeyMap(request.getKeyMap());
+
+                if (keyMap.toString().equals(key2.toString())) {
                     Account account = createAccount();
                     Map map = new ObjectMapper().convertValue(account, Map.class);
                     var struct = ProtoUtils.toStruct(map);
@@ -152,7 +154,7 @@ public class KeyValueClientTest {
                 .build();
 
         Account account = typedClient.newGet()
-                .key(12345.0)
+                .key(12345L)
                 .get();
         assertNotNull(account);
         assertEquals(createAccount(), account);
@@ -238,7 +240,7 @@ public class KeyValueClientTest {
                 .build();
 
         var account = new Account();
-        account.setId(12345);
+        account.setId(12345L);
         account.setType("wholesale");
         account.setActive(true);
 
@@ -266,7 +268,7 @@ public class KeyValueClientTest {
                 .build();
 
         client.newDelete()
-                .key(123)
+                .key(12345L)
                 .delete();
 
         try {
@@ -286,7 +288,7 @@ public class KeyValueClientTest {
         account.setActive(true);
         account.setAssetsValue(100_000D);
         account.setType("retail");
-        account.setId(12345);
+        account.setId(12345L);
 
         Address address1 = new Address();
         address1.setFirstLine("first line");

@@ -60,16 +60,16 @@ private static final long serialVersionUID = 0L;
             break;
           }
           case 18: {
-            com.google.protobuf.Struct.Builder subBuilder = null;
-            if (pagingToken_ != null) {
-              subBuilder = pagingToken_.toBuilder();
+            if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+              pagingToken_ = com.google.protobuf.MapField.newMapField(
+                  PagingTokenDefaultEntryHolder.defaultEntry);
+              mutable_bitField0_ |= 0x00000002;
             }
-            pagingToken_ = input.readMessage(com.google.protobuf.Struct.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(pagingToken_);
-              pagingToken_ = subBuilder.buildPartial();
-            }
-
+            com.google.protobuf.MapEntry<java.lang.String, io.nitric.proto.kv.v1.Key>
+            pagingToken__ = input.readMessage(
+                PagingTokenDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+            pagingToken_.getMutableMap().put(
+                pagingToken__.getKey(), pagingToken__.getValue());
             break;
           }
           default: {
@@ -99,6 +99,18 @@ private static final long serialVersionUID = 0L;
     return io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor;
   }
 
+  @SuppressWarnings({"rawtypes"})
+  @java.lang.Override
+  protected com.google.protobuf.MapField internalGetMapField(
+      int number) {
+    switch (number) {
+      case 2:
+        return internalGetPagingToken();
+      default:
+        throw new RuntimeException(
+            "Invalid map field number: " + number);
+    }
+  }
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
@@ -168,41 +180,100 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int PAGINGTOKEN_FIELD_NUMBER = 2;
-  private com.google.protobuf.Struct pagingToken_;
-  /**
-   * <pre>
-   * The query paging continuation token, when not null further results are available
-   * </pre>
-   *
-   * <code>.google.protobuf.Struct pagingToken = 2;</code>
-   * @return Whether the pagingToken field is set.
-   */
-  @java.lang.Override
-  public boolean hasPagingToken() {
-    return pagingToken_ != null;
+  private static final class PagingTokenDefaultEntryHolder {
+    static final com.google.protobuf.MapEntry<
+        java.lang.String, io.nitric.proto.kv.v1.Key> defaultEntry =
+            com.google.protobuf.MapEntry
+            .<java.lang.String, io.nitric.proto.kv.v1.Key>newDefaultInstance(
+                io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueQueryResponse_PagingTokenEntry_descriptor,
+                com.google.protobuf.WireFormat.FieldType.STRING,
+                "",
+                com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                io.nitric.proto.kv.v1.Key.getDefaultInstance());
+  }
+  private com.google.protobuf.MapField<
+      java.lang.String, io.nitric.proto.kv.v1.Key> pagingToken_;
+  private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+  internalGetPagingToken() {
+    if (pagingToken_ == null) {
+      return com.google.protobuf.MapField.emptyMapField(
+          PagingTokenDefaultEntryHolder.defaultEntry);
+    }
+    return pagingToken_;
+  }
+
+  public int getPagingTokenCount() {
+    return internalGetPagingToken().getMap().size();
   }
   /**
    * <pre>
    * The query paging continuation token, when not null further results are available
    * </pre>
    *
-   * <code>.google.protobuf.Struct pagingToken = 2;</code>
-   * @return The pagingToken.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
+   */
+
+  @java.lang.Override
+  public boolean containsPagingToken(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    return internalGetPagingToken().getMap().containsKey(key);
+  }
+  /**
+   * Use {@link #getPagingTokenMap()} instead.
    */
   @java.lang.Override
-  public com.google.protobuf.Struct getPagingToken() {
-    return pagingToken_ == null ? com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
+  @java.lang.Deprecated
+  public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getPagingToken() {
+    return getPagingTokenMap();
   }
   /**
    * <pre>
    * The query paging continuation token, when not null further results are available
    * </pre>
    *
-   * <code>.google.protobuf.Struct pagingToken = 2;</code>
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
    */
   @java.lang.Override
-  public com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder() {
-    return getPagingToken();
+
+  public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getPagingTokenMap() {
+    return internalGetPagingToken().getMap();
+  }
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
+   */
+  @java.lang.Override
+
+  public io.nitric.proto.kv.v1.Key getPagingTokenOrDefault(
+      java.lang.String key,
+      io.nitric.proto.kv.v1.Key defaultValue) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+        internalGetPagingToken().getMap();
+    return map.containsKey(key) ? map.get(key) : defaultValue;
+  }
+  /**
+   * <pre>
+   * The query paging continuation token, when not null further results are available
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
+   */
+  @java.lang.Override
+
+  public io.nitric.proto.kv.v1.Key getPagingTokenOrThrow(
+      java.lang.String key) {
+    if (key == null) { throw new java.lang.NullPointerException(); }
+    java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+        internalGetPagingToken().getMap();
+    if (!map.containsKey(key)) {
+      throw new java.lang.IllegalArgumentException();
+    }
+    return map.get(key);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -222,9 +293,12 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < values_.size(); i++) {
       output.writeMessage(1, values_.get(i));
     }
-    if (pagingToken_ != null) {
-      output.writeMessage(2, getPagingToken());
-    }
+    com.google.protobuf.GeneratedMessageV3
+      .serializeStringMapTo(
+        output,
+        internalGetPagingToken(),
+        PagingTokenDefaultEntryHolder.defaultEntry,
+        2);
     unknownFields.writeTo(output);
   }
 
@@ -238,9 +312,15 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(1, values_.get(i));
     }
-    if (pagingToken_ != null) {
+    for (java.util.Map.Entry<java.lang.String, io.nitric.proto.kv.v1.Key> entry
+         : internalGetPagingToken().getMap().entrySet()) {
+      com.google.protobuf.MapEntry<java.lang.String, io.nitric.proto.kv.v1.Key>
+      pagingToken__ = PagingTokenDefaultEntryHolder.defaultEntry.newBuilderForType()
+          .setKey(entry.getKey())
+          .setValue(entry.getValue())
+          .build();
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(2, getPagingToken());
+          .computeMessageSize(2, pagingToken__);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -259,11 +339,8 @@ private static final long serialVersionUID = 0L;
 
     if (!getValuesList()
         .equals(other.getValuesList())) return false;
-    if (hasPagingToken() != other.hasPagingToken()) return false;
-    if (hasPagingToken()) {
-      if (!getPagingToken()
-          .equals(other.getPagingToken())) return false;
-    }
+    if (!internalGetPagingToken().equals(
+        other.internalGetPagingToken())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -279,9 +356,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + VALUES_FIELD_NUMBER;
       hash = (53 * hash) + getValuesList().hashCode();
     }
-    if (hasPagingToken()) {
+    if (!internalGetPagingToken().getMap().isEmpty()) {
       hash = (37 * hash) + PAGINGTOKEN_FIELD_NUMBER;
-      hash = (53 * hash) + getPagingToken().hashCode();
+      hash = (53 * hash) + internalGetPagingToken().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -390,6 +467,28 @@ private static final long serialVersionUID = 0L;
       return io.nitric.proto.kv.v1.KeyValues.internal_static_nitric_kv_v1_KeyValueQueryResponse_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetPagingToken();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMutableMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetMutablePagingToken();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -423,12 +522,7 @@ private static final long serialVersionUID = 0L;
       } else {
         valuesBuilder_.clear();
       }
-      if (pagingTokenBuilder_ == null) {
-        pagingToken_ = null;
-      } else {
-        pagingToken_ = null;
-        pagingTokenBuilder_ = null;
-      }
+      internalGetMutablePagingToken().clear();
       return this;
     }
 
@@ -465,11 +559,8 @@ private static final long serialVersionUID = 0L;
       } else {
         result.values_ = valuesBuilder_.build();
       }
-      if (pagingTokenBuilder_ == null) {
-        result.pagingToken_ = pagingToken_;
-      } else {
-        result.pagingToken_ = pagingTokenBuilder_.build();
-      }
+      result.pagingToken_ = internalGetPagingToken();
+      result.pagingToken_.makeImmutable();
       onBuilt();
       return result;
     }
@@ -544,9 +635,8 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
-      if (other.hasPagingToken()) {
-        mergePagingToken(other.getPagingToken());
-      }
+      internalGetMutablePagingToken().mergeFrom(
+          other.internalGetPagingToken());
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -889,111 +979,106 @@ private static final long serialVersionUID = 0L;
       return valuesBuilder_;
     }
 
-    private com.google.protobuf.Struct pagingToken_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> pagingTokenBuilder_;
-    /**
-     * <pre>
-     * The query paging continuation token, when not null further results are available
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
-     * @return Whether the pagingToken field is set.
-     */
-    public boolean hasPagingToken() {
-      return pagingTokenBuilder_ != null || pagingToken_ != null;
-    }
-    /**
-     * <pre>
-     * The query paging continuation token, when not null further results are available
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
-     * @return The pagingToken.
-     */
-    public com.google.protobuf.Struct getPagingToken() {
-      if (pagingTokenBuilder_ == null) {
-        return pagingToken_ == null ? com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
-      } else {
-        return pagingTokenBuilder_.getMessage();
+    private com.google.protobuf.MapField<
+        java.lang.String, io.nitric.proto.kv.v1.Key> pagingToken_;
+    private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+    internalGetPagingToken() {
+      if (pagingToken_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            PagingTokenDefaultEntryHolder.defaultEntry);
       }
+      return pagingToken_;
     }
-    /**
-     * <pre>
-     * The query paging continuation token, when not null further results are available
-     * </pre>
-     *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
-     */
-    public Builder setPagingToken(com.google.protobuf.Struct value) {
-      if (pagingTokenBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        pagingToken_ = value;
-        onChanged();
-      } else {
-        pagingTokenBuilder_.setMessage(value);
+    private com.google.protobuf.MapField<java.lang.String, io.nitric.proto.kv.v1.Key>
+    internalGetMutablePagingToken() {
+      onChanged();;
+      if (pagingToken_ == null) {
+        pagingToken_ = com.google.protobuf.MapField.newMapField(
+            PagingTokenDefaultEntryHolder.defaultEntry);
       }
+      if (!pagingToken_.isMutable()) {
+        pagingToken_ = pagingToken_.copy();
+      }
+      return pagingToken_;
+    }
 
-      return this;
+    public int getPagingTokenCount() {
+      return internalGetPagingToken().getMap().size();
     }
     /**
      * <pre>
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
-    public Builder setPagingToken(
-        com.google.protobuf.Struct.Builder builderForValue) {
-      if (pagingTokenBuilder_ == null) {
-        pagingToken_ = builderForValue.build();
-        onChanged();
-      } else {
-        pagingTokenBuilder_.setMessage(builderForValue.build());
-      }
 
-      return this;
+    @java.lang.Override
+    public boolean containsPagingToken(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetPagingToken().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getPagingTokenMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getPagingToken() {
+      return getPagingTokenMap();
     }
     /**
      * <pre>
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
-    public Builder mergePagingToken(com.google.protobuf.Struct value) {
-      if (pagingTokenBuilder_ == null) {
-        if (pagingToken_ != null) {
-          pagingToken_ =
-            com.google.protobuf.Struct.newBuilder(pagingToken_).mergeFrom(value).buildPartial();
-        } else {
-          pagingToken_ = value;
-        }
-        onChanged();
-      } else {
-        pagingTokenBuilder_.mergeFrom(value);
-      }
+    @java.lang.Override
 
-      return this;
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> getPagingTokenMap() {
+      return internalGetPagingToken().getMap();
     }
     /**
      * <pre>
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
+    @java.lang.Override
+
+    public io.nitric.proto.kv.v1.Key getPagingTokenOrDefault(
+        java.lang.String key,
+        io.nitric.proto.kv.v1.Key defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+          internalGetPagingToken().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * The query paging continuation token, when not null further results are available
+     * </pre>
+     *
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
+     */
+    @java.lang.Override
+
+    public io.nitric.proto.kv.v1.Key getPagingTokenOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> map =
+          internalGetPagingToken().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     public Builder clearPagingToken() {
-      if (pagingTokenBuilder_ == null) {
-        pagingToken_ = null;
-        onChanged();
-      } else {
-        pagingToken_ = null;
-        pagingTokenBuilder_ = null;
-      }
-
+      internalGetMutablePagingToken().getMutableMap()
+          .clear();
       return this;
     }
     /**
@@ -1001,47 +1086,53 @@ private static final long serialVersionUID = 0L;
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
-    public com.google.protobuf.Struct.Builder getPagingTokenBuilder() {
 
-      onChanged();
-      return getPagingTokenFieldBuilder().getBuilder();
+    public Builder removePagingToken(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutablePagingToken().getMutableMap()
+          .remove(key);
+      return this;
+    }
+    /**
+     * Use alternate mutation accessors instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+    getMutablePagingToken() {
+      return internalGetMutablePagingToken().getMutableMap();
     }
     /**
      * <pre>
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
-    public com.google.protobuf.StructOrBuilder getPagingTokenOrBuilder() {
-      if (pagingTokenBuilder_ != null) {
-        return pagingTokenBuilder_.getMessageOrBuilder();
-      } else {
-        return pagingToken_ == null ?
-            com.google.protobuf.Struct.getDefaultInstance() : pagingToken_;
-      }
+    public Builder putPagingToken(
+        java.lang.String key,
+        io.nitric.proto.kv.v1.Key value) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      if (value == null) { throw new java.lang.NullPointerException(); }
+      internalGetMutablePagingToken().getMutableMap()
+          .put(key, value);
+      return this;
     }
     /**
      * <pre>
      * The query paging continuation token, when not null further results are available
      * </pre>
      *
-     * <code>.google.protobuf.Struct pagingToken = 2;</code>
+     * <code>map&lt;string, .nitric.kv.v1.Key&gt; pagingToken = 2;</code>
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>
-        getPagingTokenFieldBuilder() {
-      if (pagingTokenBuilder_ == null) {
-        pagingTokenBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder>(
-                getPagingToken(),
-                getParentForChildren(),
-                isClean());
-        pagingToken_ = null;
-      }
-      return pagingTokenBuilder_;
+
+    public Builder putAllPagingToken(
+        java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key> values) {
+      internalGetMutablePagingToken().getMutableMap()
+          .putAll(values);
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

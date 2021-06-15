@@ -25,6 +25,9 @@ import com.google.protobuf.NullValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 
+import io.nitric.proto.kv.v1.Key;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,6 +52,67 @@ public class ProtoUtils {
      * Enforce static method usage.
      */
     ProtoUtils() {
+    }
+
+    /**
+     * Return a proto API Key map from the given pojo map.
+     *
+     * @param key the source pojo map (required)
+     * @return a proto API Key map
+     */
+    public static Map<String, Key> toKeyMap(final Map<String, Object> key) {
+        Objects.requireNonNull(key, "key parameter is required");
+
+        var protoKeyMap = new HashMap<String, Key>();
+
+        key.entrySet().forEach(entry -> {
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                var keyValue = Key.newBuilder().setString(value.toString()).build();
+                protoKeyMap.put(name, keyValue);
+
+            } else if (value instanceof Long || value instanceof Integer) {
+                var number = ((Number) value).longValue();
+                var keyValue = Key.newBuilder().setNumber(number).build();
+                protoKeyMap.put(name, keyValue);
+
+            } else {
+                String msg = String.format("key %s value type is not supported %s",
+                    name,
+                    value.getClass().getName());
+                throw new IllegalArgumentException(msg);
+            }
+        });
+
+        return protoKeyMap;
+    }
+
+    /**
+     * Return a pojo map from the given proto API Key map. Please note if the given keyMap is null
+     * or empty this method will return a null map.
+     *
+     * @param keyMap the source proto key map
+     * @return a pojo map if the source key map is not null and contains entries, otherwise returns null
+     */
+    public static Map<String, Object> fromKeyMap(final  Map<String, Key> keyMap) {
+        if (keyMap == null || keyMap.isEmpty()) {
+            return null;
+        }
+
+        var pojoMap = new HashMap<String, Object>();
+
+        keyMap.keySet().forEach(keyName -> {
+            Key key = keyMap.get(keyName);
+            // Review if more key types added, this conditional check is fragile
+            if (key.getString().isEmpty()) {
+                pojoMap.put(keyName, key.getNumber());
+            } else {
+                pojoMap.put(keyName, key.getString());
+            }
+        });
+
+        return pojoMap;
     }
 
     /**

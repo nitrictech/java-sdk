@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nitric.proto.kv.v1.KeyValuePutRequest;
 import io.nitric.util.ProtoUtils;
 
+import io.nitric.proto.kv.v1.Key;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -109,7 +111,7 @@ public class Put<T> {
      * @param keyValue the values key in the collection (required)
      * @return the Put operation
      */
-    public Put<T> key(Number keyValue) {
+    public Put<T> key(Long keyValue) {
         Objects.requireNonNull(keyValue, "keyValue parameter is required");
 
         this.key.put(KeyValueClient.DEFAULT_KEY_NAME, keyValue);
@@ -167,13 +169,14 @@ public class Put<T> {
     /**
      * Store the value in the collection with the specified key and value.
      */
+    @SuppressWarnings({"unchecked", "raw"})
     public void put() {
         if (key.isEmpty()) {
             throw new NullPointerException("key parameter is required");
         }
         Objects.requireNonNull(value, "value parameter is required");
 
-        Map valueMap = null;
+        Map<String, Object> valueMap = null;
 
         if (value instanceof Map) {
             valueMap = (Map) value;
@@ -183,12 +186,12 @@ public class Put<T> {
             valueMap = objectMapper.convertValue(value, Map.class);
         }
 
-        var keyStruct = ProtoUtils.toStruct(key);
+        Map<String, Key> keyMap = ProtoUtils.toKeyMap(key);
         var valueStruct = ProtoUtils.toStruct(valueMap);
 
         var requestBuilder = KeyValuePutRequest.newBuilder()
                 .setCollection(builder.collection)
-                .setKey(keyStruct)
+                .putAllKey(keyMap)
                 .setValue(valueStruct);
 
         var request = requestBuilder.build();

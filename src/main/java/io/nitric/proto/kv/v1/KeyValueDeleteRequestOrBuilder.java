@@ -32,25 +32,52 @@ public interface KeyValueDeleteRequestOrBuilder extends
    * The unique key of the keyValue to delete
    * </pre>
    *
-   * <code>.google.protobuf.Struct key = 2;</code>
-   * @return Whether the key field is set.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
    */
-  boolean hasKey();
+  int getKeyCount();
   /**
    * <pre>
    * The unique key of the keyValue to delete
    * </pre>
    *
-   * <code>.google.protobuf.Struct key = 2;</code>
-   * @return The key.
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
    */
-  com.google.protobuf.Struct getKey();
+  boolean containsKey(
+      java.lang.String key);
+  /**
+   * Use {@link #getKeyMap()} instead.
+   */
+  @java.lang.Deprecated
+  java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+  getKey();
   /**
    * <pre>
    * The unique key of the keyValue to delete
    * </pre>
    *
-   * <code>.google.protobuf.Struct key = 2;</code>
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
    */
-  com.google.protobuf.StructOrBuilder getKeyOrBuilder();
+  java.util.Map<java.lang.String, io.nitric.proto.kv.v1.Key>
+  getKeyMap();
+  /**
+   * <pre>
+   * The unique key of the keyValue to delete
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+   */
+
+  io.nitric.proto.kv.v1.Key getKeyOrDefault(
+      java.lang.String key,
+      io.nitric.proto.kv.v1.Key defaultValue);
+  /**
+   * <pre>
+   * The unique key of the keyValue to delete
+   * </pre>
+   *
+   * <code>map&lt;string, .nitric.kv.v1.Key&gt; key = 2;</code>
+   */
+
+  io.nitric.proto.kv.v1.Key getKeyOrThrow(
+      java.lang.String key);
 }

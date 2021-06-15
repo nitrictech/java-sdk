@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class Account {
 
-    private Integer id;
+    private Long id;
     private String type;
     private Boolean active;
     private Double assetsValue;
@@ -37,11 +37,11 @@ public class Account {
 
     // Public Methods ---------------------------------------------------------
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
