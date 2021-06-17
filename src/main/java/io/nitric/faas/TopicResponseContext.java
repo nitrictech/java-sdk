@@ -1,10 +1,10 @@
-package io.nitric.proto.event.v1;
+package io.nitric.faas;
 
 /*-
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,27 @@ package io.nitric.proto.event.v1;
  * #L%
  */
 
-import io.grpc.CallOptions;
-import io.nitric.util.GrpcChannelProvider;
+/**
+ *
+ */
+public class TopicResponseContext extends ResponseContext {
+    private boolean success = true;
 
-public class MockTopicBlockingStub extends TopicGrpc.TopicBlockingStub {
-
-    protected MockTopicBlockingStub(io.grpc.Channel channel, CallOptions callOptions) {
-        super(channel, callOptions);
+    /**
+     *
+     * @return The success status of the event processing
+     */
+    public boolean isSuccess() {
+        return success;
     }
 
-    public MockTopicBlockingStub() {
-        this(GrpcChannelProvider.getChannel(), CallOptions.DEFAULT);
-    }
-
-    @Override
-    public TopicListResponse list(TopicListRequest request) {
-        return null;
+    /**
+     *
+     * @param success Set the status for processing this topic trigger, false will cause the event to be re-queued
+     */
+    public TopicResponseContext setSuccess(boolean success) {
+        this.success = success;
+        return this;
     }
 
 }

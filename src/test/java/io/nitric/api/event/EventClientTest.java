@@ -4,7 +4,7 @@ package io.nitric.api.event;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,17 @@ package io.nitric.api.event;
  * #L%
  */
 
-import io.nitric.proto.event.v1.EventPublishRequest;
-import io.nitric.proto.event.v1.EventPublishResponse;
-import io.nitric.proto.event.v1.MockEventBlockingStub;
-import org.junit.jupiter.api.Test;
+import io.nitric.proto.event.v1.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class EventClientTest {
 
     @Test public void test_build() {
@@ -38,16 +40,14 @@ public class EventClientTest {
         assertNotNull(client.serviceStub);
     }
 
-    @Test public void test_publish() {
-        var mock = new MockEventBlockingStub() {
-            @Override
-            public EventPublishResponse publish(EventPublishRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getEvent());
-                assertNotNull(request.getTopic());
-                return null;
-            }
-        };
+    @Test
+    public void test_publish() {
+        var mock = Mockito.mock(EventGrpc.EventBlockingStub.class);
+
+        Mockito.when(mock.publish(Mockito.any())).thenReturn(
+                EventPublishResponse.newBuilder().setId("test-id").build()
+        );
+
         var client = EventClient.newBuilder().serviceStub(mock).build();
 
         var event = Event.build(Map.of("name", "value"));

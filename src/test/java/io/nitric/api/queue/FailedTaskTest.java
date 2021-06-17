@@ -4,7 +4,7 @@ package io.nitric.api.queue;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ package io.nitric.api.queue;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class FailedTaskTest {
 

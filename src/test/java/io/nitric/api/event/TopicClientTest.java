@@ -4,7 +4,7 @@ package io.nitric.api.event;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ package io.nitric.api.event;
  * #L%
  */
 
-import io.nitric.proto.event.v1.MockTopicBlockingStub;
-import io.nitric.proto.event.v1.NitricTopic;
-import io.nitric.proto.event.v1.TopicListRequest;
-import io.nitric.proto.event.v1.TopicListResponse;
-import org.junit.jupiter.api.Test;
+import io.nitric.proto.event.v1.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TopicClientTest {
 
     @Test public void test_build() {
@@ -39,16 +39,15 @@ public class TopicClientTest {
     }
 
     @Test public void test_list() {
-        var mock = new MockTopicBlockingStub() {
-            @Override
-            public TopicListResponse list(TopicListRequest request) {
-                assertNotNull(request);
-                return TopicListResponse.newBuilder()
-                        .addTopics(NitricTopic.newBuilder().setName("topic1").build())
-                        .addTopics(NitricTopic.newBuilder().setName("topic2").build())
-                        .build();
-            }
-        };
+        var mock = Mockito.mock(TopicGrpc.TopicBlockingStub.class);
+
+        Mockito.when(mock.list(TopicListRequest.newBuilder().build())).thenReturn(
+                TopicListResponse.newBuilder()
+                    .addTopics(NitricTopic.newBuilder().setName("topic1").build())
+                    .addTopics(NitricTopic.newBuilder().setName("topic2").build())
+                    .build()
+        );
+
         var client = TopicClient.newBuilder().serviceStub(mock).build();
 
         var list = client.list();

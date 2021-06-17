@@ -4,7 +4,7 @@ package io.nitric.api.kv;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Struct;
 import io.nitric.proto.kv.v1.*;
 import io.nitric.util.ProtoUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class KeyValueClientTest {
 
     static final String KNOWN_KEY = "john.smith@gmail.com";
@@ -86,20 +90,12 @@ public class KeyValueClientTest {
     }
 
     @Test
-    public void test_get() {
-        var mock = new MockKeyValueBlockingStub() {
-            @Override
-            public KeyValueGetResponse get(KeyValueGetRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getCollection());
-                assertNotNull(request.getKey());
-                if (request.getKey().equals(KNOWN_KEY)) {
-                    return KeyValueGetResponse.newBuilder().setValue(KNOWN_STRUCT).build();
-                } else {
-                    return KeyValueGetResponse.newBuilder().build();
-                }
-            }
-        };
+    public void test_get_existing_key() {
+        var mock = Mockito.mock(KeyValueGrpc.KeyValueBlockingStub.class);
+
+        Mockito.when(mock.get(Mockito.any())).thenReturn(
+            KeyValueGetResponse.newBuilder().setValue(KNOWN_STRUCT).build()
+        );
 
         // Map type client
         var mapClient = KeyValueClient.newBuilder(Map.class)
@@ -109,31 +105,52 @@ public class KeyValueClientTest {
 
         var customer = mapClient.get(KNOWN_KEY);
         assertEquals(KNOWN_MAP, customer);
+    }
 
-        customer = mapClient.get("unknown key");
+    @Test
+    public void test_get_non_existing_key() {
+        var mock = Mockito.mock(KeyValueGrpc.KeyValueBlockingStub.class);
+
+        Mockito.when(mock.get(Mockito.any())).thenReturn(
+                KeyValueGetResponse.newBuilder().build()
+        );
+
+        // Map type client
+        var mapClient = KeyValueClient.newBuilder(Map.class)
+                .collection("customers")
+                .serviceStub(mock)
+                .build();
+
+        var customer = mapClient.get("unknown key");
         assertNull(customer);
+    }
+
+    @Test
+    public void test_get_invalid_client_call() {
+        // Map type client
+        var mapClient = KeyValueClient.newBuilder(Map.class)
+                .collection("customers")
+                // Service stub should never be reached in this case
+                .serviceStub(null)
+                .build();
 
         try {
             mapClient.get(null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertTrue(npe.getMessage().contains("key parameter is required"));
         }
+    }
 
-        // Typed client
-        var typedMock = new MockKeyValueBlockingStub() {
-            @Override
-            public KeyValueGetResponse get(KeyValueGetRequest request) {
-                if (request.getKey().equals("12345")) {
-                    Account account = createAccount();
-                    Map map = new ObjectMapper().convertValue(account, Map.class);
-                    var struct = ProtoUtils.toStruct(map);
-                    return KeyValueGetResponse.newBuilder().setValue(struct).build();
-                } else {
-                    return KeyValueGetResponse.newBuilder().build();
-                }
-            }
-        };
+    @Test
+    public void test_get_typed() {
+        var typedMock = Mockito.mock(KeyValueGrpc.KeyValueBlockingStub.class);
+
+        Mockito.when(typedMock.get(Mockito.any())).thenReturn(
+                KeyValueGetResponse.newBuilder()
+                        .setValue(ProtoUtils.toStruct(new ObjectMapper().convertValue(createAccount(), Map.class)))
+                        .build()
+        );
 
         var typedClient = KeyValueClient.newBuilder(Account.class)
                 .serviceStub(typedMock)
@@ -143,9 +160,6 @@ public class KeyValueClientTest {
         Account account = typedClient.get(12345);
         assertNotNull(account);
         assertEquals(createAccount(), account);
-
-        Account account2 = typedClient.get("00000");
-        assertNull(account2);
     }
 
     @Test
@@ -155,14 +169,14 @@ public class KeyValueClientTest {
 
         Account account1 = createAccount();
         Account account2 = createAccount();
-        assertTrue(account1.equals(account2));
+        assertEquals(account1, account2);
 
-        Map map1 = objectMapper.convertValue(account1, Map.class);
-        Map map2 = objectMapper.convertValue(account2, Map.class);
-        assertTrue(map1.equals(map2));
+        var map1 = objectMapper.convertValue(account1, Map.class);
+        var map2 = objectMapper.convertValue(account2, Map.class);
+        assertEquals(map1, map2);
 
         Account account1_0 = objectMapper.convertValue(map1, Account.class);
-        assertTrue(account1.equals(account1_0));
+        assertEquals(account1, account1_0);
 
         Account account2_0 = objectMapper.convertValue(map2, Account.class);
         assertTrue(account1.equals(account2_0));
@@ -177,28 +191,23 @@ public class KeyValueClientTest {
 
     @Test
     public void test_put() {
-        var mock = new MockKeyValueBlockingStub() {
-            @Override
-            public KeyValuePutResponse put(KeyValuePutRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getCollection());
-                assertNotNull(request.getKey());
-                assertNotNull(request.getValue());
-                return KeyValuePutResponse.newBuilder().build();
-            }
-        };
+        var mock = Mockito.mock(KeyValueGrpc.KeyValueBlockingStub.class);
+
+        Mockito.when(mock.put(Mockito.any())).thenReturn(
+                KeyValuePutResponse.newBuilder().build()
+        );
 
         var mapClient = KeyValueClient.newBuilder(Map.class)
                 .collection("customers")
                 .serviceStub(mock)
                 .build();
 
-        mapClient.put(KNOWN_KEY, KNOWN_MAP);
-
         try {
             mapClient.put(null, KNOWN_MAP);
             assertTrue(false);
         } catch (NullPointerException npe) {
+            // Assert that the Mock was never called
+            Mockito.verify(mock, Mockito.times(0)).put(Mockito.any());
             assertTrue(npe.getMessage().contains("key parameter is required"));
         }
 
@@ -206,8 +215,13 @@ public class KeyValueClientTest {
             mapClient.put(KNOWN_KEY, null);
             assertTrue(false);
         } catch (NullPointerException npe) {
+            // Assert that the Mock was never called
+            Mockito.verify(mock, Mockito.times(0)).put(Mockito.any());
             assertTrue(npe.getMessage().contains("value parameter is required"));
         }
+
+        mapClient.put(KNOWN_KEY, KNOWN_MAP);
+        Mockito.verify(mock, Mockito.times(1)).put(Mockito.any());
 
         var typeClient = KeyValueClient.newBuilder(Account.class)
                 .collection("account")
@@ -224,15 +238,11 @@ public class KeyValueClientTest {
 
     @Test
     public void test_delete() {
-        var mock = new MockKeyValueBlockingStub() {
-            @Override
-            public KeyValueDeleteResponse delete(KeyValueDeleteRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getCollection());
-                assertNotNull(request.getKey());
-                return KeyValueDeleteResponse.newBuilder().build();
-            }
-        };
+        var mock = Mockito.mock(KeyValueGrpc.KeyValueBlockingStub.class);
+
+        Mockito.when(mock.delete(Mockito.any())).thenReturn(
+                KeyValueDeleteResponse.newBuilder().build()
+        );
 
         var client = KeyValueClient.newBuilder(Map.class)
                 .collection("customers")

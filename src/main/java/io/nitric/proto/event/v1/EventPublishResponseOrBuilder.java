@@ -3,27 +3,31 @@
 
 package io.nitric.proto.event.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public interface EventPublishResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:nitric.event.v1.EventPublishResponse)
     com.google.protobuf.MessageOrBuilder {
+
+  /**
+   * <pre>
+   * The id of the published message
+   * When an id was not supplied
+   * one should be automatically generated
+   * </pre>
+   *
+   * <code>string id = 1;</code>
+   * @return The id.
+   */
+  java.lang.String getId();
+  /**
+   * <pre>
+   * The id of the published message
+   * When an id was not supplied
+   * one should be automatically generated
+   * </pre>
+   *
+   * <code>string id = 1;</code>
+   * @return The bytes for id.
+   */
+  com.google.protobuf.ByteString
+      getIdBytes();
 }

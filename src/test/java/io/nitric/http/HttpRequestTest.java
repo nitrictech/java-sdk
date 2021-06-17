@@ -4,7 +4,7 @@ package io.nitric.http;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ package io.nitric.http;
  * #L%
  */
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -91,7 +91,7 @@ public class HttpRequestTest {
 
         try {
             request.getHeaders().get("Accept-Charset").add("utf-16");
-            assertTrue(false, "Cant modify headers");
+            assertTrue(false);
 
         } catch (Exception e) {
             assertTrue(true);

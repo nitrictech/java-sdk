@@ -3,32 +3,9 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * <pre>
- * An ordered array of booleans
- * matching the same order as the events given
- * in the original request, each one will mark if the
- * Event was successful pushed
+ * Response for sending a collection of tasks
  * </pre>
  *
  * Protobuf type {@code nitric.queue.v1.QueueSendBatchResponse}
@@ -124,6 +101,10 @@ private static final long serialVersionUID = 0L;
   public static final int FAILEDTASKS_FIELD_NUMBER = 1;
   private java.util.List<io.nitric.proto.queue.v1.FailedTask> failedTasks_;
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
@@ -131,6 +112,10 @@ private static final long serialVersionUID = 0L;
     return failedTasks_;
   }
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
@@ -139,6 +124,10 @@ private static final long serialVersionUID = 0L;
     return failedTasks_;
   }
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
@@ -146,6 +135,10 @@ private static final long serialVersionUID = 0L;
     return failedTasks_.size();
   }
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
@@ -153,6 +146,10 @@ private static final long serialVersionUID = 0L;
     return failedTasks_.get(index);
   }
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   @java.lang.Override
@@ -320,10 +317,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * An ordered array of booleans
-   * matching the same order as the events given
-   * in the original request, each one will mark if the
-   * Event was successful pushed
+   * Response for sending a collection of tasks
    * </pre>
    *
    * Protobuf type {@code nitric.queue.v1.QueueSendBatchResponse}
@@ -523,6 +517,10 @@ private static final long serialVersionUID = 0L;
         io.nitric.proto.queue.v1.FailedTask, io.nitric.proto.queue.v1.FailedTask.Builder, io.nitric.proto.queue.v1.FailedTaskOrBuilder> failedTasksBuilder_;
 
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public java.util.List<io.nitric.proto.queue.v1.FailedTask> getFailedTasksList() {
@@ -533,6 +531,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public int getFailedTasksCount() {
@@ -543,6 +545,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public io.nitric.proto.queue.v1.FailedTask getFailedTasks(int index) {
@@ -553,6 +559,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder setFailedTasks(
@@ -570,6 +580,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder setFailedTasks(
@@ -584,6 +598,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder addFailedTasks(io.nitric.proto.queue.v1.FailedTask value) {
@@ -600,6 +618,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder addFailedTasks(
@@ -617,6 +639,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder addFailedTasks(
@@ -631,6 +657,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder addFailedTasks(
@@ -645,6 +675,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder addAllFailedTasks(
@@ -660,6 +694,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder clearFailedTasks() {
@@ -673,6 +711,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public Builder removeFailedTasks(int index) {
@@ -686,6 +728,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public io.nitric.proto.queue.v1.FailedTask.Builder getFailedTasksBuilder(
@@ -693,6 +739,10 @@ private static final long serialVersionUID = 0L;
       return getFailedTasksFieldBuilder().getBuilder(index);
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public io.nitric.proto.queue.v1.FailedTaskOrBuilder getFailedTasksOrBuilder(
@@ -703,6 +753,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder>
@@ -714,6 +768,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public io.nitric.proto.queue.v1.FailedTask.Builder addFailedTasksBuilder() {
@@ -721,6 +779,10 @@ private static final long serialVersionUID = 0L;
           io.nitric.proto.queue.v1.FailedTask.getDefaultInstance());
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public io.nitric.proto.queue.v1.FailedTask.Builder addFailedTasksBuilder(
@@ -729,6 +791,10 @@ private static final long serialVersionUID = 0L;
           index, io.nitric.proto.queue.v1.FailedTask.getDefaultInstance());
     }
     /**
+     * <pre>
+     * A list of tasks that failed to be queued
+     * </pre>
+     *
      * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
      */
     public java.util.List<io.nitric.proto.queue.v1.FailedTask.Builder>

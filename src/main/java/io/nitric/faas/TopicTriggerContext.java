@@ -1,10 +1,10 @@
-package io.nitric.proto.event.v1;
+package io.nitric.faas;
 
 /*-
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,28 @@ package io.nitric.proto.event.v1;
  * #L%
  */
 
-import io.grpc.CallOptions;
-import io.nitric.util.GrpcChannelProvider;
+/**
+ *
+ */
+public class TopicTriggerContext extends TriggerContext {
 
-public class MockEventBlockingStub extends EventGrpc.EventBlockingStub {
+    private final String topic;
 
-    protected MockEventBlockingStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-        super(channel, callOptions);
+    /**
+     * Creates a new TopicTriggerContext
+     *
+     * @param topic The name of the topic that raised the trigger
+     */
+    public TopicTriggerContext(String topic) {
+        this.topic = topic;
     }
 
-    public MockEventBlockingStub() {
-        this(GrpcChannelProvider.getChannel(), CallOptions.DEFAULT);
-    }
-
-    @Override
-    public EventPublishResponse publish(EventPublishRequest request) {
-        return null;
+    /**
+     * Retrieve the topic name for this trigger
+     *
+     * @return The name of the topic that raised the trigger
+     */
+    public String getTopic() {
+        return topic;
     }
 }
