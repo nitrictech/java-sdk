@@ -23,7 +23,42 @@ package io.nitric.faas;
 import io.nitric.proto.faas.v1.TriggerRequest;
 
 /**
+ * <p>
+ *   Abstract representation of NitricTrigger context
+ * </p>
  *
+ * <p>
+ *  The example below demonstrates unwrapping TriggerContext.
+ * </p>
+ *
+ * <pre><code class="code">
+ * package com.example;
+ *
+ * import io.nitric.faas.Faas;
+ * import io.nitric.faas.Trigger;
+ * import io.nitric.faas.TriggerContext;
+ * import io.nitric.faas.NitricFunction;
+ * import io.nitric.faas.Response;
+ *
+ * public class HelloWorld implements NitricFunction {
+ *
+ *     public NitricResponse handle(Trigger trigger) {
+ *         if (trigger.getContext().isHttp()) {
+ *             var httpContext = trigger.getContext().asHttp();
+ *             // Extract HTTP context metadata
+ *         } else if (trigger.getContext().isTopic()) {
+ *             var topicContext = trigger.getContext().asTopic();
+ *             // Extract Topic context metadata
+ *         }
+ *
+ *         return trigger.defaultResponse("Hello World");
+ *     }
+ *
+ *     public static void main(String... args) {
+ *         Faas.start(new HelloWorld());
+ *     }
+ * }
+ * </code></pre>
  */
 public abstract class TriggerContext {
 

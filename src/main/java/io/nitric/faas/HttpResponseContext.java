@@ -25,7 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * <p>
+ *   Provides contextual response metadata for triggers raised by HTTP Requests
+ * </p>
+ * @see HttpRequestTriggerContext
  */
 public class HttpResponseContext extends ResponseContext {
     public int status = 200;
@@ -55,7 +58,7 @@ public class HttpResponseContext extends ResponseContext {
     }
 
     /**
-     * @param key The key of the header to add
+     * @param key   The key of the header to add
      * @param value The value of the header to add
      * @return The instance of the context for chaining
      */
@@ -72,5 +75,15 @@ public class HttpResponseContext extends ResponseContext {
     public HttpResponseContext setHeaders(Map<String, String> headers) {
         this.headers = headers;
         return this;
+    }
+
+    /**
+     * @return String representation of HttpResponseContext
+     */
+    public String toString() {
+        return getClass().getSimpleName()
+                + "[status=" + status
+                + ", headers=" + headers
+                + "]";
     }
 }

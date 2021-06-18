@@ -40,16 +40,16 @@ import com.google.protobuf.util.JsonFormat;
  * </p>
  *
  * <p>
- *  The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
+ *  The example below starts a new <code>Faas</code> server with the <code>HelloWorld</code> function.
  * </p>
  *
  * <pre><code class="code">
  * package com.example;
  *
  * import io.nitric.faas.Faas;
- * import io.nitric.faas.NitricEvent;
+ * import io.nitric.faas.Trigger;
  * import io.nitric.faas.NitricFunction;
- * import io.nitric.faas.NitricResponse;
+ * import io.nitric.faas.Response;
  *
  * public class HelloWorld implements NitricFunction {
  *

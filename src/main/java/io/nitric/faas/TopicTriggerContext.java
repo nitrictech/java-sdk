@@ -21,7 +21,9 @@ package io.nitric.faas;
  */
 
 /**
- *
+ * <p>
+ *   Provides contextual response metadata for triggers raised by Topic events
+ * </p>
  */
 public class TopicTriggerContext extends TriggerContext {
 
@@ -44,4 +46,5 @@ public class TopicTriggerContext extends TriggerContext {
     public String getTopic() {
         return topic;
     }
+
 }

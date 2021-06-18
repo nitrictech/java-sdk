@@ -21,13 +21,14 @@ package io.nitric.faas;
  */
 
 /**
- *
+ * TopicResponseContext
+ * <p>Provides additional response metadata for a topic trigger</p>
+ * @see TopicTriggerContext
  */
 public class TopicResponseContext extends ResponseContext {
     private boolean success = true;
 
     /**
-     *
      * @return The success status of the event processing
      */
     public boolean isSuccess() {
@@ -35,7 +36,6 @@ public class TopicResponseContext extends ResponseContext {
     }
 
     /**
-     *
      * @param success Set the status for processing this topic trigger, false will cause the event to be re-queued
      */
     public TopicResponseContext setSuccess(boolean success) {
