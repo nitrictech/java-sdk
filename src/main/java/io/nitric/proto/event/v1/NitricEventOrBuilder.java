@@ -32,7 +32,7 @@ public interface NitricEventOrBuilder extends
    * A content hint for the events payload
    * </pre>
    *
-   * <code>string payloadType = 2;</code>
+   * <code>string payload_type = 2;</code>
    * @return The payloadType.
    */
   java.lang.String getPayloadType();
@@ -41,7 +41,7 @@ public interface NitricEventOrBuilder extends
    * A content hint for the events payload
    * </pre>
    *
-   * <code>string payloadType = 2;</code>
+   * <code>string payload_type = 2;</code>
    * @return The bytes for payloadType.
    */
   com.google.protobuf.ByteString

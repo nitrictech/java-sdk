@@ -5,7 +5,7 @@ package io.nitric.proto.faas.v1;
 
 /**
  * <pre>
- * The membrane has a trigger for this function to handle
+ * The server has a trigger for the client to handle
  * </pre>
  *
  * Protobuf type {@code nitric.faas.v1.TriggerRequest}
@@ -497,7 +497,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The membrane has a trigger for this function to handle
+   * The server has a trigger for the client to handle
    * </pre>
    *
    * Protobuf type {@code nitric.faas.v1.TriggerRequest}

@@ -34,7 +34,7 @@ public interface QueueCompleteRequestOrBuilder extends
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   java.lang.String getLeaseId();
@@ -43,7 +43,7 @@ public interface QueueCompleteRequestOrBuilder extends
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   com.google.protobuf.ByteString

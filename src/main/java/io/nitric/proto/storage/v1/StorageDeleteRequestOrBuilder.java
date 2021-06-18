@@ -12,7 +12,7 @@ public interface StorageDeleteRequestOrBuilder extends
    * Name of the bucket to delete from
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bucketName.
    */
   java.lang.String getBucketName();
@@ -21,7 +21,7 @@ public interface StorageDeleteRequestOrBuilder extends
    * Name of the bucket to delete from
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bytes for bucketName.
    */
   com.google.protobuf.ByteString

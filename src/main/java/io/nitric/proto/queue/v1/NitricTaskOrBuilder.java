@@ -32,7 +32,7 @@ public interface NitricTaskOrBuilder extends
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   java.lang.String getLeaseId();
@@ -41,7 +41,7 @@ public interface NitricTaskOrBuilder extends
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   com.google.protobuf.ByteString
@@ -52,7 +52,7 @@ public interface NitricTaskOrBuilder extends
    * A content hint for the tasks payload
    * </pre>
    *
-   * <code>string payloadType = 3;</code>
+   * <code>string payload_type = 3;</code>
    * @return The payloadType.
    */
   java.lang.String getPayloadType();
@@ -61,7 +61,7 @@ public interface NitricTaskOrBuilder extends
    * A content hint for the tasks payload
    * </pre>
    *
-   * <code>string payloadType = 3;</code>
+   * <code>string payload_type = 3;</code>
    * @return The bytes for payloadType.
    */
   com.google.protobuf.ByteString

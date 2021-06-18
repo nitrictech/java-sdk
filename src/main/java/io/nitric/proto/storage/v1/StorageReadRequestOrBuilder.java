@@ -13,7 +13,7 @@ public interface StorageReadRequestOrBuilder extends
    *  this will be automatically resolved to the provider specific bucket identifier.
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bucketName.
    */
   java.lang.String getBucketName();
@@ -23,7 +23,7 @@ public interface StorageReadRequestOrBuilder extends
    *  this will be automatically resolved to the provider specific bucket identifier.
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bytes for bucketName.
    */
   com.google.protobuf.ByteString

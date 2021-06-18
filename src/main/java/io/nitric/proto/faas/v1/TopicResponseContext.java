@@ -7,7 +7,7 @@ package io.nitric.proto.faas.v1;
  * <pre>
  * Specific event response message
  * We do not accept responses for events
- * only whether or not they were successfully responded to
+ * only whether or not they were successfully processed
  * </pre>
  *
  * Protobuf type {@code nitric.faas.v1.TopicResponseContext}
@@ -266,7 +266,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * Specific event response message
    * We do not accept responses for events
-   * only whether or not they were successfully responded to
+   * only whether or not they were successfully processed
    * </pre>
    *
    * Protobuf type {@code nitric.faas.v1.TopicResponseContext}

@@ -157,14 +157,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PAYLOADTYPE_FIELD_NUMBER = 2;
+  public static final int PAYLOAD_TYPE_FIELD_NUMBER = 2;
   private volatile java.lang.Object payloadType_;
   /**
    * <pre>
    * A content hint for the events payload
    * </pre>
    *
-   * <code>string payloadType = 2;</code>
+   * <code>string payload_type = 2;</code>
    * @return The payloadType.
    */
   @java.lang.Override
@@ -185,7 +185,7 @@ private static final long serialVersionUID = 0L;
    * A content hint for the events payload
    * </pre>
    *
-   * <code>string payloadType = 2;</code>
+   * <code>string payload_type = 2;</code>
    * @return The bytes for payloadType.
    */
   @java.lang.Override
@@ -320,7 +320,7 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + getId().hashCode();
-    hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+    hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + getPayloadType().hashCode();
     if (hasPayload()) {
       hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
@@ -696,7 +696,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the events payload
      * </pre>
      *
-     * <code>string payloadType = 2;</code>
+     * <code>string payload_type = 2;</code>
      * @return The payloadType.
      */
     public java.lang.String getPayloadType() {
@@ -716,7 +716,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the events payload
      * </pre>
      *
-     * <code>string payloadType = 2;</code>
+     * <code>string payload_type = 2;</code>
      * @return The bytes for payloadType.
      */
     public com.google.protobuf.ByteString
@@ -737,7 +737,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the events payload
      * </pre>
      *
-     * <code>string payloadType = 2;</code>
+     * <code>string payload_type = 2;</code>
      * @param value The payloadType to set.
      * @return This builder for chaining.
      */
@@ -756,7 +756,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the events payload
      * </pre>
      *
-     * <code>string payloadType = 2;</code>
+     * <code>string payload_type = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearPayloadType() {
@@ -770,7 +770,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the events payload
      * </pre>
      *
-     * <code>string payloadType = 2;</code>
+     * <code>string payload_type = 2;</code>
      * @param value The bytes for payloadType to set.
      * @return This builder for chaining.
      */

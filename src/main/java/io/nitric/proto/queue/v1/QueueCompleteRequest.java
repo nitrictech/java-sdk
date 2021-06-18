@@ -142,14 +142,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int LEASEID_FIELD_NUMBER = 2;
+  public static final int LEASE_ID_FIELD_NUMBER = 2;
   private volatile java.lang.Object leaseId_;
   /**
    * <pre>
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   @java.lang.Override
@@ -170,7 +170,7 @@ private static final long serialVersionUID = 0L;
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   @java.lang.Override
@@ -255,7 +255,7 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + QUEUE_FIELD_NUMBER;
     hash = (53 * hash) + getQueue().hashCode();
-    hash = (37 * hash) + LEASEID_FIELD_NUMBER;
+    hash = (37 * hash) + LEASE_ID_FIELD_NUMBER;
     hash = (53 * hash) + getLeaseId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -614,7 +614,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The leaseId.
      */
     public java.lang.String getLeaseId() {
@@ -634,7 +634,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The bytes for leaseId.
      */
     public com.google.protobuf.ByteString
@@ -655,7 +655,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The leaseId to set.
      * @return This builder for chaining.
      */
@@ -674,7 +674,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearLeaseId() {
@@ -688,7 +688,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The bytes for leaseId to set.
      * @return This builder for chaining.
      */

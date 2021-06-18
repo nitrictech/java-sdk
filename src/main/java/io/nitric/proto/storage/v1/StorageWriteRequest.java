@@ -104,7 +104,7 @@ private static final long serialVersionUID = 0L;
             io.nitric.proto.storage.v1.StorageWriteRequest.class, io.nitric.proto.storage.v1.StorageWriteRequest.Builder.class);
   }
 
-  public static final int BUCKETNAME_FIELD_NUMBER = 1;
+  public static final int BUCKET_NAME_FIELD_NUMBER = 1;
   private volatile java.lang.Object bucketName_;
   /**
    * <pre>
@@ -112,7 +112,7 @@ private static final long serialVersionUID = 0L;
    *  this will be automatically resolved to the provider specific bucket identifier.
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bucketName.
    */
   @java.lang.Override
@@ -134,7 +134,7 @@ private static final long serialVersionUID = 0L;
    *  this will be automatically resolved to the provider specific bucket identifier.
    * </pre>
    *
-   * <code>string bucketName = 1;</code>
+   * <code>string bucket_name = 1;</code>
    * @return The bytes for bucketName.
    */
   @java.lang.Override
@@ -287,7 +287,7 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + BUCKETNAME_FIELD_NUMBER;
+    hash = (37 * hash) + BUCKET_NAME_FIELD_NUMBER;
     hash = (53 * hash) + getBucketName().hashCode();
     hash = (37 * hash) + KEY_FIELD_NUMBER;
     hash = (53 * hash) + getKey().hashCode();
@@ -560,7 +560,7 @@ private static final long serialVersionUID = 0L;
      *  this will be automatically resolved to the provider specific bucket identifier.
      * </pre>
      *
-     * <code>string bucketName = 1;</code>
+     * <code>string bucket_name = 1;</code>
      * @return The bucketName.
      */
     public java.lang.String getBucketName() {
@@ -581,7 +581,7 @@ private static final long serialVersionUID = 0L;
      *  this will be automatically resolved to the provider specific bucket identifier.
      * </pre>
      *
-     * <code>string bucketName = 1;</code>
+     * <code>string bucket_name = 1;</code>
      * @return The bytes for bucketName.
      */
     public com.google.protobuf.ByteString
@@ -603,7 +603,7 @@ private static final long serialVersionUID = 0L;
      *  this will be automatically resolved to the provider specific bucket identifier.
      * </pre>
      *
-     * <code>string bucketName = 1;</code>
+     * <code>string bucket_name = 1;</code>
      * @param value The bucketName to set.
      * @return This builder for chaining.
      */
@@ -623,7 +623,7 @@ private static final long serialVersionUID = 0L;
      *  this will be automatically resolved to the provider specific bucket identifier.
      * </pre>
      *
-     * <code>string bucketName = 1;</code>
+     * <code>string bucket_name = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearBucketName() {
@@ -638,7 +638,7 @@ private static final long serialVersionUID = 0L;
      *  this will be automatically resolved to the provider specific bucket identifier.
      * </pre>
      *
-     * <code>string bucketName = 1;</code>
+     * <code>string bucket_name = 1;</code>
      * @param value The bytes for bucketName to set.
      * @return This builder for chaining.
      */

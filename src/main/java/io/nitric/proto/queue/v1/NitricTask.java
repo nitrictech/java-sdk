@@ -164,14 +164,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int LEASEID_FIELD_NUMBER = 2;
+  public static final int LEASE_ID_FIELD_NUMBER = 2;
   private volatile java.lang.Object leaseId_;
   /**
    * <pre>
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   @java.lang.Override
@@ -192,7 +192,7 @@ private static final long serialVersionUID = 0L;
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   @java.lang.Override
@@ -210,14 +210,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PAYLOADTYPE_FIELD_NUMBER = 3;
+  public static final int PAYLOAD_TYPE_FIELD_NUMBER = 3;
   private volatile java.lang.Object payloadType_;
   /**
    * <pre>
    * A content hint for the tasks payload
    * </pre>
    *
-   * <code>string payloadType = 3;</code>
+   * <code>string payload_type = 3;</code>
    * @return The payloadType.
    */
   @java.lang.Override
@@ -238,7 +238,7 @@ private static final long serialVersionUID = 0L;
    * A content hint for the tasks payload
    * </pre>
    *
-   * <code>string payloadType = 3;</code>
+   * <code>string payload_type = 3;</code>
    * @return The bytes for payloadType.
    */
   @java.lang.Override
@@ -381,9 +381,9 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + getId().hashCode();
-    hash = (37 * hash) + LEASEID_FIELD_NUMBER;
+    hash = (37 * hash) + LEASE_ID_FIELD_NUMBER;
     hash = (53 * hash) + getLeaseId().hashCode();
-    hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+    hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + getPayloadType().hashCode();
     if (hasPayload()) {
       hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
@@ -766,7 +766,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The leaseId.
      */
     public java.lang.String getLeaseId() {
@@ -786,7 +786,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The bytes for leaseId.
      */
     public com.google.protobuf.ByteString
@@ -807,7 +807,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The leaseId to set.
      * @return This builder for chaining.
      */
@@ -826,7 +826,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearLeaseId() {
@@ -840,7 +840,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The bytes for leaseId to set.
      * @return This builder for chaining.
      */
@@ -862,7 +862,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the tasks payload
      * </pre>
      *
-     * <code>string payloadType = 3;</code>
+     * <code>string payload_type = 3;</code>
      * @return The payloadType.
      */
     public java.lang.String getPayloadType() {
@@ -882,7 +882,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the tasks payload
      * </pre>
      *
-     * <code>string payloadType = 3;</code>
+     * <code>string payload_type = 3;</code>
      * @return The bytes for payloadType.
      */
     public com.google.protobuf.ByteString
@@ -903,7 +903,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the tasks payload
      * </pre>
      *
-     * <code>string payloadType = 3;</code>
+     * <code>string payload_type = 3;</code>
      * @param value The payloadType to set.
      * @return This builder for chaining.
      */
@@ -922,7 +922,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the tasks payload
      * </pre>
      *
-     * <code>string payloadType = 3;</code>
+     * <code>string payload_type = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearPayloadType() {
@@ -936,7 +936,7 @@ private static final long serialVersionUID = 0L;
      * A content hint for the tasks payload
      * </pre>
      *
-     * <code>string payloadType = 3;</code>
+     * <code>string payload_type = 3;</code>
      * @param value The bytes for payloadType to set.
      * @return This builder for chaining.
      */

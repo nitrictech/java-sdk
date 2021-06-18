@@ -4,7 +4,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Service for management of event topics
+ * Service for streaming communication with gRPC FaaS implementations
  * </pre>
  */
 @javax.annotation.Generated(
@@ -94,7 +94,7 @@ public final class FaasGrpc {
 
   /**
    * <pre>
-   * Service for management of event topics
+   * Service for streaming communication with gRPC FaaS implementations
    * </pre>
    */
   public static abstract class FaasImplBase implements io.grpc.BindableService {
@@ -124,7 +124,7 @@ public final class FaasGrpc {
 
   /**
    * <pre>
-   * Service for management of event topics
+   * Service for streaming communication with gRPC FaaS implementations
    * </pre>
    */
   public static final class FaasStub extends io.grpc.stub.AbstractAsyncStub<FaasStub> {
@@ -153,7 +153,7 @@ public final class FaasGrpc {
 
   /**
    * <pre>
-   * Service for management of event topics
+   * Service for streaming communication with gRPC FaaS implementations
    * </pre>
    */
   public static final class FaasBlockingStub extends io.grpc.stub.AbstractBlockingStub<FaasBlockingStub> {
@@ -171,7 +171,7 @@ public final class FaasGrpc {
 
   /**
    * <pre>
-   * Service for management of event topics
+   * Service for streaming communication with gRPC FaaS implementations
    * </pre>
    */
   public static final class FaasFutureStub extends io.grpc.stub.AbstractFutureStub<FaasFutureStub> {
