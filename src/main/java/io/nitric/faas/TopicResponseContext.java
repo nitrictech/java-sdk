@@ -23,6 +23,7 @@ package io.nitric.faas;
 /**
  * TopicResponseContext
  * <p>Provides additional response metadata for a topic trigger</p>
+ *
  * @see TopicTriggerContext
  */
 public class TopicResponseContext extends ResponseContext {

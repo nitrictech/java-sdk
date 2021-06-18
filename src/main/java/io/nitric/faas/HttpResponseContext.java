@@ -28,6 +28,7 @@ import java.util.Map;
  * <p>
  *   Provides contextual response metadata for triggers raised by HTTP Requests
  * </p>
+ *
  * @see HttpRequestTriggerContext
  */
 public class HttpResponseContext extends ResponseContext {
