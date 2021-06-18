@@ -101,7 +101,7 @@ public final class FaasGrpc {
 
     /**
      * <pre>
-     * Return a list of existing topics in the provider environment
+     * Begin streaming triggers/response to/from the membrane
      * </pre>
      */
     public io.grpc.stub.StreamObserver<io.nitric.proto.faas.v1.ClientMessage> triggerStream(
@@ -141,7 +141,7 @@ public final class FaasGrpc {
 
     /**
      * <pre>
-     * Return a list of existing topics in the provider environment
+     * Begin streaming triggers/response to/from the membrane
      * </pre>
      */
     public io.grpc.stub.StreamObserver<io.nitric.proto.faas.v1.ClientMessage> triggerStream(
