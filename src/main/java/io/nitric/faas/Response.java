@@ -30,7 +30,7 @@ import io.nitric.proto.faas.v1.HttpResponseContext;
  */
 public class Response {
     private byte[] data;
-    private final ResponseContext context;
+    private final AbstractResponseContext context;
 
     /**
      * Create a new Nitric Response
@@ -38,7 +38,7 @@ public class Response {
      * @param data The data for the response
      * @param context The context of the response
      */
-    protected Response(byte[] data, ResponseContext context) {
+    protected Response(byte[] data, AbstractResponseContext context) {
         this.data = data;
         this.context = context;
     }
@@ -66,7 +66,7 @@ public class Response {
      *
      * @return The abstract ResponseContext this can be unwrapped with asHttp() or asTopic()
      */
-    public ResponseContext getContext() {
+    public AbstractResponseContext getContext() {
         return this.context;
     }
 

@@ -24,7 +24,7 @@ package io.nitric.faas;
 /**
  * ResponseContext
  */
-public abstract class ResponseContext {
+public abstract class AbstractResponseContext {
 
     /**
      * @return true if this is HttpResponseContext otherwise false

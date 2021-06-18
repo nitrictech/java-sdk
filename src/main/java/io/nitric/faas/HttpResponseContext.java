@@ -29,9 +29,9 @@ import java.util.Map;
  *   Provides contextual response metadata for triggers raised by HTTP Requests
  * </p>
  *
- * @see HttpRequestTriggerContext
+ * @see HttpTriggerContext
  */
-public class HttpResponseContext extends ResponseContext {
+public class HttpResponseContext extends AbstractResponseContext {
     public int status = 200;
     public Map<String, String> headers = new HashMap<>();
 

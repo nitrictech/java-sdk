@@ -27,7 +27,7 @@ import java.util.Map;
  *   Provides contextual metadata for a trigger raised by a HTTP request
  * </p>
  */
-public class HttpRequestTriggerContext extends TriggerContext {
+public class HttpTriggerContext extends AbstractTriggerContext {
 
     private final String method;
     private final String path;
@@ -42,7 +42,7 @@ public class HttpRequestTriggerContext extends TriggerContext {
      * @param headers The headers of the HTTP request for the raised trigger
      * @param queryParams The query parameters of the HTTP request for the raised trigger
      */
-    protected HttpRequestTriggerContext(
+    protected HttpTriggerContext(
         String method,
         String path,
         Map<String, String> headers,

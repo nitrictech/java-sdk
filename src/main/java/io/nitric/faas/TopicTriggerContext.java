@@ -25,7 +25,7 @@ package io.nitric.faas;
  *   Provides contextual response metadata for triggers raised by Topic events
  * </p>
  */
-public class TopicTriggerContext extends TriggerContext {
+public class TopicTriggerContext extends AbstractTriggerContext {
 
     private final String topic;
 

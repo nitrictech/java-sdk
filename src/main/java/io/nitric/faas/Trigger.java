@@ -29,7 +29,7 @@ public class Trigger {
 
     private final byte[] data;
     private final String mimeType;
-    private final TriggerContext context;
+    private final AbstractTriggerContext context;
 
     /**
      * Creates a new Trigger
@@ -38,7 +38,7 @@ public class Trigger {
      * @param mimeType The mimetype of the data for this trigger
      * @param context The context that raised this trigger
      */
-    private Trigger(byte[] data, String mimeType, TriggerContext context) {
+    private Trigger(byte[] data, String mimeType, AbstractTriggerContext context) {
         this.data = data;
         this.mimeType = mimeType;
         this.context = context;
@@ -61,7 +61,7 @@ public class Trigger {
     /**
      * @return Retrieves the context that raised the trigger
      */
-    public TriggerContext getContext() {
+    public AbstractTriggerContext getContext() {
         return this.context;
     }
 
@@ -71,7 +71,7 @@ public class Trigger {
      * @return The translated trigger
      */
     public static Trigger fromGrpcTriggerRequest(TriggerRequest trigger) {
-        var ctx = TriggerContext.fromGrpcTriggerRequest(trigger);
+        var ctx = AbstractTriggerContext.fromGrpcTriggerRequest(trigger);
 
         return new Trigger(
             trigger.getData().toByteArray(),
@@ -95,7 +95,7 @@ public class Trigger {
      * @return A default response with context matching this request containing the provided data
      */
     public Response defaultResponse(byte[] data) {
-        ResponseContext responseCtx = null;
+        AbstractResponseContext responseCtx = null;
 
         if (this.context.isHttp()) {
             responseCtx = new HttpResponseContext();

@@ -26,7 +26,7 @@ package io.nitric.faas;
  *
  * @see TopicTriggerContext
  */
-public class TopicResponseContext extends ResponseContext {
+public class TopicResponseContext extends AbstractResponseContext {
     private boolean success = true;
 
     /**

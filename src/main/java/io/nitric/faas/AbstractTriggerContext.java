@@ -60,13 +60,13 @@ import io.nitric.proto.faas.v1.TriggerRequest;
  * }
  * </code></pre>
  */
-public abstract class TriggerContext {
+public abstract class AbstractTriggerContext {
 
     /**
      * @return If the context is for a HTTP Trigger
      */
     public boolean isHttp() {
-        return this instanceof HttpRequestTriggerContext;
+        return this instanceof HttpTriggerContext;
     }
 
     /**
@@ -79,9 +79,9 @@ public abstract class TriggerContext {
     /**
      * @return The Context as a HttpRequestTriggerContext or null if is not a trigger from a http request
      */
-    public HttpRequestTriggerContext asHttp() {
+    public HttpTriggerContext asHttp() {
         if (this.isHttp()) {
-            return (HttpRequestTriggerContext) this;
+            return (HttpTriggerContext) this;
         }
         // TODO: Determine if we would rather throw an error here?
         return null;
@@ -103,9 +103,9 @@ public abstract class TriggerContext {
      *
      * @return The translated TriggerContext or null if the TriggerRequest does not contain context
      */
-    public static TriggerContext fromGrpcTriggerRequest(TriggerRequest trigger) {
+    public static AbstractTriggerContext fromGrpcTriggerRequest(TriggerRequest trigger) {
         if (trigger.hasHttp()) {
-            return new HttpRequestTriggerContext(
+            return new HttpTriggerContext(
                 trigger.getHttp().getMethod(),
                 trigger.getHttp().getPath(),
                 trigger.getHttp().getHeadersMap(),
