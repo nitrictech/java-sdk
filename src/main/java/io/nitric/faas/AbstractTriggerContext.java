@@ -107,7 +107,7 @@ public abstract class AbstractTriggerContext {
      */
     protected static AbstractTriggerContext buildTriggerContext(TriggerRequest trigger) {
         Objects.requireNonNull(trigger, "trigger parameter is required");
-        
+
         if (trigger.hasHttp()) {
             return new HttpTriggerContext(
                 trigger.getHttp().getMethod(),

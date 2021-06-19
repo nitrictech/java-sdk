@@ -48,7 +48,7 @@ public class StorageClientTest {
 
         try {
             StorageClient.newBuilder().build();
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("bucket parameter is required", npe.getMessage());
         }
@@ -66,15 +66,37 @@ public class StorageClientTest {
         assertNotNull(data);
         assertEquals(KNOWN_TEXT, new String(data));
 
-        data = client.read("unknown key");
-        assertNotNull(data);
-
         try {
             client.read(null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }
+    }
+
+    @Test
+    public void test_read_null_key() {
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(null).build();
+
+        try {
+            client.read(null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("key parameter is required", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void test_read_unknown_key() {
+        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
+            StorageReadResponse.newBuilder().build()
+        );
+
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
+
+        var data = client.read("unknown key");
+        assertNull(data);
     }
 
     @Test
@@ -95,14 +117,14 @@ public class StorageClientTest {
 
         try {
             client.write(null, data);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }
 
         try {
             client.write("this key", null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("data parameter is required", npe.getMessage());
         }
@@ -123,7 +145,7 @@ public class StorageClientTest {
 
         try {
             client.delete(null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }
