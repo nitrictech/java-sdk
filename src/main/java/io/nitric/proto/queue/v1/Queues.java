@@ -3,26 +3,6 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public final class Queues {
   private Queues() {}
   public static void registerAllExtensions(
@@ -104,25 +84,25 @@ public final class Queues {
       "iledTask\"3\n\023QueueReceiveRequest\022\r\n\005queue" +
       "\030\001 \001(\t\022\r\n\005depth\030\002 \001(\005\"B\n\024QueueReceiveRes" +
       "ponse\022*\n\005tasks\030\001 \003(\0132\033.nitric.queue.v1.N" +
-      "itricTask\"6\n\024QueueCompleteRequest\022\r\n\005que" +
-      "ue\030\001 \001(\t\022\017\n\007leaseId\030\002 \001(\t\"\027\n\025QueueComple" +
-      "teResponse\"H\n\nFailedTask\022)\n\004task\030\001 \001(\0132\033" +
-      ".nitric.queue.v1.NitricTask\022\017\n\007message\030\002" +
-      " \001(\t\"h\n\nNitricTask\022\n\n\002id\030\001 \001(\t\022\017\n\007leaseI" +
-      "d\030\002 \001(\t\022\023\n\013payloadType\030\003 \001(\t\022(\n\007payload\030" +
-      "\004 \001(\0132\027.google.protobuf.Struct2\347\002\n\005Queue" +
-      "\022M\n\004Send\022!.nitric.queue.v1.QueueSendRequ" +
-      "est\032\".nitric.queue.v1.QueueSendResponse\022" +
-      "\\\n\tSendBatch\022&.nitric.queue.v1.QueueSend" +
-      "BatchRequest\032\'.nitric.queue.v1.QueueSend" +
-      "BatchResponse\022V\n\007Receive\022$.nitric.queue." +
-      "v1.QueueReceiveRequest\032%.nitric.queue.v1" +
-      ".QueueReceiveResponse\022Y\n\010Complete\022%.nitr" +
-      "ic.queue.v1.QueueCompleteRequest\032&.nitri" +
-      "c.queue.v1.QueueCompleteResponseBb\n\030io.n" +
-      "itric.proto.queue.v1B\006QueuesP\001Z\014nitric/v" +
-      "1;v1\252\002\025Nitric.Proto.Queue.v1\312\002\025Nitric\\Pr" +
-      "oto\\Queue\\V1b\006proto3"
+      "itricTask\"7\n\024QueueCompleteRequest\022\r\n\005que" +
+      "ue\030\001 \001(\t\022\020\n\010lease_id\030\002 \001(\t\"\027\n\025QueueCompl" +
+      "eteResponse\"H\n\nFailedTask\022)\n\004task\030\001 \001(\0132" +
+      "\033.nitric.queue.v1.NitricTask\022\017\n\007message\030" +
+      "\002 \001(\t\"j\n\nNitricTask\022\n\n\002id\030\001 \001(\t\022\020\n\010lease" +
+      "_id\030\002 \001(\t\022\024\n\014payload_type\030\003 \001(\t\022(\n\007paylo" +
+      "ad\030\004 \001(\0132\027.google.protobuf.Struct2\347\002\n\005Qu" +
+      "eue\022M\n\004Send\022!.nitric.queue.v1.QueueSendR" +
+      "equest\032\".nitric.queue.v1.QueueSendRespon" +
+      "se\022\\\n\tSendBatch\022&.nitric.queue.v1.QueueS" +
+      "endBatchRequest\032\'.nitric.queue.v1.QueueS" +
+      "endBatchResponse\022V\n\007Receive\022$.nitric.que" +
+      "ue.v1.QueueReceiveRequest\032%.nitric.queue" +
+      ".v1.QueueReceiveResponse\022Y\n\010Complete\022%.n" +
+      "itric.queue.v1.QueueCompleteRequest\032&.ni" +
+      "tric.queue.v1.QueueCompleteResponseBb\n\030i" +
+      "o.nitric.proto.queue.v1B\006QueuesP\001Z\014nitri" +
+      "c/v1;v1\252\002\025Nitric.Proto.Queue.v1\312\002\025Nitric" +
+      "\\Proto\\Queue\\V1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

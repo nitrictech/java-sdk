@@ -3,49 +3,49 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public interface QueueSendBatchResponseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:nitric.queue.v1.QueueSendBatchResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   java.util.List<io.nitric.proto.queue.v1.FailedTask>
       getFailedTasksList();
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   io.nitric.proto.queue.v1.FailedTask getFailedTasks(int index);
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   int getFailedTasksCount();
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   java.util.List<? extends io.nitric.proto.queue.v1.FailedTaskOrBuilder>
       getFailedTasksOrBuilderList();
   /**
+   * <pre>
+   * A list of tasks that failed to be queued
+   * </pre>
+   *
    * <code>repeated .nitric.queue.v1.FailedTask failedTasks = 1;</code>
    */
   io.nitric.proto.queue.v1.FailedTaskOrBuilder getFailedTasksOrBuilder(

@@ -3,26 +3,6 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * <pre>
  * A task to be sent or received from a queue.
@@ -141,6 +121,10 @@ private static final long serialVersionUID = 0L;
   public static final int ID_FIELD_NUMBER = 1;
   private volatile java.lang.Object id_;
   /**
+   * <pre>
+   * A unique id for the task
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The id.
    */
@@ -158,6 +142,10 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
+   * <pre>
+   * A unique id for the task
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The bytes for id.
    */
@@ -176,14 +164,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int LEASEID_FIELD_NUMBER = 2;
+  public static final int LEASE_ID_FIELD_NUMBER = 2;
   private volatile java.lang.Object leaseId_;
   /**
    * <pre>
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   @java.lang.Override
@@ -204,7 +192,7 @@ private static final long serialVersionUID = 0L;
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   @java.lang.Override
@@ -222,10 +210,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int PAYLOADTYPE_FIELD_NUMBER = 3;
+  public static final int PAYLOAD_TYPE_FIELD_NUMBER = 3;
   private volatile java.lang.Object payloadType_;
   /**
-   * <code>string payloadType = 3;</code>
+   * <pre>
+   * A content hint for the tasks payload
+   * </pre>
+   *
+   * <code>string payload_type = 3;</code>
    * @return The payloadType.
    */
   @java.lang.Override
@@ -242,7 +234,11 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <code>string payloadType = 3;</code>
+   * <pre>
+   * A content hint for the tasks payload
+   * </pre>
+   *
+   * <code>string payload_type = 3;</code>
    * @return The bytes for payloadType.
    */
   @java.lang.Override
@@ -263,6 +259,10 @@ private static final long serialVersionUID = 0L;
   public static final int PAYLOAD_FIELD_NUMBER = 4;
   private com.google.protobuf.Struct payload_;
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    * @return Whether the payload field is set.
    */
@@ -271,6 +271,10 @@ private static final long serialVersionUID = 0L;
     return payload_ != null;
   }
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    * @return The payload.
    */
@@ -279,6 +283,10 @@ private static final long serialVersionUID = 0L;
     return payload_ == null ? com.google.protobuf.Struct.getDefaultInstance() : payload_;
   }
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    */
   @java.lang.Override
@@ -373,9 +381,9 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + ID_FIELD_NUMBER;
     hash = (53 * hash) + getId().hashCode();
-    hash = (37 * hash) + LEASEID_FIELD_NUMBER;
+    hash = (37 * hash) + LEASE_ID_FIELD_NUMBER;
     hash = (53 * hash) + getLeaseId().hashCode();
-    hash = (37 * hash) + PAYLOADTYPE_FIELD_NUMBER;
+    hash = (37 * hash) + PAYLOAD_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + getPayloadType().hashCode();
     if (hasPayload()) {
       hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
@@ -658,6 +666,10 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object id_ = "";
     /**
+     * <pre>
+     * A unique id for the task
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return The id.
      */
@@ -674,6 +686,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A unique id for the task
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return The bytes for id.
      */
@@ -691,6 +707,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * A unique id for the task
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @param value The id to set.
      * @return This builder for chaining.
@@ -706,6 +726,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A unique id for the task
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @return This builder for chaining.
      */
@@ -716,6 +740,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * A unique id for the task
+     * </pre>
+     *
      * <code>string id = 1;</code>
      * @param value The bytes for id to set.
      * @return This builder for chaining.
@@ -738,7 +766,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The leaseId.
      */
     public java.lang.String getLeaseId() {
@@ -758,7 +786,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The bytes for leaseId.
      */
     public com.google.protobuf.ByteString
@@ -779,7 +807,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The leaseId to set.
      * @return This builder for chaining.
      */
@@ -798,7 +826,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearLeaseId() {
@@ -812,7 +840,7 @@ private static final long serialVersionUID = 0L;
      * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The bytes for leaseId to set.
      * @return This builder for chaining.
      */
@@ -830,7 +858,11 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object payloadType_ = "";
     /**
-     * <code>string payloadType = 3;</code>
+     * <pre>
+     * A content hint for the tasks payload
+     * </pre>
+     *
+     * <code>string payload_type = 3;</code>
      * @return The payloadType.
      */
     public java.lang.String getPayloadType() {
@@ -846,7 +878,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string payloadType = 3;</code>
+     * <pre>
+     * A content hint for the tasks payload
+     * </pre>
+     *
+     * <code>string payload_type = 3;</code>
      * @return The bytes for payloadType.
      */
     public com.google.protobuf.ByteString
@@ -863,7 +899,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>string payloadType = 3;</code>
+     * <pre>
+     * A content hint for the tasks payload
+     * </pre>
+     *
+     * <code>string payload_type = 3;</code>
      * @param value The payloadType to set.
      * @return This builder for chaining.
      */
@@ -878,7 +918,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string payloadType = 3;</code>
+     * <pre>
+     * A content hint for the tasks payload
+     * </pre>
+     *
+     * <code>string payload_type = 3;</code>
      * @return This builder for chaining.
      */
     public Builder clearPayloadType() {
@@ -888,7 +932,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>string payloadType = 3;</code>
+     * <pre>
+     * A content hint for the tasks payload
+     * </pre>
+     *
+     * <code>string payload_type = 3;</code>
      * @param value The bytes for payloadType to set.
      * @return This builder for chaining.
      */
@@ -908,6 +956,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Struct, com.google.protobuf.Struct.Builder, com.google.protobuf.StructOrBuilder> payloadBuilder_;
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      * @return Whether the payload field is set.
      */
@@ -915,6 +967,10 @@ private static final long serialVersionUID = 0L;
       return payloadBuilder_ != null || payload_ != null;
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      * @return The payload.
      */
@@ -926,6 +982,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public Builder setPayload(com.google.protobuf.Struct value) {
@@ -942,6 +1002,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public Builder setPayload(
@@ -956,6 +1020,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public Builder mergePayload(com.google.protobuf.Struct value) {
@@ -974,6 +1042,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public Builder clearPayload() {
@@ -988,6 +1060,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public com.google.protobuf.Struct.Builder getPayloadBuilder() {
@@ -996,6 +1072,10 @@ private static final long serialVersionUID = 0L;
       return getPayloadFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     public com.google.protobuf.StructOrBuilder getPayloadOrBuilder() {
@@ -1007,6 +1087,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * The payload of the task
+     * </pre>
+     *
      * <code>.google.protobuf.Struct payload = 4;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<

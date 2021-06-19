@@ -4,7 +4,7 @@ package io.nitric.faas;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.Collections;
 import java.util.Objects;
+
+import io.nitric.proto.faas.v1.TriggerRequest;
+import com.google.protobuf.util.JsonFormat;
 
 /**
  * <p>
@@ -39,25 +40,25 @@ import java.util.Objects;
  * </p>
  *
  * <p>
- *  The example below starts a new <code>Fass</code> server with the <code>HelloWorld</code> function.
+ *  The example below starts a new <code>Faas</code> server with the <code>HelloWorld</code> function.
  * </p>
  *
  * <pre><code class="code">
  * package com.example;
  *
  * import io.nitric.faas.Faas;
- * import io.nitric.faas.NitricEvent;
+ * import io.nitric.faas.Trigger;
  * import io.nitric.faas.NitricFunction;
- * import io.nitric.faas.NitricResponse;
+ * import io.nitric.faas.Response;
  *
  * public class HelloWorld implements NitricFunction {
  *
- *     public NitricResponse handle(NitricEvent request) {
- *         return NitricResponse.build("Hello World");
+ *     public Response handle(Trigger trigger) {
+ *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {
- *         new Faas().start(new HelloWorld());
+ *         Faas.start(new HelloWorld());
  *     }
  * }
  * </code></pre>
@@ -103,7 +104,7 @@ public class Faas {
      *
      * @param function the function (required)
      */
-    public void start(NitricFunction function) {
+    public void startFunction(NitricFunction function) {
         Objects.requireNonNull(function, "null function parameter");
 
         if (httpServer != null) {
@@ -147,6 +148,17 @@ public class Faas {
         }
     }
 
+    /**
+     * Quick Start a Nitric Function with defaults
+     *
+     * @param function The function to start
+     */
+    public static Faas start(NitricFunction function) {
+        var faas = new Faas();
+        faas.startFunction(function);
+        return faas;
+    }
+
     // Package Private Methods ------------------------------------------------
 
     HttpHandler buildServerHandler(final NitricFunction function) {
@@ -163,46 +175,43 @@ public class Faas {
             public void handle(HttpExchange he) throws IOException {
 
                 try {
-                    var eventBuilder = NitricEvent.newBuilder();
+                    if (he.getRequestBody() == null) {
+                        // Invalid request from membrane
+                        // TODO: Likely need to change this to a more valid exception type
+                        throw new InvalidObjectException("Membrane did not send a trigger request");
+                    }
 
-                    if (!he.getRequestHeaders().isEmpty()) {
-                        var requestHeaders = new HashMap<String, List<String>>();
-                        for (Entry<String, List<String>> header : he.getRequestHeaders().entrySet()) {
-                            var key = header.getKey();
-                            if (!key.equals("Connection") && !key.equals("Host") && !key.equals("Content-length")) {
-                                var headerList = requestHeaders.get(key);
-                                if (headerList == null) {
-                                    headerList = new ArrayList<>(1);
-                                    requestHeaders.put(key, headerList);
-                                }
-                                headerList.addAll(header.getValue());
-                            }
+                    var trBuilder = TriggerRequest.newBuilder();
+                    // Deserialize the requset from the membrane
+                    var jsonString = new String(he.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                    JsonFormat.parser().ignoringUnknownFields().merge(jsonString, trBuilder);
+                    var triggerRequest = trBuilder.build();
+
+                    var trigger = Trigger.buildTrigger(triggerRequest);
+
+                    Response response = null;
+
+                    try {
+                        response = function.handle(trigger);
+                    } catch (Throwable t) {
+                        // Return default response type back to the membrane with failure indicators
+                        response = trigger.buildResponse(
+                            "An error occurred, please see logs for details.\n".getBytes(StandardCharsets.UTF_8)
+                        );
+                        if (response.getContext().isHttp()) {
+                            response.getContext().asHttp().setStatus(500);
+                            response.getContext().asHttp().addHeader("Content-Type", "text/plain");
                         }
-                        eventBuilder.headers(requestHeaders);
                     }
 
-                    if (he.getRequestBody() != null) {
-                        eventBuilder.payload(he.getRequestBody().readAllBytes());
-                    }
+                    var triggerResponse = response.toGrpcTriggerResponse();
+                    var jsonResponse = JsonFormat.printer().print(triggerResponse);
 
-                    var event = eventBuilder.build();
+                    he.getResponseHeaders().put("Content-Type", Collections.singletonList("application/json"));
+                    he.sendResponseHeaders(200, jsonResponse.length());
 
-                    var response = function.handle(event);
-
-                    var responseHeaders = new HashMap<String, List<String>>();
-                    response.getHeaders().forEach((key, value) -> {
-                        responseHeaders.put(key, List.of(value));
-                    });
-                    he.getResponseHeaders().putAll(responseHeaders);
-
-                    var statusCode = (response.getStatus() > 0) ? response.getStatus() : 200;
-
-                    he.sendResponseHeaders(statusCode, response.getBodyLength());
-
-                    if (response.getBody() != null) {
-                        he.getResponseBody().write(response.getBody());
-                        he.getResponseBody().close();
-                    }
+                    he.getResponseBody().write(jsonResponse.getBytes(StandardCharsets.UTF_8));
+                    he.getResponseBody().close();
 
                 } catch (Throwable t) {
                     // Log error

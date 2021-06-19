@@ -3,26 +3,6 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 /**
  * Protobuf type {@code nitric.queue.v1.QueueCompleteRequest}
  */
@@ -162,14 +142,14 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int LEASEID_FIELD_NUMBER = 2;
+  public static final int LEASE_ID_FIELD_NUMBER = 2;
   private volatile java.lang.Object leaseId_;
   /**
    * <pre>
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   @java.lang.Override
@@ -190,7 +170,7 @@ private static final long serialVersionUID = 0L;
    * Lease id of the task to be completed
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   @java.lang.Override
@@ -275,7 +255,7 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + QUEUE_FIELD_NUMBER;
     hash = (53 * hash) + getQueue().hashCode();
-    hash = (37 * hash) + LEASEID_FIELD_NUMBER;
+    hash = (37 * hash) + LEASE_ID_FIELD_NUMBER;
     hash = (53 * hash) + getLeaseId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -634,7 +614,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The leaseId.
      */
     public java.lang.String getLeaseId() {
@@ -654,7 +634,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return The bytes for leaseId.
      */
     public com.google.protobuf.ByteString
@@ -675,7 +655,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The leaseId to set.
      * @return This builder for chaining.
      */
@@ -694,7 +674,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @return This builder for chaining.
      */
     public Builder clearLeaseId() {
@@ -708,7 +688,7 @@ private static final long serialVersionUID = 0L;
      * Lease id of the task to be completed
      * </pre>
      *
-     * <code>string leaseId = 2;</code>
+     * <code>string lease_id = 2;</code>
      * @param value The bytes for leaseId to set.
      * @return This builder for chaining.
      */

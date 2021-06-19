@@ -3,36 +3,24 @@
 
 package io.nitric.proto.queue.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public interface NitricTaskOrBuilder extends
     // @@protoc_insertion_point(interface_extends:nitric.queue.v1.NitricTask)
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <pre>
+   * A unique id for the task
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The id.
    */
   java.lang.String getId();
   /**
+   * <pre>
+   * A unique id for the task
+   * </pre>
+   *
    * <code>string id = 1;</code>
    * @return The bytes for id.
    */
@@ -44,7 +32,7 @@ public interface NitricTaskOrBuilder extends
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The leaseId.
    */
   java.lang.String getLeaseId();
@@ -53,35 +41,55 @@ public interface NitricTaskOrBuilder extends
    * The lease id unique to the pop request, this must be used to complete, extend the lease or release the task.
    * </pre>
    *
-   * <code>string leaseId = 2;</code>
+   * <code>string lease_id = 2;</code>
    * @return The bytes for leaseId.
    */
   com.google.protobuf.ByteString
       getLeaseIdBytes();
 
   /**
-   * <code>string payloadType = 3;</code>
+   * <pre>
+   * A content hint for the tasks payload
+   * </pre>
+   *
+   * <code>string payload_type = 3;</code>
    * @return The payloadType.
    */
   java.lang.String getPayloadType();
   /**
-   * <code>string payloadType = 3;</code>
+   * <pre>
+   * A content hint for the tasks payload
+   * </pre>
+   *
+   * <code>string payload_type = 3;</code>
    * @return The bytes for payloadType.
    */
   com.google.protobuf.ByteString
       getPayloadTypeBytes();
 
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    * @return Whether the payload field is set.
    */
   boolean hasPayload();
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    * @return The payload.
    */
   com.google.protobuf.Struct getPayload();
   /**
+   * <pre>
+   * The payload of the task
+   * </pre>
+   *
    * <code>.google.protobuf.Struct payload = 4;</code>
    */
   com.google.protobuf.StructOrBuilder getPayloadOrBuilder();

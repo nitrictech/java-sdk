@@ -4,7 +4,7 @@ package io.nitric.api.queue;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,17 @@ package io.nitric.api.queue;
 import io.nitric.proto.queue.v1.FailedTask;
 import io.nitric.proto.queue.v1.*;
 import io.nitric.util.ProtoUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class QueueClientTest {
 
     @Test
@@ -50,87 +54,70 @@ public class QueueClientTest {
 
     @Test
     public void test_send() {
-        var mock = new MockQueueBlockingStub() {
-            @Override
-            public QueueSendResponse send(QueueSendRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getQueue());
-                assertNotNull(request.getTask());
-                return null;
-            }
-        };
+        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+
+        Mockito.when(mock.send(Mockito.any())).thenReturn(
+                QueueSendResponse.newBuilder().build()
+        );
         var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
 
         Map<String, Object> payload = Map.of("status", "ready");
         var task = Task.newBuilder().payload(payload).build();
 
-        client.send(task);
+
 
         try {
             client.send(null);
             assertTrue(false);
 
         } catch (NullPointerException npe) {
+            Mockito.verify(mock, Mockito.times(0)).send(Mockito.any());
             assertEquals("task parameter is required", npe.getMessage());
         }
+
+        client.send(task);
+        Mockito.verify(mock, Mockito.times(1)).send(Mockito.any());
     }
 
     @Test
-    public void test_sendBatch() {
-        var mock = new MockQueueBlockingStub() {
-            @Override
-            public QueueSendBatchResponse sendBatch(QueueSendBatchRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getQueue());
-                assertNotNull(request.getTasksList());
-                var tasks = request.getTasksList();
+    public void test_sendBatch_none() {
+        var client = QueueClient.newBuilder().queue("queue").serviceStub(null).build();
 
-                QueueSendBatchResponse.Builder responseBuilder = QueueSendBatchResponse.newBuilder();
-                for (int i = 0; i < tasks.size(); i++) {
-                    if (i % 2 != 0) {
-                        var failedTask = FailedTask.newBuilder()
-                                .setTask(tasks.get(i))
-                                .setMessage("we don't like odd tasks around here: " + i)
-                                .build();
-                        responseBuilder.addFailedTasks(failedTask);
-                    }
-                }
+        client.sendBatch(new ArrayList<>());
+    }
 
-                return responseBuilder.build();
-            }
-        };
+    @Test
+    public void test_failed_task_translation() {
+        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+
+        var failedTasks = QueueSendBatchResponse.newBuilder();
+        failedTasks.addFailedTasks(0, FailedTask
+                .newBuilder()
+                .setTask(NitricTask.newBuilder().setId("1234").build())
+                .setMessage("Failed to queue task")
+                .build());
+
+        Mockito.when(mock.sendBatch(Mockito.any())).thenReturn(
+            failedTasks.build()
+        );
 
         var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        var taskList = new ArrayList<Task>();
+        taskList.add(Task.newBuilder().id("1234").payload(Map.of("test", "test")).build());
+        var response = client.sendBatch(taskList);
 
-        // Test empty list
-        var tasks = new ArrayList<Task>();
-        var failedTasks = client.sendBatch(tasks);
-        assertNotNull(failedTasks);
-        assertTrue(failedTasks.isEmpty());
+        assertNotNull(response);
+        assertFalse(response.isEmpty());
+        assertEquals(response.get(0).message, "Failed to queue task");
+    }
 
-        // Test non empty list
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> payload = Map.of("status", "ready");
-            var task = Task.newBuilder()
-                    .id(String.valueOf(i))
-                    .leaseId(String.valueOf(i * 10))
-                    .payloadType("payloadType")
-                    .payload(payload)
-                    .build();
-            tasks.add(task);
-        }
-
-        failedTasks = client.sendBatch(tasks);
-        assertNotNull(failedTasks);
-        for (io.nitric.api.queue.FailedTask failedTask : failedTasks) {
-            assertNotNull(failedTask.getTask());
-            assertNotNull(failedTask.getMessage());
-        }
+    @Test
+    public void test_sendBatch_empty() {
+        var client = QueueClient.newBuilder().queue("queue").serviceStub(null).build();
 
         try {
             client.sendBatch(null);
             assertTrue(false);
-
         } catch (NullPointerException npe) {
             assertEquals("tasks parameter is required", npe.getMessage());
         }
@@ -138,22 +125,22 @@ public class QueueClientTest {
 
     @Test
     public void test_receive() {
-        var mock = new MockQueueBlockingStub() {
-            @Override
-            public QueueReceiveResponse receive(QueueReceiveRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getQueue());
-                assertEquals(10, request.getDepth());
-                var struct = ProtoUtils.toStruct(Map.of("status", "ready"));
-                var task = NitricTask.newBuilder()
-                        .setId("id")
-                        .setLeaseId("leaseId")
-                        .setPayloadType("payloadType")
-                        .setPayload(struct)
-                        .build();
-                return QueueReceiveResponse.newBuilder().addTasks(task).build();
-            }
-        };
+        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        Mockito.when(mock.receive(Mockito.any())).thenReturn(
+                QueueReceiveResponse
+                        .newBuilder()
+                        .addTasks(
+                            NitricTask
+                                .newBuilder()
+                                .setId("id")
+                                .setLeaseId("leaseId")
+                                .setPayloadType("payloadType")
+                                .setPayload(ProtoUtils.toStruct(Map.of("status", "ready")))
+                                .build()
+                        )
+                        .build()
+        );
+
         var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
 
         var tasks = client.receive(10);
@@ -169,25 +156,26 @@ public class QueueClientTest {
 
     @Test
     public void test_complete() {
-        var mock = new MockQueueBlockingStub() {
-            @Override
-            public QueueCompleteResponse complete(QueueCompleteRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getQueue());
-                assertNotNull(request.getLeaseId());
-                return null;
-            }
-        };
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        Mockito.when(mock.complete(Mockito.any())).thenReturn(
+                QueueCompleteResponse
+                    .newBuilder()
+                    .build()
+        );
 
-        client.complete("leaseId");
+        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
 
         try {
             client.complete(null);
             assertTrue(false);
 
         } catch (NullPointerException npe) {
+            Mockito.verify(mock, Mockito.times(0)).complete(Mockito.any());
             assertEquals("leaseId parameter is required", npe.getMessage());
         }
+
+        client.complete("leaseId");
+
+
     }
 }

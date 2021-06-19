@@ -4,7 +4,7 @@ package io.nitric.faas;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ package io.nitric.faas;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class FaasTest {
 
@@ -30,7 +30,7 @@ public class FaasTest {
     private final static int PORT = 8081;
 
     NitricFunction handlerA = new NitricFunction() {
-        public NitricResponse handle(NitricEvent request) {
+        public Response handle(Trigger trigger) {
             return null;
         }
     };
@@ -52,21 +52,20 @@ public class FaasTest {
         var faas = new Faas().port(PORT);
         assertNull(faas.httpServer);
 
-        faas.start(handlerA);
+        faas.startFunction(handlerA);
         assertNotNull(faas.httpServer);
 
         // Ensure server cant be started twice
         try {
-            faas.start(handlerA);
-            assertFalse(true);
-
+            faas.startFunction(handlerA);
+            fail();
         } catch (IllegalStateException ise) {
         }
 
         faas.httpServer.stop(2);
         faas.httpServer = null;
 
-        faas.start(handlerA);
+        faas.startFunction(handlerA);
 
         assertNotNull(faas.httpServer);
 

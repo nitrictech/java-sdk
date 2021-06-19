@@ -4,7 +4,7 @@ package io.nitric.api.storage;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,16 @@ package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
 import io.nitric.proto.storage.v1.*;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StorageClientTest {
 
     private static final String KNOWN_KEY = "123456";
@@ -44,7 +48,7 @@ public class StorageClientTest {
 
         try {
             StorageClient.newBuilder().build();
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("bucket parameter is required", npe.getMessage());
         }
@@ -52,66 +56,75 @@ public class StorageClientTest {
 
     @Test
     public void test_read() {
-        var mock = new MockStorageBlockingStub() {
-            @Override
-            public StorageReadResponse read(StorageReadRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getBucketName());
-                assertNotNull(request.getKey());
+        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
+                StorageReadResponse.newBuilder().setBody(KNOWN_BS).build()
+        );
 
-                if (KNOWN_KEY.equals(request.getKey())) {
-                    return StorageReadResponse.newBuilder()
-                            .setBody(KNOWN_BS)
-                            .build();
-                } else {
-                    return StorageReadResponse.newBuilder().build();
-                }
-            }
-        };
         var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
-
-        byte[] data = client.read(KNOWN_KEY);
+        byte[] data = client.read("ANY KEY");
         assertNotNull(data);
         assertEquals(KNOWN_TEXT, new String(data));
 
-        data = client.read("unknown key");
-        assertNull(data);
-
         try {
             client.read(null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }
     }
 
     @Test
-    public void test_write() {
-        var mock = new MockStorageBlockingStub() {
-            @Override
-            public StorageWriteResponse write(StorageWriteRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getBucketName());
-                assertNotNull(request.getKey());
+    public void test_read_null_key() {
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(null).build();
 
-                return StorageWriteResponse.newBuilder().build();
-            }
-        };
+        try {
+            client.read(null);
+            fail();
+        } catch (NullPointerException npe) {
+            assertEquals("key parameter is required", npe.getMessage());
+        }
+    }
+
+    @Test
+    public void test_read_unknown_key() {
+        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
+            StorageReadResponse.newBuilder().build()
+        );
+
+        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
+
+        var data = client.read("unknown key");
+        assertNull(data);
+    }
+
+    @Test
+    public void test_write() {
+        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenReturn(
+                StorageWriteResponse.newBuilder().build()
+        );
+
         var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
 
         byte[] data = "this data".getBytes(StandardCharsets.UTF_8);
         client.write("this key", data);
 
+        // Verify we actually called the mock object
+        // TODO: Use Mockito.eq for testing here...
+        Mockito.verify(mock).write(Mockito.any());
+
         try {
             client.write(null, data);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }
 
         try {
             client.write("this key", null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("data parameter is required", npe.getMessage());
         }
@@ -119,25 +132,20 @@ public class StorageClientTest {
 
     @Test
     public void test_delete() {
-        var mock = new MockStorageBlockingStub() {
-            @Override
-            public StorageDeleteResponse delete(StorageDeleteRequest request) {
-                assertNotNull(request);
-                assertNotNull(request.getBucketName());
-                assertNotNull(request.getKey());
+        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenReturn(
+                StorageDeleteResponse.newBuilder().build()
+        );
 
-                return StorageDeleteResponse.newBuilder().build();
-            }
-        };
         var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
 
         client.delete(KNOWN_KEY);
 
-        client.delete("unknown key");
+        Mockito.verify(mock).delete(Mockito.any());
 
         try {
             client.delete(null);
-            assertTrue(false);
+            fail();
         } catch (NullPointerException npe) {
             assertEquals("key parameter is required", npe.getMessage());
         }

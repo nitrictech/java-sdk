@@ -4,7 +4,7 @@ package io.nitric.faas;
  * #%L
  * Nitric Java SDK
  * %%
- * Copyright (C) 2021 Nitric Pty Ltd
+ * Copyright (C) 2021 Nitric Technologies Pty Ltd
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,29 +32,23 @@ package io.nitric.faas;
  *
  * <pre><code class="code">
  * import io.nitric.faas.Faas;
- * import io.nitric.faas.NitricEvent;
- * import io.nitric.faas.NitricFunction;
- * import io.nitric.faas.NitricResponse;
+ * import io.nitric.faas.Trigger;
+ * import io.nitric.faas.Response;
  *
  * public class HelloWorld implements NitricFunction {
  *
- *     public NitricResponse handle(NitricEvent request) {
- *         return NitricResponse.build("Hello World");
+ *     public Response handle(Trigger trigger) {
+ *         return trigger,defaultResponse("Hello World".getBytes());
  *     }
  *
  *     public static void main(String... args) {
- *         new Faas().start(new HelloWorld());
+ *         Faas.start(new HelloWorld());
  *     }
  * }
  * </code></pre>
  *
- * <p>
- *  These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
- * </p>
- *
- * @see NitricEvent
- * @see NitricResponse
- * @see NitricResponse.Builder
+ * @see Trigger
+ * @see Response
  *
  * @since 1.0
  */
@@ -63,9 +57,9 @@ public interface NitricFunction {
     /**
      * Handle the function request.
      *
-     * @param request the function request
+     * @param trigger the function trigger
      * @return the function response
      */
-    NitricResponse handle(NitricEvent request);
+    Response handle(Trigger trigger);
 
 }

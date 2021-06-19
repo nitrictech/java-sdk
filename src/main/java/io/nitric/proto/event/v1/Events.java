@@ -3,26 +3,6 @@
 
 package io.nitric.proto.event.v1;
 
-/*-
- * #%L
- * Nitric Java SDK
- * %%
- * Copyright (C) 2021 Nitric Pty Ltd
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 public final class Events {
   private Events() {}
   public static void registerAllExtensions(
@@ -76,20 +56,21 @@ public final class Events {
       "\n\024event/v1/event.proto\022\017nitric.event.v1\032" +
       "\034google/protobuf/struct.proto\"Q\n\023EventPu" +
       "blishRequest\022\r\n\005topic\030\001 \001(\t\022+\n\005event\030\002 \001" +
-      "(\0132\034.nitric.event.v1.NitricEvent\"\026\n\024Even" +
-      "tPublishResponse\"\022\n\020TopicListRequest\"A\n\021" +
-      "TopicListResponse\022,\n\006topics\030\001 \003(\0132\034.nitr" +
-      "ic.event.v1.NitricTopic\"\033\n\013NitricTopic\022\014" +
-      "\n\004name\030\001 \001(\t\"X\n\013NitricEvent\022\n\n\002id\030\001 \001(\t\022" +
-      "\023\n\013payloadType\030\002 \001(\t\022(\n\007payload\030\003 \001(\0132\027." +
-      "google.protobuf.Struct2_\n\005Event\022V\n\007Publi" +
-      "sh\022$.nitric.event.v1.EventPublishRequest" +
-      "\032%.nitric.event.v1.EventPublishResponse2" +
-      "V\n\005Topic\022M\n\004List\022!.nitric.event.v1.Topic" +
-      "ListRequest\032\".nitric.event.v1.TopicListR" +
-      "esponseBb\n\030io.nitric.proto.event.v1B\006Eve" +
-      "ntsP\001Z\014nitric/v1;v1\252\002\025Nitric.Proto.Event" +
-      ".v1\312\002\025Nitric\\Proto\\Event\\V1b\006proto3"
+      "(\0132\034.nitric.event.v1.NitricEvent\"\"\n\024Even" +
+      "tPublishResponse\022\n\n\002id\030\001 \001(\t\"\022\n\020TopicLis" +
+      "tRequest\"A\n\021TopicListResponse\022,\n\006topics\030" +
+      "\001 \003(\0132\034.nitric.event.v1.NitricTopic\"\033\n\013N" +
+      "itricTopic\022\014\n\004name\030\001 \001(\t\"Y\n\013NitricEvent\022" +
+      "\n\n\002id\030\001 \001(\t\022\024\n\014payload_type\030\002 \001(\t\022(\n\007pay" +
+      "load\030\003 \001(\0132\027.google.protobuf.Struct2_\n\005E" +
+      "vent\022V\n\007Publish\022$.nitric.event.v1.EventP" +
+      "ublishRequest\032%.nitric.event.v1.EventPub" +
+      "lishResponse2V\n\005Topic\022M\n\004List\022!.nitric.e" +
+      "vent.v1.TopicListRequest\032\".nitric.event." +
+      "v1.TopicListResponseBb\n\030io.nitric.proto." +
+      "event.v1B\006EventsP\001Z\014nitric/v1;v1\252\002\025Nitri" +
+      "c.Proto.Event.v1\312\002\025Nitric\\Proto\\Event\\V1" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -107,7 +88,7 @@ public final class Events {
     internal_static_nitric_event_v1_EventPublishResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_nitric_event_v1_EventPublishResponse_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "Id", });
     internal_static_nitric_event_v1_TopicListRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_nitric_event_v1_TopicListRequest_fieldAccessorTable = new
