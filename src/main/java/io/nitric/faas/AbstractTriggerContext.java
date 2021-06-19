@@ -42,7 +42,7 @@ import io.nitric.proto.faas.v1.TriggerRequest;
  *
  * public class HelloWorld implements NitricFunction {
  *
- *     public NitricResponse handle(Trigger trigger) {
+ *     public Response handle(Trigger trigger) {
  *         if (trigger.getContext().isHttp()) {
  *             var httpContext = trigger.getContext().asHttp();
  *             // Extract HTTP context metadata
@@ -51,7 +51,7 @@ import io.nitric.proto.faas.v1.TriggerRequest;
  *             // Extract Topic context metadata
  *         }
  *
- *         return trigger.defaultResponse("Hello World");
+ *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {
@@ -65,21 +65,21 @@ public abstract class AbstractTriggerContext {
     /**
      * @return If the context is for a HTTP Trigger
      */
-    public boolean isHttp() {
+    public final boolean isHttp() {
         return this instanceof HttpTriggerContext;
     }
 
     /**
      * @return If the context is for a Topic Trigger
      */
-    public boolean isTopic() {
+    public final boolean isTopic() {
         return this instanceof TopicTriggerContext;
     }
 
     /**
      * @return The Context as a HttpRequestTriggerContext or null if is not a trigger from a http request
      */
-    public HttpTriggerContext asHttp() {
+    public final HttpTriggerContext asHttp() {
         if (this.isHttp()) {
             return (HttpTriggerContext) this;
         }
@@ -90,7 +90,7 @@ public abstract class AbstractTriggerContext {
     /**
      * @return The Context as a TopicTriggerContext or null if is not a trigger for a topic
      */
-    public TopicTriggerContext asTopic() {
+    public final TopicTriggerContext asTopic() {
         if (this.isTopic()) {
             return (TopicTriggerContext) this;
         }
@@ -103,7 +103,7 @@ public abstract class AbstractTriggerContext {
      *
      * @return The translated TriggerContext or null if the TriggerRequest does not contain context
      */
-    public static AbstractTriggerContext fromGrpcTriggerRequest(TriggerRequest trigger) {
+    protected static AbstractTriggerContext buildTriggerContext(TriggerRequest trigger) {
         if (trigger.hasHttp()) {
             return new HttpTriggerContext(
                 trigger.getHttp().getMethod(),
@@ -116,7 +116,7 @@ public abstract class AbstractTriggerContext {
                 trigger.getTopic().getTopic()
             );
         }
-        // TODO: Determine if we would rather throw an error here?
-        return null;
+
+        throw new UnsupportedOperationException("TriggerRequest does not contain valid context");
     }
 }

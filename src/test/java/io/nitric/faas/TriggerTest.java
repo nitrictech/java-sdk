@@ -48,7 +48,7 @@ public class TriggerTest {
                 .setHttp(triggerContext.build())
                 .build();
 
-        var trigger = Trigger.fromGrpcTriggerRequest(triggerRequest);
+        var trigger = Trigger.buildTrigger(triggerRequest);
 
 
         assertEquals(new String(trigger.getData()), "Hello World");
@@ -72,7 +72,7 @@ public class TriggerTest {
                 .setTopic(triggerContext.build())
                 .build();
 
-        var trigger = Trigger.fromGrpcTriggerRequest(triggerRequest);
+        var trigger = Trigger.buildTrigger(triggerRequest);
 
         assertEquals(new String(trigger.getData()), "Hello World");
         assertEquals(trigger.getMimeType(), "text/plain");

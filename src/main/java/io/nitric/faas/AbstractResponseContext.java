@@ -23,6 +23,46 @@ package io.nitric.faas;
 
 /**
  * ResponseContext
+ *
+ * <pre><code class="code">
+ * package com.example;
+ *
+ * import io.nitric.faas.Faas;
+ * import io.nitric.faas.Trigger;
+ * import io.nitric.faas.NitricFunction;
+ * import io.nitric.faas.Response;
+ *
+ * public class HelloWorld implements NitricFunction {
+ *
+ *     public Response handle(Trigger trigger) {
+ *         if (trigger.getContext().isHttp()) {
+ *             var httpContext = trigger.getContext().asHttp();
+ *             // Extract HTTP context metadata
+ *         } else if (trigger.getContext().isTopic()) {
+ *             var topicContext = trigger.getContext().asTopic();
+ *             // Extract Topic context metadata
+ *         }
+ *
+ *         var = response trigger.buildResponse("Hello World");
+ *
+ *         if (response.getContext().isHttp()) {
+ *             // Augment response with additional context
+ *             var httpContext = response.getContext.asHttp();
+ *             ...
+ *         } else if (response.getContext().isTopic()) {
+ *             // Augment response with additional context
+ *             var topicContext = response.getContext.asTopic();
+ *             ...
+ *         }
+ *
+ *         return response;
+ *     }
+ *
+ *     public static void main(String... args) {
+ *         Faas.start(new HelloWorld());
+ *     }
+ * }
+ * </code></pre>
  */
 public abstract class AbstractResponseContext {
 

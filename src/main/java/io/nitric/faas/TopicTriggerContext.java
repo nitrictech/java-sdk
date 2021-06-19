@@ -25,7 +25,7 @@ package io.nitric.faas;
  *   Provides contextual response metadata for triggers raised by Topic events
  * </p>
  */
-public class TopicTriggerContext extends AbstractTriggerContext {
+public final class TopicTriggerContext extends AbstractTriggerContext {
 
     private final String topic;
 
@@ -34,7 +34,7 @@ public class TopicTriggerContext extends AbstractTriggerContext {
      *
      * @param topic The name of the topic that raised the trigger
      */
-    public TopicTriggerContext(String topic) {
+    protected TopicTriggerContext(String topic) {
         this.topic = topic;
     }
 

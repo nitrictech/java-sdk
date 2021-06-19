@@ -22,6 +22,9 @@ package io.nitric.faas;
 
 import io.nitric.proto.faas.v1.TriggerRequest;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 /**
  * NitricTrigger
  */
@@ -66,12 +69,14 @@ public class Trigger {
     }
 
     /**
-     * Translates on on-wire trigger request to a Trigger to be passed to a NitricFunction
+     * Translates on on-wire trigger request to a Trigger to be passed to a NitricFunction.
      *
      * @return The translated trigger
      */
-    public static Trigger fromGrpcTriggerRequest(TriggerRequest trigger) {
-        var ctx = AbstractTriggerContext.fromGrpcTriggerRequest(trigger);
+    protected static Trigger buildTrigger(TriggerRequest trigger) {
+        Objects.requireNonNull(trigger, "trigger parameter is required");
+
+        var ctx = AbstractTriggerContext.buildTriggerContext(trigger);
 
         return new Trigger(
             trigger.getData().toByteArray(),
@@ -85,8 +90,8 @@ public class Trigger {
      *
      * @return A default response with context matching this request
      */
-    public Response defaultResponse() {
-        return this.defaultResponse(null);
+    public Response buildResponse() {
+        return this.buildResponse((byte[]) null);
     }
 
     /**
@@ -94,7 +99,7 @@ public class Trigger {
      *
      * @return A default response with context matching this request containing the provided data
      */
-    public Response defaultResponse(byte[] data) {
+    public Response buildResponse(byte[] data) {
         AbstractResponseContext responseCtx = null;
 
         if (this.context.isHttp()) {
@@ -106,4 +111,12 @@ public class Trigger {
         return new Response(data, responseCtx);
     }
 
+    /**
+     * Creates a default response object dependent on the context of the request
+     *
+     * @return A default response with context matching this request containing the provided data
+     */
+    public Response buildResponse(String data) {
+        return this.buildResponse(data.getBytes(StandardCharsets.UTF_8));
+    }
 }

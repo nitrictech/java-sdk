@@ -53,8 +53,8 @@ import com.google.protobuf.util.JsonFormat;
  *
  * public class HelloWorld implements NitricFunction {
  *
- *     public NitricResponse handle(Trigger trigger) {
- *         return trigger.defaultResponse("Hello World");
+ *     public Response handle(Trigger trigger) {
+ *         return trigger.buildResponse("Hello World".getBytes());
  *     }
  *
  *     public static void main(String... args) {
@@ -187,7 +187,7 @@ public class Faas {
                     JsonFormat.parser().ignoringUnknownFields().merge(jsonString, trBuilder);
                     var triggerRequest = trBuilder.build();
 
-                    var trigger = Trigger.fromGrpcTriggerRequest(triggerRequest);
+                    var trigger = Trigger.buildTrigger(triggerRequest);
 
                     Response response = null;
 
@@ -195,7 +195,7 @@ public class Faas {
                         response = function.handle(trigger);
                     } catch (Throwable t) {
                         // Return default response type back to the membrane with failure indicators
-                        response = trigger.defaultResponse(
+                        response = trigger.buildResponse(
                             "An error occurred, please see logs for details.\n".getBytes(StandardCharsets.UTF_8)
                         );
                         if (response.getContext().isHttp()) {
