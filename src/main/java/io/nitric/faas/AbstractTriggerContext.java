@@ -22,6 +22,8 @@ package io.nitric.faas;
 
 import io.nitric.proto.faas.v1.TriggerRequest;
 
+import java.util.Objects;
+
 /**
  * <p>
  *   Abstract representation of NitricTrigger context
@@ -104,6 +106,8 @@ public abstract class AbstractTriggerContext {
      * @return The translated TriggerContext or null if the TriggerRequest does not contain context
      */
     protected static AbstractTriggerContext buildTriggerContext(TriggerRequest trigger) {
+        Objects.requireNonNull(trigger, "trigger parameter is required");
+        
         if (trigger.hasHttp()) {
             return new HttpTriggerContext(
                 trigger.getHttp().getMethod(),
