@@ -136,32 +136,26 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 
  <pre><code class="code">
  import io.nitric.faas.Faas;
- import io.nitric.faas.NitricEvent;
- import io.nitric.faas.NitricFunction;
- import io.nitric.faas.NitricResponse;
+ import io.nitric.faas.Trigger;
+ import io.nitric.faas.Response;
 
  public class HelloWorld implements NitricFunction {
 
-     public NitricResponse handle(NitricEvent request) {
-         return NitricResponse.build("Hello World");
+     public Response handle(Trigger trigger) {
+         return trigger,defaultResponse("Hello World".getBytes());
      }
 
      public static void main(String... args) {
-         new Faas().start(new HelloWorld());
+         Faas.start(new HelloWorld());
      }
  }
- </code></pre>
-
- <p>
-  These functions return an immutable <code>NitricResponse</code> objects created using the static builder methods.
- </p></div>
+ </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="NitricEvent.html" title="class in io.nitric.faas"><code>NitricEvent</code></a>, 
-<a href="NitricResponse.html" title="class in io.nitric.faas"><code>NitricResponse</code></a>, 
-<a href="NitricResponse.Builder.html" title="class in io.nitric.faas"><code>NitricResponse.Builder</code></a></dd>
+<dd><a href="Trigger.html" title="class in io.nitric.faas"><code>Trigger</code></a>, 
+<a href="Response.html" title="class in io.nitric.faas"><code>Response</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -184,8 +178,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="NitricResponse.html" title="class in io.nitric.faas">NitricResponse</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#handle(io.nitric.faas.NitricEvent)">handle</a></span>&#8203;(<a href="NitricEvent.html" title="class in io.nitric.faas">NitricEvent</a>&nbsp;request)</code></th>
+<td class="colFirst"><code><a href="Response.html" title="class in io.nitric.faas">Response</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#handle(io.nitric.faas.Trigger)">handle</a></span>&#8203;(<a href="Trigger.html" title="class in io.nitric.faas">Trigger</a>&nbsp;trigger)</code></th>
 <td class="colLast">
 <div class="block">Handle the function request.</div>
 </td>
@@ -207,17 +201,17 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="handle(io.nitric.faas.NitricEvent)">
+<a id="handle(io.nitric.faas.Trigger)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>handle</h4>
-<pre class="methodSignature"><a href="NitricResponse.html" title="class in io.nitric.faas">NitricResponse</a>&nbsp;handle&#8203;(<a href="NitricEvent.html" title="class in io.nitric.faas">NitricEvent</a>&nbsp;request)</pre>
+<pre class="methodSignature"><a href="Response.html" title="class in io.nitric.faas">Response</a>&nbsp;handle&#8203;(<a href="Trigger.html" title="class in io.nitric.faas">Trigger</a>&nbsp;trigger)</pre>
 <div class="block">Handle the function request.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>request</code> - the function request</dd>
+<dd><code>trigger</code> - the function trigger</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the function response</dd>
 </dl>
