@@ -20,8 +20,6 @@ package io.nitric.faas;
  * #L%
  */
 
-import com.sun.net.httpserver.HttpServer;
-
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +31,7 @@ import io.nitric.proto.faas.v1.FaasGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
 import io.nitric.proto.faas.v1.ServerMessage;
 import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.util.GrpcChannelProvider;
 
 /**
  * <p>
@@ -65,60 +64,52 @@ import io.nitric.proto.faas.v1.ClientMessage;
  *
  * @see NitricFunction
  *
- * @since 1.0.0
  */
 public class Faas {
 
-    static final String DEFAULT_HOSTNAME = "127.0.0.1";
+    private FaasGrpc.FaasStub stub = null;
 
-    String hostname = DEFAULT_HOSTNAME;
-    int port = 8080;
-    HttpServer httpServer;
+    /**
+     * Set the gRPC stub to use for this FaaS instance
+     * Can be used to provide a connection on a new channel
+     * in order to connect securely with a remote membrane host
+     *
+     * @param stub - Stub instance to provide
+     */
+    protected Faas stub(FaasGrpc.FaasStub stub) {
+        this.stub = stub;
+        return this;
+    }
 
     // Public Methods -------------------------------------------------------------------
-
-    /**
-     * Set the server hostname.
-     *
-     * @param hostname the server hostname
-     * @return the Faas server instance
-     */
-    public Faas hostname(String hostname) {
-        this.hostname = hostname;
-        return this;
-    }
-
-    /**
-     * Set the server port. The default port is 8080.
-     *
-     * @param port the server port
-     * @return the Faas server instance
-     */
-    public Faas port(int port) {
-        this.port = port;
-        return this;
-    }
-
     /**
      * Start the FaaS server after configuring the given function.
+     * This method will block until the stream has terminated
      *
      * @param function the function (required)
      */
     public void startFunction(NitricFunction function) {
         Objects.requireNonNull(function, "null function parameter");
-        // TODO: Add constants for membrane server
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50051).build();
-        var svc = FaasGrpc.newStub(channel);
-        AtomicReference<StreamObserver<ClientMessage>> clientObserver = new AtomicReference<>();
 
+        // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
+        // Once we've asserted that this interfaces with a mocked stream observer
+        // We only need to assert the FaasGrpc.newStub is called to cover this logic in
+        // the case where the user has not provided a custom stub
+        if (this.stub == null) {
+            // Create a default stub with the singleton channel
+            // TODO: Determine if we should use a dedicated channel for this FaaS loop?
+            this.stub = FaasGrpc.newStub(GrpcChannelProvider.getChannel());
+        }
+
+        AtomicReference<StreamObserver<ClientMessage>> clientObserver = new AtomicReference<>();
         // Add a latch to block on while the stream is running
         CountDownLatch finishedLatch = new CountDownLatch(1);
         // Begin the stream
-        var observer = svc.triggerStream(new StreamObserver<ServerMessage>() {
+        var observer = this.stub.triggerStream(new StreamObserver<>() {
             @Override
             public void onNext(ServerMessage serverMessage) {
                 // We got a new message from the server
-                switch(serverMessage.getContentCase()) {
+                switch (serverMessage.getContentCase()) {
                     case INIT_RESPONSE:
                         // We have an init ack from the membrane
                         // XXX: NO OP for now
@@ -136,7 +127,7 @@ public class Faas {
                                         .setTriggerResponse(grpcResponse)
                                         .build());
                         break;
-                    case CONTENT_NOT_SET:
+                    default:
                         // TODO: Add error case here
                         break;
                 }
