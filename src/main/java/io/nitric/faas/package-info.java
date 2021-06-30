@@ -1,5 +1,28 @@
 /**
- * Provides the Function as a Service (FaaS) classes.
+ * <p>
+ *  Provides the Function as a Service (FaaS) classes.
+ * </p>
+ *
+ * <p>
+ *  The example below provides a simple Hello World function.
+ * </p>
+ *
+ * <pre><code class="code">
+ * import io.nitric.faas.Faas;
+ * import io.nitric.faas.Trigger;
+ * import io.nitric.faas.Response;
+ *
+ * public class HelloWorld implements NitricFunction {
+ *
+ *     public Response handle(Trigger trigger) {
+ *         return trigger.buildResponse("Hello World");
+ *     }
+ *
+ *     public static void main(String... args) {
+ *         Faas.start(new HelloWorld());
+ *     }
+ * }
+ * </code></pre>
  *
  * @since 1.0
  */

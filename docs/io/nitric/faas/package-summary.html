@@ -100,7 +100,30 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <section role="region"><a id="package.description">
 <!--   -->
 </a>
-<div class="block">Provides the Function as a Service (FaaS) classes.</div>
+<div class="block"><p>
+  Provides the Function as a Service (FaaS) classes.
+ </p>
+
+ <p>
+  The example below provides a simple Hello World function.
+ </p>
+
+ <pre><code class="code">
+ import io.nitric.faas.Faas;
+ import io.nitric.faas.Trigger;
+ import io.nitric.faas.Response;
+
+ public class HelloWorld implements NitricFunction {
+
+     public Response handle(Trigger trigger) {
+         return trigger.buildResponse("Hello World");
+     }
+
+     public static void main(String... args) {
+         Faas.start(new HelloWorld());
+     }
+ }
+ </code></pre></div>
 <dl>
 <dt><span class="simpleTagLabel">Since:</span></dt>
 <dd>1.0</dd>
@@ -136,14 +159,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="AbstractResponseContext.html" title="class in io.nitric.faas">AbstractResponseContext</a></th>
 <td class="colLast">
-<div class="block">ResponseContext</div>
+<div class="block">
+   Provides an abstract Nitric response context class.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="AbstractTriggerContext.html" title="class in io.nitric.faas">AbstractTriggerContext</a></th>
 <td class="colLast">
 <div class="block">
-   Abstract representation of NitricTrigger context</div>
+   Provides an abstract Nitric FaaS trigger context class.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -157,26 +181,29 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <th class="colFirst" scope="row"><a href="HttpResponseContext.html" title="class in io.nitric.faas">HttpResponseContext</a></th>
 <td class="colLast">
 <div class="block">
-   Provides contextual response metadata for triggers raised by HTTP Requests</div>
+   Provides contextual response metadata for triggers raised by HTTP Requests.</div>
 </td>
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="HttpTriggerContext.html" title="class in io.nitric.faas">HttpTriggerContext</a></th>
 <td class="colLast">
 <div class="block">
-   Provides contextual metadata for a trigger raised by a HTTP request</div>
+   Provides contextual metadata for a trigger raised by a HTTP request.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <th class="colFirst" scope="row"><a href="Response.html" title="class in io.nitric.faas">Response</a></th>
 <td class="colLast">
-<div class="block">Response model for a NitricFunction</div>
+<div class="block">
+  Provides a Nitric function response class.</div>
 </td>
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="TopicResponseContext.html" title="class in io.nitric.faas">TopicResponseContext</a></th>
 <td class="colLast">
-<div class="block">TopicResponseContext</div>
+<div class="block">
+  Provides a Topic response context class which can specify whether the
+  event was successfully processed.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -189,7 +216,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="Trigger.html" title="class in io.nitric.faas">Trigger</a></th>
 <td class="colLast">
-<div class="block">NitricTrigger</div>
+<div class="block">
+  Provides a Nitric FaaS Trigger class.</div>
 </td>
 </tr>
 </tbody>

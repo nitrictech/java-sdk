@@ -29,6 +29,8 @@ public final class TopicTriggerContext extends AbstractTriggerContext {
 
     private final String topic;
 
+    // Constructors -----------------------------------------------------------
+
     /**
      * Creates a new TopicTriggerContext
      *
@@ -38,6 +40,8 @@ public final class TopicTriggerContext extends AbstractTriggerContext {
         this.topic = topic;
     }
 
+    // Public Methods ---------------------------------------------------------
+
     /**
      * Retrieve the topic name for this trigger
      *
@@ -45,6 +49,14 @@ public final class TopicTriggerContext extends AbstractTriggerContext {
      */
     public String getTopic() {
         return topic;
+    }
+
+    /**
+     * @return String representation of this object
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[topic=" + topic + "]";
     }
 
 }

@@ -21,12 +21,15 @@ package io.nitric.faas;
  */
 
 /**
- * TopicResponseContext
- * <p>Provides additional response metadata for a topic trigger</p>
+ * <p>
+ *  Provides a Topic response context class which can specify whether the
+ *  event was successfully processed.
+ * </p>
  *
  * @see TopicTriggerContext
  */
 public final class TopicResponseContext extends AbstractResponseContext {
+
     private boolean success = true;
 
     /**
@@ -42,6 +45,14 @@ public final class TopicResponseContext extends AbstractResponseContext {
     public TopicResponseContext setSuccess(boolean success) {
         this.success = success;
         return this;
+    }
+
+    /**
+     * @return String representation of this object
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[success=" + success + "]";
     }
 
 }

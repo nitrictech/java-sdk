@@ -100,14 +100,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dl>
 <dt><a href="io/nitric/faas/AbstractResponseContext.html" title="class in io.nitric.faas"><span class="typeNameLink">AbstractResponseContext</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
-<div class="block">ResponseContext</div>
+<div class="block">
+   Provides an abstract Nitric response context class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/AbstractResponseContext.html#%3Cinit%3E()">AbstractResponseContext()</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/AbstractResponseContext.html" title="class in io.nitric.faas">AbstractResponseContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/nitric/faas/AbstractTriggerContext.html" title="class in io.nitric.faas"><span class="typeNameLink">AbstractTriggerContext</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
 <div class="block">
-   Abstract representation of NitricTrigger context</div>
+   Provides an abstract Nitric FaaS trigger context class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/AbstractTriggerContext.html#%3Cinit%3E()">AbstractTriggerContext()</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/AbstractTriggerContext.html" title="class in io.nitric.faas">AbstractTriggerContext</a></dt>
 <dd>&nbsp;</dd>
@@ -201,15 +202,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Trigger.html#buildResponse()">buildResponse()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas">Trigger</a></dt>
 <dd>
-<div class="block">Creates a default response object dependent on the context of the request</div>
+<div class="block">Creates a default response object dependent on the context of the request.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Trigger.html#buildResponse(byte%5B%5D)">buildResponse(byte[])</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas">Trigger</a></dt>
 <dd>
-<div class="block">Creates a default response object dependent on the context of the request</div>
+<div class="block">Creates a default response object dependent on the context of the request.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Trigger.html#buildResponse(java.lang.String)">buildResponse(String)</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas">Trigger</a></dt>
 <dd>
-<div class="block">Creates a default response object dependent on the context of the request</div>
+<div class="block">Creates a default response object dependent on the context of the request.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Trigger.html#buildTrigger(io.nitric.proto.faas.v1.TriggerRequest)">buildTrigger(TriggerRequest)</a></span> - Static method in class io.nitric.faas.<a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas">Trigger</a></dt>
 <dd>
@@ -445,10 +446,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Set the function response headers.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="io/nitric/faas/Faas.html#hostname(java.lang.String)">hostname(String)</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Faas.html" title="class in io.nitric.faas">Faas</a></dt>
-<dd>
-<div class="block">Set the server hostname.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="io/nitric/http/HttpServer.html#hostname(java.lang.String)">hostname(String)</a></span> - Method in class io.nitric.http.<a href="io/nitric/http/HttpServer.html" title="class in io.nitric.http">HttpServer</a></dt>
 <dd>
 <div class="block">Set the server hostname.</div>
@@ -479,7 +476,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="io/nitric/faas/HttpResponseContext.html" title="class in io.nitric.faas"><span class="typeNameLink">HttpResponseContext</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
 <div class="block">
-   Provides contextual response metadata for triggers raised by HTTP Requests</div>
+   Provides contextual response metadata for triggers raised by HTTP Requests.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/HttpResponseContext.html#%3Cinit%3E()">HttpResponseContext()</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/HttpResponseContext.html" title="class in io.nitric.faas">HttpResponseContext</a></dt>
 <dd>&nbsp;</dd>
@@ -493,11 +490,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="io/nitric/faas/HttpTriggerContext.html" title="class in io.nitric.faas"><span class="typeNameLink">HttpTriggerContext</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
 <div class="block">
-   Provides contextual metadata for a trigger raised by a HTTP request</div>
+   Provides contextual metadata for a trigger raised by a HTTP request.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/HttpTriggerContext.html#%3Cinit%3E(java.lang.String,java.lang.String,java.util.Map,java.util.Map)">HttpTriggerContext(String, String, Map&lt;String, String&gt;, Map&lt;String, String&gt;)</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/HttpTriggerContext.html" title="class in io.nitric.faas">HttpTriggerContext</a></dt>
 <dd>
-<div class="block">Create a new HttpRequestTriggerContext</div>
+<div class="block">Create a new HttpRequestTriggerContext.</div>
 </dd>
 </dl>
 <a id="I:I">
@@ -531,7 +528,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="io/nitric/faas/package-summary.html">io.nitric.faas</a> - package io.nitric.faas</dt>
 <dd>
-<div class="block">Provides the Function as a Service (FaaS) classes.</div>
+<div class="block">
+  Provides the Function as a Service (FaaS) classes.</div>
 </dd>
 <dt><a href="io/nitric/http/package-summary.html">io.nitric.http</a> - package io.nitric.http</dt>
 <dd>
@@ -675,10 +673,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Set the task payload type.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="io/nitric/faas/Faas.html#port(int)">port(int)</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Faas.html" title="class in io.nitric.faas">Faas</a></dt>
-<dd>
-<div class="block">Set the server port.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="io/nitric/http/HttpServer.html#port(int)">port(int)</a></span> - Method in class io.nitric.http.<a href="io/nitric/http/HttpServer.html" title="class in io.nitric.http">HttpServer</a></dt>
 <dd>
 <div class="block">Set the server port.</div>
@@ -739,11 +733,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="io/nitric/faas/Response.html" title="class in io.nitric.faas"><span class="typeNameLink">Response</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
-<div class="block">Response model for a NitricFunction</div>
+<div class="block">
+  Provides a Nitric function response class.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Response.html#%3Cinit%3E(byte%5B%5D,io.nitric.faas.AbstractResponseContext)">Response(byte[], AbstractResponseContext)</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/Response.html" title="class in io.nitric.faas">Response</a></dt>
 <dd>
-<div class="block">Create a new Nitric Response</div>
+<div class="block">Create a new Nitric FaaS response.</div>
 </dd>
 </dl>
 <a id="I:S">
@@ -820,6 +815,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Provides a StorageClient Builder.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="io/nitric/faas/Faas.html#stub(io.nitric.proto.faas.v1.FaasGrpc.FaasStub)">stub(FaasGrpc.FaasStub)</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Faas.html" title="class in io.nitric.faas">Faas</a></dt>
+<dd>
+<div class="block">Set the gRPC stub to use for this FaaS instance
+ Can be used to provide a connection on a new channel
+ in order to connect securely with a remote membrane host</div>
+</dd>
 </dl>
 <a id="I:T">
 <!--   -->
@@ -841,7 +842,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/Response.html#toGrpcTriggerResponse()">toGrpcTriggerResponse()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Response.html" title="class in io.nitric.faas">Response</a></dt>
 <dd>
-<div class="block">Translates a Response for on-wire transport to the membrane</div>
+<div class="block">Translates a Response for on-wire transport to the membrane.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/util/ProtoUtils.html#toMap(com.google.protobuf.Struct)">toMap(Struct)</a></span> - Static method in class io.nitric.util.<a href="io/nitric/util/ProtoUtils.html" title="class in io.nitric.util">ProtoUtils</a></dt>
 <dd>
@@ -866,7 +867,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="io/nitric/faas/TopicResponseContext.html" title="class in io.nitric.faas"><span class="typeNameLink">TopicResponseContext</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
-<div class="block">TopicResponseContext</div>
+<div class="block">
+  Provides a Topic response context class which can specify whether the
+  event was successfully processed.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/TopicResponseContext.html#%3Cinit%3E()">TopicResponseContext()</a></span> - Constructor for class io.nitric.faas.<a href="io/nitric/faas/TopicResponseContext.html" title="class in io.nitric.faas">TopicResponseContext</a></dt>
 <dd>&nbsp;</dd>
@@ -901,6 +904,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/nitric/faas/HttpTriggerContext.html#toString()">toString()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/HttpTriggerContext.html" title="class in io.nitric.faas">HttpTriggerContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/nitric/faas/Response.html#toString()">toString()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Response.html" title="class in io.nitric.faas">Response</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/nitric/faas/TopicResponseContext.html#toString()">toString()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/TopicResponseContext.html" title="class in io.nitric.faas">TopicResponseContext</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/nitric/faas/TopicTriggerContext.html#toString()">toString()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/TopicTriggerContext.html" title="class in io.nitric.faas">TopicTriggerContext</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="io/nitric/faas/Trigger.html#toString()">toString()</a></span> - Method in class io.nitric.faas.<a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas">Trigger</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/nitric/http/HttpRequest.html#toString()">toString()</a></span> - Method in class io.nitric.http.<a href="io/nitric/http/HttpRequest.html" title="class in io.nitric.http">HttpRequest</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="io/nitric/http/HttpResponse.html#toString()">toString()</a></span> - Method in class io.nitric.http.<a href="io/nitric/http/HttpResponse.html" title="class in io.nitric.http">HttpResponse</a></dt>
@@ -913,7 +924,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="io/nitric/faas/Trigger.html" title="class in io.nitric.faas"><span class="typeNameLink">Trigger</span></a> - Class in <a href="io/nitric/faas/package-summary.html">io.nitric.faas</a></dt>
 <dd>
-<div class="block">NitricTrigger</div>
+<div class="block">
+  Provides a Nitric FaaS Trigger class.</div>
 </dd>
 </dl>
 <a id="I:W">

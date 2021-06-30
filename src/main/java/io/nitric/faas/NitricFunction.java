@@ -38,7 +38,7 @@ package io.nitric.faas;
  * public class HelloWorld implements NitricFunction {
  *
  *     public Response handle(Trigger trigger) {
- *         return trigger,defaultResponse("Hello World".getBytes());
+ *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {

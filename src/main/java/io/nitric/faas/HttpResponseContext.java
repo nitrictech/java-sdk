@@ -26,12 +26,13 @@ import java.util.Map;
 
 /**
  * <p>
- *   Provides contextual response metadata for triggers raised by HTTP Requests
+ *   Provides contextual response metadata for triggers raised by HTTP Requests.
  * </p>
  *
  * @see HttpTriggerContext
  */
 public class HttpResponseContext extends AbstractResponseContext {
+
     public int status = 200;
     public Map<String, String> headers = new HashMap<>();
 
@@ -81,6 +82,7 @@ public class HttpResponseContext extends AbstractResponseContext {
     /**
      * @return String representation of HttpResponseContext
      */
+    @Override
     public String toString() {
         return getClass().getSimpleName()
                 + "[status=" + status

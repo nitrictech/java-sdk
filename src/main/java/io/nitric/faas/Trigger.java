@@ -1,5 +1,8 @@
 package io.nitric.faas;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,11 +25,14 @@ package io.nitric.faas;
 
 import io.nitric.proto.faas.v1.TriggerRequest;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
 /**
- * NitricTrigger
+ * <p>
+ *  Provides a Nitric FaaS Trigger class.
+ * </p>
+ *
+ * @see Faas
+ * @see AbstractTriggerContext
+ * @see Response
  */
 public class Trigger {
 
@@ -34,17 +40,24 @@ public class Trigger {
     private final String mimeType;
     private final AbstractTriggerContext context;
 
-    /**
-     * Creates a new Trigger
-     *
-     * @param data The data for this trigger
-     * @param mimeType The mimetype of the data for this trigger
-     * @param context The context that raised this trigger
+    // Constructors -----------------------------------------------------------
+
+    /*
+     * Enforce builder pattern.
      */
     private Trigger(byte[] data, String mimeType, AbstractTriggerContext context) {
         this.data = data;
         this.mimeType = mimeType;
         this.context = context;
+    }
+
+    // Public Methods ---------------------------------------------------------
+
+    /**
+     * @return Retrieves the context that raised the trigger
+     */
+    public AbstractTriggerContext getContext() {
+        return this.context;
     }
 
     /**
@@ -62,31 +75,7 @@ public class Trigger {
     }
 
     /**
-     * @return Retrieves the context that raised the trigger
-     */
-    public AbstractTriggerContext getContext() {
-        return this.context;
-    }
-
-    /**
-     * Translates on on-wire trigger request to a Trigger to be passed to a NitricFunction.
-     *
-     * @return The translated trigger
-     */
-    protected static Trigger buildTrigger(TriggerRequest trigger) {
-        Objects.requireNonNull(trigger, "trigger parameter is required");
-
-        var ctx = AbstractTriggerContext.buildTriggerContext(trigger);
-
-        return new Trigger(
-            trigger.getData().toByteArray(),
-            trigger.getMimeType(),
-            ctx
-        );
-    }
-
-    /**
-     * Creates a default response object dependent on the context of the request
+     * Creates a default response object dependent on the context of the request.
      *
      * @return A default response with context matching this request
      */
@@ -95,8 +84,9 @@ public class Trigger {
     }
 
     /**
-     * Creates a default response object dependent on the context of the request
+     * Creates a default response object dependent on the context of the request.
      *
+     * @param data the response data bytes (required)
      * @return A default response with context matching this request containing the provided data
      */
     public Response buildResponse(byte[] data) {
@@ -112,11 +102,51 @@ public class Trigger {
     }
 
     /**
-     * Creates a default response object dependent on the context of the request
+     * Creates a default response object dependent on the context of the request.
      *
+     * @param data the response text data (required)
      * @return A default response with context matching this request containing the provided data
      */
     public Response buildResponse(String data) {
         return this.buildResponse(data.getBytes(StandardCharsets.UTF_8));
     }
+
+    /**
+     * @return the string representation of this object
+     */
+    @Override
+    public String toString() {
+        String dataSample = "null";
+        if (data != null) {
+            dataSample = new String(data, StandardCharsets.UTF_8);
+            if (dataSample.length() > 40) {
+                dataSample = dataSample.substring(0, 42) + "...";
+            }
+        }
+        return getClass().getSimpleName()
+            + "[context=" + context
+            + ", mimeType=" + mimeType
+            + ", data=" + dataSample
+            + "]";
+    }
+
+    // Protected Methods ------------------------------------------------------
+
+    /**
+     * Translates on on-wire trigger request to a Trigger to be passed to a NitricFunction.
+     *
+     * @return The translated trigger (required)
+     */
+    protected static Trigger buildTrigger(TriggerRequest trigger) {
+        Objects.requireNonNull(trigger, "trigger parameter is required");
+
+        var ctx = AbstractTriggerContext.buildTriggerContext(trigger);
+
+        return new Trigger(
+            trigger.getData().toByteArray(),
+            trigger.getMimeType(),
+            ctx
+        );
+    }
+
 }

@@ -24,7 +24,7 @@ import java.util.Map;
 
 /**
  * <p>
- *   Provides contextual metadata for a trigger raised by a HTTP request
+ *   Provides contextual metadata for a trigger raised by a HTTP request.
  * </p>
  */
 public final class HttpTriggerContext extends AbstractTriggerContext {
@@ -34,8 +34,10 @@ public final class HttpTriggerContext extends AbstractTriggerContext {
     private final Map<String, String> headers;
     private final Map<String, String> queryParams;
 
+    // Constructors -----------------------------------------------------------
+
     /**
-     * Create a new HttpRequestTriggerContext
+     * Create a new HttpRequestTriggerContext.
      *
      * @param method The method of the HTTP request for the raised trigger
      * @param path The path of the HTTP request for the raised trigger
@@ -53,6 +55,8 @@ public final class HttpTriggerContext extends AbstractTriggerContext {
         this.headers = headers;
         this.queryParams = queryParams;
     }
+
+    // Public Methods ---------------------------------------------------------
 
     /**
      * @return The method of the HTTP Request that raised this trigger
@@ -85,6 +89,7 @@ public final class HttpTriggerContext extends AbstractTriggerContext {
     /**
      * @return String representation of HttpResponseContext
      */
+    @Override
     public String toString() {
         return getClass().getSimpleName()
                 + "[method=" + method

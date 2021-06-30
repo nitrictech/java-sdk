@@ -24,8 +24,6 @@ import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.nitric.proto.faas.v1.FaasGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
@@ -63,33 +61,21 @@ import io.nitric.util.GrpcChannelProvider;
  * </code></pre>
  *
  * @see NitricFunction
- *
  */
 public class Faas {
 
     private FaasGrpc.FaasStub stub = null;
 
-    /**
-     * Set the gRPC stub to use for this FaaS instance
-     * Can be used to provide a connection on a new channel
-     * in order to connect securely with a remote membrane host
-     *
-     * @param stub - Stub instance to provide
-     */
-    protected Faas stub(FaasGrpc.FaasStub stub) {
-        this.stub = stub;
-        return this;
-    }
-
     // Public Methods -------------------------------------------------------------------
+
     /**
      * Start the FaaS server after configuring the given function.
-     * This method will block until the stream has terminated
+     * This method will block until the stream has terminated.
      *
-     * @param function the function (required)
+     * @param function the function handler (required)
      */
     public void startFunction(NitricFunction function) {
-        Objects.requireNonNull(function, "null function parameter");
+        Objects.requireNonNull(function, "function parameter is required");
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -102,54 +88,17 @@ public class Faas {
         }
 
         AtomicReference<StreamObserver<ClientMessage>> clientObserver = new AtomicReference<>();
+
         // Add a latch to block on while the stream is running
         CountDownLatch finishedLatch = new CountDownLatch(1);
+
         // Begin the stream
-        var observer = this.stub.triggerStream(new StreamObserver<>() {
-            @Override
-            public void onNext(ServerMessage serverMessage) {
-                // We got a new message from the server
-                switch (serverMessage.getContentCase()) {
-                    case INIT_RESPONSE:
-                        // We have an init ack from the membrane
-                        // XXX: NO OP for now
-                        break;
-                    case TRIGGER_REQUEST:
-                        var trigger = Trigger.buildTrigger(serverMessage.getTriggerRequest());
-                        // Call the function
-                        var response = function.handle(trigger);
-                        var grpcResponse = response.toGrpcTriggerResponse();
-                        // write back the response to the server
-                        clientObserver.get().onNext(
-                                ClientMessage
-                                        .newBuilder()
-                                        .setId(serverMessage.getId())
-                                        .setTriggerResponse(grpcResponse)
-                                        .build());
-                        break;
-                    default:
-                        // TODO: Add error case here
-                        break;
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                // TODO: Handle stream errors here
-                // We may want to exit when the membrane server indicates an error...
-            }
-
-            @Override
-            public void onCompleted() {
-                // The server has indicated that streaming is now over we can exit
-                // Unlock from exit
-                finishedLatch.countDown();
-            }
-        });
+        var observer = this.stub.triggerStream(new FaasStreamObserver(function, clientObserver, finishedLatch));
 
         // Set atomic reference for the client to send messages back to the server
         // In the server message stream observer loop (see above)
         clientObserver.set(observer);
+
         // Send an init request to the server and let it know we're ready to receive work
         observer.onNext(
             ClientMessage
@@ -157,10 +106,14 @@ public class Faas {
                     .setInitRequest(InitRequest.newBuilder().build())
                     .build()
         );
+
         try {
             finishedLatch.await();
-        } catch (Throwable t) {
-            // Log that the stream was prematurely terminated
+        } catch (Throwable error) {
+            System.err.printf("Stream was prematurely terminated for function: %s, error: %s \n",
+                              function.getClass().getSimpleName(),
+                              error);
+
         } finally {
             // Always ensure the client stream is closed
             observer.onCompleted();
@@ -177,4 +130,95 @@ public class Faas {
         faas.startFunction(function);
         return faas;
     }
+
+    // Package Methods --------------------------------------------------------
+
+    /**
+     * Set the gRPC stub to use for this FaaS instance
+     * Can be used to provide a connection on a new channel
+     * in order to connect securely with a remote membrane host
+     *
+     * @param stub - Stub instance to provide
+     */
+    protected Faas stub(FaasGrpc.FaasStub stub) {
+        this.stub = stub;
+        return this;
+    }
+
+    // Inner Classes ----------------------------------------------------------
+
+    /**
+     * Provides the FaaS GRCP function stream handler.
+     */
+    static class FaasStreamObserver implements StreamObserver<ServerMessage> {
+
+        final NitricFunction function;
+        final AtomicReference<StreamObserver<ClientMessage>> clientObserver;
+        final CountDownLatch finishedLatch;
+
+        FaasStreamObserver(
+            NitricFunction function,
+            AtomicReference<StreamObserver<ClientMessage>> clientObserver,
+            CountDownLatch finishedLatch
+        ) {
+            this.function = function;
+            this.clientObserver = clientObserver;
+            this.finishedLatch = finishedLatch;
+        }
+
+        @Override
+        public void onNext(ServerMessage serverMessage) {
+            // We got a new message from the server
+            switch (serverMessage.getContentCase()) {
+                case INIT_RESPONSE:
+                    // We have an init ack from the membrane
+                    // XXX: NO OP for now
+                    break;
+                case TRIGGER_REQUEST:
+                    Trigger trigger = null;
+                    try {
+                        // Call the function
+                        trigger = Trigger.buildTrigger(serverMessage.getTriggerRequest());
+                        var response = function.handle(trigger);
+
+                        // Write back the response to the server
+                        var grpcResponse = response.toGrpcTriggerResponse();
+                        clientObserver.get().onNext(
+                                ClientMessage
+                                        .newBuilder()
+                                        .setId(serverMessage.getId())
+                                        .setTriggerResponse(grpcResponse)
+                                        .build());
+                    } catch (Throwable error) {
+                        System.err.printf("onNext() error occurred handling trigger %s with function: %s \n",
+                                          trigger,
+                                          function.getClass().getName());
+                        error.printStackTrace();
+                    }
+                    break;
+                default:
+                    System.err.printf("onNext() default case %s reached with function: %s \n",
+                                      serverMessage.getContentCase(),
+                                      function.getClass().getName());
+                    break;
+            }
+        }
+
+        @Override
+        public void onError(Throwable error) {
+            // We may want to exit when the membrane server indicates an error...
+            System.err.printf("onError() occurred with function: %s, error: %s \n",
+                              function.getClass().getName(),
+                              error);
+            error.printStackTrace();
+        }
+
+        @Override
+        public void onCompleted() {
+            // The server has indicated that streaming is now over we can exit
+            // Unlock from exit
+            finishedLatch.countDown();
+        }
+    }
+
 }

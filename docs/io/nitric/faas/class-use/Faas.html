@@ -109,7 +109,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="#io.nitric.faas">io.nitric.faas</a></th>
 <td class="colLast">
-<div class="block">Provides the Function as a Service (FaaS) classes.</div>
+<div class="block">
+  Provides the Function as a Service (FaaS) classes.</div>
 </td>
 </tr>
 </tbody>
@@ -131,24 +132,19 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../Faas.html" title="class in io.nitric.faas">Faas</a></code></td>
-<th class="colSecond" scope="row"><span class="typeNameLabel">Faas.</span><code><span class="memberNameLink"><a href="../Faas.html#hostname(java.lang.String)">hostname</a></span>&#8203;(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html?is-external=true" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;hostname)</code></th>
-<td class="colLast">
-<div class="block">Set the server hostname.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../Faas.html" title="class in io.nitric.faas">Faas</a></code></td>
-<th class="colSecond" scope="row"><span class="typeNameLabel">Faas.</span><code><span class="memberNameLink"><a href="../Faas.html#port(int)">port</a></span>&#8203;(int&nbsp;port)</code></th>
-<td class="colLast">
-<div class="block">Set the server port.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>static <a href="../Faas.html" title="class in io.nitric.faas">Faas</a></code></td>
 <th class="colSecond" scope="row"><span class="typeNameLabel">Faas.</span><code><span class="memberNameLink"><a href="../Faas.html#start(io.nitric.faas.NitricFunction)">start</a></span>&#8203;(<a href="../NitricFunction.html" title="interface in io.nitric.faas">NitricFunction</a>&nbsp;function)</code></th>
 <td class="colLast">
 <div class="block">Quick Start a Nitric Function with defaults</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../Faas.html" title="class in io.nitric.faas">Faas</a></code></td>
+<th class="colSecond" scope="row"><span class="typeNameLabel">Faas.</span><code><span class="memberNameLink"><a href="../Faas.html#stub(io.nitric.proto.faas.v1.FaasGrpc.FaasStub)">stub</a></span>&#8203;(io.nitric.proto.faas.v1.FaasGrpc.FaasStub&nbsp;stub)</code></th>
+<td class="colLast">
+<div class="block">Set the gRPC stub to use for this FaaS instance
+ Can be used to provide a connection on a new channel
+ in order to connect securely with a remote membrane host</div>
 </td>
 </tr>
 </tbody>

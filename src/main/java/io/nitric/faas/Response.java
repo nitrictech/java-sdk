@@ -1,5 +1,7 @@
 package io.nitric.faas;
 
+import java.nio.charset.StandardCharsets;
+
 /*-
  * #%L
  * Nitric Java SDK
@@ -26,14 +28,21 @@ import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.HttpResponseContext;
 
 /**
- * Response model for a NitricFunction
+ * <p>
+ *  Provides a Nitric function response class.
+ * </p>
+ *
+ * @see NitricFunction
  */
 public class Response {
-    private byte[] data;
+
     private final AbstractResponseContext context;
+    private byte[] data;
+
+    // Constructors -----------------------------------------------------------
 
     /**
-     * Create a new Nitric Response
+     * Create a new Nitric FaaS response.
      *
      * @param data The data for the response
      * @param context The context of the response
@@ -41,6 +50,17 @@ public class Response {
     protected Response(byte[] data, AbstractResponseContext context) {
         this.data = data;
         this.context = context;
+    }
+
+    // Public Methods ---------------------------------------------------------
+
+    /**
+     * Gets the context for this response
+     *
+     * @return The abstract ResponseContext this can be unwrapped with asHttp() or asTopic()
+     */
+    public AbstractResponseContext getContext() {
+        return this.context;
     }
 
     /**
@@ -62,16 +82,27 @@ public class Response {
     }
 
     /**
-     * Gets the context for this response
-     *
-     * @return The abstract ResponseContext this can be unwrapped with asHttp() or asTopic()
+     * @return the string representation of this object
      */
-    public AbstractResponseContext getContext() {
-        return this.context;
+    @Override
+    public String toString() {
+        String dataSample = "null";
+        if (data != null) {
+            dataSample = new String(data, StandardCharsets.UTF_8);
+            if (dataSample.length() > 40) {
+                dataSample = dataSample.substring(0, 42) + "...";
+            }
+        }
+        return getClass().getSimpleName()
+            + "[context=" + context
+            + ", data=" + dataSample
+            + "]";
     }
 
+    // Protected Methods ------------------------------------------------------
+
     /**
-     * Translates a Response for on-wire transport to the membrane
+     * Translates a Response for on-wire transport to the membrane.
      *
      * @return The proto object for the Nitric Response
      */
@@ -88,6 +119,7 @@ public class Response {
             httpCtxBuilder.putAllHeaders(httpCtx.getHeaders());
 
             trBuilder.setHttp(httpCtxBuilder);
+
         } else if (this.context.isTopic()) {
             var topicCtx = this.context.asTopic();
             var topicCtxBuilder = TopicResponseContext.newBuilder();
