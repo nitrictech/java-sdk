@@ -22,7 +22,13 @@ package io.nitric.faas;
 
 
 /**
- * ResponseContext
+ * <p>
+ *   Provides an abstract Nitric response context class.
+ * </p>
+ *
+ * <p>
+ *  The example below illustrates unwrapping the FaaS trigger and response context objects.
+ * </p>
  *
  * <pre><code class="code">
  * package com.example;
@@ -63,6 +69,9 @@ package io.nitric.faas;
  *     }
  * }
  * </code></pre>
+ *
+ * @see HttpResponseContext
+ * @see TopicResponseContext
  */
 public abstract class AbstractResponseContext {
 

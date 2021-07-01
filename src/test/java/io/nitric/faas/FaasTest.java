@@ -20,56 +20,84 @@ package io.nitric.faas;
  * #L%
  */
 
+import io.grpc.stub.StreamObserver;
+import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.proto.faas.v1.FaasGrpc;
+import io.nitric.proto.faas.v1.ServerMessage;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
 
 public class FaasTest {
 
-    // Avoid default port and potential conflicts when running unit tests
-    private final static int PORT = 8081;
+    NitricFunction handlerA = trigger -> trigger.buildResponse("Success");
 
-    NitricFunction handlerA = new NitricFunction() {
-        public Response handle(Trigger trigger) {
+    // Test a basic start scenario
+    @Test public void start() {
+        // Create mock stub here...
+        // it will be mocked to produce fake streams
+        var mockStub = Mockito.mock(FaasGrpc.FaasStub.class);
+
+        // Can use to verify we received client messages
+        StreamObserver<ClientMessage> mockServerStream = Mockito.mock(StreamObserver.class);
+
+        AtomicReference<StreamObserver<ServerMessage>> clientStreamReference = new AtomicReference<>();
+        Mockito.when(mockStub.triggerStream(Mockito.any())).then(invocation -> {
+            // Here we can get the real stream observer that is sent to use when the function is
+            // started
+            StreamObserver<ServerMessage> clientStream = invocation.getArgument(0);
+
+            clientStreamReference.set(clientStream);
+
+            // return the client stream
+            return mockServerStream;
+        });
+
+        AtomicReference<ClientMessage> initRequestReference = new AtomicReference<>();
+        CountDownLatch initRecievedLatch = new CountDownLatch(1);
+        Mockito.doAnswer((Answer<Object>) invocationOnMock -> {
+            initRequestReference.set(invocationOnMock.getArgument(0));
+            initRecievedLatch.countDown();
             return null;
-        }
-    };
+        }).when(mockServerStream).onNext(Mockito.any());
 
-    @Test public void test_config() {
-        var faas = new Faas();
+        var faas = new Faas().stub(mockStub);
 
-        assertEquals(8080, faas.port);
-        assertEquals("127.0.0.1", faas.hostname);
-
-        faas.hostname("localhost");
-        assertEquals("localhost", faas.hostname);
-
-        faas.port(PORT);
-        assertEquals(PORT, faas.port);
-    }
-
-    @Test public void test_start_stop() {
-        var faas = new Faas().port(PORT);
-        assertNull(faas.httpServer);
-
-        faas.startFunction(handlerA);
-        assertNotNull(faas.httpServer);
-
-        // Ensure server cant be started twice
-        try {
+        // Run the function on a thread
+        // We can by completing the server stream
+        CountDownLatch functionCompleteLatch = new CountDownLatch(1);
+        Executors.newCachedThreadPool().submit(() -> {
             faas.startFunction(handlerA);
+            functionCompleteLatch.countDown();
+        });
+
+        // Wait up to five seconds for the function to start
+        try {
+            // Ensure we recieved an init request from the function
+            // Fail if we do not
+            initRecievedLatch.await(5, TimeUnit.SECONDS);
+            // Ensure its an init request
+            assert initRequestReference.get().hasInitRequest();
+        } catch (Throwable t) {
             fail();
-        } catch (IllegalStateException ise) {
         }
 
-        faas.httpServer.stop(2);
-        faas.httpServer = null;
+        // Finish the stream and close
+        clientStreamReference.get().onCompleted();
 
-        faas.startFunction(handlerA);
-
-        assertNotNull(faas.httpServer);
-
-        faas.httpServer.stop(2);
+        try {
+            // Ensure the function exits
+            functionCompleteLatch.await(5, TimeUnit.SECONDS);
+        } catch (Throwable t) {
+            // Fail if it does not
+            fail();
+        }
     }
-
 }

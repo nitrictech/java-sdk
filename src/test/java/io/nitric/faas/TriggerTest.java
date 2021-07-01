@@ -58,6 +58,8 @@ public class TriggerTest {
         assertEquals(trigger.getContext().asHttp().getPath(), "/test/");
         assertEquals(trigger.getContext().asHttp().getHeaders().get("x-nitric-test"), "test");
         assertEquals(trigger.getContext().asHttp().getQueryParams().get("id"), "test");
+
+        assertEquals("Trigger[context=HttpTriggerContext[method=GET, path=/test/, headers={x-nitric-test=test}, queryParams{id=test}], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
 
     @Test public void test_from_grpc_topic() {
@@ -78,5 +80,7 @@ public class TriggerTest {
         assertEquals(trigger.getMimeType(), "text/plain");
         assertTrue(trigger.getContext().isTopic());
         assertEquals(trigger.getContext().asTopic().getTopic(), "test");
+
+        assertEquals("Trigger[context=TopicTriggerContext[topic=test], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
 }

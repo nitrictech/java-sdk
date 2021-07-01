@@ -20,19 +20,16 @@ package io.nitric.faas;
  * #L%
  */
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
-import io.nitric.proto.faas.v1.TriggerRequest;
-import com.google.protobuf.util.JsonFormat;
+import io.grpc.stub.StreamObserver;
+import io.nitric.proto.faas.v1.FaasGrpc;
+import io.nitric.proto.faas.v1.InitRequest;
+import io.nitric.proto.faas.v1.ServerMessage;
+import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.util.GrpcChannelProvider;
 
 /**
  * <p>
@@ -64,87 +61,62 @@ import com.google.protobuf.util.JsonFormat;
  * </code></pre>
  *
  * @see NitricFunction
- *
- * @since 1.0.0
  */
 public class Faas {
 
-    static final String DEFAULT_HOSTNAME = "127.0.0.1";
-
-    String hostname = DEFAULT_HOSTNAME;
-    int port = 8080;
-    HttpServer httpServer;
+    private FaasGrpc.FaasStub stub = null;
 
     // Public Methods -------------------------------------------------------------------
 
     /**
-     * Set the server hostname.
-     *
-     * @param hostname the server hostname
-     * @return the Faas server instance
-     */
-    public Faas hostname(String hostname) {
-        this.hostname = hostname;
-        return this;
-    }
-
-    /**
-     * Set the server port. The default port is 8080.
-     *
-     * @param port the server port
-     * @return the Faas server instance
-     */
-    public Faas port(int port) {
-        this.port = port;
-        return this;
-    }
-
-    /**
      * Start the FaaS server after configuring the given function.
+     * This method will block until the stream has terminated.
      *
-     * @param function the function (required)
+     * @param function the function handler (required)
      */
     public void startFunction(NitricFunction function) {
-        Objects.requireNonNull(function, "null function parameter");
+        Objects.requireNonNull(function, "function parameter is required");
 
-        if (httpServer != null) {
-            throw new IllegalStateException("server already started");
+        // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
+        // Once we've asserted that this interfaces with a mocked stream observer
+        // We only need to assert the FaasGrpc.newStub is called to cover this logic in
+        // the case where the user has not provided a custom stub
+        if (this.stub == null) {
+            // Create a default stub with the singleton channel
+            // TODO: Determine if we should use a dedicated channel for this FaaS loop?
+            this.stub = FaasGrpc.newStub(GrpcChannelProvider.getChannel());
         }
 
-        var childAddress = System.getenv("CHILD_ADDRESS");
-        if (childAddress != null && !childAddress.isBlank()) {
-            hostname = childAddress;
-        }
+        AtomicReference<StreamObserver<ClientMessage>> clientObserver = new AtomicReference<>();
+
+        // Add a latch to block on while the stream is running
+        CountDownLatch finishedLatch = new CountDownLatch(1);
+
+        // Begin the stream
+        var observer = this.stub.triggerStream(new FaasStreamObserver(function, clientObserver, finishedLatch));
+
+        // Set atomic reference for the client to send messages back to the server
+        // In the server message stream observer loop (see above)
+        clientObserver.set(observer);
+
+        // Send an init request to the server and let it know we're ready to receive work
+        observer.onNext(
+            ClientMessage
+                    .newBuilder()
+                    .setInitRequest(InitRequest.newBuilder().build())
+                    .build()
+        );
 
         try {
-            httpServer = HttpServer.create(new InetSocketAddress(hostname, port), 0);
+            finishedLatch.await();
+        } catch (Throwable error) {
+            System.err.printf("Stream was prematurely terminated for function: %s, error: %s \n",
+                              function.getClass().getSimpleName(),
+                              error);
 
-            httpServer.createContext("/", buildServerHandler(function));
-
-            httpServer.setExecutor(null);
-
-            // Start the server
-            httpServer.start();
-
-            var builder = new StringBuilder().append(getClass().getSimpleName());
-            if (DEFAULT_HOSTNAME.equals(hostname)) {
-                builder.append(" listening on port ").append(port);
-
-            } else {
-                builder.append(" listening on ").append(hostname).append(":").append(port);
-            }
-            builder.append(" with function: ");
-
-            if (!function.getClass().getSimpleName().isEmpty()) {
-                builder.append(function.getClass().getSimpleName());
-            } else {
-                builder.append(function.getClass().getName());
-            }
-
-            System.out.println(builder);
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } finally {
+            // Always ensure the client stream is closed
+            observer.onCompleted();
         }
     }
 
@@ -159,76 +131,94 @@ public class Faas {
         return faas;
     }
 
-    // Package Private Methods ------------------------------------------------
+    // Package Methods --------------------------------------------------------
 
-    HttpHandler buildServerHandler(final NitricFunction function) {
+    /**
+     * Set the gRPC stub to use for this FaaS instance
+     * Can be used to provide a connection on a new channel
+     * in order to connect securely with a remote membrane host
+     *
+     * @param stub - Stub instance to provide
+     */
+    protected Faas stub(FaasGrpc.FaasStub stub) {
+        this.stub = stub;
+        return this;
+    }
 
-        return new HttpHandler() {
+    // Inner Classes ----------------------------------------------------------
 
-            /**
-             * Implements the JDK HTTP server handler.
-             *
-             * @param he the HTTP exchange object
-             * @throws IOException if an I/O error occurs
-             */
-            @Override
-            public void handle(HttpExchange he) throws IOException {
+    /**
+     * Provides the FaaS GRCP function stream handler.
+     */
+    static class FaasStreamObserver implements StreamObserver<ServerMessage> {
 
-                try {
-                    if (he.getRequestBody() == null) {
-                        // Invalid request from membrane
-                        // TODO: Likely need to change this to a more valid exception type
-                        throw new InvalidObjectException("Membrane did not send a trigger request");
-                    }
+        final NitricFunction function;
+        final AtomicReference<StreamObserver<ClientMessage>> clientObserver;
+        final CountDownLatch finishedLatch;
 
-                    var trBuilder = TriggerRequest.newBuilder();
-                    // Deserialize the requset from the membrane
-                    var jsonString = new String(he.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                    JsonFormat.parser().ignoringUnknownFields().merge(jsonString, trBuilder);
-                    var triggerRequest = trBuilder.build();
+        FaasStreamObserver(
+            NitricFunction function,
+            AtomicReference<StreamObserver<ClientMessage>> clientObserver,
+            CountDownLatch finishedLatch
+        ) {
+            this.function = function;
+            this.clientObserver = clientObserver;
+            this.finishedLatch = finishedLatch;
+        }
 
-                    var trigger = Trigger.buildTrigger(triggerRequest);
-
-                    Response response = null;
-
+        @Override
+        public void onNext(ServerMessage serverMessage) {
+            // We got a new message from the server
+            switch (serverMessage.getContentCase()) {
+                case INIT_RESPONSE:
+                    // We have an init ack from the membrane
+                    // XXX: NO OP for now
+                    break;
+                case TRIGGER_REQUEST:
+                    Trigger trigger = null;
                     try {
-                        response = function.handle(trigger);
-                    } catch (Throwable t) {
-                        // Return default response type back to the membrane with failure indicators
-                        response = trigger.buildResponse(
-                            "An error occurred, please see logs for details.\n".getBytes(StandardCharsets.UTF_8)
-                        );
-                        if (response.getContext().isHttp()) {
-                            response.getContext().asHttp().setStatus(500);
-                            response.getContext().asHttp().addHeader("Content-Type", "text/plain");
-                        }
+                        // Call the function
+                        trigger = Trigger.buildTrigger(serverMessage.getTriggerRequest());
+                        var response = function.handle(trigger);
+
+                        // Write back the response to the server
+                        var grpcResponse = response.toGrpcTriggerResponse();
+                        clientObserver.get().onNext(
+                                ClientMessage
+                                        .newBuilder()
+                                        .setId(serverMessage.getId())
+                                        .setTriggerResponse(grpcResponse)
+                                        .build());
+                    } catch (Throwable error) {
+                        System.err.printf("onNext() error occurred handling trigger %s with function: %s \n",
+                                          trigger,
+                                          function.getClass().getName());
+                        error.printStackTrace();
                     }
-
-                    var triggerResponse = response.toGrpcTriggerResponse();
-                    var jsonResponse = JsonFormat.printer().print(triggerResponse);
-
-                    he.getResponseHeaders().put("Content-Type", Collections.singletonList("application/json"));
-                    he.sendResponseHeaders(200, jsonResponse.length());
-
-                    he.getResponseBody().write(jsonResponse.getBytes(StandardCharsets.UTF_8));
-                    he.getResponseBody().close();
-
-                } catch (Throwable t) {
-                    // Log error
-                    System.err.printf("Error occurred handling request %s %s with function: %s \n",
-                            he.getRequestMethod(),
-                            he.getRequestURI(),
-                            function.getClass().getName());
-                    t.printStackTrace();
-
-                    // Write HTTP error response
-                    var msg = "An error occurred, please see logs for details.\n";
-                    he.sendResponseHeaders(500, msg.length());
-                    he.getResponseBody().write(msg.getBytes(StandardCharsets.UTF_8));
-                    he.getResponseBody().close();
-                }
+                    break;
+                default:
+                    System.err.printf("onNext() default case %s reached with function: %s \n",
+                                      serverMessage.getContentCase(),
+                                      function.getClass().getName());
+                    break;
             }
-        };
+        }
+
+        @Override
+        public void onError(Throwable error) {
+            // We may want to exit when the membrane server indicates an error...
+            System.err.printf("onError() occurred with function: %s, error: %s \n",
+                              function.getClass().getName(),
+                              error);
+            error.printStackTrace();
+        }
+
+        @Override
+        public void onCompleted() {
+            // The server has indicated that streaming is now over we can exit
+            // Unlock from exit
+            finishedLatch.countDown();
+        }
     }
 
 }

@@ -26,11 +26,11 @@ import java.util.Objects;
 
 /**
  * <p>
- *   Abstract representation of NitricTrigger context
+ *   Provides an abstract Nitric FaaS trigger context class.
  * </p>
  *
  * <p>
- *  The example below demonstrates unwrapping TriggerContext.
+ *  The example below illustrates unwrapping the FaaS trigger context object.
  * </p>
  *
  * <pre><code class="code">
@@ -61,6 +61,9 @@ import java.util.Objects;
  *     }
  * }
  * </code></pre>
+ *
+ * @see HttpTriggerContext
+ * @see TopicTriggerContext
  */
 public abstract class AbstractTriggerContext {
 
@@ -123,4 +126,5 @@ public abstract class AbstractTriggerContext {
 
         throw new UnsupportedOperationException("TriggerRequest does not contain valid context");
     }
+
 }
