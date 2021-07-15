@@ -20,7 +20,7 @@ package io.nitric.api.event;
  * #L%
  */
 
-import io.nitric.proto.event.v1.EventGrpc;
+import io.nitric.proto.event.v1.EventServiceGrpc;
 import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.util.GrpcChannelProvider;
 import io.nitric.util.ProtoUtils;
@@ -57,7 +57,7 @@ import java.util.Objects;
  */
 public class EventClient {
 
-    final EventGrpc.EventBlockingStub serviceStub;
+    final EventServiceGrpc.EventServiceBlockingStub serviceStub;
 
     /*
      * Enforce builder pattern.
@@ -121,7 +121,7 @@ public class EventClient {
      */
     public static class Builder {
 
-        EventGrpc.EventBlockingStub serviceStub;
+        EventServiceGrpc.EventServiceBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
@@ -135,7 +135,7 @@ public class EventClient {
          * @param serviceStub the GRPC service stub to inject
          * @return the EventClient builder
          */
-        public EventClient.Builder serviceStub(EventGrpc.EventBlockingStub serviceStub) {
+        public EventClient.Builder serviceStub(EventServiceGrpc.EventServiceBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
@@ -146,7 +146,7 @@ public class EventClient {
         public EventClient build() {
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
-                this.serviceStub = EventGrpc.newBlockingStub(channel);
+                this.serviceStub = EventServiceGrpc.newBlockingStub(channel);
             }
 
             return new EventClient(this);

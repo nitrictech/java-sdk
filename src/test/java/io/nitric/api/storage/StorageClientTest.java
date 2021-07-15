@@ -56,7 +56,7 @@ public class StorageClientTest {
 
     @Test
     public void test_read() {
-        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
                 StorageReadResponse.newBuilder().setBody(KNOWN_BS).build()
         );
@@ -88,7 +88,7 @@ public class StorageClientTest {
 
     @Test
     public void test_read_unknown_key() {
-        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
             StorageReadResponse.newBuilder().build()
         );
@@ -101,7 +101,7 @@ public class StorageClientTest {
 
     @Test
     public void test_write() {
-        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenReturn(
                 StorageWriteResponse.newBuilder().build()
         );
@@ -132,7 +132,7 @@ public class StorageClientTest {
 
     @Test
     public void test_delete() {
-        var mock = Mockito.mock(StorageGrpc.StorageBlockingStub.class);
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenReturn(
                 StorageDeleteResponse.newBuilder().build()
         );

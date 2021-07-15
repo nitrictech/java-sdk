@@ -42,7 +42,7 @@ public class EventClientTest {
 
     @Test
     public void test_publish() {
-        var mock = Mockito.mock(EventGrpc.EventBlockingStub.class);
+        var mock = Mockito.mock(EventServiceGrpc.EventServiceBlockingStub.class);
 
         Mockito.when(mock.publish(Mockito.any())).thenReturn(
                 EventPublishResponse.newBuilder().setId("test-id").build()

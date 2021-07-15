@@ -22,7 +22,7 @@ package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
 import io.nitric.proto.storage.v1.StorageDeleteRequest;
-import io.nitric.proto.storage.v1.StorageGrpc;
+import io.nitric.proto.storage.v1.StorageServiceGrpc;
 import io.nitric.proto.storage.v1.StorageReadRequest;
 import io.nitric.proto.storage.v1.StorageWriteRequest;
 import io.nitric.util.GrpcChannelProvider;
@@ -66,7 +66,7 @@ import java.util.Objects;
 public class StorageClient {
 
     final String bucket;
-    final StorageGrpc.StorageBlockingStub serviceStub;
+    final StorageServiceGrpc.StorageServiceBlockingStub serviceStub;
 
     /*
      * Enforce builder pattern.
@@ -172,7 +172,7 @@ public class StorageClient {
     public static class Builder {
 
         String bucket;
-        StorageGrpc.StorageBlockingStub serviceStub;
+        StorageServiceGrpc.StorageServiceBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
@@ -197,7 +197,7 @@ public class StorageClient {
          * @param serviceStub the GRPC service stub to inject
          * @return the builder object
          */
-        public StorageClient.Builder serviceStub(StorageGrpc.StorageBlockingStub serviceStub) {
+        public StorageClient.Builder serviceStub(StorageServiceGrpc.StorageServiceBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
@@ -209,7 +209,7 @@ public class StorageClient {
             Objects.requireNonNull(bucket, "bucket parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
-                this.serviceStub = StorageGrpc.newBlockingStub(channel);
+                this.serviceStub = StorageServiceGrpc.newBlockingStub(channel);
             }
 
             return new StorageClient(this);

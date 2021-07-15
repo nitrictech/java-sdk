@@ -20,7 +20,7 @@ package io.nitric.api.event;
  * #L%
  */
 
-import io.nitric.proto.event.v1.TopicGrpc;
+import io.nitric.proto.event.v1.TopicServiceGrpc;
 import io.nitric.proto.event.v1.TopicListRequest;
 import io.nitric.util.GrpcChannelProvider;
 
@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  */
 public class TopicClient {
 
-    final TopicGrpc.TopicBlockingStub serviceStub;
+    final TopicServiceGrpc.TopicServiceBlockingStub serviceStub;
 
     /*
      * Enforce builder pattern.
@@ -106,7 +106,7 @@ public class TopicClient {
      */
     public static class Builder {
 
-        TopicGrpc.TopicBlockingStub serviceStub;
+        TopicServiceGrpc.TopicServiceBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
@@ -120,7 +120,7 @@ public class TopicClient {
          * @param serviceStub the GRPC service stub to inject
          * @return the TopicClient builder
          */
-        public TopicClient.Builder serviceStub(TopicGrpc.TopicBlockingStub serviceStub) {
+        public TopicClient.Builder serviceStub(TopicServiceGrpc.TopicServiceBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
@@ -131,7 +131,7 @@ public class TopicClient {
         public TopicClient build() {
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
-                this.serviceStub = TopicGrpc.newBlockingStub(channel);
+                this.serviceStub = TopicServiceGrpc.newBlockingStub(channel);
             }
 
             return new TopicClient(this);

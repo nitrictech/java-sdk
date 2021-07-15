@@ -21,7 +21,7 @@ package io.nitric.api.queue;
  */
 
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
-import io.nitric.proto.queue.v1.QueueGrpc;
+import io.nitric.proto.queue.v1.QueueServiceGrpc;
 import io.nitric.proto.queue.v1.QueueReceiveRequest;
 import io.nitric.proto.queue.v1.QueueSendBatchRequest;
 import io.nitric.proto.queue.v1.QueueSendRequest;
@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
 public class QueueClient {
 
     final String queue;
-    final QueueGrpc.QueueBlockingStub serviceStub;
+    final QueueServiceGrpc.QueueServiceBlockingStub serviceStub;
 
     /*
      * Enforce builder pattern.
@@ -241,7 +241,7 @@ public class QueueClient {
     public static class Builder {
 
         String queue;
-        QueueGrpc.QueueBlockingStub serviceStub;
+        QueueServiceGrpc.QueueServiceBlockingStub serviceStub;
 
         /*
          * Enforce builder pattern.
@@ -266,7 +266,7 @@ public class QueueClient {
          * @param serviceStub the GRPC service stub to inject
          * @return the builder object
          */
-        public Builder serviceStub(QueueGrpc.QueueBlockingStub serviceStub) {
+        public Builder serviceStub(QueueServiceGrpc.QueueServiceBlockingStub serviceStub) {
             this.serviceStub = serviceStub;
             return this;
         }
@@ -278,7 +278,7 @@ public class QueueClient {
             Objects.requireNonNull(queue, "queue parameter is required");
             if (serviceStub == null) {
                 var channel = GrpcChannelProvider.getChannel();
-                this.serviceStub = QueueGrpc.newBlockingStub(channel);
+                this.serviceStub = QueueServiceGrpc.newBlockingStub(channel);
             }
 
             return new QueueClient(this);

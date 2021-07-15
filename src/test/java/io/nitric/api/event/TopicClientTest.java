@@ -39,7 +39,7 @@ public class TopicClientTest {
     }
 
     @Test public void test_list() {
-        var mock = Mockito.mock(TopicGrpc.TopicBlockingStub.class);
+        var mock = Mockito.mock(TopicServiceGrpc.TopicServiceBlockingStub.class);
 
         Mockito.when(mock.list(TopicListRequest.newBuilder().build())).thenReturn(
                 TopicListResponse.newBuilder()

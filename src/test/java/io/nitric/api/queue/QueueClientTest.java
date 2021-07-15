@@ -54,7 +54,7 @@ public class QueueClientTest {
 
     @Test
     public void test_send() {
-        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
 
         Mockito.when(mock.send(Mockito.any())).thenReturn(
                 QueueSendResponse.newBuilder().build()
@@ -88,7 +88,7 @@ public class QueueClientTest {
 
     @Test
     public void test_failed_task_translation() {
-        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
 
         var failedTasks = QueueSendBatchResponse.newBuilder();
         failedTasks.addFailedTasks(0, FailedTask
@@ -125,7 +125,7 @@ public class QueueClientTest {
 
     @Test
     public void test_receive() {
-        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
         Mockito.when(mock.receive(Mockito.any())).thenReturn(
                 QueueReceiveResponse
                         .newBuilder()
@@ -156,7 +156,7 @@ public class QueueClientTest {
 
     @Test
     public void test_complete() {
-        var mock = Mockito.mock(QueueGrpc.QueueBlockingStub.class);
+        var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
         Mockito.when(mock.complete(Mockito.any())).thenReturn(
                 QueueCompleteResponse
                     .newBuilder()

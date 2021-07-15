@@ -60,17 +60,18 @@ public final class Storages {
       "st\022\023\n\013bucket_name\030\001 \001(\t\022\013\n\003key\030\002 \001(\t\"#\n\023" +
       "StorageReadResponse\022\014\n\004body\030\001 \001(\014\"8\n\024Sto" +
       "rageDeleteRequest\022\023\n\013bucket_name\030\001 \001(\t\022\013" +
-      "\n\003key\030\002 \001(\t\"\027\n\025StorageDeleteResponse2\227\002\n" +
-      "\007Storage\022U\n\004Read\022%.nitric.storage.v1.Sto" +
-      "rageReadRequest\032&.nitric.storage.v1.Stor" +
-      "ageReadResponse\022X\n\005Write\022&.nitric.storag" +
-      "e.v1.StorageWriteRequest\032\'.nitric.storag" +
-      "e.v1.StorageWriteResponse\022[\n\006Delete\022\'.ni" +
-      "tric.storage.v1.StorageDeleteRequest\032(.n" +
-      "itric.storage.v1.StorageDeleteResponseBj" +
-      "\n\032io.nitric.proto.storage.v1B\010StoragesP\001" +
-      "Z\014nitric/v1;v1\252\002\027Nitric.Proto.Storage.v1" +
-      "\312\002\027Nitric\\Proto\\Storage\\V1b\006proto3"
+      "\n\003key\030\002 \001(\t\"\027\n\025StorageDeleteResponse2\236\002\n" +
+      "\016StorageService\022U\n\004Read\022%.nitric.storage" +
+      ".v1.StorageReadRequest\032&.nitric.storage." +
+      "v1.StorageReadResponse\022X\n\005Write\022&.nitric" +
+      ".storage.v1.StorageWriteRequest\032\'.nitric" +
+      ".storage.v1.StorageWriteResponse\022[\n\006Dele" +
+      "te\022\'.nitric.storage.v1.StorageDeleteRequ" +
+      "est\032(.nitric.storage.v1.StorageDeleteRes" +
+      "ponseBj\n\032io.nitric.proto.storage.v1B\010Sto" +
+      "ragesP\001Z\014nitric/v1;v1\252\002\027Nitric.Proto.Sto" +
+      "rage.v1\312\002\027Nitric\\Proto\\Storage\\V1b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

@@ -25,10 +25,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.grpc.stub.StreamObserver;
-import io.nitric.proto.faas.v1.FaasGrpc;
+import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
 import io.nitric.proto.faas.v1.ServerMessage;
-import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.util.GrpcChannelProvider;
 
 /**
@@ -64,7 +64,7 @@ import io.nitric.util.GrpcChannelProvider;
  */
 public class Faas {
 
-    private FaasGrpc.FaasStub stub = null;
+    private FaasServiceGrpc.FaasServiceStub stub = null;
 
     // Public Methods -------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ public class Faas {
         if (this.stub == null) {
             // Create a default stub with the singleton channel
             // TODO: Determine if we should use a dedicated channel for this FaaS loop?
-            this.stub = FaasGrpc.newStub(GrpcChannelProvider.getChannel());
+            this.stub = FaasServiceGrpc.newStub(GrpcChannelProvider.getChannel());
         }
 
         AtomicReference<StreamObserver<ClientMessage>> clientObserver = new AtomicReference<>();
@@ -140,7 +140,7 @@ public class Faas {
      *
      * @param stub - Stub instance to provide
      */
-    protected Faas stub(FaasGrpc.FaasStub stub) {
+    protected Faas stub(FaasServiceGrpc.FaasServiceStub stub) {
         this.stub = stub;
         return this;
     }
