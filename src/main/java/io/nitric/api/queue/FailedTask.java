@@ -28,8 +28,6 @@ import java.util.Objects;
  * </p>
  *
  * @see Task
- *
- * @since 1.0
  */
 public class FailedTask {
 

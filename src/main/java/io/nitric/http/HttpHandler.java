@@ -51,8 +51,6 @@ package io.nitric.http;
  * @see HttpRequest
  * @see HttpResponse
  * @see HttpResponse.Builder
- *
- * @since 1.0
  */
 public interface HttpHandler {
 

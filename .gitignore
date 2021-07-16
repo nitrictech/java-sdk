@@ -3,9 +3,9 @@
 /.idea/
 /.vscode/
 /java-sdk.iml
+.classpath
+.project
 
 # Ignore build files
 /target/
 /dependency-reduced-pom.xml
-.classpath
-.project

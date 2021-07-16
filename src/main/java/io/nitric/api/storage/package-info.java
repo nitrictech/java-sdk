@@ -1,7 +1,32 @@
 /**
- * Provides the Storage Service API.
+ * <p>
+ *  Provides the Storage Service API.
+ * </p>
  *
- * @since 1.0
+ * <p>
+ *  The example below illustrates the Storage API.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import io.nitric.api.storage.Storage;
+ *  ...
+ *
+ *  // Create a storage bucket with the name 'inspection-images'
+ *  var bucket = Storage.bucket("inspection-images");
+ *
+ *  // Store an image file
+ *  String imageKey = "582764-front-elevation.jpg"
+ *  byte[] imageData = ...
+ *  bucket.write(imageKey, imageData);
+ *
+ *  // Load an image file
+ *  imageKey = "582764-side-elevation.jpg"
+ *  imageData = bucket.read(imageKey, imageData);
+ *
+ *  // Delete an image file
+ *  imageKey = "582764-rear-elevation.jpg"
+ *  bucket.delete(imageKey);
+ * </code></pre>
  */
 package io.nitric.api.storage;
 

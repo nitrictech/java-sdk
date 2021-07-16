@@ -1,7 +1,26 @@
 /**
- * Provides the Event Service API.
+ * <p>
+ *  Provides the Event Service API.
+ * </p>
  *
- * @since 1.0
+ * <p>
+ *  The example below illustrates the Event API.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import io.nitric.api.Event;
+ *  import io.nitric.api.Events;
+ *
+ *  // Create an order completed event
+ *  var payload = Map.of("id", id, "status", "completed");
+ *  var event = Event.build(payload);
+ *
+ *  // Publish the event to the orders topic
+ *  Events.topic("orders").publish(event);
+ *
+ *  // Get the list of available topics
+ *  List&lt;Topic&gt; topics = Events.topics();
+ * </code></pre>
  */
 package io.nitric.api.event;
 

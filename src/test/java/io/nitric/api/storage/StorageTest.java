@@ -32,25 +32,36 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StorageClientTest {
+public class StorageTest {
 
     private static final String KNOWN_KEY = "123456";
     private static final String KNOWN_TEXT = "hello world";
     private static final ByteString KNOWN_BS = ByteString.copyFrom(KNOWN_TEXT .getBytes(StandardCharsets.UTF_8));
 
     @Test
-    public void test_build() {
-        var client = StorageClient.build("bucket");
+    public void test_serviceStub() {
+        assertNotNull(Storage.getServiceStub());
 
-        assertNotNull(client);
-        assertEquals("bucket", client.bucket);
-        assertNotNull(client.serviceStub);
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
+
+        Storage.setServiceStub(mock);
+        assertEquals(mock, Storage.getServiceStub());
+    }
+
+    @Test
+    public void test_bucket() {
+        var bucket = Storage.bucket("images");
+
+        assertNotNull(bucket);
+        assertEquals("images", bucket.name);
+        assertEquals("images", bucket.getName());
+        assertEquals("Bucket[name=images]", bucket.toString());
 
         try {
-            StorageClient.newBuilder().build();
+            Storage.bucket(" ");
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("bucket parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-blank name", iae.getMessage());
         }
     }
 
@@ -60,29 +71,28 @@ public class StorageClientTest {
         Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
                 StorageReadResponse.newBuilder().setBody(KNOWN_BS).build()
         );
+        Storage.setServiceStub(mock);
+        var bucket = Storage.bucket("bucket");
 
-        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
-        byte[] data = client.read("ANY KEY");
+        byte[] data = bucket.read("ANY KEY");
         assertNotNull(data);
         assertEquals(KNOWN_TEXT, new String(data));
 
         try {
-            client.read(null);
+            bucket.read(" ");
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("key parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-blank key", iae.getMessage());
         }
     }
 
     @Test
     public void test_read_null_key() {
-        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(null).build();
-
         try {
-            client.read(null);
+            Storage.bucket("bucket").read(null);
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("key parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-null key", iae.getMessage());
         }
     }
 
@@ -92,10 +102,9 @@ public class StorageClientTest {
         Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
             StorageReadResponse.newBuilder().build()
         );
+        Storage.setServiceStub(mock);
 
-        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
-
-        var data = client.read("unknown key");
+        var data = Storage.bucket("bucket").read("unknown key");
         assertNull(data);
     }
 
@@ -105,28 +114,28 @@ public class StorageClientTest {
         Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenReturn(
                 StorageWriteResponse.newBuilder().build()
         );
-
-        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
+        Storage.setServiceStub(mock);
+        var bucket = Storage.bucket("bucket");
 
         byte[] data = "this data".getBytes(StandardCharsets.UTF_8);
-        client.write("this key", data);
+        bucket.write("this key", data);
 
         // Verify we actually called the mock object
         // TODO: Use Mockito.eq for testing here...
         Mockito.verify(mock).write(Mockito.any());
 
         try {
-            client.write(null, data);
+            bucket.write(null, data);
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("key parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-null key", iae.getMessage());
         }
 
         try {
-            client.write("this key", null);
+            bucket.write("this key", null);
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("data parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-null data", iae.getMessage());
         }
     }
 
@@ -136,18 +145,20 @@ public class StorageClientTest {
         Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenReturn(
                 StorageDeleteResponse.newBuilder().build()
         );
+        Storage.setServiceStub(mock);
 
-        var client = StorageClient.newBuilder().bucket("bucket").serviceStub(mock).build();
+        var bucket = Storage.bucket("bucket");
 
-        client.delete(KNOWN_KEY);
+        bucket.delete(KNOWN_KEY);
 
         Mockito.verify(mock).delete(Mockito.any());
 
         try {
-            client.delete(null);
+            bucket.delete(null);
             fail();
-        } catch (NullPointerException npe) {
-            assertEquals("key parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-null key", iae.getMessage());
         }
     }
+
 }

@@ -29,8 +29,6 @@ import java.util.Objects;
  * </p>
  *
  * @see FailedTask
- *
- * @since 1.0
  */
 public class Task {
 

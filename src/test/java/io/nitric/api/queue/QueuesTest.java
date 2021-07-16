@@ -21,6 +21,7 @@ package io.nitric.api.queue;
  */
 
 import io.nitric.proto.queue.v1.FailedTask;
+import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;
 import io.nitric.proto.queue.v1.*;
 import io.nitric.util.ProtoUtils;
 import org.junit.Test;
@@ -34,56 +35,63 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class QueueClientTest {
+public class QueuesTest {
 
     @Test
-    public void test_build() {
-        var client = QueueClient.build("queue");
+    public void test_serviceStub() {
+        assertNotNull(Queues.getServiceStub());
 
-        assertNotNull(client);
-        assertEquals("queue", client.queue);
-        assertNotNull(client.serviceStub);
+        var mock = Mockito.mock(QueueServiceBlockingStub.class);
+
+        Queues.setServiceStub(mock);
+        assertEquals(mock, Queues.getServiceStub());
+    }
+
+    @Test
+    public void test_queue() {
+        Queue queue = Queues.queue("orders");
+
+        assertNotNull(queue);
+        assertEquals("orders", queue.name);
+        assertEquals("orders", queue.getName());
+        assertEquals("Queue[name=orders]", queue.toString());
 
         try {
-            QueueClient.newBuilder().build();
-            assertTrue(false);
-        } catch (NullPointerException npe) {
-            assertEquals("queue parameter is required", npe.getMessage());
+            Queues.queue(" ");
+            fail();
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-blank name", iae.getMessage());
         }
     }
 
     @Test
     public void test_send() {
         var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
-
         Mockito.when(mock.send(Mockito.any())).thenReturn(
                 QueueSendResponse.newBuilder().build()
         );
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        Queues.setServiceStub(mock);
+
+        var queue = Queues.queue("queue");
 
         Map<String, Object> payload = Map.of("status", "ready");
         var task = Task.newBuilder().payload(payload).build();
 
-
-
         try {
-            client.send(null);
-            assertTrue(false);
-
-        } catch (NullPointerException npe) {
+            queue.send(null);
+            fail();
+        } catch (IllegalArgumentException iae) {
             Mockito.verify(mock, Mockito.times(0)).send(Mockito.any());
-            assertEquals("task parameter is required", npe.getMessage());
+            assertEquals("provide non-null task", iae.getMessage());
         }
 
-        client.send(task);
+        queue.send(task);
         Mockito.verify(mock, Mockito.times(1)).send(Mockito.any());
     }
 
     @Test
     public void test_sendBatch_none() {
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(null).build();
-
-        client.sendBatch(new ArrayList<>());
+        Queues.queue("queue").sendBatch(new ArrayList<>());
     }
 
     @Test
@@ -101,10 +109,12 @@ public class QueueClientTest {
             failedTasks.build()
         );
 
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        Queues.setServiceStub(mock);
+
+        var queues = Queues.queue("queue");
         var taskList = new ArrayList<Task>();
         taskList.add(Task.newBuilder().id("1234").payload(Map.of("test", "test")).build());
-        var response = client.sendBatch(taskList);
+        var response = queues.sendBatch(taskList);
 
         assertNotNull(response);
         assertFalse(response.isEmpty());
@@ -113,13 +123,11 @@ public class QueueClientTest {
 
     @Test
     public void test_sendBatch_empty() {
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(null).build();
-
         try {
-            client.sendBatch(null);
-            assertTrue(false);
-        } catch (NullPointerException npe) {
-            assertEquals("tasks parameter is required", npe.getMessage());
+            Queues.queue("queue").sendBatch(null);
+            fail();
+        } catch (IllegalArgumentException iae) {
+            assertEquals("provide non-null tasks", iae.getMessage());
         }
     }
 
@@ -140,10 +148,11 @@ public class QueueClientTest {
                         )
                         .build()
         );
+        Queues.setServiceStub(mock);
 
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        var queues = Queues.queue("queue");
 
-        var tasks = client.receive(10);
+        var tasks = queues.receive(10);
         assertNotNull(tasks);
         assertEquals(1, tasks.size());
 
@@ -162,20 +171,29 @@ public class QueueClientTest {
                     .newBuilder()
                     .build()
         );
+        Queues.setServiceStub(mock);
 
-        var client = QueueClient.newBuilder().queue("queue").serviceStub(mock).build();
+        var queues = Queues.queue("queue");
 
         try {
-            client.complete(null);
-            assertTrue(false);
+            queues.complete(null);
+            fail();
 
-        } catch (NullPointerException npe) {
+        } catch (IllegalArgumentException iae) {
             Mockito.verify(mock, Mockito.times(0)).complete(Mockito.any());
-            assertEquals("leaseId parameter is required", npe.getMessage());
+            assertEquals("provide non-null leaseId", iae.getMessage());
         }
 
-        client.complete("leaseId");
+        try {
+            queues.complete(" ");
+            fail();
 
+        } catch (IllegalArgumentException iae) {
+            Mockito.verify(mock, Mockito.times(0)).complete(Mockito.any());
+            assertEquals("provide non-blank leaseId", iae.getMessage());
+        }
 
+        queues.complete("leaseId");
     }
+
 }

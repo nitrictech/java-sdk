@@ -22,6 +22,8 @@ package io.nitric.util;
 
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.junit.Test;
 
 import java.util.Map;
@@ -29,6 +31,21 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class ProtoUtilsTest {
+
+    @Test
+    public void test_mapGrpcError() {
+        var re1= ProtoUtils.mapGrpcError(null);
+        assertNotNull(re1);
+        assertTrue(re1 instanceof NullPointerException);
+
+        var re2 = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT, null));
+        assertNotNull(re2);
+        assertTrue(re2 instanceof IllegalArgumentException);
+
+        var re3 = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INTERNAL, null));
+        assertNotNull(re3);
+        assertFalse(re3 instanceof IllegalArgumentException);
+    }
 
     @Test
     public void test_toStruct() {

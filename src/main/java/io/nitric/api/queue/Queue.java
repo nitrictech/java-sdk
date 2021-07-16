@@ -1,5 +1,16 @@
 package io.nitric.api.queue;
 
+import java.util.Collections;
+import java.util.List;
+
+import io.nitric.proto.queue.v1.QueueCompleteRequest;
+import io.nitric.proto.queue.v1.QueueReceiveRequest;
+import io.nitric.proto.queue.v1.QueueReceiveResponse;
+import io.nitric.proto.queue.v1.QueueSendBatchRequest;
+import io.nitric.proto.queue.v1.QueueSendBatchResponse;
+import io.nitric.proto.queue.v1.QueueSendRequest;
+import java.util.stream.Collectors;
+
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,30 +31,18 @@ package io.nitric.api.queue;
  * #L%
  */
 
-import io.nitric.proto.queue.v1.QueueCompleteRequest;
-import io.nitric.proto.queue.v1.QueueServiceGrpc;
-import io.nitric.proto.queue.v1.QueueReceiveRequest;
-import io.nitric.proto.queue.v1.QueueSendBatchRequest;
-import io.nitric.proto.queue.v1.QueueSendRequest;
-import io.nitric.util.GrpcChannelProvider;
+import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 /**
- * <p>
- *  Provides a Queue API client.
- * </p>
+ * Provides a Queue API queue class.
  *
  * <p>
  *  The example below illustrates the Queue API.
  * </p>
  *
  * <pre><code class="code">
- *  import io.nitric.api.queue.QueueClient;
+ *  import io.nitric.api.queue.Queues;
  *  import io.nitric.api.queue.Task;
  *  ...
  *
@@ -53,33 +52,38 @@ import java.util.stream.Collectors;
  *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
  *  var task = Task.build(payload);
  *
- *  // Send a task to the 'shipping' queue client
- *  var client = QueueClient.build("shipping");
- *  client.send(task);
+ *  // Send a task to the 'shipping' queue
+ *  var queue = Queues.queue("shipping");
+ *  queue.send(task);
  *
  *  // Receive a list of tasks from the 'shipping' queue
- *  List&lt;Task&gt; tasks = client.receive(100);
+ *  List&lt;Task&gt; tasks = queue.receive(100);
  * </code></pre>
  *
- * @see Task
- * @see FailedTask
- *
- * @since 1.0
+ * @see Queues
  */
-public class QueueClient {
+public class Queue {
 
-    final String queue;
-    final QueueServiceGrpc.QueueServiceBlockingStub serviceStub;
+    final String name;
+
+    // Constructor ------------------------------------------------------------
 
     /*
-     * Enforce builder pattern.
+     * Enforce package builder patterns.
      */
-    QueueClient(Builder builder) {
-        this.queue = builder.queue;
-        this.serviceStub = builder.serviceStub;
+    Queue(String name) {
+        Contracts.requireNonBlank(name, "name");
+        this.name = name;
     }
 
     // Public Methods ---------------------------------------------------------
+
+    /**
+     * @return the queue name
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * Send the given task to the client queue.
@@ -87,16 +91,20 @@ public class QueueClient {
      * @param task the task to send to the queue (required)
      */
     public void send(Task task) {
-        Objects.requireNonNull(task, "task parameter is required");
+        Contracts.requireNonNull(task, "task");
 
         var protoTask = toProtoTask(task);
 
         var request = QueueSendRequest.newBuilder()
-                .setQueue(queue)
+                .setQueue(name)
                 .setTask(protoTask)
                 .build();
 
-        serviceStub.send(request);
+        try {
+            Queues.getServiceStub().send(request);
+        } catch (io.grpc.StatusRuntimeException sre) {
+            throw ProtoUtils.mapGrpcError(sre);
+        }
     }
 
     /**
@@ -106,19 +114,24 @@ public class QueueClient {
      * @return the list of tasks which failed to send, or an empty list if all were successfully sent
      */
     public List<FailedTask> sendBatch(List<Task> tasks) {
-        Objects.requireNonNull(tasks, "tasks parameter is required");
+        Contracts.requireNonNull(tasks, "tasks");
 
         if (tasks.isEmpty()) {
             return Collections.emptyList();
         }
 
-        var requestBuilder = QueueSendBatchRequest.newBuilder().setQueue(queue);
+        var requestBuilder = QueueSendBatchRequest.newBuilder().setQueue(name);
         for (Task task : tasks) {
             requestBuilder.addTasks(toProtoTask(task));
         }
         var request = requestBuilder.build();
 
-        var response = serviceStub.sendBatch(request);
+        QueueSendBatchResponse response = null;
+        try {
+            response = Queues.getServiceStub().sendBatch(request);
+        } catch (io.grpc.StatusRuntimeException sre) {
+            throw ProtoUtils.mapGrpcError(sre);
+        }
 
         return response.getFailedTasksList()
                 .stream()
@@ -134,11 +147,16 @@ public class QueueClient {
      */
     public List<Task> receive(int limit) {
         var request = QueueReceiveRequest.newBuilder()
-                .setQueue(queue)
+                .setQueue(name)
                 .setDepth(limit)
                 .build();
 
-        var response = serviceStub.receive(request);
+        QueueReceiveResponse response = null;
+        try {
+            response = Queues.getServiceStub().receive(request);
+        } catch (io.grpc.StatusRuntimeException sre) {
+            throw ProtoUtils.mapGrpcError(sre);
+        }
 
         return response.getTasksList()
                 .stream()
@@ -152,33 +170,18 @@ public class QueueClient {
      * @param leaseId the lease id of the task to complete (required)
      */
     public void complete(String leaseId) {
-        Objects.requireNonNull(leaseId, "leaseId parameter is required");
+        Contracts.requireNonBlank(leaseId, "leaseId");
 
         var request = QueueCompleteRequest.newBuilder()
-                .setQueue(queue)
+                .setQueue(name)
                 .setLeaseId(leaseId)
                 .build();
 
-        serviceStub.complete(request);
-    }
-
-    /**
-     * Create an new QueueClient builder.
-     *
-     * @return new QueueClient builder
-     */
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    /**
-     * Return a new QueueClient with the specified queue name.
-     *
-     * @param queue the queue name (required)
-     * @return a new QueueClient with the specified queue name
-     */
-    public static QueueClient build(String queue) {
-        return newBuilder().queue(queue).build();
+        try {
+            Queues.getServiceStub().complete(request);
+        } catch (io.grpc.StatusRuntimeException sre) {
+            throw ProtoUtils.mapGrpcError(sre);
+        }
     }
 
     /**
@@ -186,7 +189,7 @@ public class QueueClient {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[queue=" + queue + ", serviceStub=" + serviceStub + "]";
+        return getClass().getSimpleName() + "[name=" + name + "]";
     }
 
     // Package Private Methods ------------------------------------------------
@@ -231,58 +234,6 @@ public class QueueClient {
                 .task(task)
                 .message(protoFailedTask.getMessage())
                 .build();
-    }
-
-    // Inner Classes ----------------------------------------------------------
-
-    /**
-     * Provides a QueueClient Builder.
-     */
-    public static class Builder {
-
-        String queue;
-        QueueServiceGrpc.QueueServiceBlockingStub serviceStub;
-
-        /*
-         * Enforce builder pattern.
-         */
-        Builder() {
-        }
-
-        /**
-         * Set the queue name.
-         *
-         * @param queue the queue name (required)
-         * @return the builder object
-         */
-        public Builder queue(String queue) {
-            this.queue = queue;
-            return this;
-        }
-
-        /**
-         * Set  the GRPC service stub.
-         *
-         * @param serviceStub the GRPC service stub to inject
-         * @return the builder object
-         */
-        public Builder serviceStub(QueueServiceGrpc.QueueServiceBlockingStub serviceStub) {
-            this.serviceStub = serviceStub;
-            return this;
-        }
-
-        /**
-         * @return build a new QueueClient
-         */
-        public QueueClient build() {
-            Objects.requireNonNull(queue, "queue parameter is required");
-            if (serviceStub == null) {
-                var channel = GrpcChannelProvider.getChannel();
-                this.serviceStub = QueueServiceGrpc.newBlockingStub(channel);
-            }
-
-            return new QueueClient(this);
-        }
     }
 
 }

@@ -1,7 +1,5 @@
 /**
  * Provides the Utility and Helper classes.
- *
- * @since 1.0
  */
 package io.nitric.util;
 

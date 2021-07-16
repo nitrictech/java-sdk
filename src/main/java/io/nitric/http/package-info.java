@@ -1,7 +1,5 @@
 /**
  * Provides the HTTP Server (FaaS) classes.
- *
- * @since 1.0
  */
 package io.nitric.http;
 
