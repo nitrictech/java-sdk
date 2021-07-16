@@ -1,3 +1,4 @@
+io.nitric.api.document
 io.nitric.api.event
 io.nitric.api.queue
 io.nitric.api.storage
