@@ -162,7 +162,105 @@ extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/ja
 
  // Delete a customer document
  customers.doc("anne.smith@example.com").delete();
- </code></pre></div>
+ </code></pre>
+
+ <p>
+  The example below illustrates type mapping with a custom POJO class.
+ </p>
+
+ <pre><code class="code">
+ package com.example.entity;
+
+ public class Customer {
+
+     private String mobile;
+     private Boolean active;
+
+     public String getMobile() {
+         return mobile;
+     }
+     public void setMobile(String mobile) {
+         this.mobile = mobile;
+     }
+
+     public Boolean getActive() {
+         return active;
+     }
+     public void setActive(Boolean active) {
+         this.active = active;
+     }
+ }
+
+ package com.example.function;
+
+ import com.example.entity.Customer;
+
+ import io.nitric.api.document.Documents;
+ import io.nitric.faas.Faas;
+ import io.nitric.faas.Trigger;
+ import io.nitric.faas.NitricFunction;
+ import io.nitric.faas.Response;
+
+ public class CustomerFunction implements NitricFunction {
+
+     public Response handle(Trigger trigger) {
+         // Get an customer document reference
+         String id = request.getParameter("id");
+         var custRef = Documents.collection("customers")
+             .doc(id, Customer.class);
+
+         // Update an customer document
+         Customer customer = custRef.get();
+         customer.setMobile("0432 321 543");
+         customer.setActive(false);
+         custRef.set(customer);
+
+        return trigger.buildResponse("OK");
+     }
+
+     public static void main(String... args) {
+         Faas.start(new CustomerFunction());
+     }
+  }
+ </code></pre>
+
+ <h3>Native Builds</h3>
+
+ <p>
+  When building a native function using GraalVM compiler you will need to a reflection configuration file
+  so that your custom POJO class is supported. To do this simply add the JSON file to your build path:
+ </p>
+
+ <pre class="code">
+ src/main/resources/META-INF/native-image/reflect-config.json
+ </pre>
+
+ <p>
+  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
+ </p>
+
+ <pre class="code">
+ [
+    {
+       "name" : "com.example.entity.Customer",
+       "allDeclaredConstructors" : true,
+       "allPublicConstructors" : true,
+       "allDeclaredMethods" : true,
+       "allPublicMethods" : true,
+       "allDeclaredFields" : true,
+       "allPublicFields" : true
+    }
+ ]
+ </pre>
+
+ <p>
+  If you forget to do this, you may get a runtime error like this:
+ </p>
+
+ <pre class="code">
+ java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Customer and no properties ...
+         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
+ </pre></div>
 </li>
 </ul>
 </div>
