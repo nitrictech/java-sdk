@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/assets/dot-matrix-logo-java.png" alt="Nitric Logo"/>
+  <img src="./src/main/javadoc/dot-matrix-logo-java.png" alt="Nitric Logo"/>
 </p>
 
 # Nitric Java SDK
@@ -12,15 +12,14 @@ The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) 
 ## Getting Started
 
 ### Using the [Nitric CLI](https://github.com/nitric-tech/cli)
-> @nitric/sdk is included in all node related SDK projects by default
 
 ```bash
-nitric make:function <java-template> example
+nitric make:project example
+ ? Include an example service? function/java11
+ ? Name for the example service? hello-world
+ ✔ Making Project getting-started
+ ✔ Making Service hello-world
 ```
-
-Some available Java templates are:
-
-* faas/java11
 
 ### Adding to an existing project
 **Maven**
@@ -28,9 +27,9 @@ Some available Java templates are:
 <dependency>
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>1.0.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
-## Usage
-Javadoc and Code examples are available [here](https://nitrictech.github.io/java-sdk/)
+## Javadoc
+[![javadoc](https://javadoc.io/badge2/io.nitric/java-sdk/javadoc.svg)](https://javadoc.io/doc/io.nitric/java-sdk)
