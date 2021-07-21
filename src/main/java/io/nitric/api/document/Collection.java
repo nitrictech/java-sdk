@@ -55,7 +55,9 @@ import java.util.Map;
  * customers.doc("anne.smith@example.com").delete();
  * </code></pre>
  */
-public class Collection extends AbstractCollection {
+public class Collection {
+
+    final DocColl collection;
 
     // Constructor ------------------------------------------------------------
 
@@ -63,7 +65,9 @@ public class Collection extends AbstractCollection {
      * Enforce package builder patterns.
      */
     Collection(DocColl collection) {
-        super(collection);
+        Contracts.requireNonNull(collection, "collection");
+
+        this.collection = collection;
     }
 
     // Public Methods ---------------------------------------------------------
@@ -74,12 +78,15 @@ public class Collection extends AbstractCollection {
      * @param id the document unique id (required)
      * @return new collection document reference
      */
-    @Override
-    public CollectionDocRef<Map> doc(String id) {
+    public DocumentRef<Map> doc(String id) {
         Contracts.requireNonBlank(id, "id");
 
+        if (collection.parent != null && collection.parent.id.isBlank()) {
+            throw newMissingParentException(id);
+        }
+
         var docKey = new DocKey(collection, id);
-        return new CollectionDocRef<Map>(docKey, Map.class);
+        return new DocumentRef<Map>(docKey, Map.class);
     }
 
     /**
@@ -89,12 +96,15 @@ public class Collection extends AbstractCollection {
      * @param type the document value type (required)
      * @return new collection document reference
      */
-    @Override
-    public <T> CollectionDocRef<T> doc(String id, Class<T> type) {
+    public <T> DocumentRef<T> doc(String id, Class<T> type) {
         Contracts.requireNonBlank(id, "id");
 
+        if (collection.parent != null && collection.parent.id.isBlank()) {
+            throw newMissingParentException(id);
+        }
+
         var docKey = new DocKey(collection, id);
-        return new CollectionDocRef<T>(docKey, type);
+        return new DocumentRef<T>(docKey, type);
     }
 
     /**
@@ -102,7 +112,6 @@ public class Collection extends AbstractCollection {
      *
      * @return a new collection query object
      */
-    @Override
     public Query<Map> query() {
         return new Query<Map>(collection, Map.class);
     }
@@ -113,7 +122,6 @@ public class Collection extends AbstractCollection {
      * @param type the query value type (required)
      * @return a new collection query object
      */
-    @Override
     public <T> Query<T> query(Class<T> type) {
         Contracts.requireNonNull(type, "type");
 
@@ -126,12 +134,56 @@ public class Collection extends AbstractCollection {
      * @param name the name of the sub collection (required)
      * @return a new sub collection for the parent collection
      */
-    public SubCollection collection(String name) {
+    public Collection collection(String name) {
         Contracts.requireNonBlank(name, "name");
+
+        if (collection.parent != null) {
+            var msg = "cannot make a collection under a sub collection";
+            throw newUnsupportedSubCollOperation(msg);
+        }
 
         var parentKey = new DocKey(collection, "");
         var subColl = new DocColl(name, parentKey);
-        return new SubCollection(subColl);
+        return new Collection(subColl);
     }
 
+    /**
+     * @return the string representation of this object
+     */
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[collection=" + collection + "]";
+    }
+
+    // Package Private Methods ------------------------------------------------
+
+    UnsupportedOperationException newUnsupportedSubCollOperation(String prefix) {
+
+        var builder = new StringBuilder().append(prefix)
+            .append(": \n\n Documents.collection(\"")
+            .append(collection.parent.collection.name)
+            .append("\n)");
+
+        if (collection.parent.id != null && !collection.parent.id.isBlank()) {
+            builder.append(".doc(\"").append(collection.parent.id).append("\")");
+        }
+        builder.append(".collection(\"").append(collection.name).append("\")");
+
+        return new UnsupportedOperationException(builder.toString());
+    }
+
+    UnsupportedOperationException newMissingParentException(String id) {
+
+        var msg = String.format(
+                "parent document id not defined: %s:<unknown>/%s:%s \n\n"
+                        + "Did you mean: Documents.collection(\"%s\").doc(id).subCollection(\"%s\").doc(\"%s\")\n",
+                collection.parent.collection.name,
+                collection.name,
+                id,
+                collection.name,
+                collection.parent.collection.name,
+                id);
+
+        throw new UnsupportedOperationException(msg);
+    }
 }

@@ -67,8 +67,8 @@ public class QueuesTest {
     @Test
     public void test_send() {
         var mock = Mockito.mock(QueueServiceGrpc.QueueServiceBlockingStub.class);
-        Mockito.when(mock.send(Mockito.any())).thenReturn(
-                QueueSendResponse.newBuilder().build()
+        Mockito.when(mock.sendBatch(Mockito.any())).thenReturn(
+            QueueSendBatchResponse.newBuilder().build()
         );
         Queues.setServiceStub(mock);
 
@@ -81,12 +81,12 @@ public class QueuesTest {
             queue.send(null);
             fail();
         } catch (IllegalArgumentException iae) {
-            Mockito.verify(mock, Mockito.times(0)).send(Mockito.any());
+            Mockito.verify(mock, Mockito.times(0)).sendBatch(Mockito.any());
             assertEquals("provide non-null task", iae.getMessage());
         }
 
         queue.send(task);
-        Mockito.verify(mock, Mockito.times(1)).send(Mockito.any());
+        Mockito.verify(mock, Mockito.times(1)).sendBatch(Mockito.any());
     }
 
     @Test

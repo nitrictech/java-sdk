@@ -89,21 +89,20 @@ public class Queue {
      * Send the given task to the client queue.
      *
      * @param task the task to send to the queue (required)
+     * @return null if task successfully sent, or a failed task otherwise
      */
-    public void send(Task task) {
+    public FailedTask send(Task task) {
         Contracts.requireNonNull(task, "task");
 
-        var protoTask = toProtoTask(task);
+        var taskList = Collections.singletonList(task);
 
-        var request = QueueSendRequest.newBuilder()
-                .setQueue(name)
-                .setTask(protoTask)
-                .build();
+        var results = sendBatch(taskList);
 
-        try {
-            Queues.getServiceStub().send(request);
-        } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+        if (results.isEmpty()) {
+            return null;
+
+        } else {
+            return results.get(0);
         }
     }
 

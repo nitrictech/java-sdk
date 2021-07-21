@@ -31,9 +31,9 @@ import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 
 /**
- * Provides an abstract Document Reference class.
+ * Provides an Document Reference class.
  */
-public abstract class AbstractDocRef<T> {
+public class DocumentRef<T> {
 
     final DocKey key;
     final Class<T> type;
@@ -43,7 +43,7 @@ public abstract class AbstractDocRef<T> {
     /*
      * Enforce package builder patterns.
      */
-    AbstractDocRef(DocKey key, Class<T> type) {
+    DocumentRef(DocKey key, Class<T> type) {
         Contracts.requireNonNull(key, "key");
         Contracts.requireNonBlank(key.id, "key.id");
         Contracts.requireNonNull(type, "type");
@@ -143,11 +143,82 @@ public abstract class AbstractDocRef<T> {
     }
 
     /**
+     * Create a new sub collection for this top level document reference.
+     *
+     * @param name the name of the sub collection (required)
+     * @return a new sub collection for the parent collection
+     */
+    public Collection collection(String name) {
+        Contracts.requireNonBlank(name, "name");
+
+        if (key.collection.parent != null) {
+            var msg = "cannot make a collection a under sub collection document";
+            throw newUnsupportedSubDocOperation(msg);
+        }
+
+        var subColl = new DocColl(name, key);
+        return new Collection(subColl);
+    }
+
+    /**
+     * Create a new sub collection query for this Document Ref.
+     * The query object will have a <code>Map</code> value type.
+     *
+     * @param name the name of the sub collection (required)
+     * @return a new collection query object
+     */
+    public Query<Map> query(String name) {
+        Contracts.requireNonBlank(name, "name");
+
+        if (key.collection.parent != null) {
+            var msg = "cannot make a query under a sub collection document";
+            throw newUnsupportedSubDocOperation(msg);
+        }
+
+        var subColl = new DocColl(name, key);
+        return new Query<Map>(subColl, Map.class);
+    }
+
+    /**
+     * Create a new sub collection query for this Document Ref, and with the given value type.
+     *
+     * @param name the name of the sub collection (required)
+     * @param type the query value type (required)
+     * @return a new collection query object
+     */
+    public <K> Query<K> query(String name, Class<K> type) {
+        Contracts.requireNonBlank(name, "name");
+        Contracts.requireNonNull(type, "type");
+
+        if (key.collection.parent != null) {
+            var msg = "cannot make a query under a sub collection document";
+            throw newUnsupportedSubDocOperation(msg);
+        }
+
+        var subColl = new DocColl(name, key);
+        return new Query<K>(subColl, type);
+    }
+
+    /**
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[key=" + key + ", type=" + type + "]";
+    }
+
+    // Package Private Methods ------------------------------------------------
+
+    UnsupportedOperationException newUnsupportedSubDocOperation(String prefix) {
+
+        var msg = String.format(
+                prefix + ": \n\n Documents.collection(\"%s\").doc(\"%s\").collection(\"%s\").doc(\"%s\")\n",
+                key.collection.parent.collection.name,
+                key.collection.parent.id,
+                key.collection.name,
+                key.id);
+
+        return new UnsupportedOperationException(msg);
     }
 
 }

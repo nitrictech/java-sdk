@@ -63,7 +63,7 @@ public class DocumentsTest {
         assertEquals("customers", mapDoc.key.collection.name);
         assertEquals(Map.class, mapDoc.type);
         assertEquals("id", mapDoc.id());
-        assertEquals("CollectionDocRef[key=DocKey[collection=DocColl[name=customers, parent=null], id=id], type=interface java.util.Map]",
+        assertEquals("DocumentRef[key=DocKey[collection=DocColl[name=customers, parent=null], id=id], type=interface java.util.Map]",
                 mapDoc.toString());
 
         var custDoc = Documents.collection("customers")
@@ -98,7 +98,7 @@ public class DocumentsTest {
 
         assertEquals("customers", subcoll.collection.parent.collection.name);
         assertEquals("orders", subcoll.collection.name);
-        assertEquals("SubCollection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=]]]",
+        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=]]]",
                      subcoll.toString());
     }
 
@@ -136,7 +136,7 @@ public class DocumentsTest {
         assertEquals("customers", subcoll.collection.parent.collection.name);
         assertEquals("customers:id", subcoll.collection.parent.id);
         assertEquals("orders", subcoll.collection.name);
-        assertEquals("SubCollection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
+        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
                      subcoll.toString());
 
         subcoll = Documents.collection("customers")
@@ -146,7 +146,7 @@ public class DocumentsTest {
         assertEquals("customers", subcoll.collection.parent.collection.name);
         assertEquals("customers:id", subcoll.collection.parent.id);
         assertEquals("orders", subcoll.collection.name);
-        assertEquals("SubCollection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
+        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
                 subcoll.toString());
     }
 
@@ -210,7 +210,7 @@ public class DocumentsTest {
         assertEquals("orders", mapDoc.key.collection.name);
         assertEquals("orders:id", mapDoc.key.id);
         assertEquals(Map.class, mapDoc.type);
-        assertEquals("SubCollectionDocRef[key=DocKey[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]], id=orders:id], type=interface java.util.Map]",
+        assertEquals("DocumentRef[key=DocKey[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]], id=orders:id], type=interface java.util.Map]",
                 mapDoc.toString());
 
         var orderDoc = Documents.collection("customers")
