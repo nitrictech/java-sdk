@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"io.nitric.api.event"},{"l":"io.nitric.api.kv"},{"l":"io.nitric.api.queue"},{"l":"io.nitric.api.storage"},{"l":"io.nitric.faas"},{"l":"io.nitric.http"},{"l":"io.nitric.util"}]

@@ -118,12 +118,12 @@ public final class NitricFaas {
       "c.faas.v1.HttpResponseContext.HeadersEnt" +
       "ry\022\016\n\006status\030\002 \001(\005\032.\n\014HeadersEntry\022\013\n\003ke" +
       "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\'\n\024TopicRespo" +
-      "nseContext\022\017\n\007success\030\001 \001(\0102Y\n\004Faas\022Q\n\rT" +
-      "riggerStream\022\035.nitric.faas.v1.ClientMess" +
-      "age\032\035.nitric.faas.v1.ServerMessage(\0010\001Bc" +
-      "\n\027io.nitric.proto.faas.v1B\nNitricFaasP\001Z" +
-      "\014nitric/v1;v1\252\002\024Nitric.Proto.Faas.v1\312\002\024N" +
-      "itric\\Proto\\Faas\\V1b\006proto3"
+      "nseContext\022\017\n\007success\030\001 \001(\0102`\n\013FaasServi" +
+      "ce\022Q\n\rTriggerStream\022\035.nitric.faas.v1.Cli" +
+      "entMessage\032\035.nitric.faas.v1.ServerMessag" +
+      "e(\0010\001Bc\n\027io.nitric.proto.faas.v1B\nNitric" +
+      "FaasP\001Z\014nitric/v1;v1\252\002\024Nitric.Proto.Faas" +
+      ".v1\312\002\024Nitric\\Proto\\Faas\\V1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

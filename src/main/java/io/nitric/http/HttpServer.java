@@ -63,8 +63,6 @@ import java.util.Objects;
  * </code></pre>
  *
  * @see HttpHandler
- *
- * @since 1.0.0
  */
 public class HttpServer {
 

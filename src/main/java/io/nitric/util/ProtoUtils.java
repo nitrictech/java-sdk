@@ -24,6 +24,8 @@ import com.google.protobuf.ListValue;
 import com.google.protobuf.NullValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 import java.util.List;
 import java.util.Map;
@@ -40,8 +42,6 @@ import java.util.stream.Collectors;
  * <p>
  * This class has code derived from method in the <code>com.google.api.graphql.grpc</code> library
  * </p>
- *
- * @since 1.0
  */
 public class ProtoUtils {
 
@@ -49,6 +49,33 @@ public class ProtoUtils {
      * Enforce static method usage.
      */
     ProtoUtils() {
+    }
+
+    // Public Methods ---------------------------------------------------------
+
+    /**
+     * Map the gRPC error to representative Java exception.
+     *
+     * @param sre the GRPC error (required)
+     * @return a representative Java exception
+     */
+    public static RuntimeException mapGrpcError(StatusRuntimeException sre)  {
+        if (sre == null) {
+            return new NullPointerException("Null sre parameter");
+        }
+
+        if (sre.getStatus().getCode() == Status.Code.INVALID_ARGUMENT) {
+            if (sre.getStatus().getDescription() != null) {
+                return new IllegalArgumentException(sre.getStatus().getDescription(), sre);
+            } else if (sre.getMessage() != null) {
+                return new IllegalArgumentException(sre.getMessage(), sre);
+            } else {
+                return new IllegalArgumentException(sre);
+            }
+
+        } else {
+            return sre;
+        }
     }
 
     /**

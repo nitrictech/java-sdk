@@ -4,7 +4,7 @@
 
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>0.2.0</version>
+    <version>0.5.0</version>
     <packaging>jar</packaging>
     <name>nitric-java-sdk</name>
     <description>Nitric Java SDK</description>
@@ -206,8 +206,7 @@
                     <notimestamp>true</notimestamp>
                     <excludePackageNames>io.nitric.proto.*</excludePackageNames>
                     <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-                    <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
-                    <destDir>${project.basedir}/docs</destDir>
+                    <destDir>${project.basedir}/target/javadoc</destDir>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
                     <doclint>none</doclint>

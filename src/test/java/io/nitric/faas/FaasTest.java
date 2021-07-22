@@ -22,7 +22,7 @@ package io.nitric.faas;
 
 import io.grpc.stub.StreamObserver;
 import io.nitric.proto.faas.v1.ClientMessage;
-import io.nitric.proto.faas.v1.FaasGrpc;
+import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.ServerMessage;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,7 +43,7 @@ public class FaasTest {
     @Test public void start() {
         // Create mock stub here...
         // it will be mocked to produce fake streams
-        var mockStub = Mockito.mock(FaasGrpc.FaasStub.class);
+        var mockStub = Mockito.mock(FaasServiceGrpc.FaasServiceStub.class);
 
         // Can use to verify we received client messages
         StreamObserver<ClientMessage> mockServerStream = Mockito.mock(StreamObserver.class);

@@ -71,7 +71,6 @@ import java.util.Objects;
  *
  * @see HttpRequest
  * @see HttpHandler
- * @since 1.0
  */
 public class HttpResponse {
 

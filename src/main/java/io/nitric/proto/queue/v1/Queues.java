@@ -90,19 +90,19 @@ public final class Queues {
       "\033.nitric.queue.v1.NitricTask\022\017\n\007message\030" +
       "\002 \001(\t\"j\n\nNitricTask\022\n\n\002id\030\001 \001(\t\022\020\n\010lease" +
       "_id\030\002 \001(\t\022\024\n\014payload_type\030\003 \001(\t\022(\n\007paylo" +
-      "ad\030\004 \001(\0132\027.google.protobuf.Struct2\347\002\n\005Qu" +
-      "eue\022M\n\004Send\022!.nitric.queue.v1.QueueSendR" +
-      "equest\032\".nitric.queue.v1.QueueSendRespon" +
-      "se\022\\\n\tSendBatch\022&.nitric.queue.v1.QueueS" +
-      "endBatchRequest\032\'.nitric.queue.v1.QueueS" +
-      "endBatchResponse\022V\n\007Receive\022$.nitric.que" +
-      "ue.v1.QueueReceiveRequest\032%.nitric.queue" +
-      ".v1.QueueReceiveResponse\022Y\n\010Complete\022%.n" +
-      "itric.queue.v1.QueueCompleteRequest\032&.ni" +
-      "tric.queue.v1.QueueCompleteResponseBb\n\030i" +
-      "o.nitric.proto.queue.v1B\006QueuesP\001Z\014nitri" +
-      "c/v1;v1\252\002\025Nitric.Proto.Queue.v1\312\002\025Nitric" +
-      "\\Proto\\Queue\\V1b\006proto3"
+      "ad\030\004 \001(\0132\027.google.protobuf.Struct2\356\002\n\014Qu" +
+      "eueService\022M\n\004Send\022!.nitric.queue.v1.Que" +
+      "ueSendRequest\032\".nitric.queue.v1.QueueSen" +
+      "dResponse\022\\\n\tSendBatch\022&.nitric.queue.v1" +
+      ".QueueSendBatchRequest\032\'.nitric.queue.v1" +
+      ".QueueSendBatchResponse\022V\n\007Receive\022$.nit" +
+      "ric.queue.v1.QueueReceiveRequest\032%.nitri" +
+      "c.queue.v1.QueueReceiveResponse\022Y\n\010Compl" +
+      "ete\022%.nitric.queue.v1.QueueCompleteReque" +
+      "st\032&.nitric.queue.v1.QueueCompleteRespon" +
+      "seBb\n\030io.nitric.proto.queue.v1B\006QueuesP\001" +
+      "Z\014nitric/v1;v1\252\002\025Nitric.Proto.Queue.v1\312\002" +
+      "\025Nitric\\Proto\\Queue\\V1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

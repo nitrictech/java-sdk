@@ -1,5 +1,7 @@
 package io.nitric.api.event;
 
+import io.nitric.proto.event.v1.EventPublishRequest;
+
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,12 +22,31 @@ package io.nitric.api.event;
  * #L%
  */
 
-import java.util.Objects;
+import io.nitric.util.Contracts;
+import io.nitric.util.ProtoUtils;
 
 /**
- * Provides an Topic class.
+ * <p>
+ *  Provides an Topic class.
+ * </p>
  *
- * @since 1.0
+ * <p>
+ *  The example below illustrates the Event API.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import io.nitric.api.Event;
+ *  import io.nitric.api.Events;
+ *
+ *  // Create an order completed event
+ *  var payload = Map.of("id", id, "status", "completed");
+ *  var event = Event.build(payload);
+ *
+ *  // Publish the event to the orders topic
+ *  Events.topic("orders").publish(event);
+ * </code></pre>
+ *
+ * @see Events
  */
 public class Topic {
 
@@ -34,9 +55,12 @@ public class Topic {
     /*
      * Enforce builder pattern.
      */
-    Topic(Builder builder) {
-        this.name = builder.name;
+    Topic(String name) {
+        Contracts.requireNonBlank(name, "name");
+        this.name = name;
     }
+
+    // Public Methods ---------------------------------------------------------
 
     /**
      * @return the topic name
@@ -46,65 +70,42 @@ public class Topic {
     }
 
     /**
+     * Publish the given event to this topic.
+     *
+     * @param event the even to publish (required)
+     */
+    public void publish(Event event) {
+        Contracts.requireNonNull(event, "event");
+
+        var struct = ProtoUtils.toStruct(event.payload);
+
+        var eventBuilder = io.nitric.proto.event.v1.NitricEvent.newBuilder().setPayload(struct);
+        if (event.getId() != null) {
+            eventBuilder.setId(event.getId());
+        }
+        if (event.getPayloadType() != null) {
+            eventBuilder.setPayloadType(event.getPayloadType());
+        }
+        var protoEvent = eventBuilder.build();
+
+        var request = EventPublishRequest.newBuilder()
+                .setTopic(this.name)
+                .setEvent(protoEvent)
+                .build();
+
+        try {
+            Events.getEventServiceStub().publish(request);
+        } catch (io.grpc.StatusRuntimeException sre) {
+            throw ProtoUtils.mapGrpcError(sre);
+        }
+    }
+
+    /**
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[name=" + name + "]";
-    }
-
-    /**
-     * @return a new Topic builder object
-     */
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    /**
-     * Create a new Topic for the given name.
-     *
-     * @param name the topic name (required)
-     * @return a new Topic for the given name
-     */
-    public static Topic build(String name) {
-        return new Builder().name(name).build();
-    }
-
-    // Inner Classes ----------------------------------------------------------
-
-    /**
-     * Provides a Topic builder.
-     *
-     * @since 1.0
-     */
-    public static class Builder {
-
-        String name;
-
-        /*
-         * Enforce builder pattern.
-         */
-        Builder() {
-        }
-
-        /**
-         * Set the topic name.
-         *
-         * @param name the topic name
-         * @return the builder object
-         */
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * @return a new Event object
-         */
-        public Topic build() {
-            Objects.requireNonNull(name, "name parameter is required");
-            return new Topic(this);
-        }
     }
 
 }

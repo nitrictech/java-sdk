@@ -62,15 +62,15 @@ public final class Events {
       "\001 \003(\0132\034.nitric.event.v1.NitricTopic\"\033\n\013N" +
       "itricTopic\022\014\n\004name\030\001 \001(\t\"Y\n\013NitricEvent\022" +
       "\n\n\002id\030\001 \001(\t\022\024\n\014payload_type\030\002 \001(\t\022(\n\007pay" +
-      "load\030\003 \001(\0132\027.google.protobuf.Struct2_\n\005E" +
-      "vent\022V\n\007Publish\022$.nitric.event.v1.EventP" +
-      "ublishRequest\032%.nitric.event.v1.EventPub" +
-      "lishResponse2V\n\005Topic\022M\n\004List\022!.nitric.e" +
-      "vent.v1.TopicListRequest\032\".nitric.event." +
-      "v1.TopicListResponseBb\n\030io.nitric.proto." +
-      "event.v1B\006EventsP\001Z\014nitric/v1;v1\252\002\025Nitri" +
-      "c.Proto.Event.v1\312\002\025Nitric\\Proto\\Event\\V1" +
-      "b\006proto3"
+      "load\030\003 \001(\0132\027.google.protobuf.Struct2f\n\014E" +
+      "ventService\022V\n\007Publish\022$.nitric.event.v1" +
+      ".EventPublishRequest\032%.nitric.event.v1.E" +
+      "ventPublishResponse2]\n\014TopicService\022M\n\004L" +
+      "ist\022!.nitric.event.v1.TopicListRequest\032\"" +
+      ".nitric.event.v1.TopicListResponseBb\n\030io" +
+      ".nitric.proto.event.v1B\006EventsP\001Z\014nitric" +
+      "/v1;v1\252\002\025Nitric.Proto.Event.v1\312\002\025Nitric\\" +
+      "Proto\\Event\\V1b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

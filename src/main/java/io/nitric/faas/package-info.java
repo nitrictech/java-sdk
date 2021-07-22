@@ -23,8 +23,6 @@
  *     }
  * }
  * </code></pre>
- *
- * @since 1.0
  */
 package io.nitric.faas;
 

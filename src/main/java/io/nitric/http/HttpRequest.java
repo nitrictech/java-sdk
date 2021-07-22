@@ -77,8 +77,6 @@ import java.util.Map;
  * @see HttpHandler
  * @see HttpResponse
  * @see HttpResponse.Builder
- *
- * @since 1.0
  */
 public class HttpRequest {
 

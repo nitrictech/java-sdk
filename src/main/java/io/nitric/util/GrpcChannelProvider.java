@@ -35,8 +35,6 @@ import java.util.Objects;
  *  default values set the respective Environment Variables: <code>NITRIC_SERVICE_HOST</code> and
  *  <code>NITRIC_SERVICE_PORT</code>.
  * </p>
- *
- * @since 1.0
  */
 public class GrpcChannelProvider {
 

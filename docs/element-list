@@ -1,7 +1,0 @@
-io.nitric.api.event
-io.nitric.api.kv
-io.nitric.api.queue
-io.nitric.api.storage
-io.nitric.faas
-io.nitric.http
-io.nitric.util

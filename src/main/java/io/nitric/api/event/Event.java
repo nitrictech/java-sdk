@@ -25,14 +25,14 @@ import java.util.Objects;
 
 /**
  * Provides an Event message class.
- *
- * @since 1.0
  */
 public class Event {
 
     final String id;
     final String payloadType;
     final Map<String, Object> payload;
+
+    // Constructor ------------------------------------------------------------
 
     /*
      * Enforce builder pattern.
@@ -42,6 +42,8 @@ public class Event {
         this.payloadType = builder.payloadType;
         this.payload = builder.payload;
     }
+
+    // Public Methods ---------------------------------------------------------
 
     /**
      * @return the event id
