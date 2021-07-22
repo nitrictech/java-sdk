@@ -7,5 +7,6 @@
 .project
 
 # Ignore build files
+/src/main/java/io/nitric/proto
 /target/
 /dependency-reduced-pom.xml

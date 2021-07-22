@@ -9,24 +9,23 @@
  *
  * <pre><code class="code">
  * import io.nitric.api.document.Documents;
- * import java.util.Map;
  * ...
  *
- * // Create a customers collection
+ * // Create a "customers" collection
  * var customers = Documents.collection("customers");
  *
- * // Store a new customer document
- * var customerMap = Map.of("email", "anne.smith@example.com", "status", "active");
- *
- * customers.doc("anne.smith@example.com").set(customerMap);
- *
- * // Get customer document ref and content
+ * // Get a customer document reference by id
  * var customerRef = customers.doc("anne.smith@example.com");
  *
- * customerMap = customerRef.get();
+ * // Get the document references content
+ * var contentMap = customerRef.get();
+ *
+ * // Update customer document content
+ * contentMap.put("status", "active");
+ * customerRef.set(contentMap);
  *
  * // Delete a customer document
- * customers.doc("anne.smith@example.com").delete();
+ * customerRef.delete();
  * </code></pre>
  */
 package io.nitric.api.document;

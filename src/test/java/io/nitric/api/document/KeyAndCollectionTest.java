@@ -27,44 +27,42 @@ import static org.junit.Assert.*;
 /**
  * Provides DocKey and DocColl test case.
  */
-public class DocKeyAndCollTest {
+public class KeyAndCollectionTest {
 
     @Test
     public void test_init() {
-        var usersCol = new DocColl("users");
-        assertEquals("users", usersCol.name);
-        assertNull(usersCol.parent);
+        var usersCol = new Collection("users", null);
+        assertEquals("users", usersCol.getName());
+        assertNull(usersCol.getParent());
 
-        var userKey = new DocKey(usersCol, "user@server.com");
-        assertNotNull(userKey.collection);
-        assertEquals("users", userKey.collection.name);
-        assertNull(userKey.collection.parent);
-        assertEquals("user@server.com", userKey.id);
+        var userKey = new Key(usersCol, "user@server.com");
+        assertNotNull(userKey.getCollection());
+        assertEquals("users", userKey.getCollection().getName());
+        assertNull(userKey.getCollection().getParent());
+        assertEquals("user@server.com", userKey.getId());
+        assertEquals("Key[collection=Collection[name=users, parent=null], id=user@server.com]",
+                userKey.toString());
 
-        assertEquals("DocKey[collection=DocColl[name=users, parent=null], id=user@server.com]" , userKey.toString());
+        var parentKey = new Key(new Collection("customers", null), "customers:123");
 
-        var parentKey = new DocKey(new DocColl("customers"), "customers:123");
-        assertEquals("DocKey[collection=DocColl[name=customers, parent=null], id=customers:123]" , parentKey.toString());
-
-        var subCol = new DocColl("orders", parentKey);
-        assertEquals("orders", subCol.name);
-        assertNotNull(subCol.parent);
-        assertEquals("customers", subCol.parent.collection.name);
-        assertEquals("customers:123", subCol.parent.id);
-        assertNull(subCol.parent.collection.parent);
-        assertEquals("DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:123]]" , subCol.toString());
+        var subCol = new Collection("orders", parentKey);
+        assertEquals("orders", subCol.getName());
+        assertNotNull(subCol.getParent());
+        assertEquals("customers", subCol.getParent().getCollection().getName());
+        assertEquals("customers:123", subCol.getParent().getId());
+        assertNull(subCol.getParent().getCollection().getParent());
     }
 
     @Test
     public void test_toCollection_toKey() {
-        var usersCol = new DocColl("users");
-        var col = usersCol.toCollection();
+        var usersCol = new Collection("users", null);
+        var col = usersCol.toGrpcCollection();
         assertNotNull(col);
         assertEquals("users", col.getName());
         assertFalse(col.hasParent());
 
-        var userKey = new DocKey(usersCol, "user@server.com");
-        var key = userKey.toKey();
+        var userKey = new Key(usersCol, "user@server.com");
+        var key = userKey.toGrpcKey();
 
         assertNotNull(key);
         assertNotNull(key.getCollection());
@@ -72,10 +70,10 @@ public class DocKeyAndCollTest {
         assertEquals(key.getId(), "user@server.com");
         assertFalse(key.getCollection().hasParent());
 
-        var parentKey = new DocKey(new DocColl("customers"), "customers:123");
-        var subCol = new DocColl("orders", parentKey);
+        var parentKey = new Key(new Collection("customers", null), "customers:123");
+        var subCol = new Collection("orders", parentKey);
 
-        var subcollection = subCol.toCollection();
+        var subcollection = subCol.toGrpcCollection();
         assertNotNull(subcollection);
         assertEquals("orders", subcollection.getName());
         assertTrue(subcollection.hasParent());

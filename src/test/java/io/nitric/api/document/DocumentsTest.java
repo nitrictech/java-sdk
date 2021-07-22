@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public class DocumentsTest {
 
     @Test
-    public void useCase_serviceStub() {
+    public void test_serviceStub() {
         assertNotNull(Documents.getServiceStub());
 
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
@@ -45,44 +45,37 @@ public class DocumentsTest {
         assertEquals(mock, Documents.getServiceStub());
     }
 
-    // collection... [doc, query, subCollection]
-
     @Test
-    public void useCase_collection() {
+    public void test_collection() {
         var mapColl = Documents.collection("customers");
 
-        assertEquals("customers", mapColl.collection.name);
-        assertEquals("Collection[collection=DocColl[name=customers, parent=null]]", mapColl.toString());
+        assertEquals("customers", mapColl.name);
     }
 
     @Test
-    public void useCase_collection_doc() {
+    public void test_collection_doc() {
         var mapDoc = Documents.collection("customers")
                 .doc("id");
 
         assertEquals("customers", mapDoc.key.collection.name);
         assertEquals(Map.class, mapDoc.type);
-        assertEquals("id", mapDoc.id());
-        assertEquals("DocumentRef[key=DocKey[collection=DocColl[name=customers, parent=null], id=id], type=interface java.util.Map]",
-                mapDoc.toString());
+        assertEquals("id", mapDoc.getKey().getId());
 
         var custDoc = Documents.collection("customers")
                 .doc("id", Customer.class);
 
         assertEquals("customers", custDoc.key.collection.name);
         assertEquals(Customer.class, custDoc.type);
-        assertEquals("id", custDoc.id());
+        assertEquals("id", custDoc.getKey().getId());
     }
 
     @Test
-    public void useCase_collection_query() {
+    public void test_collection_query() {
         var mapQuery = Documents.collection("customers")
                 .query();
 
         assertEquals(Map.class, mapQuery.type);
         assertEquals("customers", mapQuery.collection.name);
-        assertEquals("Query[collection=DocColl[name=customers, parent=null], expressions=[], limit=0, pagingToken=null, type=interface java.util.Map]",
-                     mapQuery.toString());
 
         var custQuery = Documents.collection("customers")
                 .query(Customer.class);
@@ -92,20 +85,16 @@ public class DocumentsTest {
     }
 
     @Test
-    public void useCase_collection_collection() {
+    public void test_collection_collection() {
         var subcoll = Documents.collection("customers")
                 .collection("orders");
 
-        assertEquals("customers", subcoll.collection.parent.collection.name);
-        assertEquals("orders", subcoll.collection.name);
-        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=]]]",
-                     subcoll.toString());
+        assertEquals("customers", subcoll.parent.collection.name);
+        assertEquals("orders", subcoll.name);
     }
 
-    // collection/doc... [query, subCollection]
-
     @Test
-    public void userCase_collection_doc_query() {
+    public void test_collection_doc_query() {
         var mapQuery = Documents.collection("customers")
                 .doc("customers:id")
                 .query("orders");
@@ -114,8 +103,6 @@ public class DocumentsTest {
         assertEquals("customers:id", mapQuery.collection.parent.id);
         assertEquals("orders", mapQuery.collection.name);
         assertEquals(Map.class, mapQuery.type);
-        assertEquals("Query[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]], expressions=[], limit=0, pagingToken=null, type=interface java.util.Map]",
-                     mapQuery.toString());
 
         var orderQuery = Documents.collection("customers")
                 .doc("customers:id")
@@ -128,55 +115,47 @@ public class DocumentsTest {
     }
 
     @Test
-    public void useCase_collection_doc_collection() {
+    public void test_collection_doc_collection() {
         var subcoll = Documents.collection("customers")
                 .doc("customers:id")
                 .collection("orders");
 
-        assertEquals("customers", subcoll.collection.parent.collection.name);
-        assertEquals("customers:id", subcoll.collection.parent.id);
-        assertEquals("orders", subcoll.collection.name);
-        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
-                     subcoll.toString());
+        assertEquals("customers", subcoll.parent.collection.name);
+        assertEquals("customers:id", subcoll.parent.id);
+        assertEquals("orders", subcoll.name);
 
         subcoll = Documents.collection("customers")
                 .doc("customers:id", Map.class)
                 .collection("orders");
 
-        assertEquals("customers", subcoll.collection.parent.collection.name);
-        assertEquals("customers:id", subcoll.collection.parent.id);
-        assertEquals("orders", subcoll.collection.name);
-        assertEquals("Collection[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]]]",
-                subcoll.toString());
+        assertEquals("customers", subcoll.parent.collection.name);
+        assertEquals("customers:id", subcoll.parent.id);
+        assertEquals("orders", subcoll.name);
     }
 
-    // collection/subcollection/... [doc, query]
-
     @Test
-    public void useCase_collection_collection_doc() {
+    public void test_collection_collection_doc() {
         try {
             var mapDoc = Documents.collection("customers")
                     .collection("orders")
                     .doc("38234");
-            assert false;
+            fail();
 
         } catch (UnsupportedOperationException uae) {
-            assert true;
         }
 
         try {
             var mapDoc = Documents.collection("customers")
                     .collection("orders")
                     .doc("38234", Order.class);
-            assert false;
+            fail();
 
         } catch (UnsupportedOperationException uae) {
-            assert true;
         }
     }
 
     @Test
-    public void useCase_collection_collection_query() {
+    public void test_collection_collection_query() {
         var mapQuery = Documents.collection("customers")
                 .collection("orders")
                 .query();
@@ -184,8 +163,6 @@ public class DocumentsTest {
         assertEquals("customers", mapQuery.collection.parent.collection.name);
         assertEquals("orders", mapQuery.collection.name);
         assertEquals(Map.class, mapQuery.type);
-        assertEquals("Query[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=]], expressions=[], limit=0, pagingToken=null, type=interface java.util.Map]",
-                mapQuery.toString());
 
         var orderQuery = Documents.collection("customers")
                 .collection("orders")
@@ -196,10 +173,8 @@ public class DocumentsTest {
         assertEquals(Order.class, orderQuery.type);
     }
 
-    // collection/doc/subcollection/... [doc, query, subCollection]
-
     @Test
-    public void useCase_collection_doc_collection_doc() {
+    public void test_collection_doc_collection_doc() {
         var mapDoc = Documents.collection("customers")
                 .doc("customers:id")
                 .collection("orders")
@@ -210,8 +185,6 @@ public class DocumentsTest {
         assertEquals("orders", mapDoc.key.collection.name);
         assertEquals("orders:id", mapDoc.key.id);
         assertEquals(Map.class, mapDoc.type);
-        assertEquals("DocumentRef[key=DocKey[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]], id=orders:id], type=interface java.util.Map]",
-                mapDoc.toString());
 
         var orderDoc = Documents.collection("customers")
                 .doc("customers:id")
@@ -226,7 +199,7 @@ public class DocumentsTest {
     }
 
     @Test
-    public void userCase_collection_doc_subcollection_query() {
+    public void test_collection_doc_subcollection_query() {
         var mapQuery = Documents.collection("customers")
                 .doc("customers:id")
                 .collection("orders")
@@ -236,8 +209,6 @@ public class DocumentsTest {
         assertEquals("customers:id", mapQuery.collection.parent.id);
         assertEquals("orders", mapQuery.collection.name);
         assertEquals(Map.class, mapQuery.type);
-        assertEquals("Query[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:id]], expressions=[], limit=0, pagingToken=null, type=interface java.util.Map]",
-                mapQuery.toString());
 
         var orderQuery = Documents.collection("customers")
                 .doc("customers:id")
@@ -248,6 +219,28 @@ public class DocumentsTest {
         assertEquals("customers:id", orderQuery.collection.parent.id);
         assertEquals("orders", orderQuery.collection.name);
         assertEquals(Order.class, orderQuery.type);
+    }
+
+    @Test
+    public void test_collection_collection_collection() {
+        try {
+            Documents.collection("customers")
+                    .collection("orders")
+                    .collection("items");
+            fail();
+
+        } catch (UnsupportedOperationException uoe) {
+        }
+
+        try {
+            Documents.collection("customers")
+                    .doc("123")
+                    .collection("orders")
+                    .collection("items");
+            fail();
+
+        } catch (UnsupportedOperationException uoe) {
+        }
     }
 
 }

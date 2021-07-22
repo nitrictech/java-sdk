@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Provides a document Collection class.
+ *  Provides a Collection class.
  * </p>
  *
  * <p>
@@ -57,20 +57,40 @@ import java.util.Map;
  */
 public class Collection {
 
-    final DocColl collection;
+    final String name;
+    final Key parent;
 
     // Constructor ------------------------------------------------------------
 
     /*
      * Enforce package builder patterns.
      */
-    Collection(DocColl collection) {
-        Contracts.requireNonNull(collection, "collection");
+    Collection(String name, Key parent) {
+        Contracts.requireNonBlank(name, "name");
 
-        this.collection = collection;
+        this.name = name;
+        this.parent = parent;
     }
 
     // Public Methods ---------------------------------------------------------
+
+    /**
+     * Return the collection name.
+     *
+     * @return the collection name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Return the collection parent key.
+     *
+     * @return the collection parent key
+     */
+    public Key getParent() {
+        return parent;
+    }
 
     /**
      * Create a new collection Document Reference object for given document id and <code>Map</code> value type.
@@ -81,12 +101,12 @@ public class Collection {
     public DocumentRef<Map> doc(String id) {
         Contracts.requireNonBlank(id, "id");
 
-        if (collection.parent != null && collection.parent.id.isBlank()) {
+        if (parent != null && parent.id.isBlank()) {
             throw newMissingParentException(id);
         }
 
-        var docKey = new DocKey(collection, id);
-        return new DocumentRef<Map>(docKey, Map.class);
+        var key = new Key(this, id);
+        return new DocumentRef<Map>(key, Map.class);
     }
 
     /**
@@ -99,12 +119,12 @@ public class Collection {
     public <T> DocumentRef<T> doc(String id, Class<T> type) {
         Contracts.requireNonBlank(id, "id");
 
-        if (collection.parent != null && collection.parent.id.isBlank()) {
+        if (parent != null && parent.id.isBlank()) {
             throw newMissingParentException(id);
         }
 
-        var docKey = new DocKey(collection, id);
-        return new DocumentRef<T>(docKey, type);
+        var key = new Key(this, id);
+        return new DocumentRef<T>(key, type);
     }
 
     /**
@@ -113,7 +133,7 @@ public class Collection {
      * @return a new collection query object
      */
     public Query<Map> query() {
-        return new Query<Map>(collection, Map.class);
+        return new Query<Map>(this, Map.class);
     }
 
     /**
@@ -125,7 +145,7 @@ public class Collection {
     public <T> Query<T> query(Class<T> type) {
         Contracts.requireNonNull(type, "type");
 
-        return new Query<T>(collection, type);
+        return new Query<T>(this, type);
     }
 
     /**
@@ -137,37 +157,62 @@ public class Collection {
     public Collection collection(String name) {
         Contracts.requireNonBlank(name, "name");
 
-        if (collection.parent != null) {
-            var msg = "cannot make a collection under a sub collection";
-            throw newUnsupportedSubCollOperation(msg);
+        if (parent != null) {
+            throw newUnsupportedSubCollOperation("Max collection depth 1 exceeded");
         }
 
-        var parentKey = new DocKey(collection, "");
-        var subColl = new DocColl(name, parentKey);
-        return new Collection(subColl);
+        var parentKey = new Key(this, "");
+        return new Collection(name, parentKey);
     }
 
     /**
+     * Return this string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[collection=" + collection + "]";
+        return getClass().getSimpleName() + "[name=" + name + ", parent=" + parent + "]";
     }
 
     // Package Private Methods ------------------------------------------------
 
+    /**
+     * @return the new GRPC Collection [name, parent]
+     */
+    io.nitric.proto.document.v1.Collection toGrpcCollection() {
+        var builder = io.nitric.proto.document.v1.Collection
+            .newBuilder()
+            .setName(name);
+
+        if (parent != null) {
+            var parentCol = io.nitric.proto.document.v1.Collection
+                .newBuilder()
+                .setName(parent.collection.name)
+                .build();
+
+            var parentKey = io.nitric.proto.document.v1.Key
+                .newBuilder()
+                .setId(parent.id)
+                .setCollection(parentCol)
+                .build();
+
+            builder.setParent(parentKey);
+        }
+
+        return builder.build();
+    }
+
     UnsupportedOperationException newUnsupportedSubCollOperation(String prefix) {
 
         var builder = new StringBuilder().append(prefix)
-            .append(": \n\n Documents.collection(\"")
-            .append(collection.parent.collection.name)
-            .append("\n)");
+            .append(": [")
+            .append(parent.collection.name);
 
-        if (collection.parent.id != null && !collection.parent.id.isBlank()) {
-            builder.append(".doc(\"").append(collection.parent.id).append("\")");
+        if (!parent.id.isBlank()) {
+            builder.append(":").append(parent.id);
         }
-        builder.append(".collection(\"").append(collection.name).append("\")");
+        builder.append("]/[").append(name).append("]");
 
         return new UnsupportedOperationException(builder.toString());
     }
@@ -177,11 +222,11 @@ public class Collection {
         var msg = String.format(
                 "parent document id not defined: %s:<unknown>/%s:%s \n\n"
                         + "Did you mean: Documents.collection(\"%s\").doc(id).subCollection(\"%s\").doc(\"%s\")\n",
-                collection.parent.collection.name,
-                collection.name,
+                parent.collection.name,
+                name,
                 id,
-                collection.name,
-                collection.parent.collection.name,
+                name,
+                parent.collection.name,
                 id);
 
         throw new UnsupportedOperationException(msg);
