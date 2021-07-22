@@ -121,6 +121,27 @@
         </extensions>
         <plugins>
             <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <configuration>
+                    <protoSourceRoot>contracts/proto</protoSourceRoot>
+                    <outputDirectory>src/main/java</outputDirectory>
+                    <clearOutputDirectory>false</clearOutputDirectory>
+                    <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.36.0:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>whitespace-maven-plugin</artifactId>
                 <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
                 <version>1.0.4</version>
@@ -205,7 +226,7 @@
                     <destDir>.</destDir>
                     <notimestamp>true</notimestamp>
                     <excludePackageNames>io.nitric.proto.*</excludePackageNames>
-                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <stylesheetfile>${basedir}/src/javadoc/stylesheet.css</stylesheetfile>
                     <destDir>${project.basedir}/target/javadoc</destDir>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                     <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
@@ -273,7 +294,7 @@
         </plugins>
     </build>
 
-    <!-- To generated proto files run: mvn compile -P proto-gen -->
+    <!-- To generated proto files run: mvn compile -P proto-gen
     <profiles>
         <profile>
             <id>proto-gen</id>
@@ -304,5 +325,6 @@
             </build>
         </profile>
     </profiles>
+    -->
 
 </project>

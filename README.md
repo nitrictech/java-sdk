@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./src/main/javadoc/dot-matrix-logo-java.png" alt="Nitric Logo"/>
+  <img src="./src/javadoc/dot-matrix-logo-java.png" alt="Nitric Logo"/>
 </p>
 
 # Nitric Java SDK
