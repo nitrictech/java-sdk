@@ -46,7 +46,7 @@ public class QueryTest {
 
     @Test
     public void test_where() {
-        var collection = new DocColl("customers", null);
+        var collection = new Collection("customers", null);
         var query = new Query<Customer>(collection, Customer.class);
 
         query.where("key", "==", "value");
@@ -106,7 +106,7 @@ public class QueryTest {
 
     @Test
     public void test_limit() {
-        var collection = new DocColl("customers", null);
+        var collection = new Collection("customers", null);
         var query = new Query<Customer>(collection, Customer.class);
         query.limit(100);
 
@@ -115,7 +115,7 @@ public class QueryTest {
 
     @Test
     public void test_pagingFrom() {
-        var collection = new DocColl("customers", null);
+        var collection = new Collection("customers", null);
         var query = new Query<Customer>(collection, Customer.class);
         var pagingToken = Map.of("page", "2");
         query.pagingFrom(pagingToken);
@@ -201,15 +201,12 @@ public class QueryTest {
 
     @Test
     public void test_toString() {
-        var parentKey = new DocKey(new DocColl("customers"), "customers:123");
-        var collection = new DocColl("orders", parentKey);
+        var parentKey = new Key(new Collection("customers", null), "customers:123");
+        var collection = new Collection("orders", parentKey);
         var query = new Query<Order>(collection, Order.class);
         query.where("sku", "==", "BYD EA-1");
         query.limit(100);
         query.pagingFrom(Map.of("page", "2"));
-
-        assertEquals("Query[collection=DocColl[name=orders, parent=DocKey[collection=DocColl[name=customers, parent=null], id=customers:123]], expressions=[Expression[operand=sku, operator===, value=BYD EA-1]], limit=100, pagingToken={page=2}, type=class io.nitric.api.document.model.Order]",
-                     query.toString());
     }
 
     // Private Methods --------------------------------------------------------
@@ -236,8 +233,8 @@ public class QueryTest {
     }
 
     private Query<Order> newOrderQuery() {
-        var parentKey = new DocKey(new DocColl("customers"), "customers:123");
-        var collection = new DocColl("orders", parentKey);
+        var parentKey = new Key(new Collection("customers", null), "customers:123");
+        var collection = new Collection("orders", parentKey);
         var query = new Query<Order>(collection, Order.class);
         query.where("sku", "==", "BYD EA-1");
         query.limit(100);

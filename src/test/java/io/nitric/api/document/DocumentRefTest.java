@@ -21,6 +21,7 @@ package io.nitric.api.document;
  */
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.Document;
 import io.nitric.proto.document.v1.DocumentDeleteResponse;
@@ -31,19 +32,103 @@ import io.nitric.util.ProtoUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import javax.print.Doc;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Provides CollectionDocRef test case.
  */
-public class SubCollectionDocRefTest {
+public class DocumentRefTest {
 
     @Test
-    public void test_get() {
+    public void test_toString() {
+        var collection = new Collection("customers", null);
+        var key = new Key(collection, "123");
+        var document = new DocumentRef<Map>(key, Map.class);
+        assertEquals("DocumentRef[key=Key[collection=Collection[name=customers, parent=null], id=123], type=interface java.util.Map]",
+                document.toString());
+    }
+
+    @Test
+    public void test_collection_doc_get() {
+        var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
+        Mockito.when(mock.get(Mockito.any())).thenReturn(
+                DocumentGetResponse.newBuilder().build()
+        );
+        Documents.setServiceStub(mock);
+
+        // Test empty response
+        var value = Documents.collection("customers").doc("id").get();
+        Mockito.verify(mock, Mockito.times(1)).get(Mockito.any());
+        assertNull(value);
+
+        // Test get map object
+        Map<String, Object> custMap = Map.of("email", "test@server.com");
+        var struct = ProtoUtils.toStruct(custMap);
+
+        Mockito.when(mock.get(Mockito.any())).thenReturn(
+                DocumentGetResponse.newBuilder()
+                        .setDocument(Document.newBuilder().setContent(struct).build())
+                        .build()
+        );
+
+        value = Documents.collection("customers").doc("id").get();
+        Mockito.verify(mock, Mockito.times(2)).get(Mockito.any());
+        assertEquals(custMap, value);
+
+        // Test get customer object
+        Customer customer = new Customer();
+        customer.setEmail("test@server.com");
+        custMap = new ObjectMapper().convertValue(customer, Map.class);
+        struct = ProtoUtils.toStruct(custMap);
+
+        Mockito.when(mock.get(Mockito.any())).thenReturn(
+                DocumentGetResponse.newBuilder()
+                        .setDocument(Document.newBuilder().setContent(struct).build())
+                        .build()
+        );
+
+        var cust = Documents.collection("customers").doc("id", Customer.class).get();
+        Mockito.verify(mock, Mockito.times(3)).get(Mockito.any());
+        assertEquals(customer.getEmail(), cust.getEmail());
+    }
+
+    @Test
+    public void test_collection_doc_set() {
+        var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
+        Mockito.when(mock.set(Mockito.any())).thenReturn(
+                DocumentSetResponse.newBuilder().build()
+        );
+        Documents.setServiceStub(mock);
+
+        // Test set map
+        Documents.collection("customers").doc("id").set(Collections.emptyMap());
+        Mockito.verify(mock, Mockito.times(1)).set(Mockito.any());
+
+        // Test set customer object
+        Customer customer = new Customer();
+        customer.setEmail("test@server.com");
+        Documents.collection("customers").doc("id", Customer.class).set(customer);
+        Mockito.verify(mock, Mockito.times(2)).set(Mockito.any());
+    }
+
+    @Test
+    public void test_collection_doc_delete() {
+        var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
+        Mockito.when(mock.delete(Mockito.any())).thenReturn(
+                DocumentDeleteResponse.newBuilder().build()
+        );
+        Documents.setServiceStub(mock);
+
+        Documents.collection("customers").doc("id").delete();
+        Mockito.verify(mock, Mockito.times(1)).delete(Mockito.any());
+    }
+
+    @Test
+    public void test_collection_doc_collection_doc_get() {
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.get(Mockito.any())).thenReturn(
                 DocumentGetResponse.newBuilder().build()
@@ -77,7 +162,6 @@ public class SubCollectionDocRefTest {
         Mockito.verify(mock, Mockito.times(2)).get(Mockito.any());
         assertEquals(orderMap, value);
 
-        // Test get order object
         Order order = new Order();
         order.setSku("BYD EA-1");
         orderMap = new ObjectMapper().convertValue(order, Map.class);
@@ -99,7 +183,7 @@ public class SubCollectionDocRefTest {
     }
 
     @Test
-    public void test_set() {
+    public void test_collection_doc_collection_doc_set() {
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.set(Mockito.any())).thenReturn(
                 DocumentSetResponse.newBuilder().build()
@@ -126,7 +210,7 @@ public class SubCollectionDocRefTest {
     }
 
     @Test
-    public void test_delete() {
+    public void test_collection_doc_collection_doc_delete() {
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.delete(Mockito.any())).thenReturn(
                 DocumentDeleteResponse.newBuilder().build()
@@ -140,4 +224,5 @@ public class SubCollectionDocRefTest {
                 .delete();
         Mockito.verify(mock, Mockito.times(1)).delete(Mockito.any());
     }
+
 }

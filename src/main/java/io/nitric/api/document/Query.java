@@ -40,7 +40,7 @@ import io.nitric.util.ProtoUtils;
  */
 public class Query<T> {
 
-    final DocColl collection;
+    final Collection collection;
     final List<Expression> expressions = new ArrayList<Expression>();
     int limit;
     Map<String, String> pagingToken;
@@ -51,7 +51,7 @@ public class Query<T> {
     /*
      * Enforce package builder patterns.
      */
-    Query(DocColl collection, Class<T> type) {
+    Query(Collection collection, Class<T> type) {
         Contracts.requireNonNull(collection, "collection");
         Contracts.requireNonNull(type, "type");
 
@@ -311,7 +311,7 @@ public class Query<T> {
 
         protected DocumentQueryRequest buildDocQueryRequest(List<Expression> expressions) {
             var requestBuilder = DocumentQueryRequest.newBuilder()
-                    .setCollection(query.collection.toCollection());
+                    .setCollection(query.collection.toGrpcCollection());
 
             expressions.forEach(e -> {
                 var exp = io.nitric.proto.document.v1.Expression.newBuilder()

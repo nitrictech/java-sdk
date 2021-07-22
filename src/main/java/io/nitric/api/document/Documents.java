@@ -167,10 +167,7 @@ public class Documents {
      * @return a new document collection
      */
     public static Collection collection(String name) {
-        Contracts.requireNonBlank(name, "name");
-
-        var collection = new DocColl(name, null);
-        return new Collection(collection);
+        return new Collection(name, null);
     }
 
     // Package Private Methods ------------------------------------------------

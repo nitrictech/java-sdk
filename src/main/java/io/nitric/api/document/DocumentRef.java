@@ -35,7 +35,7 @@ import io.nitric.util.ProtoUtils;
  */
 public class DocumentRef<T> {
 
-    final DocKey key;
+    final Key key;
     final Class<T> type;
 
     // Constructor ------------------------------------------------------------
@@ -43,7 +43,7 @@ public class DocumentRef<T> {
     /*
      * Enforce package builder patterns.
      */
-    DocumentRef(DocKey key, Class<T> type) {
+    DocumentRef(Key key, Class<T> type) {
         Contracts.requireNonNull(key, "key");
         Contracts.requireNonBlank(key.id, "key.id");
         Contracts.requireNonNull(type, "type");
@@ -68,7 +68,7 @@ public class DocumentRef<T> {
      */
     public T get() {
         var request = DocumentGetRequest.newBuilder()
-                .setKey(key.toKey())
+                .setKey(key.toGrpcKey())
                 .build();
 
             DocumentGetResponse response = null;
@@ -116,7 +116,7 @@ public class DocumentRef<T> {
         var contentStruct = ProtoUtils.toStruct(contentMap);
 
         var request = DocumentSetRequest.newBuilder()
-                .setKey(key.toKey())
+                .setKey(key.toGrpcKey())
                 .setContent(contentStruct)
                 .build();
 
@@ -132,7 +132,7 @@ public class DocumentRef<T> {
      */
     public void delete() {
         var request = DocumentDeleteRequest.newBuilder()
-                .setKey(key.toKey())
+                .setKey(key.toGrpcKey())
                 .build();
 
         try {
@@ -156,8 +156,7 @@ public class DocumentRef<T> {
             throw newUnsupportedSubDocOperation(msg);
         }
 
-        var subColl = new DocColl(name, key);
-        return new Collection(subColl);
+        return new Collection(name, key);
     }
 
     /**
@@ -171,11 +170,10 @@ public class DocumentRef<T> {
         Contracts.requireNonBlank(name, "name");
 
         if (key.collection.parent != null) {
-            var msg = "cannot make a query under a sub collection document";
-            throw newUnsupportedSubDocOperation(msg);
+            throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
         }
 
-        var subColl = new DocColl(name, key);
+        var subColl = new Collection(name, key);
         return new Query<Map>(subColl, Map.class);
     }
 
@@ -191,11 +189,10 @@ public class DocumentRef<T> {
         Contracts.requireNonNull(type, "type");
 
         if (key.collection.parent != null) {
-            var msg = "cannot make a query under a sub collection document";
-            throw newUnsupportedSubDocOperation(msg);
+            throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
         }
 
-        var subColl = new DocColl(name, key);
+        var subColl = new Collection(name, key);
         return new Query<K>(subColl, type);
     }
 
@@ -212,7 +209,7 @@ public class DocumentRef<T> {
     UnsupportedOperationException newUnsupportedSubDocOperation(String prefix) {
 
         var msg = String.format(
-                prefix + ": \n\n Documents.collection(\"%s\").doc(\"%s\").collection(\"%s\").doc(\"%s\")\n",
+                prefix + ": [%s:id:%s]/[%s:%s]",
                 key.collection.parent.collection.name,
                 key.collection.parent.id,
                 key.collection.name,
