@@ -59,14 +59,14 @@ public class DocumentsTest {
 
         assertEquals("customers", mapDoc.key.collection.name);
         assertEquals(Map.class, mapDoc.type);
-        assertEquals("id", mapDoc.id());
+        assertEquals("id", mapDoc.getKey().getId());
 
         var custDoc = Documents.collection("customers")
                 .doc("id", Customer.class);
 
         assertEquals("customers", custDoc.key.collection.name);
         assertEquals(Customer.class, custDoc.type);
-        assertEquals("id", custDoc.id());
+        assertEquals("id", custDoc.getKey().getId());
     }
 
     @Test

@@ -23,7 +23,7 @@ package io.nitric.api.document;
 import io.nitric.util.Contracts;
 
 /**
- * Provides a document Key class.
+ * Provides a Document Key class.
  *
  * @see Collection
  */
@@ -47,13 +47,17 @@ public class Key {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return the documents collections
+     * Return the document collection.
+     *
+     * @return the documents collection
      */
     public Collection getCollection() {
         return collection;
     }
 
     /**
+     * Return the unique collection document id.
+     *
      * @return the unique document collection  id
      */
     public String getId() {
@@ -61,6 +65,8 @@ public class Key {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
@@ -71,7 +77,23 @@ public class Key {
     // Package Private Methods ------------------------------------------------
 
     /**
-     * @return the new GRPC Key [collection, id]
+     * @return a new Key from the given GRPC Key
+     */
+    static Key buildFromGrpcKey(io.nitric.proto.document.v1.Key key) {
+        var grpcParentKey = key.getCollection().getParent();
+
+        if (grpcParentKey != null) {
+            var parentCol = new Collection(grpcParentKey.getCollection().getName(), null);
+            var parentKey = new Key(parentCol, grpcParentKey.getId());
+            return new Key(new Collection(key.getCollection().getName(), parentKey), key.getId());
+
+        } else {
+            return new Key(new Collection(key.getCollection().getName(), null), key.getId());
+        }
+    }
+
+    /**
+     * @return a new GRPC Key
      */
     io.nitric.proto.document.v1.Key toGrpcKey() {
         return io.nitric.proto.document.v1.Key.newBuilder()

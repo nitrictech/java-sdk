@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * <p>
- *  Provides a document Collection class.
+ *  Provides a Collection class.
  * </p>
  *
  * <p>
@@ -75,6 +75,8 @@ public class Collection {
     // Public Methods ---------------------------------------------------------
 
     /**
+     * Return the collection name.
+     *
      * @return the collection name
      */
     public String getName() {
@@ -82,6 +84,8 @@ public class Collection {
     }
 
     /**
+     * Return the collection parent key.
+     *
      * @return the collection parent key
      */
     public Key getParent() {
@@ -162,6 +166,8 @@ public class Collection {
     }
 
     /**
+     * Return this string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override

@@ -193,7 +193,8 @@ public class QueryTest {
         assertTrue(result.iterator().hasNext());
 
         final var count = new AtomicInteger();
-        result.forEach(order -> {
+        result.forEach(doc -> {
+            var order = doc.getContent();
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
@@ -215,17 +216,43 @@ public class QueryTest {
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             var order = new Order();
+            order.setId(String.valueOf(i));
             order.setSku("ABC-" + i);
             orders.add(order);
         }
+
+        var parentCollection = io.nitric.proto.document.v1.Collection
+                .newBuilder()
+                .setName("customers")
+                .build();
+        var parentKey = io.nitric.proto.document.v1.Key
+                .newBuilder()
+                .setId("12345")
+                .setCollection(parentCollection)
+                .build();
+        var collection = io.nitric.proto.document.v1.Collection
+                .newBuilder()
+                .setName("orders")
+                .setParent(parentKey)
+                .build();
 
         List<Document> results = new ArrayList<>();
 
         var objectMapper = new ObjectMapper();
         orders.forEach(order -> {
+
+            var key = io.nitric.proto.document.v1.Key
+                    .newBuilder()
+                    .setId(order.getId())
+                    .setCollection(collection)
+                    .build();
+
             var contentMap = objectMapper.convertValue(order, Map.class);
             var contentStruct = ProtoUtils.toStruct(contentMap);
-            var document = Document.newBuilder().setContent(contentStruct).build();
+            var document = Document.newBuilder()
+                    .setKey(key)
+                    .setContent(contentStruct)
+                    .build();
             results.add(document);
         });
 

@@ -22,12 +22,11 @@ package io.nitric.api.document;
 
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.proto.document.v1.DocumentServiceGrpc.DocumentServiceBlockingStub;
-import io.nitric.util.Contracts;
 import io.nitric.util.GrpcChannelProvider;
 
 /**
  * <p>
- *  Provides a Document API client.
+ *  Provides the Document API client.
  * </p>
  *
  * <p>

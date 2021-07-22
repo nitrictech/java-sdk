@@ -55,10 +55,12 @@ public class DocumentRef<T> {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return the document's unique id
+     * Return the document's key.
+     *
+     * @return the document's key
      */
-    public String id() {
-        return key.id;
+    public Key getKey() {
+        return key;
     }
 
     /**
@@ -143,7 +145,7 @@ public class DocumentRef<T> {
     }
 
     /**
-     * Create a new sub collection for this top level document reference.
+     * Create a new sub collection under this document.
      *
      * @param name the name of the sub collection (required)
      * @return a new sub collection for the parent collection
@@ -197,6 +199,8 @@ public class DocumentRef<T> {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
