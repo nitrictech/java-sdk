@@ -25,12 +25,17 @@ package io.nitric.api.document.model;
  */
 public class Order {
 
+    private String id;
     private String sku;
     private Integer number;
     private Double price;
 
     // Public Methods ---------------------------------------------------------
 
+    public String getId() { return id; }
+    public void setId(String id) {
+        this.id = id;
+    }
     public String getSku() {
         return sku;
     }
@@ -48,6 +53,11 @@ public class Order {
     }
     public void setSku(String sku) {
         this.sku = sku;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[id=" + id + ", sku=" + sku + "]";
     }
 
 }
