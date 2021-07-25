@@ -47,10 +47,9 @@ public class TaskTest {
 
         try {
             Task.newBuilder().build();
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("payload parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
     }
 }

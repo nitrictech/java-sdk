@@ -35,14 +35,15 @@ package io.nitric.faas;
  * import io.nitric.faas.Trigger;
  * import io.nitric.faas.Response;
  *
- * public class HelloWorld implements NitricFunction {
+ * public class Handler implements NitricFunction {
  *
+ *     &commat;Override
  *     public Response handle(Trigger trigger) {
  *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {
- *         Faas.start(new HelloWorld());
+ *         Faas.start(new Handler());
  *     }
  * }
  * </code></pre>

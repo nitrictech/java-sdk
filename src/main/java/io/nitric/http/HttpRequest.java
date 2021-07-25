@@ -47,7 +47,7 @@ import java.util.Map;
  *
  *     public static void main(String... args) {
  *
- *         new HttpServer().start((HttpRequest r) -gt; {
+ *         new HttpServer().start((HttpRequest r) -&gt; {
  *             var logger = System.out;
  *
  *             logger.printf("request: \n");

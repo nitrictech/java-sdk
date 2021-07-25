@@ -20,7 +20,7 @@ package io.nitric.api.queue;
  * #L%
  */
 
-import java.util.Objects;
+import io.nitric.util.Contracts;
 
 /**
  * <p>
@@ -122,7 +122,7 @@ public class FailedTask {
          * @return a new FailedTask object
          */
         public FailedTask build() {
-            Objects.requireNonNull(task, "task parameter is required");
+            Contracts.requireNonNull(task, "task");
             return new FailedTask(this);
         }
     }

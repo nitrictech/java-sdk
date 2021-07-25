@@ -21,7 +21,8 @@ package io.nitric.api.event;
  */
 
 import java.util.Map;
-import java.util.Objects;
+
+import io.nitric.util.Contracts;
 
 /**
  * Provides an Event message class.
@@ -151,7 +152,7 @@ public class Event {
          * @return a new Event object
          */
         public Event build() {
-            Objects.requireNonNull(payload, "payload parameter is required");
+            Contracts.requireNonNull(payload, "payload");
             return new Event(this);
         }
     }

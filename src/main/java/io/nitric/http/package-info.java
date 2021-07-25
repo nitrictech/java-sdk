@@ -1,5 +1,32 @@
 /**
- * Provides the HTTP Server (FaaS) classes.
+ * <p>
+ *  Provides the HTTP Server (FaaS) classes.
+ * </p>
+ *
+ * <p>
+ *  The example below illustrates the HTTP API.
+ * </p>
+ *
+ * <pre><code class="code">
+ * package com.example;
+ *
+ * import io.nitric.http.HttpHandler;
+ * import io.nitric.http.HttpRequest;
+ * import io.nitric.http.HttpResponse;
+ * import io.nitric.http.HttpServer;
+ *
+ * public class Handler implements HttpHandler {
+ *
+ *     &commat;Override
+ *     public HttpResponse handle(HttpRequest request) {
+ *         return HttpResponse.build("Hello World");
+ *     }
+ *
+ *     public static void main(String... args) {
+ *         HttpServer().start(new Handler());
+ *     }
+ * }
+ * </code></pre>
  */
 package io.nitric.http;
 

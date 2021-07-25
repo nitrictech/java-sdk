@@ -26,7 +26,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import io.nitric.util.Contracts;
 
 /**
  * <p>
@@ -226,8 +227,8 @@ public class HttpResponse {
          * @return the response builder instance
          */
         public Builder header(String name, String value) {
-            Objects.requireNonNull(name, "header name is required");
-            Objects.requireNonNull(name, "header value is required");
+            Contracts.requireNonBlank(name, "header");
+            Contracts.requireNonBlank(value, "value");
 
             if (headers == null) {
                 headers = new HashMap<String, List<String>>();

@@ -22,6 +22,8 @@ package io.nitric.http;
 
 import com.sun.net.httpserver.HttpExchange;
 
+import io.nitric.util.Contracts;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  * <p>
@@ -39,7 +40,7 @@ import java.util.Objects;
  * </p>
  *
  * <p>
- *  The example below starts a HTTP server with a Hello World handler for the path "/".
+ *  The example below starts a HTTP server with a HTTP handler for the path "/".
  * </p>
  *
  * <pre><code class="code">
@@ -50,14 +51,15 @@ import java.util.Objects;
  * import io.nitric.http.HttpResponse;
  * import io.nitric.http.HttpServer;
  *
- * public class HelloWorld implements HttpHandler {
+ * public class Handler implements HttpHandler {
  *
+ *     &commat;Override
  *     public HttpResponse handle(HttpRequest request) {
  *         return HttpResponse.build("Hello World");
  *     }
  *
  *     public static void main(String... args) {
- *         new HttpServer().start(new HelloWorld());
+ *         HttpServer().start(new Handler());
  *     }
  * }
  * </code></pre>
@@ -107,8 +109,8 @@ public class HttpServer {
      * @return the HttpServer instance
      */
     public HttpServer register(String path, HttpHandler function) {
-        Objects.requireNonNull(path, "null path parameter");
-        Objects.requireNonNull(function, "null function parameter");
+        Contracts.requireNonBlank(path, "path");
+        Contracts.requireNonNull(function, "function");
 
         var checkHandler = pathFunctions.get(path);
         if (checkHandler != null) {
@@ -121,13 +123,15 @@ public class HttpServer {
     }
 
     /**
-     * Start the FaaS server after configuring the given function  to the path "/".
+     * Start the Http server with the given function configured for the path "/".
      *
      * @param function the function (required)
+     * @return a new started Http function server with the given function
      */
-    public void start(HttpHandler function) {
+    public HttpServer start(HttpHandler function) {
         register("/", function);
         start();
+        return this;
     }
 
     /**

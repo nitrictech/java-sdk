@@ -20,7 +20,6 @@ package io.nitric.faas;
  * #L%
  */
 
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,6 +28,7 @@ import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
 import io.nitric.proto.faas.v1.ServerMessage;
+import io.nitric.util.Contracts;
 import io.nitric.util.GrpcChannelProvider;
 
 /**
@@ -48,14 +48,15 @@ import io.nitric.util.GrpcChannelProvider;
  * import io.nitric.faas.NitricFunction;
  * import io.nitric.faas.Response;
  *
- * public class HelloWorld implements NitricFunction {
+ * public class Handler implements NitricFunction {
  *
+ *     &commat;Override
  *     public Response handle(Trigger trigger) {
  *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {
- *         Faas.start(new HelloWorld());
+ *         Faas.start(new Handler());
  *     }
  * }
  * </code></pre>
@@ -75,7 +76,7 @@ public class Faas {
      * @param function the function handler (required)
      */
     public void startFunction(NitricFunction function) {
-        Objects.requireNonNull(function, "function parameter is required");
+        Contracts.requireNonNull(function, "function");
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -121,9 +122,10 @@ public class Faas {
     }
 
     /**
-     * Quick Start a Nitric Function with defaults
+     * Start a Nitric function server with the given function.
      *
-     * @param function The function to start
+     * @param function The function to start (required)
+     * @return a new started Nitric Function server
      */
     public static Faas start(NitricFunction function) {
         var faas = new Faas();
@@ -134,9 +136,9 @@ public class Faas {
     // Package Methods --------------------------------------------------------
 
     /**
-     * Set the gRPC stub to use for this FaaS instance
+     * Set the gRPC stub to use for this FaaS instance.
      * Can be used to provide a connection on a new channel
-     * in order to connect securely with a remote membrane host
+     * in order to connect securely with a remote membrane host.
      *
      * @param stub - Stub instance to provide
      */

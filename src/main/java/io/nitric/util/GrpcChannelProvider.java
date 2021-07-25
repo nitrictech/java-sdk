@@ -23,8 +23,6 @@ package io.nitric.util;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-import java.util.Objects;
-
 /**
  * <p>
  *  Provides a gRPC Managed Channel object by use by Nitric Service Clients.
@@ -91,8 +89,8 @@ public class GrpcChannelProvider {
      * @return the environment variable value or default if not defined
      */
     protected static String getEnvVar(String varName, String defaultValue) {
-        Objects.requireNonNull(varName, "varName parameter is required");
-        Objects.requireNonNull(defaultValue, "defaultValue parameter is required");
+        Contracts.requireNonBlank(varName, "varName");
+        Contracts.requireNonBlank(defaultValue, "defaultValue");
 
         return (System.getenv(varName) != null) ? System.getenv(varName) : defaultValue;
     }

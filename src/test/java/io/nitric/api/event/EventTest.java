@@ -54,18 +54,16 @@ public class EventTest {
 
         try {
             Event.newBuilder().build();
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("payload parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
 
         try {
             Event.build(null);
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("payload parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
     }
 }

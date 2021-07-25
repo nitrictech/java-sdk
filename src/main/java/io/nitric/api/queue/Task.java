@@ -21,7 +21,8 @@ package io.nitric.api.queue;
  */
 
 import java.util.Map;
-import java.util.Objects;
+
+import io.nitric.util.Contracts;
 
 /**
  * <p>
@@ -170,7 +171,7 @@ public class Task {
          * @return a new Task
          */
         public Task build() {
-            Objects.requireNonNull(payload, "payload parameter is required");
+            Contracts.requireNonNull(payload, "payload");
             return new Task(this);
         }
     }
