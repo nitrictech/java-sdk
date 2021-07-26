@@ -101,7 +101,7 @@ public class HttpResponseTest {
 
         try {
             response.getHeaders().get("Accept-Charset").add("utf-16");
-            assertTrue(false);
+            fail();
 
         } catch (Exception e) {
             assertTrue(true);

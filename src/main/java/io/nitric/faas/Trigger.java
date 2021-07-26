@@ -24,6 +24,7 @@ import java.util.Objects;
  */
 
 import io.nitric.proto.faas.v1.TriggerRequest;
+import io.nitric.util.Contracts;
 
 /**
  * <p>
@@ -138,7 +139,7 @@ public class Trigger {
      * @return The translated trigger (required)
      */
     protected static Trigger buildTrigger(TriggerRequest trigger) {
-        Objects.requireNonNull(trigger, "trigger parameter is required");
+        Contracts.requireNonNull(trigger, "trigger");
 
         var ctx = AbstractTriggerContext.buildTriggerContext(trigger);
 

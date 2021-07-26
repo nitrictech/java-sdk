@@ -31,15 +31,22 @@ package io.nitric.http;
  * </p>
  *
  * <pre><code class="code">
+ * package com.example;
+ *
  * import io.nitric.http.HttpHandler;
  * import io.nitric.http.HttpRequest;
  * import io.nitric.http.HttpResponse;
- * ...
+ * import io.nitric.http.HttpServer;
  *
- * public class HelloWorld implements HttpHandler {
+ * public class Handler implements HttpHandler {
  *
+ *     &commat;Override
  *     public HttpResponse handle(HttpRequest request) {
  *         return HttpResponse.build("Hello World");
+ *     }
+ *
+ *     public static void main(String... args) {
+ *         HttpServer().start(new Handler());
  *     }
  * }
  * </code></pre>

@@ -51,10 +51,9 @@ public class FailedTaskTest {
 
         try {
             FailedTask.newBuilder().build();
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("task parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
     }
 }

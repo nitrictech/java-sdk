@@ -29,7 +29,6 @@ import io.grpc.StatusRuntimeException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -85,7 +84,7 @@ public class ProtoUtils {
      * @return a Map object.
      */
     public static Map<String, Object> toMap(Struct struct) {
-        Objects.requireNonNull(struct, "struct parameter is required");
+        Contracts.requireNonNull(struct, "struct");
 
         return struct
                 .getFieldsMap()
@@ -115,7 +114,7 @@ public class ProtoUtils {
      * @return a new protobuf Struct object
      */
     public static Struct toStruct(Map<String, Object> map) {
-        Objects.requireNonNull(map, "map parameter is required");
+        Contracts.requireNonNull(map, "map");
 
         return mapToStructBuilder(map).build();
     }

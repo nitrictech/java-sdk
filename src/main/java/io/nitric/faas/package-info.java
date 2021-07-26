@@ -4,7 +4,7 @@
  * </p>
  *
  * <p>
- *  The example below provides a simple Hello World function.
+ *  The example below illustrates the FaaS API.
  * </p>
  *
  * <pre><code class="code">
@@ -12,14 +12,15 @@
  * import io.nitric.faas.Trigger;
  * import io.nitric.faas.Response;
  *
- * public class HelloWorld implements NitricFunction {
+ * public class Handler implements NitricFunction {
  *
+ *     &commat;Override
  *     public Response handle(Trigger trigger) {
  *         return trigger.buildResponse("Hello World");
  *     }
  *
  *     public static void main(String... args) {
- *         Faas.start(new HelloWorld());
+ *         Faas.start(new Handler());
  *     }
  * }
  * </code></pre>

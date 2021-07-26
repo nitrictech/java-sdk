@@ -65,7 +65,7 @@ public class HttpServerTest {
         // Ensure server cant be started twice
         try {
             faas.start();
-            assertFalse(true);
+            fail();
 
         } catch (IllegalStateException ise) {
         }
@@ -100,7 +100,7 @@ public class HttpServerTest {
 
         try {
             faas.register("/customers/", handlerA);
-            assertTrue(false);
+            fail();
 
         } catch (IllegalArgumentException iae) {
             assertTrue(iae.toString().endsWith("already registered for path: /customers/"));

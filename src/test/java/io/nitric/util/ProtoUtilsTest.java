@@ -57,10 +57,9 @@ public class ProtoUtilsTest {
 
         try {
             ProtoUtils.toStruct(null);
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("map parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
     }
 
@@ -77,10 +76,9 @@ public class ProtoUtilsTest {
 
         try {
             ProtoUtils.toMap(null);
-            assertTrue(false);
+            fail();
 
-        } catch (NullPointerException npe) {
-            assertEquals("struct parameter is required", npe.getMessage());
+        } catch (IllegalArgumentException iae) {
         }
     }
 
