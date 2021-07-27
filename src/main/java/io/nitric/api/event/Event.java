@@ -47,6 +47,8 @@ public class Event {
     // Public Methods ---------------------------------------------------------
 
     /**
+     * Return the event id.
+     *
      * @return the event id
      */
     public String getId() {
@@ -54,6 +56,8 @@ public class Event {
     }
 
     /**
+     * Return the event payload type.
+     *
      * @return the event payload type
      */
     public String getPayloadType() {
@@ -61,6 +65,8 @@ public class Event {
     }
 
     /**
+     * Return the event payload.
+     *
      * @return the event payload
      */
     public Map<String, Object> getPayload() {
@@ -68,6 +74,8 @@ public class Event {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
@@ -80,6 +88,8 @@ public class Event {
     }
 
     /**
+     * Return a new Event builder object.
+     *
      * @return a new Event builder object
      */
     public static Builder newBuilder() {

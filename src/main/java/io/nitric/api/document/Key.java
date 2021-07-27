@@ -76,9 +76,6 @@ public class Key {
 
     // Package Private Methods ------------------------------------------------
 
-    /**
-     * @return a new Key from the given GRPC Key
-     */
     static Key buildFromGrpcKey(io.nitric.proto.document.v1.Key key) {
         var grpcParentKey = key.getCollection().getParent();
 
@@ -92,13 +89,11 @@ public class Key {
         }
     }
 
-    /**
-     * @return a new GRPC Key
-     */
     io.nitric.proto.document.v1.Key toGrpcKey() {
         return io.nitric.proto.document.v1.Key.newBuilder()
                 .setCollection(collection.toGrpcCollection())
                 .setId(id)
                 .build();
     }
+
 }

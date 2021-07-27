@@ -171,9 +171,6 @@ public class Documents {
 
     // Package Private Methods ------------------------------------------------
 
-    /**
-     * @return the Document GRPC service stub
-     */
     static DocumentServiceBlockingStub getServiceStub() {
         if (serviceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
@@ -182,11 +179,6 @@ public class Documents {
         return serviceStub;
     }
 
-    /**
-     * Set the Document GRPC service stub.
-     *
-     * @param stub the Document GRPC service stub
-     */
     static void setServiceStub(DocumentServiceBlockingStub stub) {
         serviceStub = stub;
     }

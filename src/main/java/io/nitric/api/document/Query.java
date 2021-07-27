@@ -110,7 +110,7 @@ import io.nitric.util.ProtoUtils;
  *      Order order = doc.getContent();
  *  });
  *
- *  // Fetch all order for a specific customer
+ *  // Fetch all orders for a specific customer
  *  QueryResults results = Documents.collection("customers").doc("jane-smith@server.com")
  *      .collection("orders")
  *      .query(Order.class)
@@ -192,6 +192,7 @@ import io.nitric.util.ProtoUtils;
  * <pre><code class="code">
  *  import io.nitric.api.document.Documents;
  *  import io.nitric.api.document.QueryResults;
+ *  import java.util.Map;
  *
  *  Query query = Documents.collection("customers")
  *      .query()
@@ -406,6 +407,8 @@ public class Query<T> {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
@@ -659,4 +662,5 @@ public class Query<T> {
                     + "]";
         }
     }
+
 }

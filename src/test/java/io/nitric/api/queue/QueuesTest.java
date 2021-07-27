@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -101,7 +102,7 @@ public class QueuesTest {
         var failedTasks = QueueSendBatchResponse.newBuilder();
         failedTasks.addFailedTasks(0, FailedTask
                 .newBuilder()
-                .setTask(NitricTask.newBuilder().setId("1234").build())
+                .setTask(NitricTask.newBuilder().setId("1234").setLeaseId("leaseId").build())
                 .setMessage("Failed to queue task")
                 .build());
 
@@ -158,9 +159,10 @@ public class QueuesTest {
 
         var task = tasks.get(0);
         assertEquals("id", task.getId());
-        assertEquals("leaseId", task.getLeaseId());
-        assertEquals("payloadType", task.getPayloadType());
         assertEquals("{status=ready}", task.getPayload().toString());
+        assertEquals("payloadType", task.getPayloadType());
+        assertEquals("leaseId", task.getLeaseId());
+        assertEquals("queue", task.getQueue());
     }
 
     @Test
@@ -173,27 +175,16 @@ public class QueuesTest {
         );
         Queues.setServiceStub(mock);
 
-        var queues = Queues.queue("queue");
+        ReceivedTask task = new ReceivedTask(
+            "id",
+            "payloadType",
+            Collections.emptyMap(),
+            "leaseId",
+            "queue");
 
-        try {
-            queues.complete(null);
-            fail();
+        task.complete();
 
-        } catch (IllegalArgumentException iae) {
-            Mockito.verify(mock, Mockito.times(0)).complete(Mockito.any());
-            assertEquals("provide non-null leaseId", iae.getMessage());
-        }
-
-        try {
-            queues.complete(" ");
-            fail();
-
-        } catch (IllegalArgumentException iae) {
-            Mockito.verify(mock, Mockito.times(0)).complete(Mockito.any());
-            assertEquals("provide non-blank leaseId", iae.getMessage());
-        }
-
-        queues.complete("leaseId");
+        Mockito.verify(mock, Mockito.times(1)).complete(Mockito.any());
     }
 
 }

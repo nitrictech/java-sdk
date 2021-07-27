@@ -1,16 +1,5 @@
 package io.nitric.api.queue;
 
-import java.util.Collections;
-import java.util.List;
-
-import io.nitric.proto.queue.v1.QueueCompleteRequest;
-import io.nitric.proto.queue.v1.QueueReceiveRequest;
-import io.nitric.proto.queue.v1.QueueReceiveResponse;
-import io.nitric.proto.queue.v1.QueueSendBatchRequest;
-import io.nitric.proto.queue.v1.QueueSendBatchResponse;
-import io.nitric.proto.queue.v1.QueueSendRequest;
-import java.util.stream.Collectors;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -31,6 +20,15 @@ import java.util.stream.Collectors;
  * #L%
  */
 
+import java.util.Collections;
+import java.util.List;
+
+import io.nitric.proto.queue.v1.QueueReceiveRequest;
+import io.nitric.proto.queue.v1.QueueReceiveResponse;
+import io.nitric.proto.queue.v1.QueueSendBatchRequest;
+import io.nitric.proto.queue.v1.QueueSendBatchResponse;
+import java.util.stream.Collectors;
+
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 
@@ -42,22 +40,27 @@ import io.nitric.util.ProtoUtils;
  * </p>
  *
  * <pre><code class="code">
- *  import io.nitric.api.queue.Queues;
- *  import io.nitric.api.queue.Task;
- *  ...
+ * import io.nitric.api.queue.Queues;
+ * import io.nitric.api.queue.Task;
+ * import io.nitric.api.queue.ReceivedTask;
+ * ...
  *
- *  String orderId = ...
- *  String serialNumber = ...
+ * String orderId = ...
+ * String serialNumber = ...
  *
- *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
- *  var task = Task.build(payload);
+ * var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
+ * var task = Task.build(payload);
  *
- *  // Send a task to the 'shipping' queue
- *  var queue = Queues.queue("shipping");
- *  queue.send(task);
+ * // Send a task to the 'shipping' queue
+ * var queue = Queues.queue("shipping");
+ * queue.send(task);
  *
- *  // Receive a list of tasks from the 'shipping' queue
- *  List&lt;Task&gt; tasks = queue.receive(100);
+ * // Receive a list of tasks from the 'shipping' queue
+ * List&lt;ReceivedTask&gt; tasks = queue.receive(100);
+ *
+ * // Complete the first shipping task
+ * var shippingTask = tasks.get(0);
+ * shippingTask.complete();
  * </code></pre>
  *
  * @see Queues
@@ -79,6 +82,8 @@ public class Queue {
     // Public Methods ---------------------------------------------------------
 
     /**
+     * Return the queue name.
+     *
      * @return the queue name
      */
     public String getName() {
@@ -144,7 +149,7 @@ public class Queue {
      * @param limit the maximum number of tasks to receive from the queue
      * @return the tasks from the client queue
      */
-    public List<Task> receive(int limit) {
+    public List<ReceivedTask> receive(int limit) {
         var request = QueueReceiveRequest.newBuilder()
                 .setQueue(name)
                 .setDepth(limit)
@@ -164,26 +169,8 @@ public class Queue {
     }
 
     /**
-     * Complete the task specified by the given lease id.
+     * Return the string representation of this object.
      *
-     * @param leaseId the lease id of the task to complete (required)
-     */
-    public void complete(String leaseId) {
-        Contracts.requireNonBlank(leaseId, "leaseId");
-
-        var request = QueueCompleteRequest.newBuilder()
-                .setQueue(name)
-                .setLeaseId(leaseId)
-                .build();
-
-        try {
-            Queues.getServiceStub().complete(request);
-        } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
-        }
-    }
-
-    /**
      * @return the string representation of this object
      */
     @Override
@@ -200,9 +187,6 @@ public class Queue {
         if (task.getId() != null) {
             taskBuilder.setId(task.getId());
         }
-        if (task.getLeaseId() != null) {
-            taskBuilder.setLeaseId(task.getLeaseId());
-        }
         if (task.getPayloadType() != null) {
             taskBuilder.setPayloadType(task.getPayloadType());
         }
@@ -210,24 +194,25 @@ public class Queue {
         return taskBuilder.build();
     }
 
-    Task toApiTask(io.nitric.proto.queue.v1.NitricTask task) {
-        return Task.newBuilder()
-                .id(task.getId())
-                .leaseId(task.getLeaseId())
-                .payloadType(task.getPayloadType())
-                .payload(ProtoUtils.toMap(task.getPayload()))
-                .build();
+    ReceivedTask toApiTask(io.nitric.proto.queue.v1.NitricTask task) {
+
+        return new ReceivedTask(
+            task.getId(),
+            task.getPayloadType(),
+            ProtoUtils.toMap(task.getPayload()),
+            task.getLeaseId(),
+            getName());
     }
 
     FailedTask toApiFailedTask(io.nitric.proto.queue.v1.FailedTask protoFailedTask) {
         io.nitric.proto.queue.v1.NitricTask protoTask = protoFailedTask.getTask();
 
-        var task = Task.newBuilder()
-                .id(protoTask.getId())
-                .leaseId(protoTask.getLeaseId())
-                .payloadType(protoTask.getPayloadType())
-                .payload(ProtoUtils.toMap(protoTask.getPayload()))
-                .build();
+        var task = new ReceivedTask(
+            protoTask.getId(),
+            protoTask.getPayloadType(),
+            ProtoUtils.toMap(protoTask.getPayload()),
+            protoTask.getLeaseId(),
+            getName());
 
         return FailedTask.newBuilder()
                 .task(task)

@@ -110,9 +110,6 @@ public class Events {
 
     // Package Private Methods ------------------------------------------------
 
-    /**
-     * @return the Event Service GRPC stub
-     */
     static EventServiceBlockingStub getEventServiceStub() {
         if (eventServiceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
@@ -121,18 +118,10 @@ public class Events {
         return eventServiceStub;
     }
 
-    /**
-     * Set the Event Service GRPC stub.
-     *
-     * @param stub the Event Service GRPC stub
-     */
     static void setEventServiceStub(EventServiceBlockingStub stub) {
         eventServiceStub = stub;
     }
 
-    /**
-     * @return the Topic Service GRPC stub
-     */
     static TopicServiceBlockingStub getTopicServiceStub() {
         if (topicServiceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
@@ -141,11 +130,6 @@ public class Events {
         return topicServiceStub;
     }
 
-    /**
-     * Set the Topic Service GRPC stub.
-     *
-     * @param stub the Topic Service GRPC stub
-     */
     static void setTopicServiceStub(TopicServiceBlockingStub stub) {
         topicServiceStub = stub;
     }

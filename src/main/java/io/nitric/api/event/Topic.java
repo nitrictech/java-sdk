@@ -63,6 +63,8 @@ public class Topic {
     // Public Methods ---------------------------------------------------------
 
     /**
+     * Return the topic name.
+     *
      * @return the topic name
      */
     public String getName() {
@@ -101,6 +103,8 @@ public class Topic {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override

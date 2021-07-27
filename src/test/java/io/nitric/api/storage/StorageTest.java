@@ -66,20 +66,16 @@ public class StorageTest {
     }
 
     @Test
-    public void test_read() {
-        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
-        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
-                StorageReadResponse.newBuilder().setBody(KNOWN_BS).build()
-        );
-        Storage.setServiceStub(mock);
-        var bucket = Storage.bucket("bucket");
+    public void test_bucket_file() {
+        var file = Storage.bucket("images").file("todo.txt");
 
-        byte[] data = bucket.read("ANY KEY");
-        assertNotNull(data);
-        assertEquals(KNOWN_TEXT, new String(data));
+        assertNotNull(file);
+        assertEquals("images", file.getBucket());
+        assertEquals("todo.txt", file.getKey());
+        assertEquals("File[bucket=images, key=todo.txt]", file.toString());
 
         try {
-            bucket.read(" ");
+            Storage.bucket("images").file(" ");
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-blank key", iae.getMessage());
@@ -87,13 +83,17 @@ public class StorageTest {
     }
 
     @Test
-    public void test_read_null_key() {
-        try {
-            Storage.bucket("bucket").read(null);
-            fail();
-        } catch (IllegalArgumentException iae) {
-            assertEquals("provide non-null key", iae.getMessage());
-        }
+    public void test_bucket_file_read() {
+        var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
+        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenReturn(
+                StorageReadResponse.newBuilder().setBody(KNOWN_BS).build()
+        );
+        Storage.setServiceStub(mock);
+        var bucket = Storage.bucket("bucket");
+
+        byte[] data = bucket.file("ANY KEY").read();
+        assertNotNull(data);
+        assertEquals(KNOWN_TEXT, new String(data));
     }
 
     @Test
@@ -104,35 +104,27 @@ public class StorageTest {
         );
         Storage.setServiceStub(mock);
 
-        var data = Storage.bucket("bucket").read("unknown key");
+        var data = Storage.bucket("bucket").file("unknown key").read();
         assertNull(data);
     }
 
     @Test
-    public void test_write() {
+    public void test_bucket_file_write() {
         var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenReturn(
                 StorageWriteResponse.newBuilder().build()
         );
         Storage.setServiceStub(mock);
-        var bucket = Storage.bucket("bucket");
 
         byte[] data = "this data".getBytes(StandardCharsets.UTF_8);
-        bucket.write("this key", data);
+        Storage.bucket("bucket").file("this key").write(data);
 
         // Verify we actually called the mock object
         // TODO: Use Mockito.eq for testing here...
         Mockito.verify(mock).write(Mockito.any());
 
         try {
-            bucket.write(null, data);
-            fail();
-        } catch (IllegalArgumentException iae) {
-            assertEquals("provide non-null key", iae.getMessage());
-        }
-
-        try {
-            bucket.write("this key", null);
+            Storage.bucket("bucket").file("this key").write(null);
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-null data", iae.getMessage());
@@ -140,25 +132,16 @@ public class StorageTest {
     }
 
     @Test
-    public void test_delete() {
+    public void test_bucket_file_delete() {
         var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
         Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenReturn(
                 StorageDeleteResponse.newBuilder().build()
         );
         Storage.setServiceStub(mock);
 
-        var bucket = Storage.bucket("bucket");
-
-        bucket.delete(KNOWN_KEY);
+        Storage.bucket("bucket").file(KNOWN_KEY).delete();
 
         Mockito.verify(mock).delete(Mockito.any());
-
-        try {
-            bucket.delete(null);
-            fail();
-        } catch (IllegalArgumentException iae) {
-            assertEquals("provide non-null key", iae.getMessage());
-        }
     }
 
 }

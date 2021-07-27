@@ -177,9 +177,6 @@ public class Collection {
 
     // Package Private Methods ------------------------------------------------
 
-    /**
-     * @return the new GRPC Collection [name, parent]
-     */
     io.nitric.proto.document.v1.Collection toGrpcCollection() {
         var builder = io.nitric.proto.document.v1.Collection
             .newBuilder()

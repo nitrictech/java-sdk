@@ -33,17 +33,15 @@ public class TaskTest {
 
         var task = Task.newBuilder()
                 .id("id")
-                .leaseId("leaseId")
                 .payloadType("payloadType")
                 .payload(payload)
                 .build();
 
         assertNotNull(task);
         assertEquals("id", task.getId());
-        assertEquals("leaseId", task.getLeaseId());
         assertEquals("payloadType", task.getPayloadType());
         assertEquals(payload, task.getPayload());
-        assertEquals("Task[id=id, leaseId=leaseId, payloadType=payloadType, payload={name=value}]", task.toString());
+        assertEquals("Task[id=id, payloadType=payloadType, payload={name=value}]", task.toString());
 
         try {
             Task.newBuilder().build();
