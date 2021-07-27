@@ -69,6 +69,8 @@ public class FailedTask {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
@@ -80,8 +82,6 @@ public class FailedTask {
 
     /**
      * Provides a FailedTask builder class.
-     *
-     * @since 1.0
      */
     public static class Builder {
 

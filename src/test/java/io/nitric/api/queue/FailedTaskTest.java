@@ -46,7 +46,7 @@ public class FailedTaskTest {
         assertNotNull(failedTask);
         assertEquals(task, failedTask.getTask());
         assertEquals("message", failedTask.getMessage());
-        assertEquals("FailedTask[task=Task[id=null, leaseId=null, payloadType=null, payload={name=value}], message=message]",
+        assertEquals("FailedTask[task=Task[id=null, payloadType=null, payload={name=value}], message=message]",
                 failedTask.toString());
 
         try {

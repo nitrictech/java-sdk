@@ -8,22 +8,27 @@
  * </p>
  *
  * <pre><code class="code">
- *  import io.nitric.api.queue.Queues;
- *  import io.nitric.api.queue.Task;
- *  ...
+ * import io.nitric.api.queue.Queues;
+ * import io.nitric.api.queue.Task;
+ * import io.nitric.api.queue.ReceivedTask;
+ * ...
  *
- *  String orderId = ...
- *  String serialNumber = ...
+ * String orderId = ...
+ * String serialNumber = ...
  *
- *  var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
- *  var task = Task.build(payload);
+ * var payload = Map.of("orderId", orderId, "serialNumber", serialNumber);
+ * var task = Task.build(payload);
  *
- *  // Send a task to the 'shipping' queue
- *  var queue = Queues.queue("shipping");
- *  queue.send(task);
+ * // Send a task to the 'shipping' queue
+ * var queue = Queues.queue("shipping");
+ * queue.send(task);
  *
- *  // Receive a list of tasks from the 'shipping' queue
- *  List&lt;Task&gt; tasks = queue.receive(100);
+ * // Receive a list of tasks from the 'shipping' queue
+ * List&lt;ReceivedTask&gt; tasks = queue.receive(100);
+ *
+ * // Complete the first shipping task
+ * var shippingTask = tasks.get(0);
+ * shippingTask.complete();
  * </code></pre>
  */
 package io.nitric.api.queue;

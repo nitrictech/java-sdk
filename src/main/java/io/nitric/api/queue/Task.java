@@ -26,31 +26,32 @@ import io.nitric.util.Contracts;
 
 /**
  * <p>
- *  Provides a Queue API task class.
+ *  Provides a Queue API Task class.
  * </p>
  *
  * @see FailedTask
+ * @see ReceivedTask
  */
 public class Task {
 
     final String id;
-    final String leaseId;
     final String payloadType;
     final Map<String, Object> payload;
 
     /*
      * Enforce builder pattern.
      */
-    Task(Builder builder) {
-        this.id = builder.id;
-        this.leaseId = builder.leaseId;
-        this.payloadType = builder.payloadType;
-        this.payload = builder.payload;
+    Task(String id, String payloadType, Map<String, Object> payload) {
+        this.id = id;
+        this.payloadType = payloadType;
+        this.payload = payload;
     }
 
     // Public Methods ---------------------------------------------------------
 
     /**
+     * Return the task id.
+     *
      * @return the task id
      */
     public String getId() {
@@ -58,16 +59,8 @@ public class Task {
     }
 
     /**
-     * Return the lease id unique to the pop request, this must be used to complete, extend the lease or release the
-     * task.
+     * Return the task payload type.
      *
-     * @return the task lease id, unique to the pop request.
-     */
-    public String getLeaseId() {
-        return leaseId;
-    }
-
-    /**
      * @return the task payload type
      */
     public String getPayloadType() {
@@ -75,6 +68,8 @@ public class Task {
     }
 
     /**
+     * Return the task payload.
+     *
      * @return the task payload
      */
     public Map<String, Object> getPayload() {
@@ -82,6 +77,8 @@ public class Task {
     }
 
     /**
+     * Return a new Task builder.
+     *
      * @return a new Task builder
      */
     public static Builder newBuilder() {
@@ -89,13 +86,14 @@ public class Task {
     }
 
     /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         return getClass().getSimpleName()
                 + "[id=" + id
-                + ", leaseId=" + leaseId
                 + ", payloadType=" + payloadType
                 + ", payload=" + payload
                 + "]";
@@ -105,8 +103,6 @@ public class Task {
 
     /**
      * Provides a Task builder class.
-     *
-     * @since 1.0
      */
     public static class Builder {
 
@@ -131,17 +127,6 @@ public class Task {
          */
         public Builder id(String id) {
             this.id = id;
-            return this;
-        }
-
-        /**
-         * Set the task lease id.
-         *
-         * @param leaseId the task lease id
-         * @return the builder object
-         */
-        public Builder leaseId(String leaseId) {
-            this.leaseId = leaseId;
             return this;
         }
 
@@ -172,7 +157,8 @@ public class Task {
          */
         public Task build() {
             Contracts.requireNonNull(payload, "payload");
-            return new Task(this);
+            return new Task(id, payloadType, payload);
         }
     }
+
 }

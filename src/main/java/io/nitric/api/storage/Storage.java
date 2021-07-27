@@ -38,21 +38,22 @@ import io.nitric.util.GrpcChannelProvider;
  *  import io.nitric.api.storage.Storage;
  *  ...
  *
- *  // Create a storage bucket with the name 'inspection-images'
- *  var bucket = Storage.bucket("inspection-images");
+ *  byte[] frontData = ...
  *
- *  // Store an image file
- *  String imageKey = "582764-front-elevation.jpg"
- *  byte[] imageData = ...
- *  bucket.write(imageKey, imageData);
+ *  // Store an file file
+ *  Storage.bucket("inspection-images")
+ *     .file("582764-front-elevation.jpg")
+ *     .write(frontData);
  *
- *  // Load an image file
- *  imageKey = "582764-side-elevation.jpg"
- *  imageData = bucket.read(imageKey, imageData);
+ *  // Retrieve an image file
+ *  byte[] sideData = Storage.bucket("inspection-images")
+ *      .file("582764-side-elevation.jpg")
+ *      .read();
  *
  *  // Delete an image file
- *  imageKey = "582764-rear-elevation.jpg"
- *  bucket.delete(imageKey);
+ *  Storage.bucket(bucket)
+ *      .file("582764-rear-elevation.jpg")
+ *      .delete();
  * </code></pre>
  *
  * @see Bucket
@@ -77,15 +78,11 @@ public class Storage {
      */
     public static Bucket bucket(String name) {
         Contracts.requireNonBlank(name, "name");
-
         return new Bucket(name);
     }
 
     // Package Private Methods ------------------------------------------------
 
-    /**
-     * @return the Storage Service GRPC stub
-     */
     static StorageServiceBlockingStub getServiceStub() {
         if (serviceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
@@ -94,11 +91,6 @@ public class Storage {
         return serviceStub;
     }
 
-    /**
-     * Set the Storage Service GRPC stub.
-     *
-     * @param stub the Storage Service GRPC stub
-     */
     static void setServiceStub(StorageServiceBlockingStub stub) {
         serviceStub = stub;
     }
