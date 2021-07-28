@@ -1,5 +1,3 @@
-package io.nitric.api.event;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.event;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.event;
 
 import java.util.Map;
 

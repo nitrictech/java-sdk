@@ -1,7 +1,3 @@
-package io.nitric.api.document;
-
-import java.util.Map;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,7 +18,12 @@ import java.util.Map;
  * #L%
  */
 
+package io.nitric.api.document;
+
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.nitric.proto.document.v1.DocumentDeleteRequest;
 import io.nitric.proto.document.v1.DocumentGetRequest;
 import io.nitric.proto.document.v1.DocumentGetResponse;

@@ -1,7 +1,3 @@
-package io.nitric.faas;
-
-import java.nio.charset.StandardCharsets;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,10 +18,15 @@ import java.nio.charset.StandardCharsets;
  * #L%
  */
 
+package io.nitric.faas;
+
+import java.nio.charset.StandardCharsets;
+
 import com.google.protobuf.ByteString;
-import io.nitric.proto.faas.v1.TriggerResponse;
-import io.nitric.proto.faas.v1.TopicResponseContext;
+
 import io.nitric.proto.faas.v1.HttpResponseContext;
+import io.nitric.proto.faas.v1.TopicResponseContext;
+import io.nitric.proto.faas.v1.TriggerResponse;
 
 /**
  * <p>

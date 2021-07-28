@@ -1,5 +1,3 @@
-package io.nitric.api.queue;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,15 +18,16 @@ package io.nitric.api.queue;
  * #L%
  */
 
+package io.nitric.api.queue;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.nitric.proto.queue.v1.QueueReceiveRequest;
 import io.nitric.proto.queue.v1.QueueReceiveResponse;
 import io.nitric.proto.queue.v1.QueueSendBatchRequest;
 import io.nitric.proto.queue.v1.QueueSendBatchResponse;
-import java.util.stream.Collectors;
-
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 

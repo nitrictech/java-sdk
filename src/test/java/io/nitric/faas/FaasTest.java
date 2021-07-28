@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,20 +18,23 @@ package io.nitric.faas;
  * #L%
  */
 
-import io.grpc.stub.StreamObserver;
-import io.nitric.proto.faas.v1.ClientMessage;
-import io.nitric.proto.faas.v1.FaasServiceGrpc;
-import io.nitric.proto.faas.v1.ServerMessage;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
+package io.nitric.faas;
+
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+
+import io.grpc.stub.StreamObserver;
+import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.proto.faas.v1.FaasServiceGrpc;
+import io.nitric.proto.faas.v1.ServerMessage;
 
 public class FaasTest {
 

@@ -1,5 +1,3 @@
-package io.nitric.http;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,9 +18,7 @@ package io.nitric.http;
  * #L%
  */
 
-import com.sun.net.httpserver.HttpExchange;
-
-import io.nitric.util.Contracts;
+package io.nitric.http;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -33,6 +29,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.sun.net.httpserver.HttpExchange;
+
+import io.nitric.util.Contracts;
 
 /**
  * <p>

@@ -1,5 +1,3 @@
-package io.nitric.api.storage;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.storage;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
 

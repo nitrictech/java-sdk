@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,9 +18,11 @@ package io.nitric.api.document;
  * #L%
  */
 
-import io.nitric.util.Contracts;
+package io.nitric.api.document;
 
 import java.util.Map;
+
+import io.nitric.util.Contracts;
 
 /**
  * <p>

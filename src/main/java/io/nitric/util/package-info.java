@@ -1,8 +1,3 @@
-/**
- * Provides the Utility and Helper classes.
- */
-package io.nitric.util;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,3 +17,8 @@ package io.nitric.util;
  * limitations under the License.
  * #L%
  */
+
+/**
+ * Provides the Utility and Helper classes.
+ */
+package io.nitric.util;

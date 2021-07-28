@@ -1,5 +1,3 @@
-package io.nitric.api.document.model;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.document.model;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.document.model;
 
 /**
  * Provides an Order model class.

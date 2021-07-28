@@ -1,5 +1,3 @@
-package io.nitric.api.event;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,14 +18,15 @@ package io.nitric.api.event;
  * #L%
  */
 
+package io.nitric.api.event;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import io.nitric.proto.event.v1.EventServiceGrpc;
+import io.nitric.proto.event.v1.EventServiceGrpc.EventServiceBlockingStub;
 import io.nitric.proto.event.v1.TopicListRequest;
 import io.nitric.proto.event.v1.TopicListResponse;
-import io.nitric.proto.event.v1.EventServiceGrpc.EventServiceBlockingStub;
 import io.nitric.proto.event.v1.TopicServiceGrpc;
 import io.nitric.proto.event.v1.TopicServiceGrpc.TopicServiceBlockingStub;
 import io.nitric.util.Contracts;

@@ -1,5 +1,3 @@
-package io.nitric.util;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.util;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.util;
 
 /**
  * Provides 'Design by Contract' utility functions class.

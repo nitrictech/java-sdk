@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.document;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.document;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -137,7 +137,7 @@ import io.nitric.util.ProtoUtils;
  *      .query()
  *      .where("status", "==", "active")
  *      .where("country", "==", "US")
- *      .where("age", ">", "21")
+ *      .where("age", "&gt;", "21")
  *      .fetch();
  * </code></pre>
  *

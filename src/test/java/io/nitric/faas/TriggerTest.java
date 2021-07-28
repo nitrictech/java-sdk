@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,15 +18,20 @@ package io.nitric.faas;
  * #L%
  */
 
-import com.google.protobuf.ByteString;
-import io.nitric.proto.faas.v1.HttpTriggerContext;
-import io.nitric.proto.faas.v1.TopicTriggerContext;
-import io.nitric.proto.faas.v1.TriggerRequest;
-import org.junit.Test;
+package io.nitric.faas;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import com.google.protobuf.ByteString;
+
+import org.junit.Test;
+
+import io.nitric.proto.faas.v1.HttpTriggerContext;
+import io.nitric.proto.faas.v1.TopicTriggerContext;
+import io.nitric.proto.faas.v1.TriggerRequest;
 
 public class TriggerTest {
 

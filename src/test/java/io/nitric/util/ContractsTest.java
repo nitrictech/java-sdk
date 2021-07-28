@@ -1,5 +1,3 @@
-package io.nitric.util;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,9 +18,12 @@ package io.nitric.util;
  * #L%
  */
 
-import org.junit.Test;
+package io.nitric.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 public class ContractsTest {
 
