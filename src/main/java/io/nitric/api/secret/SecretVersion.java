@@ -20,8 +20,6 @@
 
 package io.nitric.api.secret;
 
-import java.nio.charset.StandardCharsets;
-
 import io.nitric.proto.secret.v1.SecretAccessRequest;
 import io.nitric.proto.secret.v1.SecretAccessResponse;
 import io.nitric.util.Contracts;
@@ -30,11 +28,13 @@ import io.nitric.util.ProtoUtils;
 /**
  * <p>
  * Provides a Secret Version class. The Secret Version is used to specify a particular secret version stored
- * with the Secret API. To obtain the latest version of a secret use the <code>Secret.latest()</code> method.
+ * with the Secret API. To obtain the latest secret version value use the <code>Secret.latest().access()</code>
+ * methods.
  * </p>
  *
- * @see Secret
  * @see Secrets
+ * @see Secret
+ * @see SecretValue
  */
 public class SecretVersion {
 
@@ -77,31 +77,33 @@ public class SecretVersion {
 
     /**
      * <p>
-     * Return the secret version's value data.
+     * Return the version's secret value.
      * </p>
      *
      * <pre><code class="code">
      * String keyVersion = ...
      *
-     * SecretVersion secretVersion = Secrets.secret("encryption.key").version(keyVersion);
+     * SecretValue secretValue = Secrets.secret("encryption.key")
+     *     .version(keyVersion)
+     *     .access();
      *
-     * byte[] keyData = secretVersion.value();
+     * byte[] keyData = secretValue.get();
      * </code></pre>
      *
-     * @return the secret version's value data
+     * @return the version's secret value
      */
-    public byte[] value() {
-        var secret = io.nitric.proto.secret.v1.Secret.newBuilder()
+    public SecretValue access() {
+        var protoSecret = io.nitric.proto.secret.v1.Secret.newBuilder()
             .setName(getSecret().getName())
             .build();
 
-        var secretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
-            .setSecret(secret)
+        var protoVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
+            .setSecret(protoSecret)
             .setVersion(getVersion())
             .build();
 
         var request = SecretAccessRequest.newBuilder()
-                .setSecretVersion(secretVersion)
+                .setSecretVersion(protoVersion)
                 .build();
 
         SecretAccessResponse response = null;
@@ -111,27 +113,14 @@ public class SecretVersion {
             throw ProtoUtils.mapGrpcError(sre);
         }
 
+        var secretVersion = new SecretVersion(
+            secret,
+            response.getSecretVersion().getVersion());
+
         var body = response.getValue();
         var value = (!body.isEmpty()) ? body.toByteArray() : new byte[0];
 
-        return value;
-    }
-
-    /**
-     * <p>
-     * Return the secret version's value as a UTF-8 encoded string.
-     * </p>
-     *
-     * <pre><code class="code">
-     * SecretVersion secretVersion = Secrets.secret("jdbc.password").latest();
-     *
-     * String password = secretVersion.valueText();
-     * </code></pre>
-     *
-     * @return the secret version's value as a UTF-8 encoded string
-     */
-    public String valueText() {
-        return new String(value(), StandardCharsets.UTF_8);
+        return new SecretValue(secretVersion, value);
     }
 
     /**

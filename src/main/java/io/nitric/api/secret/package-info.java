@@ -19,12 +19,13 @@
  *
  * // Get the latest secret 'jdbc.password' value
  * String password = Secrets.secret("jdbc.password")
- *     .latest()
- *     .valueText();
+ *         .latest()
+ *         .access()
+ *         .getAsText();
  *
  * // Store the new password value, making it the latest version
  * String newPassword = "AU8ezbHiV^NFHI98BqR6OeOf!8@%FKvP";
- * Secrets.secret("jdbc.password").putText(newPassword);
+ * Secrets.secret("jdbc.password").putAsText(newPassword);
  * </code></pre>
  *
  * <h3>Encryption Key Example</h3>
@@ -43,36 +44,41 @@
  *
  * <pre><code class="code">
  * import io.nitric.api.secret.Secrets;
- * import io.nitric.api.secret.SecretVersion;
+ * import io.nitric.api.secret.SecretValue;
  * import com.example.entity.PiiRecord;
  * ...
  *
- * // Store a new AES-256 secret 'encryption.key'
- * byte[] keyData = new byte[32];
- * Secrets.secret("encryption.key").put(keyData);
+ * // Store a new AES-256 secret data 'encryption.key'
+ * byte[] dataKey = ...
+ * Secrets.secret("encryption.key").put(dataKey);
  *
- * // Sometime later lookup latest version of 'encryption.key' and use this to encrypt PII data.
- * // Note we store the secret key name and version with the PII record so we can use this later to decrypt the record.
- * SecretVersion version = Secrets.secret("encryption.key").latest();
- * byte[] latestKey = version.value();
+ * // Sometime later lookup latest version of 'encryption.key' and use this to encrypt a private record.
+ * // Note we store the secret key name and version with the record so we can use this later to
+ * // decrypt the record.
+ * SecretValue value = Secrets.secret("encryption.key")
+ *         .latest()
+ *         .access();
  *
- * // Here we encrypt the PII data with encryption key
+ * byte[] dataKey = value.get();
+ *
+ * // Here we encrypt the PII data with encryption data key
  * byte[] encryptedData = ...
  *
  * PiiRecord record = new PiiRecord();
  * record.setEncryptedData(encryptedData);
- * record.setKeyName(version.getSecret().getName());
- * record.setKeyVersion(version.getVersion());
+ * record.setKeyName(value.getSecretVersion().getSecret().getName());
+ * record.setKeyVersion(value.getSecretVersion().getVersion());
  *
- * // Retrieve a PII record
- * PiiRecord custRecord = null;
+ * // Retrieve a customer PII record
+ * PiiRecord custRecord = ...
  *
  * byte[] custKey = Secrets
- *     .secret(custRecord.getKeyName())
- *     .version(custRecord.getKeyVersion())
- *     .value();
+ *         .secret(custRecord.getKeyName())
+ *         .version(custRecord.getKeyVersion())
+ *         .access()
+ *         .get();
  *
- * // Use the encryption key to decrypt the record's PII data
+ * // Use the encryption key to decrypt the records PII data
  * </code></pre>
  */
 package io.nitric.api.secret;

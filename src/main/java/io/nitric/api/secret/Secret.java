@@ -34,6 +34,7 @@ import io.nitric.util.ProtoUtils;
  *
  * @see Secrets
  * @see SecretVersion
+ * @see SecretValue
  */
 public class Secret {
 
@@ -71,18 +72,24 @@ public class Secret {
 
     /**
      * <p>
-     * Return a new SecretVersion with the <code>"latest"</code> version number.
+     * Return the latest SecretVersion alias. Note this latest SecretVersion alias is use to retrieve the latest
+     * <code>SecretValue</code> instances. Repeated calls to with this latest alias may result in different
+     * <code>SecretValue</code> objects being returned as the secret value may have been updated between calls and a
+     * new secret version value is available.
      * </p>
      *
      * <p>
-     * Use this method to get the latest version for this secret.
+     * Use this method to access the latest secret value for this secret.
      * </p>
      *
      * <pre><code class="code">
-     * var password = Secrets.secret("jdbc.password").latest().valueText();
+     * var password = Secrets.secret("jdbc.password")
+     *         .latest()
+     *         .access()
+     *         .getAsText();
      * </code></pre>
      *
-     * @return a new SecretVersion with the <code>"latest"</code> version number
+     * @return a new <code>"latest"</code> SecretVersion alias
      */
     public SecretVersion latest() {
         return new SecretVersion(this, SecretVersion.LATEST);
@@ -132,12 +139,12 @@ public class Secret {
      * <pre><code class="code">
      * String password = "AU8ezbHiV^NFHI98BqR6OeOf!8@%FKvP";
      *
-     * SecretVersion secretVersion = Secrets.secret("jdbc.password").putText(password);
+     * SecretVersion secretVersion = Secrets.secret("jdbc.password").putAsText(password);
      * </code></pre>
      *
      * @param value the secret text value to store (required)
      */
-    public SecretVersion putText(String value) {
+    public SecretVersion putAsText(String value) {
         Contracts.requireNonBlank(value, "value");
 
         byte[] valueData = value.getBytes(StandardCharsets.UTF_8);

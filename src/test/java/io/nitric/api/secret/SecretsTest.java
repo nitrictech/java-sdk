@@ -93,28 +93,41 @@ public class SecretsTest {
 
     @Test
     public void test_secret_put() {
-        var secret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
-        var secretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
-                .setSecret(secret)
+        var protoSecret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
+        var protoSecretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
+                .setSecret(protoSecret)
                 .setVersion("version")
                 .build();
 
         var mock = Mockito.mock(SecretServiceGrpc.SecretServiceBlockingStub.class);
         Mockito.when(mock.put(Mockito.any(SecretPutRequest.class))).thenReturn(
-                SecretPutResponse.newBuilder().setSecretVersion(secretVersion).build()
+                SecretPutResponse.newBuilder().setSecretVersion(protoSecretVersion).build()
         );
         Secrets.setServiceStub(mock);
 
         var value = "password".getBytes(StandardCharsets.UTF_8);
 
-        var sv = Secrets.secret("name").put(value);
+        var secret = Secrets.secret("name").put(value);
 
-        assertNotNull(sv);
-        assertEquals("name", sv.getSecret().getName());
-        assertEquals("version", sv.getVersion());
+        assertNotNull(secret);
+        assertEquals("name", secret.getSecret().getName());
+        assertEquals("version", secret.getVersion());
 
         // Verify we actually called the mock object
-        Mockito.verify(mock).put(Mockito.any());
+        var protoRequest = SecretPutRequest.newBuilder()
+                .setSecret(protoSecret)
+                .setValue(ByteString.copyFrom(value))
+                .build();
+        Mockito.verify(mock).put(protoRequest);
+
+        var secret2 = Secrets.secret("name").put(value);
+
+        assertNotNull(secret2);
+        assertEquals("name", secret2.getSecret().getName());
+        assertEquals("version", secret2.getVersion());
+
+        // Verify we actually called the mock object
+        Mockito.verify(mock, Mockito.times(2)).put(protoRequest);
 
         try {
             Secrets.secret("name").put(null);
@@ -124,40 +137,10 @@ public class SecretsTest {
     }
 
     @Test
-    public void test_secret_putText() {
-        var secret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
-        var secretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
-                .setSecret(secret)
-                .setVersion("version")
-                .build();
-
-        var mock = Mockito.mock(SecretServiceGrpc.SecretServiceBlockingStub.class);
-        Mockito.when(mock.put(Mockito.any(SecretPutRequest.class))).thenReturn(
-                SecretPutResponse.newBuilder().setSecretVersion(secretVersion).build()
-        );
-        Secrets.setServiceStub(mock);
-
-        var sv = Secrets.secret("name").putText("password");
-
-        assertNotNull(sv);
-        assertEquals("name", sv.getSecret().getName());
-        assertEquals("version", sv.getVersion());
-
-        // Verify we actually called the mock object
-        Mockito.verify(mock).put(Mockito.any());
-
-        try {
-            Secrets.secret("name").putText(" ");
-            fail();
-        } catch (IllegalArgumentException iae) {
-        }
-    }
-
-    @Test
-    public void test_secret_version_value() {
-        var secret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
-        var secretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
-                .setSecret(secret)
+    public void test_secret_version_access() {
+        var protoSecret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
+        var protoSecretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
+                .setSecret(protoSecret)
                 .setVersion("version")
                 .build();
 
@@ -166,42 +149,22 @@ public class SecretsTest {
 
         var mock = Mockito.mock(SecretServiceGrpc.SecretServiceBlockingStub.class);
         Mockito.when(mock.access(Mockito.any(SecretAccessRequest.class))).thenReturn(
-                SecretAccessResponse.newBuilder().setSecretVersion(secretVersion).setValue(valueBS).build()
+                SecretAccessResponse.newBuilder().setSecretVersion(protoSecretVersion).setValue(valueBS).build()
         );
         Secrets.setServiceStub(mock);
 
-        var responseValue = Secrets.secret("name").version("version").value();
+        var secretValue = Secrets.secret("name").version("version").access();
 
-        assertNotNull(responseValue);
-        assertEquals("password", new String(responseValue));
+        assertNotNull(secretValue);
+        assertEquals("name", secretValue.getSecretVersion().getSecret().getName());
+        assertEquals("version", secretValue.getSecretVersion().getVersion());
+        assertEquals("password", secretValue.getAsText());
 
         // Verify we actually called the mock object
-        Mockito.verify(mock).access(Mockito.any());
-    }
-
-    @Test
-    public void test_secret_version_valueText() {
-        var secret = io.nitric.proto.secret.v1.Secret.newBuilder().setName("name").build();
-        var secretVersion = io.nitric.proto.secret.v1.SecretVersion.newBuilder()
-                .setSecret(secret)
-                .setVersion("version")
+        var protoRequest = SecretAccessRequest.newBuilder()
+                .setSecretVersion(protoSecretVersion)
                 .build();
-
-        var value = "password".getBytes(StandardCharsets.UTF_8);
-        var valueBS = ByteString.copyFrom(value);
-
-        var mock = Mockito.mock(SecretServiceGrpc.SecretServiceBlockingStub.class);
-        Mockito.when(mock.access(Mockito.any(SecretAccessRequest.class))).thenReturn(
-                SecretAccessResponse.newBuilder().setSecretVersion(secretVersion).setValue(valueBS).build()
-        );
-        Secrets.setServiceStub(mock);
-
-        var responseValue = Secrets.secret("name").version("version").valueText();
-
-        assertEquals("password", responseValue);
-
-        // Verify we actually called the mock object
-        Mockito.verify(mock).access(Mockito.any());
+        Mockito.verify(mock).access(protoRequest);
     }
 
     public class PiiRecord {
@@ -231,12 +194,13 @@ public class SecretsTest {
 
         // Get the latest secret 'jdbc.password' value
         String password = Secrets.secret("jdbc.password")
-            .latest()
-            .valueText();
+                .latest()
+                .access()
+                .getAsText();
 
         // Store the new password value, making it the latest version
         String newPassword = "AU8ezbHiV^NFHI98BqR6OeOf!8@%FKvP";
-        Secrets.secret("jdbc.password").putText(newPassword);
+        Secrets.secret("jdbc.password").putAsText(newPassword);
 
         // Encrypting PII (Personally Identifying Information) Record Example
 
@@ -247,26 +211,26 @@ public class SecretsTest {
         // Sometime later lookup latest version of 'encryption.key' and use this to encrypt a private record.
         // Note we store the secret key name and version with the record so we can use this later to
         // decrypt the record.
-        SecretVersion version = Secrets.secret("encryption.key").latest();
-        byte[] latestKey = version.value();
+        SecretValue value = Secrets.secret("encryption.key").latest().access();
+        byte[] dataKey = value.get();
 
-        // Here we encrypt the PII data with encryption key
+        // Here we encrypt the PII data with encryption data key
         byte[] encryptedData = null;
 
         PiiRecord record1 = new PiiRecord();
         record1.setEncryptedData(encryptedData);
-        record1.setKeyName(version.getSecret().getName());
-        record1.setKeyVersion(version.getVersion());
+        record1.setKeyName(value.getSecretVersion().getSecret().getName());
+        record1.setKeyVersion(value.getSecretVersion().getVersion());
 
         // Retrieve a PII record
         PiiRecord record2 = null;
 
-        byte[] dataKey = Secrets
-            .secret(record2.getKeyName())
-            .version(record2.getKeyVersion())
-            .value();
+        byte[] dataKey2 = Secrets
+                .secret(record2.getKeyName())
+                .version(record2.getKeyVersion())
+                .access()
+                .get();
 
         // Use the encryption key to decrypt the records PII data
     }
-
 }
