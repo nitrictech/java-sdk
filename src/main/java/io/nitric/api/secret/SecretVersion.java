@@ -77,7 +77,7 @@ public class SecretVersion {
 
     /**
      * <p>
-     * Return the version's secret value.
+     * Return the version's secret value if found, or throws an exception otherwise.
      * </p>
      *
      * <pre><code class="code">
@@ -90,7 +90,8 @@ public class SecretVersion {
      * byte[] keyData = secretValue.get();
      * </code></pre>
      *
-     * @return the version's secret value
+     * @return the version's secret value if found, or throws an exception otherwise
+     * @throws io.grpc.StatusRuntimeException if the secret value was not found
      */
     public SecretValue access() {
         var protoSecret = io.nitric.proto.secret.v1.Secret.newBuilder()
