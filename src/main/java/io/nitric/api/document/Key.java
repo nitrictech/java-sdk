@@ -79,7 +79,11 @@ public class Key {
     static Key buildFromGrpcKey(io.nitric.proto.document.v1.Key key) {
         var grpcParentKey = key.getCollection().getParent();
 
-        if (grpcParentKey != null) {
+        if (grpcParentKey != null &&
+            grpcParentKey.getCollection() != null &&
+            grpcParentKey.getCollection().getName() != null &&
+            !grpcParentKey.getCollection().getName().isBlank()) {
+
             var parentCol = new Collection(grpcParentKey.getCollection().getName(), null);
             var parentKey = new Key(parentCol, grpcParentKey.getId());
             return new Key(new Collection(key.getCollection().getName(), parentKey), key.getId());

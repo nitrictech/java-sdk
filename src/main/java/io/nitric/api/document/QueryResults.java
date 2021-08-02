@@ -136,7 +136,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
 
             } else {
                 var value = objectMapper.convertValue(map, query.type);
-                queryData.add(new ResultDoc<T>(key, value));
+                queryData.add(new ResultDoc<>(key, value));
             }
         });
 

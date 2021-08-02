@@ -152,9 +152,9 @@ public class QueryTest {
         assertNull(result.getPagingToken());
         assertFalse(result.iterator().hasNext());
 
-        // Test 12 Values Result
+        // Test 12 POJO Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createQueryResponse()
+                createOrdersQueryResponse()
         );
 
         query = newOrderQuery();
@@ -167,11 +167,49 @@ public class QueryTest {
 
         final var count = new AtomicInteger();
         result.forEach(doc -> {
-            assertNotNull(doc.getContent());
+            assertTrue(doc.getContent() instanceof  Order);
             assertNotNull(doc.getKey());
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
+
+        // Test 12 Map Values Result
+        Mockito.when(mock.query(Mockito.any())).thenReturn(
+                createCustomersQueryResponse()
+        );
+
+        var customerResults = Documents.collection("customer").query().fetch();
+
+        Mockito.verify(mock, Mockito.times(3)).query(Mockito.any());
+        assertNotNull(customerResults);
+        assertNotNull(customerResults.getPagingToken());
+        assertTrue(customerResults.iterator().hasNext());
+
+        final var count2 = new AtomicInteger();
+        customerResults.forEach(doc -> {
+            assertTrue(Map.class.isAssignableFrom(doc.getContent().getClass()));
+            assertNotNull(doc.getKey());
+            count2.incrementAndGet();
+        });
+        assertEquals(12, count2.get());
+
+        // Test Paged Query
+        var pagingToken = Map.of("page", "2");
+        customerResults = Documents.collection("customer")
+                .query()
+                .pagingFrom(pagingToken)
+                .fetch();
+
+        Mockito.verify(mock, Mockito.times(4)).query(Mockito.any());
+        assertNotNull(customerResults);
+        assertNotNull(customerResults.getPagingToken());
+        assertTrue(customerResults.iterator().hasNext());
+
+        final var count3 = new AtomicInteger();
+        customerResults.forEach(doc -> {
+            count3.incrementAndGet();
+        });
+        assertEquals(12, count3.get());
     }
 
     @Test
@@ -192,7 +230,7 @@ public class QueryTest {
 
         // Test 12 Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createQueryResponse()
+                createOrdersQueryResponse()
         );
 
         query = newOrderQuery();
@@ -211,7 +249,7 @@ public class QueryTest {
 
         // Test 12 Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createQueryResponse()
+                createOrdersQueryResponse()
         );
 
         query = newOrderQuery();
@@ -236,6 +274,40 @@ public class QueryTest {
     }
 
     // Private Methods --------------------------------------------------------
+
+    private List<Document> newCustomers() {
+        List<Map> customers = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            var content = Map.of("id", String.valueOf(i));
+            customers.add(content);
+        }
+
+        var collection = io.nitric.proto.document.v1.Collection
+                .newBuilder()
+                .setName("customers")
+                .build();
+
+        List<Document> results = new ArrayList<>();
+
+        var objectMapper = new ObjectMapper();
+        customers.forEach(customer -> {
+
+            var key = io.nitric.proto.document.v1.Key
+                    .newBuilder()
+                    .setId(customer.get("id").toString())
+                    .setCollection(collection)
+                    .build();
+
+            var contentStruct = ProtoUtils.toStruct(customer);
+            var document = Document.newBuilder()
+                    .setKey(key)
+                    .setContent(contentStruct)
+                    .build();
+            results.add(document);
+        });
+
+        return results;
+    }
 
     private List<Document> newOrders() {
 
@@ -294,8 +366,15 @@ public class QueryTest {
         return query;
     }
 
-    private DocumentQueryResponse createQueryResponse() {
+    private DocumentQueryResponse createOrdersQueryResponse() {
         return DocumentQueryResponse.newBuilder().addAllDocuments(newOrders()).build();
+    }
+
+    private DocumentQueryResponse createCustomersQueryResponse() {
+        return DocumentQueryResponse.newBuilder()
+                .addAllDocuments(newCustomers())
+                .putAllPagingToken(Map.of("page", "0"))
+                .build();
     }
 
 }
