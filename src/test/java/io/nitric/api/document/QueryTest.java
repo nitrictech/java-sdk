@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,8 +44,6 @@ import io.nitric.util.ProtoUtils;
  * Provide a query test case.
  */
 public class QueryTest {
-
-    final AtomicInteger fetchAllCount = new AtomicInteger();
 
     @Test
     public void test_where() {
@@ -144,7 +143,7 @@ public class QueryTest {
 
         // Test 12 Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createFetchResponse()
+                createQueryResponse()
         );
 
         query = newOrderQuery();
@@ -156,14 +155,16 @@ public class QueryTest {
         assertTrue(result.iterator().hasNext());
 
         final var count = new AtomicInteger();
-        result.forEach(order -> {
+        result.forEach(doc -> {
+            assertNotNull(doc.getContent());
+            assertNotNull(doc.getKey());
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
     }
 
     @Test
-    public void test_fetchAll() {
+    public void test_stream() {
         // Test Empty Result
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.query(Mockito.any())).thenReturn(
@@ -172,31 +173,27 @@ public class QueryTest {
         Documents.setServiceStub(mock);
 
         var query = newOrderQuery();
-        var result = query.fetchAll();
+        Stream<ResultDoc<Order>> stream = query.stream();
 
         Mockito.verify(mock, Mockito.times(1)).query(Mockito.any());
-        assertNotNull(result);
-        assertNull(result.getPagingToken());
-        assertFalse(result.iterator().hasNext());
-
-        final var callCount = new AtomicInteger();
+        assertNotNull(stream);
+        assertEquals(0, stream.count());
 
         // Test 12 Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createFetchAllResponse()
+                createQueryResponse()
         );
 
         query = newOrderQuery();
-        result = query.fetchAll();
+        stream = query.stream();
 
         Mockito.verify(mock, Mockito.times(2)).query(Mockito.any());
-        assertNotNull(result);
-        assertNull(result.getPagingToken());
-        assertTrue(result.iterator().hasNext());
+        assertNotNull(stream);
 
         final var count = new AtomicInteger();
-        result.forEach(doc -> {
-            var order = doc.getContent();
+        stream.forEach(doc -> {
+            assertNotNull(doc.getContent());
+            assertNotNull(doc.getKey());
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
@@ -215,6 +212,7 @@ public class QueryTest {
     // Private Methods --------------------------------------------------------
 
     private List<Document> newOrders() {
+
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             var order = new Order();
@@ -266,20 +264,12 @@ public class QueryTest {
         var collection = new Collection("orders", parentKey);
         var query = new Query<Order>(collection, Order.class);
         query.where("sku", "==", "BYD EA-1");
-        query.limit(100);
 
         return query;
     }
 
-    private DocumentQueryResponse createFetchResponse() {
+    private DocumentQueryResponse createQueryResponse() {
         return DocumentQueryResponse.newBuilder().addAllDocuments(newOrders()).build();
     }
 
-    private DocumentQueryResponse createFetchAllResponse() {
-        if (fetchAllCount.getAndIncrement() == 0) {
-            return DocumentQueryResponse.newBuilder().addAllDocuments(newOrders()).build();
-        } else {
-            return DocumentQueryResponse.newBuilder().build();
-        }
-    }
 }

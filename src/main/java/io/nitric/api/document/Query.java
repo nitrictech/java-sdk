@@ -20,19 +20,16 @@
 
 package io.nitric.api.document;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.nitric.proto.document.v1.DocumentQueryRequest;
-import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.proto.document.v1.ExpressionValue;
 import io.nitric.util.Contracts;
-import io.nitric.util.ProtoUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * <p>
@@ -81,7 +78,7 @@ import io.nitric.util.ProtoUtils;
  *  import io.nitric.api.document.QueryResults;
  *  import com.example.entity.Customer;
  *
- *  QueryResults results = Documents.collection("customers")
+ *  QueryResults&lt;Customer&gt; results = Documents.collection("customers")
  *      .query(Customer.class)
  *      .fetch();
  *
@@ -112,7 +109,7 @@ import io.nitric.util.ProtoUtils;
  *  });
  *
  *  // Fetch all orders for a specific customer
- *  QueryResults results = Documents.collection("customers").doc("jane-smith@server.com")
+ *  QueryResults&lt;Order&gt; results = Documents.collection("customers").doc("jane-smith@server.com")
  *      .collection("orders")
  *      .query(Order.class)
  *      .fetch();
@@ -185,15 +182,35 @@ import io.nitric.util.ProtoUtils;
  * <h3>Large Result Sets</h3>
  *
  * <p>
- *   When processing large result sets the Query API provides two options. The first is to use a paginated query
- *   where you pass pagingToken from the previous query results to the next query to continue. This technique is
- *   useful for paged user experiences. An example is provided below:
+ *  When processing large result sets the Query API provides two options. The first option is to use the
+ *  <code>stream()</code> method which will return ResultDoc Stream object. This stream will internally make further
+ *  Document Service query calls until there are no more results available from the server.
+ * </p>
+ *
+ * <pre><code class="code">
+ *  import java.util.stream.Stream;
+ *  import io.nitric.api.document.Documents;
+ *  import io.nitric.api.document.ResultDoc;
+ *
+ *  Stream&lt;ResultDoc&lt;Map&gt;&gt; stream = Documents.collection("customers")
+ *      .query()
+ *      .stream();
+ *
+ *  stream.foreach(doc -&gt; {
+ *      // Process results...
+ *  });
+ * </code></pre>
+ *
+ * <p>
+ *   The second option form processing large result sets is to use a paginated query where you pass pagingToken from
+ *   the previous query results to the next query to continue. This technique is useful for paged user experiences.
+ *   An example is provided below:
  * </p>
  *
  * <pre><code class="code">
  *  import io.nitric.api.document.Documents;
+ *  import io.nitric.api.document.Query;
  *  import io.nitric.api.document.QueryResults;
- *  import java.util.Map;
  *
  *  Query query = Documents.collection("customers")
  *      .query()
@@ -217,24 +234,6 @@ import io.nitric.util.ProtoUtils;
  *  });
  * </code></pre>
  *
- * <p>
- *  The second option for processing large result sets is to use the <code>fetchAll()</code> method which will
- *  return a paging iterator which will internally perform queries to fetch the next set of results to process.
- *  A code example is provided below:
- * </p>
- *
- * <pre><code class="code">
- *  import io.nitric.api.document.Documents;
- *  import io.nitric.api.document.QueryResults;
- *
- *  QueryResults results = Documents.collection("customers")
- *      .query()
- *      .fetchAll();
- *
- *  results.foreach(doc -&gt; {
- *      // Process results...
- *  });
- * </code></pre>
  */
 public class Query<T> {
 
@@ -393,18 +392,20 @@ public class Query<T> {
     }
 
     /**
-     * Perform the Query operation and return all the fetched results. The QueryResults iterator will continue to
-     * process all the pages of results until no more are available from the server. If no fetch limit is specified,
-     * this method will set the query fetch limit to 1000.
+     * Perform the Query operation and return a Stream object. If no fetch limit is specified this stream()
+     * object will continue to perform Document Service queries until there are not more results available from the
+     * server.
      *
-     * @return the Query operations fetched results.
+     * @return the Query operations fetched results
      */
-    public QueryResults<T> fetchAll() {
-        if (this.limit <= 0) {
-            this.limit = 1000;
-        }
+    public Stream<ResultDoc<T>> stream() {
+        // If no fetch limit specified then paginate all
+        boolean paginateAll = (this.limit == 0);
 
-        return new QueryResults<T>(this, true);
+        var iterator = new QueryResults<T>(this, paginateAll).iterator();
+        var spliterators = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED);
+
+        return StreamSupport.stream(spliterators, false);
     }
 
     /**
@@ -424,208 +425,6 @@ public class Query<T> {
     }
 
     // Inner Classes ----------------------------------------------------------
-
-    /**
-     * Provides a Query Result Document class.
-     */
-    public static class ResultDoc<T> {
-
-        final Key key;
-        final T content;
-
-        /**
-         * Enforce package builder patterns.
-         */
-        ResultDoc(Key key, T content) {
-            this.key = key;
-            this.content = content;
-        }
-
-        /**
-         * @return the document key
-         */
-        public Key getKey() {
-            return key;
-        }
-
-        /**
-         * @return the document content
-         */
-        public T getContent() {
-            return content;
-        }
-
-        /**
-         * @return the string representation of this object
-         */
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "[key=" + key + ", content=" + content + "]";
-        }
-    }
-
-    /**
-     * Provides a Query Result class.
-     */
-    public static class QueryResults<T> implements Iterable<ResultDoc<T>> {
-
-        final Query<T> query;
-        final boolean paginateAll;
-        Map<String, String> pagingToken;
-        List<ResultDoc<T>> queryData;
-
-        /**
-         * Create a QueryResults object.
-         *
-         * @parma query the query to continue
-         * @param paginateAll specify whether the iterator paginate through all results
-         */
-        QueryResults(Query<T> query, boolean paginateAll) {
-
-            this.query = query;
-            this.pagingToken = query.pagingToken;
-            this.paginateAll = paginateAll;
-
-            // Perform initial query
-            var request = buildDocQueryRequest(this.query.expressions);
-
-            DocumentQueryResponse response = null;
-            try {
-                response = Documents.getServiceStub().query(request);
-            } catch (io.grpc.StatusRuntimeException sre) {
-                throw ProtoUtils.mapGrpcError(sre);
-            }
-
-            loadPageData(response);
-        }
-
-        /**
-         * Return a typed query results iterator.
-         *
-         * @return a typed query results iterator
-         */
-        @Override
-        public Iterator<ResultDoc<T>> iterator() {
-            if (!paginateAll) {
-                return queryData.iterator();
-
-            } else {
-                return new PagingIterator<T>(this);
-            }
-        }
-
-        /**
-         * Return the query paging continuation token if there are more items available. If this value is null
-         * then no further query results are available.
-         *
-         * @return the query paging continuation token
-         */
-        public Map<String, String> getPagingToken() {
-            return pagingToken.isEmpty() ? null : pagingToken;
-        }
-
-        // Protected Methods --------------------------------------------------
-
-        protected DocumentQueryRequest buildDocQueryRequest(List<Expression> expressions) {
-            var requestBuilder = DocumentQueryRequest.newBuilder()
-                    .setCollection(query.collection.toGrpcCollection());
-
-            expressions.forEach(e -> {
-                var exp = io.nitric.proto.document.v1.Expression.newBuilder()
-                        .setOperand(e.operand)
-                        .setOperator(e.operator)
-                        .setValue(e.toExpressionValue())
-                        .build();
-                requestBuilder.addExpressions(exp);
-            });
-
-            requestBuilder.setLimit(query.limit);
-
-            if (this.pagingToken != null) {
-                requestBuilder.putAllPagingToken(this.pagingToken);
-            }
-
-            return requestBuilder.build();
-        }
-
-        @SuppressWarnings({"unchecked"})
-        protected void loadPageData(DocumentQueryResponse response) {
-
-            // Marshall response data
-            queryData = new ArrayList<ResultDoc<T>>(response.getDocumentsCount());
-
-            var objectMapper = new ObjectMapper();
-
-            response.getDocumentsList().forEach(doc -> {
-                var key = Key.buildFromGrpcKey(doc.getKey());
-                var map = ProtoUtils.toMap(doc.getContent());
-
-                if (query.type.isAssignableFrom(map.getClass())) {
-                    queryData.add(new ResultDoc(key, map));
-
-                } else {
-                    var value = (T) objectMapper.convertValue(map, query.type);
-                    queryData.add(new ResultDoc(key, value));
-                }
-            });
-
-            this.pagingToken = response.getPagingTokenMap();
-        }
-    }
-
-    // Package Private Classes ------------------------------------------------
-
-    static class PagingIterator<T> implements Iterator<ResultDoc<T>> {
-
-        private QueryResults<T> queryResults;
-        private int index = 0;
-
-        public PagingIterator(QueryResults<T> queryResults) {
-            this.queryResults = queryResults;
-        }
-
-        @Override
-        public boolean hasNext() {
-
-            if (index < queryResults.queryData.size()) {
-                return true;
-
-            } else if (index == queryResults.queryData.size()) {
-
-                if (queryResults.pagingToken != null && !queryResults.pagingToken.isEmpty()) {
-                    index = 0;
-
-                    // Load next page of data
-                    var request = queryResults.buildDocQueryRequest(queryResults.query.expressions);
-
-                    DocumentQueryResponse response = null;
-                    try {
-                        response = Documents.getServiceStub().query(request);
-                    } catch (io.grpc.StatusRuntimeException sre) {
-                        throw ProtoUtils.mapGrpcError(sre);
-                    }
-
-                    queryResults.loadPageData(response);
-
-                    return queryResults.queryData.size() > 0;
-
-                } else {
-                    return false;
-                }
-
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public ResultDoc<T> next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Iterator has no more elements");
-            }
-            return queryResults.queryData.get(index++);
-        }
-    }
 
     static class Expression {
         final String operand;
