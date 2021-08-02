@@ -58,4 +58,12 @@ public class ResponseTest {
         assertTrue(grpcResponse.hasTopic());
         assertFalse(grpcResponse.getTopic().getSuccess());
     }
+
+    @Test public void test_toString() {
+        var trc = new TopicResponseContext();
+        trc.setSuccess(true);
+        var resp = new Response("test".getBytes(StandardCharsets.UTF_8), trc);
+
+        assertEquals(resp.toString(), "Response[context=TopicResponseContext[success=true], data=test]");
+    }
 }
