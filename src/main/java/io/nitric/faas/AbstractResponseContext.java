@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,6 +18,7 @@ package io.nitric.faas;
  * #L%
  */
 
+package io.nitric.faas;
 
 /**
  * <p>

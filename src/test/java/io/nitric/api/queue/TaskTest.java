@@ -1,5 +1,3 @@
-package io.nitric.api.queue;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,10 +18,15 @@ package io.nitric.api.queue;
  * #L%
  */
 
-import org.junit.Test;
+package io.nitric.api.queue;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class TaskTest {
 

@@ -1,5 +1,3 @@
-package io.nitric.api.queue;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,20 +18,30 @@ package io.nitric.api.queue;
  * #L%
  */
 
-import io.nitric.proto.queue.v1.FailedTask;
-import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;
-import io.nitric.proto.queue.v1.*;
-import io.nitric.util.ProtoUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+package io.nitric.api.queue;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import io.nitric.proto.queue.v1.FailedTask;
+import io.nitric.proto.queue.v1.NitricTask;
+import io.nitric.proto.queue.v1.QueueCompleteResponse;
+import io.nitric.proto.queue.v1.QueueReceiveResponse;
+import io.nitric.proto.queue.v1.QueueSendBatchResponse;
+import io.nitric.proto.queue.v1.QueueServiceGrpc;
+import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;
+import io.nitric.util.ProtoUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QueuesTest {

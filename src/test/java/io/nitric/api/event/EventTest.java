@@ -1,5 +1,3 @@
-package io.nitric.api.event;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,12 +18,13 @@ package io.nitric.api.event;
  * #L%
  */
 
-import org.junit.Test;
+package io.nitric.api.event;
 
+import static org.junit.Assert.*;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class EventTest {
 

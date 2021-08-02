@@ -1,8 +1,3 @@
-package io.nitric.faas;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,6 +17,10 @@ import java.util.Objects;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.faas;
+
+import java.nio.charset.StandardCharsets;
 
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.util.Contracts;

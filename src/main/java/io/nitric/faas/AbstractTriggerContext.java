@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.faas;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.faas;
 
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.util.Contracts;

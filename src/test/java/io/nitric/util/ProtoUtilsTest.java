@@ -1,5 +1,3 @@
-package io.nitric.util;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,15 +18,23 @@ package io.nitric.util;
  * #L%
  */
 
-import com.google.protobuf.Struct;
-import com.google.protobuf.Value;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import org.junit.Test;
+package io.nitric.util;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Value;
+
+import org.junit.Test;
+
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 public class ProtoUtilsTest {
 

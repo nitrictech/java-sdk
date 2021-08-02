@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,11 +18,13 @@ package io.nitric.faas;
  * #L%
  */
 
+package io.nitric.faas;
+
 import java.util.Map;
 
 /**
  * <p>
- *   Provides contextual metadata for a trigger raised by a HTTP request.
+ *  Provides contextual metadata for a trigger raised by a HTTP request.
  * </p>
  */
 public final class HttpTriggerContext extends AbstractTriggerContext {

@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.document;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.document;
 
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.proto.document.v1.DocumentServiceGrpc.DocumentServiceBlockingStub;

@@ -1,5 +1,3 @@
-package io.nitric.api.queue;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,11 +18,13 @@ package io.nitric.api.queue;
  * #L%
  */
 
+package io.nitric.api.queue;
+
 import java.util.Map;
 
-import io.nitric.util.ProtoUtils;
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
 import io.nitric.util.Contracts;
+import io.nitric.util.ProtoUtils;
 
 /**
  * <p>

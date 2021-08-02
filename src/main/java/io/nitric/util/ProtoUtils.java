@@ -1,5 +1,3 @@
-package io.nitric.util;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,18 +18,21 @@ package io.nitric.util;
  * #L%
  */
 
-import com.google.protobuf.ListValue;
-import com.google.protobuf.NullValue;
-import com.google.protobuf.Struct;
-import com.google.protobuf.Value;
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
+package io.nitric.util;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import com.google.protobuf.ListValue;
+import com.google.protobuf.NullValue;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Value;
+
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 /**
  * <p>

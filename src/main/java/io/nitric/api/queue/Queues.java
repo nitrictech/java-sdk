@@ -1,5 +1,3 @@
-package io.nitric.api.queue;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.api.queue;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.api.queue;
 
 import io.nitric.proto.queue.v1.QueueServiceGrpc;
 import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;

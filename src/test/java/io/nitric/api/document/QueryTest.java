@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,22 +18,26 @@ package io.nitric.api.document;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.nitric.api.document.model.Customer;
-import io.nitric.api.document.model.Order;
-import io.nitric.proto.document.v1.Document;
-import io.nitric.proto.document.v1.DocumentQueryResponse;
-import io.nitric.proto.document.v1.DocumentServiceGrpc;
-import io.nitric.util.ProtoUtils;
-import org.junit.Test;
-import org.mockito.Mockito;
+package io.nitric.api.document;
+
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import io.nitric.api.document.model.Customer;
+import io.nitric.api.document.model.Order;
+import io.nitric.proto.document.v1.Document;
+import io.nitric.proto.document.v1.DocumentQueryResponse;
+import io.nitric.proto.document.v1.DocumentServiceGrpc;
+import io.nitric.util.ProtoUtils;
 
 /**
  * Provide a query test case.

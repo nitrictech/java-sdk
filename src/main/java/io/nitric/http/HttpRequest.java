@@ -1,5 +1,3 @@
-package io.nitric.http;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -19,6 +17,8 @@ package io.nitric.http;
  * limitations under the License.
  * #L%
  */
+
+package io.nitric.http;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

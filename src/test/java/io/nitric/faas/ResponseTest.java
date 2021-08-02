@@ -1,5 +1,3 @@
-package io.nitric.faas;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,11 +18,15 @@ package io.nitric.faas;
  * #L%
  */
 
-import org.junit.Test;
+package io.nitric.faas;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ResponseTest {
 

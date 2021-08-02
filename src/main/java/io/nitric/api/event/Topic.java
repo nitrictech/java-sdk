@@ -1,7 +1,3 @@
-package io.nitric.api.event;
-
-import io.nitric.proto.event.v1.EventPublishRequest;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -22,6 +18,9 @@ import io.nitric.proto.event.v1.EventPublishRequest;
  * #L%
  */
 
+package io.nitric.api.event;
+
+import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 

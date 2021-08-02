@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,7 +18,19 @@ package io.nitric.api.document;
  * #L%
  */
 
+package io.nitric.api.document;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.Collections;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
 import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.Document;
@@ -29,14 +39,6 @@ import io.nitric.proto.document.v1.DocumentGetResponse;
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.proto.document.v1.DocumentSetResponse;
 import io.nitric.util.ProtoUtils;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import javax.print.Doc;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Provides CollectionDocRef test case.

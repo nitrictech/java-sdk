@@ -1,5 +1,3 @@
-package io.nitric.api.storage;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,23 +18,36 @@ package io.nitric.api.storage;
  * #L%
  */
 
+package io.nitric.api.storage;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import java.nio.charset.StandardCharsets;
+
 import com.google.protobuf.ByteString;
-import io.nitric.proto.storage.v1.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.nio.charset.StandardCharsets;
-
-import static org.junit.Assert.*;
+import io.nitric.proto.storage.v1.StorageDeleteRequest;
+import io.nitric.proto.storage.v1.StorageDeleteResponse;
+import io.nitric.proto.storage.v1.StorageReadRequest;
+import io.nitric.proto.storage.v1.StorageReadResponse;
+import io.nitric.proto.storage.v1.StorageServiceGrpc;
+import io.nitric.proto.storage.v1.StorageWriteRequest;
+import io.nitric.proto.storage.v1.StorageWriteResponse;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StorageTest {
 
     private static final String KNOWN_KEY = "123456";
     private static final String KNOWN_TEXT = "hello world";
-    private static final ByteString KNOWN_BS = ByteString.copyFrom(KNOWN_TEXT .getBytes(StandardCharsets.UTF_8));
+    private static final ByteString KNOWN_BS = ByteString.copyFrom(KNOWN_TEXT.getBytes(StandardCharsets.UTF_8));
 
     @Test
     public void test_serviceStub() {

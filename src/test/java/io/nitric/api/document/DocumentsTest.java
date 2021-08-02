@@ -1,5 +1,3 @@
-package io.nitric.api.document;
-
 /*-
  * #%L
  * Nitric Java SDK
@@ -20,15 +18,20 @@ package io.nitric.api.document;
  * #L%
  */
 
-import io.nitric.api.document.model.Customer;
-import io.nitric.api.document.model.Order;
-import io.nitric.proto.document.v1.DocumentServiceGrpc;
-import org.junit.Test;
-import org.mockito.Mockito;
+package io.nitric.api.document;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import io.nitric.api.document.model.Customer;
+import io.nitric.api.document.model.Order;
+import io.nitric.proto.document.v1.DocumentServiceGrpc;
 
 /**
  * Provides Documents test case.
