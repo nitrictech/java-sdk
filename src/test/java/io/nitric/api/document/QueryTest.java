@@ -23,6 +23,7 @@ package io.nitric.api.document;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -103,6 +104,16 @@ public class QueryTest {
         assertEquals(1.1, query.expressions.get(1).toExpressionValue().getDoubleValue(), 0.0000001);
         assertEquals(2, query.expressions.get(2).toExpressionValue().getIntValue());
         assertEquals(true, query.expressions.get(3).toExpressionValue().getBoolValue());
+
+        var exp = new Query.Expression("field", ">", 1);
+        assertEquals("Expression[operand=field, operator=>, value=1]", exp.toString());
+
+        try {
+            exp = new Query.Expression("field", "<>", Collections.emptyMap());
+            exp.toExpressionValue();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -197,6 +208,18 @@ public class QueryTest {
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
+
+        // Test 12 Values Result
+        Mockito.when(mock.query(Mockito.any())).thenReturn(
+                createQueryResponse()
+        );
+
+        query = newOrderQuery();
+        stream = query.limit(10).stream();
+
+        Mockito.verify(mock, Mockito.times(3)).query(Mockito.any());
+        assertNotNull(stream);
+        assertEquals(12, count.get());
     }
 
     @Test
@@ -207,6 +230,9 @@ public class QueryTest {
         query.where("sku", "==", "BYD EA-1");
         query.limit(100);
         query.pagingFrom(Map.of("page", "2"));
+
+        assertEquals("Query[collection=Collection[name=orders, parent=Key[collection=Collection[name=customers, parent=null], id=customers:123]], expressions=[Expression[operand=sku, operator===, value=BYD EA-1]], limit=100, pagingToken={page=2}, type=class io.nitric.api.document.model.Order]",
+                query.toString());
     }
 
     // Private Methods --------------------------------------------------------

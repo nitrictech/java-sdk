@@ -80,7 +80,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
             return queryData.iterator();
 
         } else {
-            return new PagingIterator<T>(this);
+            return new PagingIterator<>(this);
         }
     }
 
@@ -123,7 +123,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
     protected void loadPageData(DocumentQueryResponse response) {
 
         // Marshall response data
-        queryData = new ArrayList<ResultDoc<T>>(response.getDocumentsCount());
+        queryData = new ArrayList<>(response.getDocumentsCount());
 
         var objectMapper = new ObjectMapper();
 
@@ -135,8 +135,8 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
                 queryData.add(new ResultDoc(key, map));
 
             } else {
-                var value = (T) objectMapper.convertValue(map, query.type);
-                queryData.add(new ResultDoc(key, value));
+                var value = objectMapper.convertValue(map, query.type);
+                queryData.add(new ResultDoc<T>(key, value));
             }
         });
 
