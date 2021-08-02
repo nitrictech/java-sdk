@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -619,6 +620,9 @@ public class Query<T> {
 
         @Override
         public ResultDoc<T> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("Iterator has no more elements");
+            }
             return queryResults.queryData.get(index++);
         }
     }

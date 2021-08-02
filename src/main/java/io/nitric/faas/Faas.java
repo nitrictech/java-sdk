@@ -22,6 +22,8 @@ package io.nitric.faas;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import io.grpc.stub.StreamObserver;
 import io.nitric.proto.faas.v1.ClientMessage;
@@ -64,6 +66,8 @@ import io.nitric.util.GrpcChannelProvider;
  * @see NitricFunction
  */
 public class Faas {
+
+    private static final Logger LOGGER = Logger.getLogger("Faas");
 
     private FaasServiceGrpc.FaasServiceStub stub = null;
 
@@ -110,11 +114,12 @@ public class Faas {
 
         try {
             finishedLatch.await();
-        } catch (Throwable error) {
+        } catch (InterruptedException e) {
             System.err.printf("Stream was prematurely terminated for function: %s, error: %s \n",
                               function.getClass().getSimpleName(),
-                              error);
-
+                              e);
+            // Restore thread interrupted state
+            Thread.currentThread().interrupt();
         } finally {
             // Always ensure the client stream is closed
             observer.onCompleted();
@@ -192,10 +197,15 @@ public class Faas {
                                         .setTriggerResponse(grpcResponse)
                                         .build());
                     } catch (Throwable error) {
-                        System.err.printf("onNext() error occurred handling trigger %s with function: %s \n",
-                                          trigger,
-                                          function.getClass().getName());
-                        error.printStackTrace();
+                        LOGGER.log(
+                                Level.SEVERE,
+                                String.format(
+                                        "onNext() error occurred handling trigger %s with function: %s",
+                                        trigger,
+                                        function.getClass().getName()
+                                ),
+                                error
+                        );
                     }
                     break;
                 default:
@@ -208,11 +218,14 @@ public class Faas {
 
         @Override
         public void onError(Throwable error) {
-            // We may want to exit when the membrane server indicates an error...
-            System.err.printf("onError() occurred with function: %s, error: %s \n",
-                              function.getClass().getName(),
-                              error);
-            error.printStackTrace();
+            LOGGER.log(
+                    Level.SEVERE,
+                    String.format(
+                            "onError() occurred with function: %s",
+                            function.getClass().getName()
+                    ),
+                    error
+            );
         }
 
         @Override

@@ -20,26 +20,24 @@
 
 package io.nitric.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Map;
 
+import com.google.protobuf.NullValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 
+import io.grpc.Metadata;
 import org.junit.Test;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
+import static org.junit.Assert.*;
+
 public class ProtoUtilsTest {
 
     @Test
-    public void test_mapGrpcError() {
+    public void test_mapGrpcError_null() {
         var re1= ProtoUtils.mapGrpcError(null);
         assertNotNull(re1);
         assertTrue(re1 instanceof NullPointerException);
@@ -51,6 +49,28 @@ public class ProtoUtilsTest {
         var re3 = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INTERNAL, null));
         assertNotNull(re3);
         assertFalse(re3 instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void test_mapGrpcError_INVALID_ARGUMENT() {
+        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT, null));
+        assertNotNull(e);
+        assertTrue(e instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void test_mapGrpcError_INVALID_ARGUMENT_with_description() {
+        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription("test"), null));
+        assertNotNull(e);
+        assertEquals(e.getMessage(), "test");
+        assertTrue(e instanceof IllegalArgumentException);
+    }
+
+    @Test
+    public void test_mapGrpcError_INTERNAL() {
+        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INTERNAL, null));
+        assertNotNull(e);
+        assertFalse(e instanceof IllegalArgumentException);
     }
 
     @Test
@@ -86,6 +106,46 @@ public class ProtoUtilsTest {
 
         } catch (IllegalArgumentException iae) {
         }
+    }
+
+    @Test
+    public void test_getScalarValue_bool() {
+        var origVal = Value.newBuilder()
+                .setBoolValue(true)
+                .build();
+        var val = ProtoUtils.getScalarValue(origVal);
+
+        assertEquals(val, origVal.getBoolValue());
+    }
+
+    @Test
+    public void test_getScalarValue_number() {
+        var origVal = Value.newBuilder()
+                .setNumberValue(100)
+                .build();
+        var val = ProtoUtils.getScalarValue(origVal);
+
+        assertEquals(val, origVal.getNumberValue());
+    }
+
+    @Test
+    public void test_getScalarValue_string() {
+        var origVal = Value.newBuilder()
+                .setStringValue("test")
+                .build();
+        var val = ProtoUtils.getScalarValue(origVal);
+
+        assertEquals(val, origVal.getStringValue());
+    }
+
+    @Test
+    public void test_getScalarValue_null() {
+        var origVal = Value.newBuilder()
+                .setNullValue(NullValue.NULL_VALUE)
+                .build();
+        var val = ProtoUtils.getScalarValue(origVal);
+
+        assertNull(val);
     }
 
 }
