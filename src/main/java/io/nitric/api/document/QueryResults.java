@@ -177,7 +177,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
 
                     queryResults.loadPageData(response);
 
-                    return queryResults.queryData.size() > 0;
+                    return !queryResults.queryData.isEmpty();
 
                 } else {
                     return false;

@@ -12,7 +12,7 @@
 # Nitric Java SDK
 The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) framework with Java 11.
 
-> The SDK is available as early access and interfaces may still subject to breaking changes.
+> The SDK is available as early access and interfaces may still be subject to breaking changes.
 
 ## Prerequisites
 - OpenJDK 11+
