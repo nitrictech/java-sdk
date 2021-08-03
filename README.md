@@ -11,7 +11,8 @@
 
 # Nitric Java SDK
 The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) framework with Java 11.
-> The SDK is in early stage development and APIs and interfaces are still subject to breaking changes
+
+> The SDK is available as early access and interfaces may still be subject to breaking changes.
 
 ## Prerequisites
 - OpenJDK 11+
@@ -23,9 +24,9 @@ The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) 
 ```bash
 nitric make:project example
  ? Include an example service? function/java11
- ? Name for the example service? hello-world
+ ? Name for the example service?
  ✔ Making Project getting-started
- ✔ Making Service hello-world
+ ✔ Making Service example
 ```
 
 ### Adding to an existing project
@@ -34,7 +35,7 @@ nitric make:project example
 <dependency>
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>0.5.0</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 

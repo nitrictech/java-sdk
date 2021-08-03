@@ -23,9 +23,11 @@ package io.nitric.api.document;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,8 +45,6 @@ import io.nitric.util.ProtoUtils;
  * Provide a query test case.
  */
 public class QueryTest {
-
-    final AtomicInteger fetchAllCount = new AtomicInteger();
 
     @Test
     public void test_where() {
@@ -104,6 +104,16 @@ public class QueryTest {
         assertEquals(1.1, query.expressions.get(1).toExpressionValue().getDoubleValue(), 0.0000001);
         assertEquals(2, query.expressions.get(2).toExpressionValue().getIntValue());
         assertEquals(true, query.expressions.get(3).toExpressionValue().getBoolValue());
+
+        var exp = new Query.Expression("field", ">", 1);
+        assertEquals("Expression[operand=field, operator=>, value=1]", exp.toString());
+
+        exp = new Query.Expression("field", "<>", Collections.emptyMap());
+        try {
+            exp.toExpressionValue();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -142,9 +152,9 @@ public class QueryTest {
         assertNull(result.getPagingToken());
         assertFalse(result.iterator().hasNext());
 
-        // Test 12 Values Result
+        // Test 12 POJO Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createFetchResponse()
+                createOrdersQueryResponse()
         );
 
         query = newOrderQuery();
@@ -156,14 +166,54 @@ public class QueryTest {
         assertTrue(result.iterator().hasNext());
 
         final var count = new AtomicInteger();
-        result.forEach(order -> {
+        result.forEach(doc -> {
+            assertTrue(doc.getContent() instanceof  Order);
+            assertNotNull(doc.getKey());
             count.incrementAndGet();
         });
         assertEquals(12, count.get());
+
+        // Test 12 Map Values Result
+        Mockito.when(mock.query(Mockito.any())).thenReturn(
+                createCustomersQueryResponse()
+        );
+
+        var customerResults = Documents.collection("customer").query().fetch();
+
+        Mockito.verify(mock, Mockito.times(3)).query(Mockito.any());
+        assertNotNull(customerResults);
+        assertNotNull(customerResults.getPagingToken());
+        assertTrue(customerResults.iterator().hasNext());
+
+        final var count2 = new AtomicInteger();
+        customerResults.forEach(doc -> {
+            assertTrue(Map.class.isAssignableFrom(doc.getContent().getClass()));
+            assertNotNull(doc.getKey());
+            count2.incrementAndGet();
+        });
+        assertEquals(12, count2.get());
+
+        // Test Paged Query
+        var pagingToken = Map.of("page", "2");
+        customerResults = Documents.collection("customer")
+                .query()
+                .pagingFrom(pagingToken)
+                .fetch();
+
+        Mockito.verify(mock, Mockito.times(4)).query(Mockito.any());
+        assertNotNull(customerResults);
+        assertNotNull(customerResults.getPagingToken());
+        assertTrue(customerResults.iterator().hasNext());
+
+        final var count3 = new AtomicInteger();
+        customerResults.forEach(doc -> {
+            count3.incrementAndGet();
+        });
+        assertEquals(12, count3.get());
     }
 
     @Test
-    public void test_fetchAll() {
+    public void test_stream() {
         // Test Empty Result
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.query(Mockito.any())).thenReturn(
@@ -172,33 +222,41 @@ public class QueryTest {
         Documents.setServiceStub(mock);
 
         var query = newOrderQuery();
-        var result = query.fetchAll();
+        Stream<ResultDoc<Order>> stream = query.stream();
 
         Mockito.verify(mock, Mockito.times(1)).query(Mockito.any());
-        assertNotNull(result);
-        assertNull(result.getPagingToken());
-        assertFalse(result.iterator().hasNext());
-
-        final var callCount = new AtomicInteger();
+        assertNotNull(stream);
+        assertEquals(0, stream.count());
 
         // Test 12 Values Result
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                createFetchAllResponse()
+                createOrdersQueryResponse()
         );
 
         query = newOrderQuery();
-        result = query.fetchAll();
+        stream = query.stream();
 
         Mockito.verify(mock, Mockito.times(2)).query(Mockito.any());
-        assertNotNull(result);
-        assertNull(result.getPagingToken());
-        assertTrue(result.iterator().hasNext());
+        assertNotNull(stream);
 
         final var count = new AtomicInteger();
-        result.forEach(doc -> {
-            var order = doc.getContent();
+        stream.forEach(doc -> {
+            assertNotNull(doc.getContent());
+            assertNotNull(doc.getKey());
             count.incrementAndGet();
         });
+        assertEquals(12, count.get());
+
+        // Test 12 Values Result
+        Mockito.when(mock.query(Mockito.any())).thenReturn(
+                createOrdersQueryResponse()
+        );
+
+        query = newOrderQuery();
+        stream = query.limit(10).stream();
+
+        Mockito.verify(mock, Mockito.times(3)).query(Mockito.any());
+        assertNotNull(stream);
         assertEquals(12, count.get());
     }
 
@@ -210,11 +268,49 @@ public class QueryTest {
         query.where("sku", "==", "BYD EA-1");
         query.limit(100);
         query.pagingFrom(Map.of("page", "2"));
+
+        assertEquals("Query[collection=Collection[name=orders, parent=Key[collection=Collection[name=customers, parent=null], id=customers:123]], expressions=[Expression[operand=sku, operator===, value=BYD EA-1]], limit=100, pagingToken={page=2}, type=class io.nitric.api.document.model.Order]",
+                query.toString());
     }
 
     // Private Methods --------------------------------------------------------
 
+    private List<Document> newCustomers() {
+        List<Map> customers = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            var content = Map.of("id", String.valueOf(i));
+            customers.add(content);
+        }
+
+        var collection = io.nitric.proto.document.v1.Collection
+                .newBuilder()
+                .setName("customers")
+                .build();
+
+        List<Document> results = new ArrayList<>();
+
+        var objectMapper = new ObjectMapper();
+        customers.forEach(customer -> {
+
+            var key = io.nitric.proto.document.v1.Key
+                    .newBuilder()
+                    .setId(customer.get("id").toString())
+                    .setCollection(collection)
+                    .build();
+
+            var contentStruct = ProtoUtils.toStruct(customer);
+            var document = Document.newBuilder()
+                    .setKey(key)
+                    .setContent(contentStruct)
+                    .build();
+            results.add(document);
+        });
+
+        return results;
+    }
+
     private List<Document> newOrders() {
+
         List<Order> orders = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
             var order = new Order();
@@ -266,20 +362,19 @@ public class QueryTest {
         var collection = new Collection("orders", parentKey);
         var query = new Query<Order>(collection, Order.class);
         query.where("sku", "==", "BYD EA-1");
-        query.limit(100);
 
         return query;
     }
 
-    private DocumentQueryResponse createFetchResponse() {
+    private DocumentQueryResponse createOrdersQueryResponse() {
         return DocumentQueryResponse.newBuilder().addAllDocuments(newOrders()).build();
     }
 
-    private DocumentQueryResponse createFetchAllResponse() {
-        if (fetchAllCount.getAndIncrement() == 0) {
-            return DocumentQueryResponse.newBuilder().addAllDocuments(newOrders()).build();
-        } else {
-            return DocumentQueryResponse.newBuilder().build();
-        }
+    private DocumentQueryResponse createCustomersQueryResponse() {
+        return DocumentQueryResponse.newBuilder()
+                .addAllDocuments(newCustomers())
+                .putAllPagingToken(Map.of("page", "0"))
+                .build();
     }
+
 }

@@ -39,7 +39,7 @@ import io.nitric.util.GrpcChannelProvider;
  * </p>
  *
  * <p>
- *  The example below starts a new <code>Faas</code> server with the <code>HelloWorld</code> function.
+ *  The example below starts a new <code>Faas</code> server with the <code>Handler</code> function.
  * </p>
  *
  * <pre><code class="code">
