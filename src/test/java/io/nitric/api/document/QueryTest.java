@@ -108,8 +108,8 @@ public class QueryTest {
         var exp = new Query.Expression("field", ">", 1);
         assertEquals("Expression[operand=field, operator=>, value=1]", exp.toString());
 
+        exp = new Query.Expression("field", "<>", Collections.emptyMap());
         try {
-            exp = new Query.Expression("field", "<>", Collections.emptyMap());
             exp.toExpressionValue();
             fail();
         } catch (IllegalArgumentException iae) {
