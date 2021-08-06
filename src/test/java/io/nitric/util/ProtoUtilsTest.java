@@ -26,7 +26,6 @@ import com.google.protobuf.NullValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 
-import io.grpc.Metadata;
 import org.junit.Test;
 
 import io.grpc.Status;

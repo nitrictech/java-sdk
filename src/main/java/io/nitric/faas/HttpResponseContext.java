@@ -32,8 +32,8 @@ import java.util.Map;
  */
 public class HttpResponseContext extends AbstractResponseContext {
 
-    public int status = 200;
-    public Map<String, String> headers = new HashMap<>();
+    private int status = 200;
+    private Map<String, String> headers = new HashMap<>();
 
     /**
      * @return The HTTP Response status for this context

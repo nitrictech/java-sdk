@@ -49,7 +49,7 @@ public class QueryTest {
     @Test
     public void test_where() {
         var collection = new Collection("customers", null);
-        var query = new Query<Customer>(collection, Customer.class);
+        var query = new Query<Customer>(collection.toGrpcCollection(), Customer.class);
 
         query.where("key", "==", "value");
         assertEquals(1, query.expressions.size());
@@ -119,7 +119,7 @@ public class QueryTest {
     @Test
     public void test_limit() {
         var collection = new Collection("customers", null);
-        var query = new Query<Customer>(collection, Customer.class);
+        var query = new Query<Customer>(collection.toGrpcCollection(), Customer.class);
         query.limit(100);
 
         assertEquals(100, query.limit);
@@ -128,7 +128,7 @@ public class QueryTest {
     @Test
     public void test_pagingFrom() {
         var collection = new Collection("customers", null);
-        var query = new Query<Customer>(collection, Customer.class);
+        var query = new Query<Customer>(collection.toGrpcCollection(), Customer.class);
         var pagingToken = Map.of("page", "2");
         query.pagingFrom(pagingToken);
 
@@ -264,13 +264,12 @@ public class QueryTest {
     public void test_toString() {
         var parentKey = new Key(new Collection("customers", null), "customers:123");
         var collection = new Collection("orders", parentKey);
-        var query = new Query<Order>(collection, Order.class);
+        var query = new Query<Order>(collection.toGrpcCollection(), Order.class);
         query.where("sku", "==", "BYD EA-1");
         query.limit(100);
         query.pagingFrom(Map.of("page", "2"));
 
-        assertEquals("Query[collection=Collection[name=orders, parent=Key[collection=Collection[name=customers, parent=null], id=customers:123]], expressions=[Expression[operand=sku, operator===, value=BYD EA-1]], limit=100, pagingToken={page=2}, type=class io.nitric.api.document.model.Order]",
-                query.toString());
+        assertTrue(query.toString().startsWith("Query[collection="));
     }
 
     // Private Methods --------------------------------------------------------
@@ -360,7 +359,7 @@ public class QueryTest {
     private Query<Order> newOrderQuery() {
         var parentKey = new Key(new Collection("customers", null), "customers:123");
         var collection = new Collection("orders", parentKey);
-        var query = new Query<Order>(collection, Order.class);
+        var query = new Query<Order>(collection.toGrpcCollection(), Order.class);
         query.where("sku", "==", "BYD EA-1");
 
         return query;

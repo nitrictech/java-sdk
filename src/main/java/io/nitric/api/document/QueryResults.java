@@ -98,7 +98,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
 
     protected DocumentQueryRequest buildDocQueryRequest(List<Query.Expression> expressions) {
         var requestBuilder = DocumentQueryRequest.newBuilder()
-                .setCollection(query.collection.toGrpcCollection());
+                .setCollection(query.collection);
 
         expressions.forEach(e -> {
             var exp = io.nitric.proto.document.v1.Expression.newBuilder()

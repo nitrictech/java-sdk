@@ -35,7 +35,7 @@ nitric make:project example
 <dependency>
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
 </dependency>
 ```
 

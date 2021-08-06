@@ -157,6 +157,14 @@ public class Documents {
 
     static DocumentServiceBlockingStub serviceStub;
 
+    // Constructor ------------------------------------------------------------
+
+    /*
+     * Enforce package builder patterns.
+     */
+    private Documents() {
+    }
+
     // Public Methods ---------------------------------------------------------
 
     /**
