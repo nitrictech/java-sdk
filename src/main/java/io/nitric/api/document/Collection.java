@@ -55,10 +55,7 @@ import io.nitric.util.Contracts;
  * customers.doc("anne.smith@example.com").delete();
  * </code></pre>
  */
-public class Collection {
-
-    final String name;
-    final Key parent;
+public class Collection extends AbstractCollection {
 
     // Constructor ------------------------------------------------------------
 
@@ -66,31 +63,10 @@ public class Collection {
      * Enforce package builder patterns.
      */
     Collection(String name, Key parent) {
-        Contracts.requireNonBlank(name, "name");
-
-        this.name = name;
-        this.parent = parent;
+        super(name, parent);
     }
 
     // Public Methods ---------------------------------------------------------
-
-    /**
-     * Return the collection name.
-     *
-     * @return the collection name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Return the collection parent key.
-     *
-     * @return the collection parent key
-     */
-    public Key getParent() {
-        return parent;
-    }
 
     /**
      * Create a new collection Document Reference object for given document id and <code>Map</code> value type.
@@ -128,27 +104,6 @@ public class Collection {
     }
 
     /**
-     * Create a new collection query object with the <code>Map</code> value type.
-     *
-     * @return a new collection query object
-     */
-    public Query<Map> query() {
-        return new Query<Map>(toGrpcCollection(), Map.class);
-    }
-
-    /**
-     * Create a new collection query object with the given value type.
-     *
-     * @param type the query value type (required)
-     * @return a new collection query object
-     */
-    public <T> Query<T> query(Class<T> type) {
-        Contracts.requireNonNull(type, "type");
-
-        return new Query<T>(toGrpcCollection(), type);
-    }
-
-    /**
      * Create a new sub collection query group for this collection.
      *
      * @param name the name of the sub collection (required)
@@ -176,29 +131,6 @@ public class Collection {
     }
 
     // Package Private Methods ------------------------------------------------
-
-    io.nitric.proto.document.v1.Collection toGrpcCollection() {
-        var builder = io.nitric.proto.document.v1.Collection
-            .newBuilder()
-            .setName(name);
-
-        if (parent != null) {
-            var parentCol = io.nitric.proto.document.v1.Collection
-                .newBuilder()
-                .setName(parent.collection.name)
-                .build();
-
-            var parentKey = io.nitric.proto.document.v1.Key
-                .newBuilder()
-                .setId(parent.id)
-                .setCollection(parentCol)
-                .build();
-
-            builder.setParent(parentKey);
-        }
-
-        return builder.build();
-    }
 
     UnsupportedOperationException newUnsupportedSubCollOperation(String prefix) {
 

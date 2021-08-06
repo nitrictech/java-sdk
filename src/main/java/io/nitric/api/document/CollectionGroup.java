@@ -20,13 +20,9 @@
 
 package io.nitric.api.document;
 
-import io.nitric.util.Contracts;
-
-import java.util.Map;
-
 /**
  * <p>
- *  Provides a query sub collection group class.
+ *  Provides a query sub CollectionGroup class.
  * </p>
  *
  * <p>
@@ -51,97 +47,13 @@ import java.util.Map;
  *  });
  * </code></pre>
  */
-public class CollectionGroup {
-
-    final String name;
-    final Key parent;
-
-    // Constructor ------------------------------------------------------------
+public class CollectionGroup extends AbstractCollection {
 
     /*
      * Enforce package builder patterns.
      */
     CollectionGroup(String name, Key parent) {
-        Contracts.requireNonBlank(name, "name");
-
-        this.name = name;
-        this.parent = parent;
-    }
-
-    // Public Methods ---------------------------------------------------------
-
-    /**
-     * Return the sub collection name.
-     *
-     * @return the sub collection name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Return the sub collection parent key.
-     *
-     * @return the sub collection parent key
-     */
-    public Key getParent() {
-        return parent;
-    }
-
-    /**
-     * Create a new sub collection group query object with the <code>Map</code> value type.
-     *
-     * @return a new sub collection group query object
-     */
-    public Query<Map> query() {
-        return new Query<Map>(toGrpcCollection(), Map.class);
-    }
-
-    /**
-     * Create a new sub collection query object with the given value type.
-     *
-     * @param type the query value type (required)
-     * @return a new sub collection group query object
-     */
-    public <T> Query<T> query(Class<T> type) {
-        Contracts.requireNonNull(type, "type");
-
-        return new Query<T>(toGrpcCollection(), type);
-    }
-
-    /**
-     * Return this string representation of this object.
-     *
-     * @return the string representation of this object
-     */
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[name=" + name + ", parent=" + parent + "]";
-    }
-
-    // Package Private Methods ------------------------------------------------
-
-    io.nitric.proto.document.v1.Collection toGrpcCollection() {
-        var builder = io.nitric.proto.document.v1.Collection
-                .newBuilder()
-                .setName(name);
-
-        if (parent != null) {
-            var parentCol = io.nitric.proto.document.v1.Collection
-                    .newBuilder()
-                    .setName(parent.collection.name)
-                    .build();
-
-            var parentKey = io.nitric.proto.document.v1.Key
-                    .newBuilder()
-                    .setId(parent.id)
-                    .setCollection(parentCol)
-                    .build();
-
-            builder.setParent(parentKey);
-        }
-
-        return builder.build();
+        super(name, parent);
     }
 
 }
