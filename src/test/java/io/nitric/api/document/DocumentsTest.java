@@ -22,7 +22,6 @@ package io.nitric.api.document;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.Map;
 
@@ -78,13 +77,13 @@ public class DocumentsTest {
                 .query();
 
         assertEquals(Map.class, mapQuery.type);
-        assertEquals("customers", mapQuery.collection.name);
+        assertEquals("customers", mapQuery.collection.getName());
 
         var custQuery = Documents.collection("customers")
                 .query(Customer.class);
 
         assertEquals(Customer.class, custQuery.type);
-        assertEquals("customers", custQuery.collection.name);
+        assertEquals("customers", custQuery.collection.getName());
     }
 
     @Test
@@ -102,18 +101,18 @@ public class DocumentsTest {
                 .doc("customers:id")
                 .query("orders");
 
-        assertEquals("customers", mapQuery.collection.parent.collection.name);
-        assertEquals("customers:id", mapQuery.collection.parent.id);
-        assertEquals("orders", mapQuery.collection.name);
+        assertEquals("customers", mapQuery.collection.getParent().getCollection().getName());
+        assertEquals("customers:id", mapQuery.collection.getParent().getId());
+        assertEquals("orders", mapQuery.collection.getName());
         assertEquals(Map.class, mapQuery.type);
 
         var orderQuery = Documents.collection("customers")
                 .doc("customers:id")
                 .query("orders", Order.class);
 
-        assertEquals("customers", orderQuery.collection.parent.collection.name);
-        assertEquals("customers:id", orderQuery.collection.parent.id);
-        assertEquals("orders", orderQuery.collection.name);
+        assertEquals("customers", orderQuery.collection.getParent().getCollection().getName());
+        assertEquals("customers:id", orderQuery.collection.getParent().getId());
+        assertEquals("orders", orderQuery.collection.getName());
         assertEquals(Order.class, orderQuery.type);
     }
 
@@ -137,42 +136,21 @@ public class DocumentsTest {
     }
 
     @Test
-    public void test_collection_collection_doc() {
-        try {
-            var mapDoc = Documents.collection("customers")
-                    .collection("orders")
-                    .doc("38234");
-            fail();
-
-        } catch (UnsupportedOperationException uae) {
-        }
-
-        try {
-            var mapDoc = Documents.collection("customers")
-                    .collection("orders")
-                    .doc("38234", Order.class);
-            fail();
-
-        } catch (UnsupportedOperationException uae) {
-        }
-    }
-
-    @Test
     public void test_collection_collection_query() {
         var mapQuery = Documents.collection("customers")
                 .collection("orders")
                 .query();
 
-        assertEquals("customers", mapQuery.collection.parent.collection.name);
-        assertEquals("orders", mapQuery.collection.name);
+        assertEquals("customers", mapQuery.collection.getParent().getCollection().getName());
+        assertEquals("orders", mapQuery.collection.getName());
         assertEquals(Map.class, mapQuery.type);
 
         var orderQuery = Documents.collection("customers")
                 .collection("orders")
                 .query(Order.class);
 
-        assertEquals("customers", orderQuery.collection.parent.collection.name);
-        assertEquals("orders", orderQuery.collection.name);
+        assertEquals("customers", orderQuery.collection.getParent().getCollection().getName());
+        assertEquals("orders", orderQuery.collection.getName());
         assertEquals(Order.class, orderQuery.type);
     }
 
@@ -208,9 +186,9 @@ public class DocumentsTest {
                 .collection("orders")
                 .query();
 
-        assertEquals("customers", mapQuery.collection.parent.collection.name);
-        assertEquals("customers:id", mapQuery.collection.parent.id);
-        assertEquals("orders", mapQuery.collection.name);
+        assertEquals("customers", mapQuery.collection.getParent().getCollection().getName());
+        assertEquals("customers:id", mapQuery.collection.getParent().getId());
+        assertEquals("orders", mapQuery.collection.getName());
         assertEquals(Map.class, mapQuery.type);
 
         var orderQuery = Documents.collection("customers")
@@ -218,32 +196,10 @@ public class DocumentsTest {
                 .collection("orders")
                 .query(Order.class);
 
-        assertEquals("customers", orderQuery.collection.parent.collection.name);
-        assertEquals("customers:id", orderQuery.collection.parent.id);
-        assertEquals("orders", orderQuery.collection.name);
+        assertEquals("customers", orderQuery.collection.getParent().getCollection().getName());
+        assertEquals("customers:id", orderQuery.collection.getParent().getId());
+        assertEquals("orders", orderQuery.collection.getName());
         assertEquals(Order.class, orderQuery.type);
-    }
-
-    @Test
-    public void test_collection_collection_collection() {
-        try {
-            Documents.collection("customers")
-                    .collection("orders")
-                    .collection("items");
-            fail();
-
-        } catch (UnsupportedOperationException uoe) {
-        }
-
-        try {
-            Documents.collection("customers")
-                    .doc("123")
-                    .collection("orders")
-                    .collection("items");
-            fail();
-
-        } catch (UnsupportedOperationException uoe) {
-        }
     }
 
 }

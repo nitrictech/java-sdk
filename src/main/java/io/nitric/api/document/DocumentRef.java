@@ -176,8 +176,8 @@ public class DocumentRef<T> {
             throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
         }
 
-        var subColl = new Collection(name, key);
-        return new Query<Map>(subColl, Map.class);
+        var collectionGroup = new CollectionGroup(name, key);
+        return new Query<Map>(collectionGroup.toGrpcCollection(), Map.class);
     }
 
     /**
@@ -195,8 +195,8 @@ public class DocumentRef<T> {
             throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
         }
 
-        var subColl = new Collection(name, key);
-        return new Query<K>(subColl, type);
+        var collectionGroup = new CollectionGroup(name, key);
+        return new Query<K>(collectionGroup.toGrpcCollection(), type);
     }
 
     /**

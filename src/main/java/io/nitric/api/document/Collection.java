@@ -133,7 +133,7 @@ public class Collection {
      * @return a new collection query object
      */
     public Query<Map> query() {
-        return new Query<Map>(this, Map.class);
+        return new Query<Map>(toGrpcCollection(), Map.class);
     }
 
     /**
@@ -145,16 +145,16 @@ public class Collection {
     public <T> Query<T> query(Class<T> type) {
         Contracts.requireNonNull(type, "type");
 
-        return new Query<T>(this, type);
+        return new Query<T>(toGrpcCollection(), type);
     }
 
     /**
-     * Create a new sub collection for this top level collection.
+     * Create a new sub collection query group for this collection.
      *
      * @param name the name of the sub collection (required)
-     * @return a new sub collection for the parent collection
+     * @return a new sub collection query group for the parent collection
      */
-    public Collection collection(String name) {
+    public CollectionGroup collection(String name) {
         Contracts.requireNonBlank(name, "name");
 
         if (parent != null) {
@@ -162,7 +162,7 @@ public class Collection {
         }
 
         var parentKey = new Key(this, "");
-        return new Collection(name, parentKey);
+        return new CollectionGroup(name, parentKey);
     }
 
     /**

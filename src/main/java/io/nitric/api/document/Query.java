@@ -20,6 +20,7 @@
 
 package io.nitric.api.document;
 
+import io.nitric.proto.document.v1.Collection;
 import io.nitric.proto.document.v1.ExpressionValue;
 import io.nitric.util.Contracts;
 
@@ -237,7 +238,7 @@ import java.util.stream.StreamSupport;
  */
 public class Query<T> {
 
-    final Collection collection;
+    final io.nitric.proto.document.v1.Collection collection;
     final List<Expression> expressions = new ArrayList<Expression>();
     int limit;
     Map<String, String> pagingToken;
