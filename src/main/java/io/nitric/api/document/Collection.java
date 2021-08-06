@@ -77,10 +77,6 @@ public class Collection extends AbstractCollection {
     public DocumentRef<Map> doc(String id) {
         Contracts.requireNonBlank(id, "id");
 
-        if (parent != null && parent.id.isBlank()) {
-            throw newMissingParentException(id);
-        }
-
         var key = new Key(this, id);
         return new DocumentRef<Map>(key, Map.class);
     }
@@ -95,10 +91,6 @@ public class Collection extends AbstractCollection {
     public <T> DocumentRef<T> doc(String id, Class<T> type) {
         Contracts.requireNonBlank(id, "id");
 
-        if (parent != null && parent.id.isBlank()) {
-            throw newMissingParentException(id);
-        }
-
         var key = new Key(this, id);
         return new DocumentRef<T>(key, type);
     }
@@ -112,52 +104,8 @@ public class Collection extends AbstractCollection {
     public CollectionGroup collection(String name) {
         Contracts.requireNonBlank(name, "name");
 
-        if (parent != null) {
-            throw newUnsupportedSubCollOperation("Max collection depth 1 exceeded");
-        }
-
         var parentKey = new Key(this, "");
         return new CollectionGroup(name, parentKey);
     }
 
-    /**
-     * Return this string representation of this object.
-     *
-     * @return the string representation of this object
-     */
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[name=" + name + ", parent=" + parent + "]";
-    }
-
-    // Package Private Methods ------------------------------------------------
-
-    UnsupportedOperationException newUnsupportedSubCollOperation(String prefix) {
-
-        var builder = new StringBuilder().append(prefix)
-            .append(": [")
-            .append(parent.collection.name);
-
-        if (!parent.id.isBlank()) {
-            builder.append(":").append(parent.id);
-        }
-        builder.append("]/[").append(name).append("]");
-
-        return new UnsupportedOperationException(builder.toString());
-    }
-
-    UnsupportedOperationException newMissingParentException(String id) {
-
-        var msg = String.format(
-                "parent document id not defined: %s:<unknown>/%s:%s \n\n"
-                        + "Did you mean: Documents.collection(\"%s\").doc(id).subCollection(\"%s\").doc(\"%s\")\n",
-                parent.collection.name,
-                name,
-                id,
-                name,
-                parent.collection.name,
-                id);
-
-        throw new UnsupportedOperationException(msg);
-    }
 }

@@ -20,10 +20,6 @@
 
 package io.nitric.api.document;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.util.Map;
 
 import org.junit.Test;
@@ -32,6 +28,8 @@ import org.mockito.Mockito;
 import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
+
+import static org.junit.Assert.*;
 
 /**
  * Provides Documents test case.
@@ -54,6 +52,8 @@ public class DocumentsTest {
 
         assertEquals("customers", mapColl.getName());
         assertNull(mapColl.getParent());
+
+        assertEquals("Collection[name=customers, parent=null]", mapColl.toString());
     }
 
     @Test
@@ -202,6 +202,29 @@ public class DocumentsTest {
         assertEquals("customers:id", orderQuery.collection.getParent().getId());
         assertEquals("orders", orderQuery.collection.getName());
         assertEquals(Order.class, orderQuery.type);
+    }
+
+    @Test
+    public void test_collection_doc_collection_doc_query() {
+
+        var orderDoc = Documents.collection("customers")
+                .doc("customers:id")
+                .collection("orders")
+                .doc("orders:id", Order.class);
+
+        try {
+            orderDoc.query("payments");
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            assertTrue(iae.getMessage().startsWith("Max collection depth 1 exceeded"));
+        }
+
+        try {
+            orderDoc.query("payments", Map.class);
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            assertTrue(iae.getMessage().startsWith("Max collection depth 1 exceeded"));
+        }
     }
 
 }
