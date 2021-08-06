@@ -239,7 +239,7 @@ import java.util.stream.StreamSupport;
 public class Query<T> {
 
     final io.nitric.proto.document.v1.Collection collection;
-    final List<Expression> expressions = new ArrayList<Expression>();
+    final List<Expression> expressions = new ArrayList<>();
     int limit;
     Map<String, String> pagingToken;
     final Class<T> type;
@@ -389,7 +389,7 @@ public class Query<T> {
      * @return the Query operations fetched results.
      */
     public QueryResults<T> fetch() {
-        return new QueryResults<T>(this, false);
+        return new QueryResults<>(this, false);
     }
 
     /**
@@ -403,7 +403,7 @@ public class Query<T> {
         // If no fetch limit specified then paginate all
         boolean paginateAll = (this.limit == 0);
 
-        var iterator = new QueryResults<T>(this, paginateAll).iterator();
+        var iterator = new QueryResults<>(this, paginateAll).iterator();
         var spliterators = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED);
 
         return StreamSupport.stream(spliterators, false);

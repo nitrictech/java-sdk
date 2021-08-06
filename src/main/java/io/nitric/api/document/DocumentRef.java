@@ -89,7 +89,7 @@ public class DocumentRef<T> {
 
                 } else {
                     var objectMapper = new ObjectMapper();
-                    return (T) objectMapper.convertValue(map, type);
+                    return objectMapper.convertValue(map, type);
                 }
 
             } else {
@@ -177,7 +177,7 @@ public class DocumentRef<T> {
         }
 
         var collectionGroup = new CollectionGroup(name, key);
-        return new Query<Map>(collectionGroup.toGrpcCollection(), Map.class);
+        return new Query<>(collectionGroup.toGrpcCollection(), Map.class);
     }
 
     /**
@@ -196,7 +196,7 @@ public class DocumentRef<T> {
         }
 
         var collectionGroup = new CollectionGroup(name, key);
-        return new Query<K>(collectionGroup.toGrpcCollection(), type);
+        return new Query<>(collectionGroup.toGrpcCollection(), type);
     }
 
     /**
@@ -214,7 +214,8 @@ public class DocumentRef<T> {
     UnsupportedOperationException newUnsupportedSubDocOperation(String prefix) {
 
         var msg = String.format(
-                prefix + ": [%s:id:%s]/[%s:%s]",
+                "%s : [%s:id:%s]/[%s:%s]",
+                prefix,
                 key.collection.parent.collection.name,
                 key.collection.parent.id,
                 key.collection.name,

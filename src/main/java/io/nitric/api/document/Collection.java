@@ -78,7 +78,7 @@ public class Collection extends AbstractCollection {
         Contracts.requireNonBlank(id, "id");
 
         var key = new Key(this, id);
-        return new DocumentRef<Map>(key, Map.class);
+        return new DocumentRef<>(key, Map.class);
     }
 
     /**
@@ -92,7 +92,7 @@ public class Collection extends AbstractCollection {
         Contracts.requireNonBlank(id, "id");
 
         var key = new Key(this, id);
-        return new DocumentRef<T>(key, type);
+        return new DocumentRef<>(key, type);
     }
 
     /**
