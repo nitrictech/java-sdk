@@ -72,7 +72,7 @@ public class AbstractCollection {
      * @return a new query object
      */
     public Query<Map> query() {
-        return new Query<Map>(toGrpcCollection(), Map.class);
+        return new Query<>(toGrpcCollection(), Map.class);
     }
 
     /**
@@ -84,7 +84,7 @@ public class AbstractCollection {
     public <T> Query<T> query(Class<T> type) {
         Contracts.requireNonNull(type, "type");
 
-        return new Query<T>(toGrpcCollection(), type);
+        return new Query<>(toGrpcCollection(), type);
     }
 
     /**

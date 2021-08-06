@@ -22,6 +22,7 @@ package io.nitric.api.document;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Map;
 
@@ -51,7 +52,8 @@ public class DocumentsTest {
     public void test_collection() {
         var mapColl = Documents.collection("customers");
 
-        assertEquals("customers", mapColl.name);
+        assertEquals("customers", mapColl.getName());
+        assertNull(mapColl.getParent());
     }
 
     @Test
