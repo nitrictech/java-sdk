@@ -56,11 +56,9 @@
     </distributionManagement>
 
     <properties>
-        <!--
         <sonar.projectKey>nitrictech_java-sdk</sonar.projectKey>
         <sonar.organization>nitrictech</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        -->
         <io.grpc.version>1.36.0</io.grpc.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -296,7 +294,6 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -316,7 +313,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 

@@ -36,6 +36,9 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
+          cat ~/.m2/settings.xml
+          echo $MAVEN_USERNAME
+          echo $MAVEN_PASSWORD
           mvn \
           --no-transfer-progress \
           --batch-mode \
