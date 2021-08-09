@@ -36,7 +36,8 @@ public class TriggerTest {
 
     final static String LONG_DATA = "Another two syncons at the Robertstown sub-station should be switched on in the coming week, and while...";
 
-    @Test public void test_from_grpc_http() {
+    @Test
+    public void test_from_grpc_http() {
         var triggerContext = HttpTriggerContext
                 .newBuilder()
                 .setMethod("GET")
@@ -65,7 +66,8 @@ public class TriggerTest {
         assertEquals("FunctionTrigger[context=HttpTriggerContext[method=GET, path=/test/, headers={x-nitric-test=test}, queryParams{id=test}], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
 
-    @Test public void test_http_trigger_response() {
+    @Test
+    public void test_http_trigger_response() {
         var triggerContext = HttpTriggerContext
                 .newBuilder()
                 .setMethod("GET")
@@ -113,7 +115,8 @@ public class TriggerTest {
         assertFalse(response.getContext().isTopic());
     }
 
-    @Test public void test_from_grpc_topic() {
+    @Test
+    public void test_from_grpc_topic() {
         var triggerContext = TopicTriggerContext
                 .newBuilder()
                 .setTopic("test");
@@ -134,4 +137,27 @@ public class TriggerTest {
 
         assertEquals("FunctionTrigger[context=TopicTriggerContext[topic=test], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
+
+    @Test
+    public void test_no_data() {
+        var triggerContext = TopicTriggerContext
+                .newBuilder()
+                .setTopic("test");
+
+        var triggerRequest = TriggerRequest
+                .newBuilder()
+                .setTopic(triggerContext.build())
+                .build();
+
+        var trigger = FunctionTrigger.buildTrigger(triggerRequest);
+
+        assertNotNull(trigger.getData());
+        assertEquals(0, trigger.getData().length);
+        assertEquals("", trigger.getDataAsText());
+
+        var response = trigger.buildResponse((byte[]) null);
+        assertNotNull(response);
+        assertNull(response.getData());
+    }
+
 }

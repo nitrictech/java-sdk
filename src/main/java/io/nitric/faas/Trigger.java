@@ -45,19 +45,19 @@ public interface Trigger {
     AbstractTriggerContext getContext();
 
     /**
-     * Return the trigger data.
+     * Return the trigger data. This method will return a zero length byte array if not defined.
      *
-     * @return Retrieve the data of the trigger
+     * @return the data of the trigger, or zero length byte array if not defined
      */
     byte[] getData();
 
     /**
-     * Get the trigger data as UTF-8 encode text, or null if not define
+     * Get the trigger data as UTF-8 encode text, or empty string if not defined.
      *
-     * @return the trigger data as UTF-8 encode text, or null if not define
+     * @return the trigger data as UTF-8 encode text, or empty string if not defined
      */
     default String getDataAsText() {
-        return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : null;
+        return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : "";
     }
 
     /**
