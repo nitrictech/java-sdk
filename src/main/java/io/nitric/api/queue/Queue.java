@@ -138,7 +138,7 @@ public class Queue {
 
         return response.getFailedTasksList()
                 .stream()
-                .map(failedTask -> toApiFailedTask(failedTask))
+                .map(this::toApiFailedTask)
                 .collect(Collectors.toList());
     }
 
@@ -163,7 +163,7 @@ public class Queue {
 
         return response.getTasksList()
                 .stream()
-                .map(task -> toApiTask(task))
+                .map(this::toApiTask)
                 .collect(Collectors.toList());
     }
 

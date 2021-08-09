@@ -238,6 +238,10 @@ import java.util.stream.StreamSupport;
  */
 public class Query<T> {
 
+    private static final String OPERAND = "operand";
+    private static final String OPERATOR = "operator";
+    private static final String VALUE = "value";
+
     final io.nitric.proto.document.v1.Collection collection;
     final List<Expression> expressions = new ArrayList<>();
     int limit;
@@ -269,15 +273,15 @@ public class Query<T> {
      * Queries with multiple <code>where()</code> expressions are implicitly AND together when executed.
      * </p>
      *
-     * @param operand the left hand side expression operand (required)
+     * @param operand the left-hand side expression operand (required)
      * @param operator the query expression operator (required)
-     * @param value the right hand side operand (required)
+     * @param value the right-hand side operand (required)
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, String value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonBlank(value, "value");
+        Contracts.requireNonBlank(operand, OPERAND);
+        Contracts.requireNonBlank(operator, OPERATOR);
+        Contracts.requireNonBlank(value, VALUE);
 
         expressions.add(new Expression(operand, operator, value));
 
@@ -300,9 +304,9 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Double value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
+        Contracts.requireNonBlank(operand, OPERAND);
+        Contracts.requireNonBlank(operator, OPERATOR);
+        Contracts.requireNonNull(value, VALUE);
 
         expressions.add(new Expression(operand, operator, value));
 
@@ -325,9 +329,9 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Integer value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
+        Contracts.requireNonBlank(operand, OPERAND);
+        Contracts.requireNonBlank(operator, OPERATOR);
+        Contracts.requireNonNull(value, VALUE);
 
         expressions.add(new Expression(operand, operator, value));
 
@@ -350,9 +354,9 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Boolean value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
+        Contracts.requireNonBlank(operand, OPERAND);
+        Contracts.requireNonBlank(operator, OPERATOR);
+        Contracts.requireNonNull(value, VALUE);
 
         expressions.add(new Expression(operand, operator, value));
 

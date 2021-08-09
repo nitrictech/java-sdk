@@ -25,6 +25,12 @@ package io.nitric.util;
  */
 public final class Contracts {
 
+    /*
+     * Enforce static usage
+     */
+    private Contracts() {
+    }
+
     /**
      * Ensure the specified parameter value is not null.
      *

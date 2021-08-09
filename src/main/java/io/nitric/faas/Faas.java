@@ -82,7 +82,7 @@ public class Faas {
     public void startFunction(NitricFunction function) {
         Contracts.requireNonNull(function, "function");
 
-        // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
+        // FIXME: Unrecoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
         // We only need to assert the FaasGrpc.newStub is called to cover this logic in
         // the case where the user has not provided a custom stub
@@ -115,9 +115,9 @@ public class Faas {
         try {
             finishedLatch.await();
         } catch (InterruptedException e) {
-            System.err.printf("Stream was prematurely terminated for function: %s, error: %s \n",
-                              function.getClass().getSimpleName(),
-                              e);
+            logException(e,
+                         "Stream was prematurely terminated for function: %s, error: %s \n",
+                         function.getClass().getSimpleName());
             // Restore thread interrupted state
             Thread.currentThread().interrupt();
         } finally {
@@ -150,6 +150,18 @@ public class Faas {
     protected Faas stub(FaasServiceGrpc.FaasServiceStub stub) {
         this.stub = stub;
         return this;
+    }
+
+    // Package Private Methods ------------------------------------------------
+
+    static void logError(String format, Object...args) {
+        String msg = String.format(format, args);
+        LOGGER.log(Level.SEVERE, msg);
+    }
+
+    static void logException(Throwable error, String format, Object...args) {
+        String msg = String.format(format, args);
+        LOGGER.log(Level.SEVERE, msg, error);
     }
 
     // Inner Classes ----------------------------------------------------------
@@ -185,7 +197,7 @@ public class Faas {
                     Trigger trigger = null;
                     try {
                         // Call the function
-                        trigger = Trigger.buildTrigger(serverMessage.getTriggerRequest());
+                        trigger = FunctionTrigger.buildTrigger(serverMessage.getTriggerRequest());
                         var response = function.handle(trigger);
 
                         // Write back the response to the server
@@ -197,35 +209,23 @@ public class Faas {
                                         .setTriggerResponse(grpcResponse)
                                         .build());
                     } catch (Throwable error) {
-                        LOGGER.log(
-                                Level.SEVERE,
-                                String.format(
-                                        "onNext() error occurred handling trigger %s with function: %s",
-                                        trigger,
-                                        function.getClass().getName()
-                                ),
-                                error
-                        );
+                        logException(error,
+                                     "onNext() error occurred handling trigger %s with function: %s",
+                                     trigger,
+                                     function.getClass().getName());
                     }
                     break;
                 default:
-                    System.err.printf("onNext() default case %s reached with function: %s \n",
-                                      serverMessage.getContentCase(),
-                                      function.getClass().getName());
+                    logError("onNext() default case %s reached with function: %s \n",
+                             serverMessage.getContentCase(),
+                             function.getClass().getName());
                     break;
             }
         }
 
         @Override
         public void onError(Throwable error) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    String.format(
-                            "onError() occurred with function: %s",
-                            function.getClass().getName()
-                    ),
-                    error
-            );
+            logException(error, "onError() occurred with function: %s", function.getClass().getName());
         }
 
         @Override

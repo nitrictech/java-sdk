@@ -93,7 +93,7 @@ public class ProtoUtils {
                 .stream()
                 .collect(
                         toMapNullFriendly(
-                                entry -> entry.getKey(),
+                                Map.Entry::getKey,
                                 entry -> {
                                     Value value = entry.getValue();
                                     switch (value.getKindCase()) {

@@ -43,6 +43,7 @@ import io.nitric.util.Contracts;
  *
  * public class HelloWorld implements NitricFunction {
  *
+ *     &commat;Override
  *     public Response handle(Trigger trigger) {
  *         if (trigger.getContext().isHttp()) {
  *             var httpContext = trigger.getContext().asHttp();
@@ -81,25 +82,31 @@ public abstract class AbstractTriggerContext {
     }
 
     /**
-     * @return The Context as a HttpRequestTriggerContext or null if is not a trigger from a http request
+     * Return the HTTP trigger context if valid tpe or throw UnsupportedOperationException otherwise.
+     *
+     * @return the HTTP trigger context if valid tpe or throw UnsupportedOperationException otherwise
+     * @throws UnsupportedOperationException if not an HTTP trigger type
      */
     public final HttpTriggerContext asHttp() {
         if (this.isHttp()) {
             return (HttpTriggerContext) this;
+        } else {
+            throw new UnsupportedOperationException("not a HTTP trigger context: " + getClass().getSimpleName());
         }
-        // TODO: Determine if we would rather throw an error here?
-        return null;
     }
 
     /**
-     * @return The Context as a TopicTriggerContext or null if is not a trigger for a topic
+     * Return the Topic trigger context if valid tpe or throw UnsupportedOperationException otherwise.
+     *
+     * @return the Topic trigger context if valid tpe or throw UnsupportedOperationException otherwise.
+     * @throws UnsupportedOperationException if not a Topic trigger type
      */
     public final TopicTriggerContext asTopic() {
         if (this.isTopic()) {
             return (TopicTriggerContext) this;
+        } else {
+            throw new UnsupportedOperationException("not a Topic trigger context: " + getClass().getSimpleName());
         }
-        // TODO: Determine if we would rather throw an error here?
-        return null;
     }
 
     /**
@@ -121,9 +128,10 @@ public abstract class AbstractTriggerContext {
             return new TopicTriggerContext(
                 trigger.getTopic().getTopic()
             );
+        } else {
+            String msg = "not a supported Trigger context type: " + trigger.getClass().getSimpleName();
+            throw new UnsupportedOperationException(msg);
         }
-
-        throw new UnsupportedOperationException("TriggerRequest does not contain valid context");
     }
 
 }
