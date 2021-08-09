@@ -84,6 +84,8 @@ public class TriggerTest {
         var trigger = FunctionTrigger.buildTrigger(triggerRequest);
 
         assertNotNull(trigger);
+        assertEquals(LONG_DATA, trigger.getDataAsText());
+        assertEquals(LONG_DATA, new String(trigger.getData(), StandardCharsets.UTF_8));
         assertNotNull(trigger.toString());
 
         // response without data

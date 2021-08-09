@@ -26,11 +26,8 @@ import java.util.Map;
 
 import com.google.protobuf.ByteString;
 
-import io.nitric.faas.AbstractResponseContext;
 import io.nitric.faas.AbstractTriggerContext;
-import io.nitric.faas.HttpResponseContext;
 import io.nitric.faas.Response;
-import io.nitric.faas.TopicResponseContext;
 import io.nitric.faas.Trigger;
 import io.nitric.proto.faas.v1.HttpTriggerContext;
 import io.nitric.proto.faas.v1.TopicTriggerContext;
@@ -123,60 +120,20 @@ public class MockTrigger implements Trigger {
     }
 
     /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @return A default response with context matching this request
-     */
-    @Override
-    public Response buildResponse() {
-        return this.buildResponse((byte[]) null);
-    }
-
-    /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @param data the response data bytes (required)
-     * @return A default response with context matching this request containing the provided data
-     */
-    @Override
-    public Response buildResponse(byte[] data) {
-        AbstractResponseContext responseCtx = null;
-
-        if (this.context.isHttp()) {
-            responseCtx = new HttpResponseContext();
-        } else if (this.context.isTopic()) {
-            responseCtx = new TopicResponseContext();
-        }
-
-        return new MockResponse(data, responseCtx);
-    }
-
-    /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @param data the response text data (required)
-     * @return A default response with context matching this request containing the provided data
-     */
-    @Override
-    public Response buildResponse(String data) {
-        return this.buildResponse(data.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         String dataSample = "null";
-        if (data != null) {
-            dataSample = new String(data, StandardCharsets.UTF_8);
+        if (getData() != null) {
+            dataSample = new String(getData(), StandardCharsets.UTF_8);
             if (dataSample.length() > 40) {
                 dataSample = dataSample.substring(0, 42) + "...";
             }
         }
         return getClass().getSimpleName()
-            + "[context=" + context
-            + ", mimeType=" + mimeType
+            + "[context=" + getContext()
+            + ", mimeType=" + getMimeType()
             + ", data=" + dataSample
             + "]";
     }
@@ -500,22 +457,6 @@ public class MockTrigger implements Trigger {
          */
         protected MockTopicTriggerContext(String topic) {
             super(topic);
-        }
-    }
-
-    /**
-     * Provides a Mock MockResponse for unit testing.
-     */
-    static class MockResponse extends io.nitric.faas.Response {
-
-        /**
-         * Create a new Nitric FaaS response.
-         *
-         * @param data The data for the response
-         * @param context The context of the response
-         */
-        protected MockResponse(byte[] data, AbstractResponseContext context) {
-            super(data, context);
         }
     }
 

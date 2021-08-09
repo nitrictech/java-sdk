@@ -127,7 +127,7 @@ public class MockTriggerTest {
         assertTrue(response.getContext().isHttp());
         assertFalse(response.getContext().isTopic());
 
-        assertEquals("MockResponse[context=HttpResponseContext[status=200, headers={content-length=1024}], data={\"status\": \"completed\"}]",
+        assertEquals("Response[context=HttpResponseContext[status=200, headers={content-length=1024}], data={\"status\": \"completed\"}]",
                 response.toString());
     }
 
@@ -207,7 +207,7 @@ public class MockTriggerTest {
         assertTrue(response.getContext().isTopic());
         assertFalse(response.getContext().isHttp());
 
-        assertEquals("MockResponse[context=TopicResponseContext[success=true], data={\"status\": \"completed\"}]",
+        assertEquals("Response[context=TopicResponseContext[success=true], data={\"status\": \"completed\"}]",
                 response.toString());
     }
 

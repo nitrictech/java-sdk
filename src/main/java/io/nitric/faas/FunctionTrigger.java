@@ -54,7 +54,9 @@ public class FunctionTrigger implements Trigger {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return Retrieves the context that raised the trigger
+     * Return the context which raised the trigger.
+     *
+     * @return the context which raised the trigger
      */
     @Override
     public AbstractTriggerContext getContext() {
@@ -62,7 +64,9 @@ public class FunctionTrigger implements Trigger {
     }
 
     /**
-     * @return Retrieve the data of the trigger
+     * Get the trigger data.
+     *
+     * @return the data of the trigger
      */
     @Override
     public byte[] getData() {
@@ -78,60 +82,20 @@ public class FunctionTrigger implements Trigger {
     }
 
     /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @return A default response with context matching this request
-     */
-    @Override
-    public Response buildResponse() {
-        return this.buildResponse((byte[]) null);
-    }
-
-    /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @param data the response data bytes (required)
-     * @return A default response with context matching this request containing the provided data
-     */
-    @Override
-    public Response buildResponse(byte[] data) {
-        AbstractResponseContext responseCtx = null;
-
-        if (this.context.isHttp()) {
-            responseCtx = new HttpResponseContext();
-        } else if (this.context.isTopic()) {
-            responseCtx = new TopicResponseContext();
-        }
-
-        return new Response(data, responseCtx);
-    }
-
-    /**
-     * Creates a default response object dependent on the context of the request.
-     *
-     * @param data the response text data (required)
-     * @return A default response with context matching this request containing the provided data
-     */
-    @Override
-    public Response buildResponse(String data) {
-        return this.buildResponse(data.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         String dataSample = "null";
-        if (data != null) {
-            dataSample = new String(data, StandardCharsets.UTF_8);
+        if (getData() != null) {
+            dataSample = new String(getData(), StandardCharsets.UTF_8);
             if (dataSample.length() > 40) {
                 dataSample = dataSample.substring(0, 42) + "...";
             }
         }
         return getClass().getSimpleName()
-            + "[context=" + context
-            + ", mimeType=" + mimeType
+            + "[context=" + getContext()
+            + ", mimeType=" + getMimeType()
             + ", data=" + dataSample
             + "]";
     }

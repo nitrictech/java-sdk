@@ -66,7 +66,7 @@ public class Response {
     }
 
     /**
-     * Retrieve the data contained in the response
+     * Get the data contained in the response.
      *
      * @return The response data as bytes
      */
@@ -75,7 +75,7 @@ public class Response {
     }
 
     /**
-     * Retrieve the data contained in the response as UTF-8 encode text, or null if not define.
+     * Get the data contained in the response as UTF-8 encode text, or null if not define.
      *
      * @return the response data as UTF-8 encoded text, or null if not defined
      */
