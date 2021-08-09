@@ -147,8 +147,9 @@ public class MockTriggerTest {
         assertFalse(trigger.getContext().isHttp());
         assertNotNull(trigger.getContext().asTopic());
         assertEquals("topic", trigger.getContext().asTopic().getTopic());
+        var context = trigger.getContext();
         try {
-            assertNull(trigger.getContext().asHttp());
+            assertNull(context.asHttp());
             fail();
         } catch (UnsupportedOperationException uoe) {
         }
@@ -168,12 +169,13 @@ public class MockTriggerTest {
         assertFalse(trigger.getContext().isHttp());
         assertNotNull(trigger.getContext().asTopic());
         assertEquals("topic", trigger.getContext().asTopic().getTopic());
+
+        context = trigger.getContext();
         try {
-            assertNull(trigger.getContext().asHttp());
+            assertNull(context.asHttp());
             fail();
         } catch (UnsupportedOperationException uoe) {
         }
-
 
         assertEquals("MockTrigger[context=MockTopicTriggerContext[topic=topic], mimeType=mimeType, data=data]",
                 trigger.toString());
