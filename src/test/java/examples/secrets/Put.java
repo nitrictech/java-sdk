@@ -20,19 +20,16 @@
 
 package io.nitric.examples;
 // [START import]
-import io.nitric.api.document.Documents;
+import io.nitric.api.secret.Secrets;
 // [END import]
 
-class DocumentsSet {
-    public static void Set() {
+class SecretPut {
+    public static void Put() {
         // [START snippet]
-        var document = Documents.collection("products").doc("nitric");
+        var newPassword = "qxGJp9rWMbYvPEsNFXzukQa!";
 
-        document.set(Map.of(
-            "id", "nitric",
-            "name", "Nitric Framework",
-            "description", "A development framework"
-        ));
+        // Store the new password value, making it the latest version
+        Secrets.secret("database.password").putAsText(newPassword);
         // [END snippet]
     }
 }

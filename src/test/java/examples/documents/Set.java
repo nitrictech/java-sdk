@@ -21,17 +21,19 @@
 package io.nitric.examples;
 // [START import]
 import io.nitric.api.document.Documents;
+import java.util.Map;
 // [END import]
 
-class DocumentsSubColQuery {
-    public static void SubColQuery() {
+class DocumentsSet {
+    public static void Set() {
         // [START snippet]
-        var query = Documents.collection("Customers")
-              .doc("apple")
-              .collection("Orders")
-              .query();
+        var document = Documents.collection("products").doc("nitric");
 
-        var results = query.fetch();
+        document.set(Map.of(
+            "id", "nitric",
+            "name", "Nitric Framework",
+            "description", "A development framework"
+        ));
         // [END snippet]
     }
 }

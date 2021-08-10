@@ -20,17 +20,28 @@
 
 package io.nitric.examples;
 // [START import]
-import io.nitric.api.document.Documents;
+import io.nitric.faas.Faas;
+import io.nitric.faas.Trigger;
+import io.nitric.faas.NitricFunction;
+import io.nitric.faas.Response;
+import io.nitric.api.event.Events;
+import io.nitric.api.event.Event;
+import java.util.Map;
 // [END import]
 
-class DocumentsQueryFilter {
-    public static void QueryFilter() {
-        // [START snippet]
-        var query = Documents.collection("Customers").query()
-        .where("country", "==", "US")
-        .where("age", ">=", 21);
-    
-        var results = query.fetch();
-        // [END snippet]
+// [START snippet]
+public class PublishExample implements NitricFunction {
+
+    @Override
+    public Response handle(Trigger trigger) {
+        var topic = Events.topic("my-topic");
+        topic.publish(Event.build(Map.of("Content", "of event")));
+
+        return trigger.buildResponse("Successfully published message");
+    }
+
+    public static void main(String[] args) {
+        new Faas().start(new PublishExample());
     }
 }
+// [END snippet]

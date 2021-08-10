@@ -30,7 +30,7 @@ import java.util.Map;
 // [END import]
 
 // [START snippet]
-public class MyFirstFunction implements NitricFunction {
+public class EventIDsExample implements NitricFunction {
 
     @Override
     public Response handle(Trigger trigger) {
@@ -46,7 +46,7 @@ public class MyFirstFunction implements NitricFunction {
     }
 
     public static void main(String[] args) {
-        new Faas().start(new MyFirstFunction());
+        new Faas().start(new EventIDsExample());
     }
 }
 // [END snippet]

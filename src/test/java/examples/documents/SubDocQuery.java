@@ -20,16 +20,18 @@
 
 package io.nitric.examples;
 // [START import]
-import io.nitric.api.secret.Secrets;
+import io.nitric.api.document.Documents;
 // [END import]
 
-class SecretPut {
-    public static void Put() {
+class DocumentsSubDocQuery {
+    public static void SubDocQuery() {
         // [START snippet]
-        var newPassword = "qxGJp9rWMbYvPEsNFXzukQa!";
+        var query = Documents.collection("Customers")
+              .doc("apple")
+              .collection("Orders")
+              .query();
 
-        // Store the new password value, making it the latest version
-        Secrets.secret("database.password").putAsText(newPassword);        
+        var results = query.fetch();
         // [END snippet]
     }
 }

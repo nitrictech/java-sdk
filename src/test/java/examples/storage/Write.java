@@ -19,18 +19,24 @@
  */
 
 package io.nitric.examples;
+
 // [START import]
-import io.nitric.api.document.Documents;
+import java.io.UnsupportedEncodingException;
+import io.nitric.api.storage.Storage;
 // [END import]
 
-class DocumentsStreamed {
-    public static void Streamed() {
+class StorageWrite {
+    public static void Write() {
         // [START snippet]
-        var query = Documents.collection("Customers").query();
-
-        query.stream().foreach(doc -> {
-            // Process doc stream
-        });
+        var bucket = Storage.bucket("my-bucket");
+        try
+        {
+            bucket.file("/path/to/file").write("Hello World".getBytes("utf-8"));
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            // Process error...
+        }
         // [END snippet]
     }
 }

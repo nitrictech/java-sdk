@@ -21,25 +21,26 @@
 package io.nitric.examples;
 // [START import]
 import io.nitric.api.queue.Queues;
-import io.nitric.api.queue.Task;
+import io.nitric.api.queue.ReceivedTask;
 import java.util.Map;
+import java.util.List;
 // [END import]
 
-class QueueSend {
-    public static void Send() {
+class QueueReceive {
+    public static void Receive() {
         // [START snippet]
         // Construct a new queue client for the 'example' queue
         var queue = Queues.queue("my-queue");
 
         // Receive a list of tasks from the 'example' queue
-        List<Task> tasks = queue.receive(1);
+        List<ReceivedTask> tasks = queue.receive(1);
 
-        for (Task task : tasks) {
+        for (ReceivedTask task : tasks) {
             try {
                 // process task here
                 // processTask(task);
 
-                task.Complete();
+                task.complete();
             } catch (Exception e) {
                 // We don't need to requeue the task here
                 // we can simply log the error and move on

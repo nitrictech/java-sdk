@@ -20,14 +20,18 @@
 
 package io.nitric.examples;
 // [START import]
-import io.nitric.api.storage.Storage;
+import io.nitric.api.document.Documents;
+import java.util.stream.*;
 // [END import]
 
-class StorageWrite {
-    public static void Write() {
+class DocumentsStreamed {
+    public static void Streamed() {
         // [START snippet]
-        var bucket = Storage.bucket("my-bucket");
-        bucket.file("/path/to/file").write("Hello World".getBytes("utf-8"));
+        var query = Documents.collection("Customers").query();
+
+        query.stream().forEach(doc -> {
+            // Process doc stream
+        });
         // [END snippet]
     }
 }
