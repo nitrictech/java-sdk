@@ -238,10 +238,6 @@ import java.util.stream.StreamSupport;
  */
 public class Query<T> {
 
-    private static final String OPERAND = "operand";
-    private static final String OPERATOR = "operator";
-    private static final String VALUE = "value";
-
     final io.nitric.proto.document.v1.Collection collection;
     final List<Expression> expressions = new ArrayList<>();
     int limit;
@@ -279,13 +275,8 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, String value) {
-        Contracts.requireNonBlank(operand, OPERAND);
-        Contracts.requireNonBlank(operator, OPERATOR);
-        Contracts.requireNonBlank(value, VALUE);
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        Contracts.requireNonBlank(value, "value");
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -304,13 +295,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Double value) {
-        Contracts.requireNonBlank(operand, OPERAND);
-        Contracts.requireNonBlank(operator, OPERATOR);
-        Contracts.requireNonNull(value, VALUE);
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -329,13 +314,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Integer value) {
-        Contracts.requireNonBlank(operand, OPERAND);
-        Contracts.requireNonBlank(operator, OPERATOR);
-        Contracts.requireNonNull(value, VALUE);
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -354,13 +333,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Boolean value) {
-        Contracts.requireNonBlank(operand, OPERAND);
-        Contracts.requireNonBlank(operator, OPERATOR);
-        Contracts.requireNonNull(value, VALUE);
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -427,6 +400,18 @@ public class Query<T> {
                 + ", pagingToken=" + pagingToken
                 + ", type=" + type
                 + "]";
+    }
+
+    // Package Private Methods ------------------------------------------------
+
+    Query<T> whereObj(String operand, String operator, Object value) {
+        Contracts.requireNonBlank(operand, "operand");
+        Contracts.requireNonBlank(operator, "operator");
+        Contracts.requireNonNull(value, "value");
+
+        expressions.add(new Expression(operand, operator, value));
+
+        return this;
     }
 
     // Inner Classes ----------------------------------------------------------

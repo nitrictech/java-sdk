@@ -82,7 +82,7 @@ public class Faas {
     public void startFunction(NitricFunction function) {
         Contracts.requireNonNull(function, "function");
 
-        // FIXME: Unrecoverable code without mocking static methods (need to include Powermock)
+        // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
         // We only need to assert the FaasGrpc.newStub is called to cover this logic in
         // the case where the user has not provided a custom stub
