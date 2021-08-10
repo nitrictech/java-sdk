@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples.storage;
+package examples.storage;
 // [START import]
 import io.nitric.api.storage.Storage;
 // [END import]

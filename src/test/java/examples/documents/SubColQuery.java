@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples.documents;
+package examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 // [END import]

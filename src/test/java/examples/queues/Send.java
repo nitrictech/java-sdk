@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples.queues;
+package examples.queues;
 // [START import]
 import io.nitric.api.queue.Queues;
 import io.nitric.api.queue.Task;

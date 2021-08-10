@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples.secrets;
+package examples.secrets;
 // [START import]
 import io.nitric.api.secret.Secrets;
 // [END import]
