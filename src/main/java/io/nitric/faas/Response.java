@@ -27,6 +27,7 @@ import com.google.protobuf.ByteString;
 import io.nitric.proto.faas.v1.HttpResponseContext;
 import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.TriggerResponse;
+import io.nitric.util.Contracts;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public class Response {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * Gets the context for this response
+     * Gets the context for this response.
      *
      * @return The abstract ResponseContext this can be unwrapped with asHttp() or asTopic()
      */
@@ -65,7 +66,7 @@ public class Response {
     }
 
     /**
-     * Retrieve the data contained in the response
+     * Get the data contained in the response.
      *
      * @return The response data as bytes
      */
@@ -74,7 +75,16 @@ public class Response {
     }
 
     /**
-     * Set the data for this response
+     * Get the data contained in the response as UTF-8 encode text, or null if not define.
+     *
+     * @return the response data as UTF-8 encoded text, or null if not defined
+     */
+    public String getDataAsText() {
+        return (data != null) ? new String(data, StandardCharsets.UTF_8) : null;
+    }
+
+    /**
+     * Set the data for this response.
      *
      * @param data The data as an array of bytes
      */
@@ -83,13 +93,25 @@ public class Response {
     }
 
     /**
+     * Set the data for this response as UTF-8 encoded text.
+     *
+     * @param text the UTF-8 encode text to set as the data
+     */
+    public void setDataAsText(String text) {
+        Contracts.requireNonNull(text, "text");
+        this.data = text.getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Return the string representation of this object.
+     *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
         String dataSample = "null";
         if (data != null) {
-            dataSample = new String(data, StandardCharsets.UTF_8);
+            dataSample = getDataAsText();
             if (dataSample.length() > 40) {
                 dataSample = dataSample.substring(0, 42) + "...";
             }

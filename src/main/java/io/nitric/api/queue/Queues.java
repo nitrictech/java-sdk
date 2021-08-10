@@ -65,6 +65,14 @@ public class Queues {
 
     static QueueServiceBlockingStub serviceStub;
 
+    // Constructor ------------------------------------------------------------
+
+    /*
+     * Enforce package builder patterns.
+     */
+    private Queues() {
+    }
+
     // Public Methods ---------------------------------------------------------
 
     /**

@@ -20,6 +20,7 @@
 
 package io.nitric.faas;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Map;
  *  Provides contextual metadata for a trigger raised by a HTTP request.
  * </p>
  */
-public final class HttpTriggerContext extends AbstractTriggerContext {
+public class HttpTriggerContext extends AbstractTriggerContext {
 
     private final String method;
     private final String path;
@@ -76,14 +77,14 @@ public final class HttpTriggerContext extends AbstractTriggerContext {
      * @return The headers of the HTTP Request that raised this trigger
      */
     public Map<String, String> getHeaders() {
-        return this.headers;
+        return Collections.unmodifiableMap(this.headers);
     }
 
     /**
      * @return The query parameters of the HTTP Request that raised this trigger
      */
     public Map<String, String> getQueryParams() {
-        return this.queryParams;
+        return Collections.unmodifiableMap(this.queryParams);
     }
 
     /**

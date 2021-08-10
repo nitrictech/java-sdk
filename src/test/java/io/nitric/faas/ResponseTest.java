@@ -20,15 +20,33 @@
 
 package io.nitric.faas;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class ResponseTest {
+
+    @Test
+    public void http_response_context() {
+        var headers = Map.of("x-nitric-test", "test");
+
+        var ctx = new HttpResponseContext()
+                .setStatus(200)
+                .addHeader("x-nitric-test", "test");
+        assertEquals(200, ctx.getStatus());
+        assertEquals(headers.toString(), ctx.getHeaders().toString());
+
+        ctx = new HttpResponseContext()
+                .setStatus(200)
+                .setHeaders(headers);
+        assertEquals(200, ctx.getStatus());
+        assertEquals(headers.toString(), ctx.getHeaders().toString());
+
+        assertEquals("HttpResponseContext[status=200, headers={x-nitric-test=test}]", ctx.toString());
+    }
 
     @Test
     public void http_response_to_grpc() {
@@ -42,11 +60,46 @@ public class ResponseTest {
 
         assertEquals(grpcResponse.getData().toString(StandardCharsets.UTF_8), "Hello World");
         assertTrue(grpcResponse.hasHttp());
-        assertEquals(grpcResponse.getHttp().getStatus(), 200);
-        assertEquals(grpcResponse.getHttp().getHeadersMap().get("x-nitric-test"), "test");
+        assertEquals(200, grpcResponse.getHttp().getStatus());
+        assertEquals(Map.of("x-nitric-test", "test"), grpcResponse.getHttp().getHeadersMap());
     }
 
-    @Test public void topic_response_to_grpc() {
+    @Test
+    public void topic_response_context() {
+        var ctx = new TopicResponseContext().setSuccess(false);
+        assertFalse(ctx.isSuccess());
+
+        ctx.setSuccess(true);
+        assertTrue(ctx.isSuccess());
+
+        assertEquals("TopicResponseContext[success=true]", ctx.toString());
+    }
+
+    @Test
+    public void topic_response_data() {
+        var ctx = new TopicResponseContext();
+
+        var response = new Response(null, ctx);
+        assertNull(response.getData());
+        assertNull(response.getDataAsText());
+
+        response = new Response("data".getBytes(StandardCharsets.UTF_8), ctx);
+        assertNotNull(response.getData());
+        assertEquals("data", response.getDataAsText());
+
+        response = new Response(null, ctx);
+        response.setData("data".getBytes(StandardCharsets.UTF_8));
+        assertNotNull(response.getData());
+        assertEquals("data", response.getDataAsText());
+
+        response = new Response(null, ctx);
+        response.setDataAsText("data");
+        assertNotNull(response.getData());
+        assertEquals("data", response.getDataAsText());
+    }
+
+    @Test
+    public void topic_response_to_grpc() {
         var ctx = new TopicResponseContext()
                 .setSuccess(false);
 
@@ -59,7 +112,7 @@ public class ResponseTest {
         assertFalse(grpcResponse.getTopic().getSuccess());
     }
 
-    @Test public void test_toString() {
+    @Test public void topic_context_toString() {
         var trc = new TopicResponseContext();
         trc.setSuccess(true);
         var resp = new Response("test".getBytes(StandardCharsets.UTF_8), trc);

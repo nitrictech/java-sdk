@@ -269,19 +269,14 @@ public class Query<T> {
      * Queries with multiple <code>where()</code> expressions are implicitly AND together when executed.
      * </p>
      *
-     * @param operand the left hand side expression operand (required)
+     * @param operand the left-hand side expression operand (required)
      * @param operator the query expression operator (required)
-     * @param value the right hand side operand (required)
+     * @param value the right-hand side operand (required)
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, String value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
         Contracts.requireNonBlank(value, "value");
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -300,13 +295,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Double value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -325,13 +314,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Integer value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -350,13 +333,7 @@ public class Query<T> {
      * @return the Query operation
      */
     public Query<T> where(String operand, String operator, Boolean value) {
-        Contracts.requireNonBlank(operand, "operand");
-        Contracts.requireNonBlank(operator, "operator");
-        Contracts.requireNonNull(value, "value");
-
-        expressions.add(new Expression(operand, operator, value));
-
-        return this;
+        return whereObj(operand, operator, value);
     }
 
     /**
@@ -423,6 +400,18 @@ public class Query<T> {
                 + ", pagingToken=" + pagingToken
                 + ", type=" + type
                 + "]";
+    }
+
+    // Package Private Methods ------------------------------------------------
+
+    Query<T> whereObj(String operand, String operator, Object value) {
+        Contracts.requireNonBlank(operand, "operand");
+        Contracts.requireNonBlank(operator, "operator");
+        Contracts.requireNonNull(value, "value");
+
+        expressions.add(new Expression(operand, operator, value));
+
+        return this;
     }
 
     // Inner Classes ----------------------------------------------------------

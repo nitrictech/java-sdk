@@ -22,65 +22,58 @@ package io.nitric.faas;
 
 import java.nio.charset.StandardCharsets;
 
-import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.util.Contracts;
 
 /**
  * <p>
- *  Provides a Nitric FaaS Trigger class.
+ *  Provides a Nitric FaaS Trigger inferface.
  * </p>
  *
  * @see Faas
  * @see AbstractTriggerContext
  * @see Response
  */
-public class Trigger {
-
-    private final byte[] data;
-    private final String mimeType;
-    private final AbstractTriggerContext context;
-
-    // Constructors -----------------------------------------------------------
-
-    /*
-     * Enforce builder pattern.
-     */
-    private Trigger(byte[] data, String mimeType, AbstractTriggerContext context) {
-        this.data = data;
-        this.mimeType = mimeType;
-        this.context = context;
-    }
+public interface Trigger {
 
     // Public Methods ---------------------------------------------------------
 
     /**
-     * @return Retrieves the context that raised the trigger
+     * Return the context which raised the trigger.
+     *
+     * @return the context which raised the trigger
      */
-    public AbstractTriggerContext getContext() {
-        return this.context;
+    AbstractTriggerContext getContext();
+
+    /**
+     * Return the trigger data. This method will return a zero length byte array if not defined.
+     *
+     * @return the data of the trigger, or zero length byte array if not defined
+     */
+    byte[] getData();
+
+    /**
+     * Get the trigger data as UTF-8 encode text, or empty string if not defined.
+     *
+     * @return the trigger data as UTF-8 encode text, or empty string if not defined
+     */
+    default String getDataAsText() {
+        return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : "";
     }
 
     /**
-     * @return Retrieve the data of the trigger
-     */
-    public byte[] getData() {
-        return this.data;
-    }
-
-    /**
+     * Return the mime type of the trigger.
+     *
      * @return Retrieve the mimeType of the trigger
      */
-    public String getMimeType() {
-        return this.mimeType;
-    }
+    String getMimeType();
 
     /**
      * Creates a default response object dependent on the context of the request.
      *
      * @return A default response with context matching this request
      */
-    public Response buildResponse() {
-        return this.buildResponse((byte[]) null);
+    default Response buildResponse() {
+        return buildResponse((byte[]) null);
     }
 
     /**
@@ -89,12 +82,12 @@ public class Trigger {
      * @param data the response data bytes (required)
      * @return A default response with context matching this request containing the provided data
      */
-    public Response buildResponse(byte[] data) {
+    default Response buildResponse(byte[] data) {
         AbstractResponseContext responseCtx = null;
 
-        if (this.context.isHttp()) {
+        if (getContext().isHttp()) {
             responseCtx = new HttpResponseContext();
-        } else if (this.context.isTopic()) {
+        } else if (getContext().isTopic()) {
             responseCtx = new TopicResponseContext();
         }
 
@@ -107,46 +100,9 @@ public class Trigger {
      * @param data the response text data (required)
      * @return A default response with context matching this request containing the provided data
      */
-    public Response buildResponse(String data) {
-        return this.buildResponse(data.getBytes(StandardCharsets.UTF_8));
-    }
-
-    /**
-     * @return the string representation of this object
-     */
-    @Override
-    public String toString() {
-        String dataSample = "null";
-        if (data != null) {
-            dataSample = new String(data, StandardCharsets.UTF_8);
-            if (dataSample.length() > 40) {
-                dataSample = dataSample.substring(0, 42) + "...";
-            }
-        }
-        return getClass().getSimpleName()
-            + "[context=" + context
-            + ", mimeType=" + mimeType
-            + ", data=" + dataSample
-            + "]";
-    }
-
-    // Protected Methods ------------------------------------------------------
-
-    /**
-     * Translates on on-wire trigger request to a Trigger to be passed to a NitricFunction.
-     *
-     * @return The translated trigger (required)
-     */
-    protected static Trigger buildTrigger(TriggerRequest trigger) {
-        Contracts.requireNonNull(trigger, "trigger");
-
-        var ctx = AbstractTriggerContext.buildTriggerContext(trigger);
-
-        return new Trigger(
-            trigger.getData().toByteArray(),
-            trigger.getMimeType(),
-            ctx
-        );
+    default Response buildResponse(String data) {
+        Contracts.requireNonBlank(data, "data");
+        return buildResponse(data.getBytes(StandardCharsets.UTF_8));
     }
 
 }

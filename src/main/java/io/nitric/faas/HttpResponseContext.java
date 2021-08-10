@@ -20,6 +20,7 @@
 
 package io.nitric.faas;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class HttpResponseContext extends AbstractResponseContext {
      * @return The HTTP headers for this context
      */
     public Map<String, String> getHeaders() {
-        return this.headers;
+        return Collections.unmodifiableMap(this.headers);
     }
 
     /**

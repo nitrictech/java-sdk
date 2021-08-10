@@ -20,9 +20,6 @@
 
 package io.nitric.faas;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
@@ -33,9 +30,14 @@ import io.nitric.proto.faas.v1.HttpTriggerContext;
 import io.nitric.proto.faas.v1.TopicTriggerContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 
+import static org.junit.Assert.*;
+
 public class TriggerTest {
 
-    @Test public void test_from_grpc_http() {
+    final static String LONG_DATA = "Another two syncons at the Robertstown sub-station should be switched on in the coming week, and while...";
+
+    @Test
+    public void test_from_grpc_http() {
         var triggerContext = HttpTriggerContext
                 .newBuilder()
                 .setMethod("GET")
@@ -51,8 +53,7 @@ public class TriggerTest {
                 .setHttp(triggerContext.build())
                 .build();
 
-        var trigger = Trigger.buildTrigger(triggerRequest);
-
+        var trigger = FunctionTrigger.buildTrigger(triggerRequest);
 
         assertEquals(new String(trigger.getData()), "Hello World");
         assertEquals(trigger.getMimeType(), "text/plain");
@@ -62,10 +63,60 @@ public class TriggerTest {
         assertEquals(trigger.getContext().asHttp().getHeaders().get("x-nitric-test"), "test");
         assertEquals(trigger.getContext().asHttp().getQueryParams().get("id"), "test");
 
-        assertEquals("Trigger[context=HttpTriggerContext[method=GET, path=/test/, headers={x-nitric-test=test}, queryParams{id=test}], mimeType=text/plain, data=Hello World]", trigger.toString());
+        assertEquals("FunctionTrigger[context=HttpTriggerContext[method=GET, path=/test/, headers={x-nitric-test=test}, queryParams{id=test}], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
 
-    @Test public void test_from_grpc_topic() {
+    @Test
+    public void test_http_trigger_response() {
+        var triggerContext = HttpTriggerContext
+                .newBuilder()
+                .setMethod("GET")
+                .setPath("/test/");
+
+        triggerContext.putHeaders("x-nitric-test", "test");
+        triggerContext.putQueryParams("id", "test");
+
+        var triggerRequest = TriggerRequest
+                .newBuilder()
+                .setData(ByteString.copyFrom(LONG_DATA, StandardCharsets.UTF_8))
+                .setMimeType("text/plain")
+                .setHttp(triggerContext.build())
+                .build();
+
+        var trigger = FunctionTrigger.buildTrigger(triggerRequest);
+
+        assertNotNull(trigger);
+        assertEquals(LONG_DATA, trigger.getDataAsText());
+        assertEquals(LONG_DATA, new String(trigger.getData(), StandardCharsets.UTF_8));
+        assertNotNull(trigger.toString());
+
+        // response without data
+        var response = trigger.buildResponse();
+        assertNotNull(response);
+        assertNull(response.getData());
+        assertNotNull(response.getContext());
+        assertNotNull(response.getContext().asHttp());
+        assertEquals(200, response.getContext().asHttp().getStatus());
+        assertNull(response.getContext().asTopic());
+        assertTrue(response.getContext().isHttp());
+        assertFalse(response.getContext().isTopic());
+
+        // response with data
+        response = trigger.buildResponse("test-response");
+        assertNotNull(response);
+        assertNotNull(response.getData());
+        assertEquals("test-response", response.getDataAsText());
+
+        assertNotNull(response.getContext());
+        assertNotNull(response.getContext().asHttp());
+        assertEquals(200, response.getContext().asHttp().getStatus());
+        assertNull(response.getContext().asTopic());
+        assertTrue(response.getContext().isHttp());
+        assertFalse(response.getContext().isTopic());
+    }
+
+    @Test
+    public void test_from_grpc_topic() {
         var triggerContext = TopicTriggerContext
                 .newBuilder()
                 .setTopic("test");
@@ -77,13 +128,36 @@ public class TriggerTest {
                 .setTopic(triggerContext.build())
                 .build();
 
-        var trigger = Trigger.buildTrigger(triggerRequest);
+        var trigger = FunctionTrigger.buildTrigger(triggerRequest);
 
         assertEquals(new String(trigger.getData()), "Hello World");
         assertEquals(trigger.getMimeType(), "text/plain");
         assertTrue(trigger.getContext().isTopic());
         assertEquals(trigger.getContext().asTopic().getTopic(), "test");
 
-        assertEquals("Trigger[context=TopicTriggerContext[topic=test], mimeType=text/plain, data=Hello World]", trigger.toString());
+        assertEquals("FunctionTrigger[context=TopicTriggerContext[topic=test], mimeType=text/plain, data=Hello World]", trigger.toString());
     }
+
+    @Test
+    public void test_no_data() {
+        var triggerContext = TopicTriggerContext
+                .newBuilder()
+                .setTopic("test");
+
+        var triggerRequest = TriggerRequest
+                .newBuilder()
+                .setTopic(triggerContext.build())
+                .build();
+
+        var trigger = FunctionTrigger.buildTrigger(triggerRequest);
+
+        assertNotNull(trigger.getData());
+        assertEquals(0, trigger.getData().length);
+        assertEquals("", trigger.getDataAsText());
+
+        var response = trigger.buildResponse((byte[]) null);
+        assertNotNull(response);
+        assertNull(response.getData());
+    }
+
 }

@@ -20,31 +20,29 @@
 
 package io.nitric.faas;
 
-import static org.junit.Assert.fail;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.google.protobuf.ByteString;
+import io.grpc.stub.StreamObserver;
+import io.nitric.proto.faas.v1.ClientMessage;
+import io.nitric.proto.faas.v1.FaasServiceGrpc;
+import io.nitric.proto.faas.v1.ServerMessage;
 import io.nitric.proto.faas.v1.TopicTriggerContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import io.grpc.stub.StreamObserver;
-import io.nitric.proto.faas.v1.ClientMessage;
-import io.nitric.proto.faas.v1.FaasServiceGrpc;
-import io.nitric.proto.faas.v1.ServerMessage;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.fail;
 
 public class FaasTest {
 
-
-
     // Test a basic start scenario
-    @Test public void start() {
+    @Test
+    public void start() {
         NitricFunction handler = Mockito.mock(NitricFunction.class);
 
         // Create mock stub here...
@@ -109,7 +107,8 @@ public class FaasTest {
         }
     }
 
-    @Test public void handleTopicTrigger() {
+    @Test
+    public void handleTopicTrigger() {
         NitricFunction handler = Mockito.mock(NitricFunction.class);
         // Create mock stub here...
         // it will be mocked to produce fake streams
@@ -189,4 +188,20 @@ public class FaasTest {
             fail();
         }
     }
+
+    @Test
+    public void logging() {
+        try {
+            Faas.logError("name: %s", "value");
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            Faas.logException(new NullPointerException(), "name: %s", "value");
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
 }
