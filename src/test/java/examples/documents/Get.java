@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 // [END import]
 
-class DocumentsGet {
-    public static void Get() {
+public class Get {
+    public static void Example() {
         // [START snippet]
         var product = Documents.collection("products").doc("nitric").get();
         // [END snippet]

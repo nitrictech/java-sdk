@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.storage;
 // [START import]
 import io.nitric.api.storage.Storage;
 // [END import]
 
-class StorageRead {
-    public static void Read() {
+public class Read {
+    public static void Example() {
         // [START snippet]
         var bucket = Storage.bucket("my-bucket");
         var file = bucket.file("/path/to/file").read();

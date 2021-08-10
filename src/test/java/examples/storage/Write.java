@@ -18,15 +18,14 @@
  * #L%
  */
 
-package io.nitric.examples;
-
+package io.nitric.examples.storage;
 // [START import]
 import java.io.UnsupportedEncodingException;
 import io.nitric.api.storage.Storage;
 // [END import]
 
-class StorageWrite {
-    public static void Write() {
+public class Write {
+    public static void Example() {
         // [START snippet]
         var bucket = Storage.bucket("my-bucket");
         try

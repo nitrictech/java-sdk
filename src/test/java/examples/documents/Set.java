@@ -18,14 +18,14 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 import java.util.Map;
 // [END import]
 
-class DocumentsSet {
-    public static void Set() {
+public class Set {
+    public static void Example() {
         // [START snippet]
         var document = Documents.collection("products").doc("nitric");
 

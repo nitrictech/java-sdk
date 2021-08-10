@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 // [END import]
 
-class DocumentsDelete {
-    public static void Delete() {
+public class Delete {
+    public static void Example() {
         // [START snippet]
         Documents.collection("products").doc("nitric").delete();
         // [END snippet]

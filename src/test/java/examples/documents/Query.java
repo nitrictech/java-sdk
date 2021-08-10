@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 // [END import]
 
-class DocumentsQuery {
-    public static void Query() {
+public class Query {
+    public static void Example() {
         // [START snippet]
         var query = Documents.collection("Customers").query();
 

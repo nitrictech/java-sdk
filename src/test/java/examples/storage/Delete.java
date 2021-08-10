@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.storage;
 // [START import]
 import io.nitric.api.storage.Storage;
 // [END import]
 
-class StorageDelete {
-    public static void Delete() {
+public class Delete {
+    public static void Example() {
         // [START snippet]
         var bucket = Storage.bucket("my-bucket");
         bucket.file("/path/to/file").delete();

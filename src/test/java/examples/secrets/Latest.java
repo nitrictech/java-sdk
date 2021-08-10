@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.secrets;
 // [START import]
 import io.nitric.api.secret.Secrets;
 // [END import]
 
-class SecretLatest {
-    public static void Latest() {
+public class Latest {
+    public static void Example() {
         // [START snippet]
         var version = Secrets.secret("database.password").latest();
         // [END snippet]

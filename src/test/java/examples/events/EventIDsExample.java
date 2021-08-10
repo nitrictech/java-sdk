@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.events;
 // [START import]
 import io.nitric.faas.Faas;
 import io.nitric.faas.Trigger;

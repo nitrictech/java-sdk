@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.secrets;
 // [START import]
 import io.nitric.api.secret.Secrets;
 // [END import]
 
-class SecretPut {
-    public static void Put() {
+public class Put {
+    public static void Example() {
         // [START snippet]
         var newPassword = "qxGJp9rWMbYvPEsNFXzukQa!";
 

@@ -18,13 +18,13 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.documents;
 // [START import]
 import io.nitric.api.document.Documents;
 // [END import]
 
-class DocumentsRef {
-    public static void Ref() {
+public class Refs {
+    public static void Example() {
         // [START snippet]
         // create a reference to a collection named 'products'
         var products = Documents.collection("products");

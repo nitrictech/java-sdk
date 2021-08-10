@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.queues;
 // [START import]
 import io.nitric.api.queue.Queues;
 import io.nitric.api.queue.ReceivedTask;
@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.List;
 // [END import]
 
-class QueueReceive {
-    public static void Receive() {
+public class Receive {
+    public static void Example() {
         // [START snippet]
         // Construct a new queue client for the 'example' queue
         var queue = Queues.queue("my-queue");

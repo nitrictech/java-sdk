@@ -18,15 +18,15 @@
  * #L%
  */
 
-package io.nitric.examples;
+package io.nitric.examples.queues;
 // [START import]
 import io.nitric.api.queue.Queues;
 import io.nitric.api.queue.Task;
 import java.util.Map;
 // [END import]
 
-class QueueSend {
-    public static void Send() {
+public class Send {
+    public static void Example() {
         // [START snippet]
         var queue = Queues.queue("my-queue");
         queue.send(
