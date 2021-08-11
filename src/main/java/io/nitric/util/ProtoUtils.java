@@ -48,7 +48,7 @@ public class ProtoUtils {
     /*
      * Enforce static method usage.
      */
-    ProtoUtils() {
+    private ProtoUtils() {
     }
 
     // Public Methods ---------------------------------------------------------

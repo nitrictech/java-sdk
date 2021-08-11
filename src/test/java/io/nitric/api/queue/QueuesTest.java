@@ -20,34 +20,36 @@
 
 package io.nitric.api.queue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.nitric.proto.queue.v1.FailedTask;
+import io.nitric.proto.queue.v1.NitricTask;
+import io.nitric.proto.queue.v1.QueueCompleteRequest;
+import io.nitric.proto.queue.v1.QueueCompleteResponse;
+import io.nitric.proto.queue.v1.QueueReceiveRequest;
+import io.nitric.proto.queue.v1.QueueReceiveResponse;
+import io.nitric.proto.queue.v1.QueueSendBatchRequest;
+import io.nitric.proto.queue.v1.QueueSendBatchResponse;
+import io.nitric.proto.queue.v1.QueueServiceGrpc;
+import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;
+import io.nitric.util.ProtoUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import io.nitric.proto.queue.v1.FailedTask;
-import io.nitric.proto.queue.v1.NitricTask;
-import io.nitric.proto.queue.v1.QueueCompleteResponse;
-import io.nitric.proto.queue.v1.QueueReceiveResponse;
-import io.nitric.proto.queue.v1.QueueSendBatchResponse;
-import io.nitric.proto.queue.v1.QueueServiceGrpc;
-import io.nitric.proto.queue.v1.QueueServiceGrpc.QueueServiceBlockingStub;
-import io.nitric.util.ProtoUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QueuesTest {
 
     @Test
     public void test_serviceStub() {
+        Queues.setServiceStub(null);
         assertNotNull(Queues.getServiceStub());
 
         var mock = Mockito.mock(QueueServiceBlockingStub.class);
@@ -96,6 +98,17 @@ public class QueuesTest {
 
         queue.send(task);
         Mockito.verify(mock, Mockito.times(1)).sendBatch(Mockito.any());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.sendBatch(Mockito.any(QueueSendBatchRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            queue.send(task);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -171,6 +184,19 @@ public class QueuesTest {
         assertEquals("payloadType", task.getPayloadType());
         assertEquals("leaseId", task.getLeaseId());
         assertEquals("queue", task.getQueue());
+        assertEquals("ReceivedTask[id=id, payloadType=payloadType, payload={status=ready}, leaseId=leaseId, queue=queue]",
+            task.toString());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.receive(Mockito.any(QueueReceiveRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            queues.receive(10);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -193,6 +219,17 @@ public class QueuesTest {
         task.complete();
 
         Mockito.verify(mock, Mockito.times(1)).complete(Mockito.any());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.complete(Mockito.any(QueueCompleteRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            task.complete();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
 }

@@ -42,6 +42,7 @@ public class EventsTest {
 
     @Test
     public void test_eventServiceStub() {
+        Events.setEventServiceStub(null);
         assertNotNull(Events.getEventServiceStub());
 
         var mock = Mockito.mock(EventServiceBlockingStub.class);

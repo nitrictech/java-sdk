@@ -190,9 +190,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
 
         @Override
         public ResultDoc<T> next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Iterator has no more elements");
-            }
+            // Note iterator is wrapped by Stream iterator which prevents NoSuchElementException
             return queryResults.queryData.get(index++);
         }
     }

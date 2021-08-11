@@ -45,6 +45,12 @@ public class GrpcChannelProvider {
 
     protected static ManagedChannel channel;
 
+    /*
+     * Enforce static method usage
+     */
+    private GrpcChannelProvider() {
+    }
+
     // Public Methods ---------------------------------------------------------
 
     /**
@@ -68,14 +74,6 @@ public class GrpcChannelProvider {
         }
 
         return channel;
-    }
-
-    /**
-     * @return the string representation of this object
-     */
-    @Override
-    public String toString() {
-        return getClass().getName() + "[channel=" + channel + "]";
     }
 
     // Protected Methods ------------------------------------------------------
