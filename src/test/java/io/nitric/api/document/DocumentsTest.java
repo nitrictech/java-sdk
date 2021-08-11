@@ -38,6 +38,7 @@ public class DocumentsTest {
 
     @Test
     public void test_serviceStub() {
+        Documents.setServiceStub(null);
         assertNotNull(Documents.getServiceStub());
 
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);

@@ -22,6 +22,7 @@ package io.nitric.api.document;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -31,12 +32,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.Document;
+import io.nitric.proto.document.v1.DocumentDeleteRequest;
 import io.nitric.proto.document.v1.DocumentDeleteResponse;
+import io.nitric.proto.document.v1.DocumentGetRequest;
 import io.nitric.proto.document.v1.DocumentGetResponse;
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
+import io.nitric.proto.document.v1.DocumentSetRequest;
 import io.nitric.proto.document.v1.DocumentSetResponse;
 import io.nitric.util.ProtoUtils;
 
@@ -96,6 +102,17 @@ public class DocumentRefTest {
         var cust = Documents.collection("customers").doc("id", Customer.class).get();
         Mockito.verify(mock, Mockito.times(3)).get(Mockito.any());
         assertEquals(customer.getEmail(), cust.getEmail());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.get(Mockito.any(DocumentGetRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            Documents.collection("customers").doc("id", Customer.class).get();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -115,6 +132,17 @@ public class DocumentRefTest {
         customer.setEmail("test@server.com");
         Documents.collection("customers").doc("id", Customer.class).set(customer);
         Mockito.verify(mock, Mockito.times(2)).set(Mockito.any());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.set(Mockito.any(DocumentSetRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            Documents.collection("customers").doc("id", Customer.class).set(customer);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -127,6 +155,17 @@ public class DocumentRefTest {
 
         Documents.collection("customers").doc("id").delete();
         Mockito.verify(mock, Mockito.times(1)).delete(Mockito.any());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.delete(Mockito.any(DocumentDeleteRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            Documents.collection("customers").doc("id").delete();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -225,6 +264,19 @@ public class DocumentRefTest {
                 .doc("order-1")
                 .delete();
         Mockito.verify(mock, Mockito.times(1)).delete(Mockito.any());
+    }
+
+    @Test
+    public void test_collection_doc_collection_doc_collection() {
+        try {
+            Documents.collection("customers")
+                    .doc("customer-1")
+                    .collection("orders")
+                    .doc("order-1")
+                    .collection("payments");
+            fail();
+        } catch (UnsupportedOperationException uoe) {
+        }
     }
 
 }

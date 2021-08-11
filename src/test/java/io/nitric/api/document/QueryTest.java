@@ -20,7 +20,12 @@
 
 package io.nitric.api.document;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,9 +39,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.Document;
+import io.nitric.proto.document.v1.DocumentQueryRequest;
 import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.util.ProtoUtils;
@@ -258,6 +266,17 @@ public class QueryTest {
         Mockito.verify(mock, Mockito.times(3)).query(Mockito.any());
         assertNotNull(stream);
         assertEquals(12, count.get());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.query(Mockito.any(DocumentQueryRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            query.limit(10).stream().count();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test

@@ -34,6 +34,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.nitric.proto.storage.v1.StorageDeleteRequest;
 import io.nitric.proto.storage.v1.StorageDeleteResponse;
 import io.nitric.proto.storage.v1.StorageReadRequest;
@@ -51,6 +53,7 @@ public class StorageTest {
 
     @Test
     public void test_serviceStub() {
+        Storage.setServiceStub(null);
         assertNotNull(Storage.getServiceStub());
 
         var mock = Mockito.mock(StorageServiceGrpc.StorageServiceBlockingStub.class);
@@ -105,6 +108,17 @@ public class StorageTest {
         byte[] data = bucket.file("ANY KEY").read();
         assertNotNull(data);
         assertEquals(KNOWN_TEXT, new String(data));
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            bucket.file("ANY KEY").read();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -140,6 +154,17 @@ public class StorageTest {
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-null data", iae.getMessage());
         }
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            Storage.bucket("bucket").file("this key").write(data);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
@@ -153,6 +178,17 @@ public class StorageTest {
         Storage.bucket("bucket").file(KNOWN_KEY).delete();
 
         Mockito.verify(mock).delete(Mockito.any());
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        try {
+            Storage.bucket("bucket").file(KNOWN_KEY).delete();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
 }
