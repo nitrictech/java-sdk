@@ -273,7 +273,7 @@ public class QueryTest {
         );
 
         try {
-            query.limit(10).stream().count();
+            query.stream();
             fail();
         } catch (IllegalArgumentException iae) {
         }

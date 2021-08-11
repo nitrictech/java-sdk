@@ -143,8 +143,9 @@ public class SecretsTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var secret3 = Secrets.secret("name");
         try {
-            Secrets.secret("name").putAsText("password");
+            secret3.putAsText("password");
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -187,8 +188,9 @@ public class SecretsTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var version =  Secrets.secret("name").version("version");
         try {
-            Secrets.secret("name").version("version").access();
+            version.access();
             fail();
         } catch (IllegalArgumentException iae) {
         }

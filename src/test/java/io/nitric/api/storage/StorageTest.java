@@ -114,8 +114,9 @@ public class StorageTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var file = bucket.file("ANY KEY");
         try {
-            bucket.file("ANY KEY").read();
+            file.read();
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -148,8 +149,9 @@ public class StorageTest {
         // TODO: Use Mockito.eq for testing here...
         Mockito.verify(mock).write(Mockito.any());
 
+        var file = Storage.bucket("bucket").file("this key");
         try {
-            Storage.bucket("bucket").file("this key").write(null);
+            file.write(null);
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-null data", iae.getMessage());
@@ -160,8 +162,9 @@ public class StorageTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var file2 = Storage.bucket("bucket").file("this key");
         try {
-            Storage.bucket("bucket").file("this key").write(data);
+            file2.write(data);
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -184,8 +187,9 @@ public class StorageTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var file = Storage.bucket("bucket").file(KNOWN_KEY);
         try {
-            Storage.bucket("bucket").file(KNOWN_KEY).delete();
+            file.delete();
             fail();
         } catch (IllegalArgumentException iae) {
         }

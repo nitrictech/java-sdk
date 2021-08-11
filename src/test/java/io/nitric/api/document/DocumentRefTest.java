@@ -108,8 +108,9 @@ public class DocumentRefTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var docRef =  Documents.collection("customers").doc("id", Customer.class);
         try {
-            Documents.collection("customers").doc("id", Customer.class).get();
+            docRef.get();
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -138,8 +139,9 @@ public class DocumentRefTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var docRef = Documents.collection("customers").doc("id", Customer.class);
         try {
-            Documents.collection("customers").doc("id", Customer.class).set(customer);
+            docRef.set(customer);
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -161,8 +163,9 @@ public class DocumentRefTest {
                 new StatusRuntimeException(Status.INVALID_ARGUMENT)
         );
 
+        var docRef = Documents.collection("customers").doc("id");
         try {
-            Documents.collection("customers").doc("id").delete();
+            docRef.delete();
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -268,12 +271,12 @@ public class DocumentRefTest {
 
     @Test
     public void test_collection_doc_collection_doc_collection() {
+        var docRef = Documents.collection("customers")
+                .doc("customer-1")
+                .collection("orders")
+                .doc("order-1");
         try {
-            Documents.collection("customers")
-                    .doc("customer-1")
-                    .collection("orders")
-                    .doc("order-1")
-                    .collection("payments");
+            docRef.collection("payments");
             fail();
         } catch (UnsupportedOperationException uoe) {
         }
