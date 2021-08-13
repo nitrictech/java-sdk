@@ -11,7 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          token: ${{secrets.SUB_MODULE_PAT}}
           submodules: recursive
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v2
