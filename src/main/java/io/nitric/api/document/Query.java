@@ -380,6 +380,7 @@ public class Query<T> {
         // If no fetch limit specified then paginate all
         boolean paginateAll = (this.limit == 0);
 
+        // Note will replace with QueryStream service call when implemented
         var iterator = new QueryResults<>(this, paginateAll).iterator();
         var spliterators = Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED);
 

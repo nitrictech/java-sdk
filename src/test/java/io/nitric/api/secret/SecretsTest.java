@@ -28,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -44,6 +46,7 @@ public class SecretsTest {
 
     @Test
     public void test_serviceStub() {
+        Secrets.setServiceStub(null);
         assertNotNull(Secrets.getServiceStub());
 
         var mock = Mockito.mock(SecretServiceGrpc.SecretServiceBlockingStub.class);
@@ -120,7 +123,7 @@ public class SecretsTest {
                 .build();
         Mockito.verify(mock).put(protoRequest);
 
-        var secret2 = Secrets.secret("name").put(value);
+        var secret2 = Secrets.secret("name").putAsText("password");
 
         assertNotNull(secret2);
         assertEquals("name", secret2.getSecret().getName());
@@ -131,6 +134,18 @@ public class SecretsTest {
 
         try {
             Secrets.secret("name").put(null);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.put(Mockito.any(SecretPutRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        var secret3 = Secrets.secret("name");
+        try {
+            secret3.putAsText("password");
             fail();
         } catch (IllegalArgumentException iae) {
         }
@@ -159,12 +174,26 @@ public class SecretsTest {
         assertEquals("name", secretValue.getSecretVersion().getSecret().getName());
         assertEquals("version", secretValue.getSecretVersion().getVersion());
         assertEquals("password", secretValue.getAsText());
+        assertEquals("password", new String(secretValue.get(), StandardCharsets.UTF_8));
+        assertEquals("SecretValue[secretVersion=SecretVersion[secret=Secret[name=name], version=version], value.length=8]", secretValue.toString());
 
         // Verify we actually called the mock object
         var protoRequest = SecretAccessRequest.newBuilder()
                 .setSecretVersion(protoSecretVersion)
                 .build();
         Mockito.verify(mock).access(protoRequest);
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.access(Mockito.any(SecretAccessRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+        );
+
+        var version =  Secrets.secret("name").version("version");
+        try {
+            version.access();
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     public class PiiRecord {

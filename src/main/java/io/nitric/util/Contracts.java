@@ -26,7 +26,7 @@ package io.nitric.util;
 public final class Contracts {
 
     /*
-     * Enforce static usage
+     * Enforce static method usage
      */
     private Contracts() {
     }

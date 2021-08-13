@@ -20,16 +20,16 @@
 
 package io.nitric.api.document;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.nitric.proto.document.v1.DocumentQueryRequest;
-import io.nitric.proto.document.v1.DocumentQueryResponse;
-import io.nitric.util.ProtoUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.nitric.proto.document.v1.DocumentQueryRequest;
+import io.nitric.proto.document.v1.DocumentQueryResponse;
+import io.nitric.util.ProtoUtils;
 
 /**
  * Provides an iterable Query Result class.
@@ -190,9 +190,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
 
         @Override
         public ResultDoc<T> next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException("Iterator has no more elements");
-            }
+            // Note iterator is wrapped by Stream iterator which prevents NoSuchElementException
             return queryResults.queryData.get(index++);
         }
     }
