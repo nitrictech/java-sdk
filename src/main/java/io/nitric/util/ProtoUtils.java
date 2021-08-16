@@ -54,31 +54,6 @@ public class ProtoUtils {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * Map the gRPC error to representative Java exception.
-     *
-     * @param sre the GRPC error (required)
-     * @return a representative Java exception
-     */
-    public static RuntimeException mapGrpcError(StatusRuntimeException sre)  {
-        if (sre == null) {
-            return new NullPointerException("Null sre parameter");
-        }
-
-        if (sre.getStatus().getCode() == Status.Code.INVALID_ARGUMENT) {
-            if (sre.getStatus().getDescription() != null) {
-                return new IllegalArgumentException(sre.getStatus().getDescription(), sre);
-            } else if (sre.getMessage() != null) {
-                return new IllegalArgumentException(sre.getMessage(), sre);
-            } else {
-                return new IllegalArgumentException(sre);
-            }
-
-        } else {
-            return sre;
-        }
-    }
-
-    /**
      * Return a new Map built from the given struct.
      *
      * @param struct the protobuf Struct object
