@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.secret.v1.SecretPutRequest;
 import io.nitric.proto.secret.v1.SecretPutResponse;
 import io.nitric.util.Contracts;
@@ -124,7 +125,7 @@ public class Secret {
         try {
             response = Secrets.getServiceStub().put(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         return new SecretVersion(this, response.getSecretVersion().getVersion());

@@ -22,6 +22,7 @@ package io.nitric.api.queue;
 
 import java.util.Map;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
@@ -84,7 +85,7 @@ public class ReceivedTask extends Task {
         try {
             Queues.getServiceStub().complete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
     }
 

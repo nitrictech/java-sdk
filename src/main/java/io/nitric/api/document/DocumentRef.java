@@ -24,6 +24,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.nitric.api.exception.ApiException;
+import io.nitric.api.exception.InvalidArgumentException;
 import io.nitric.proto.document.v1.DocumentDeleteRequest;
 import io.nitric.proto.document.v1.DocumentGetRequest;
 import io.nitric.proto.document.v1.DocumentGetResponse;
@@ -68,6 +70,7 @@ public class DocumentRef<T> {
      * Return the collection document reference value.
      *
      * @return the collection document reference value, or null if not found
+     * @throws ApiException nitric API exception
      */
     public T get() {
         var request = DocumentGetRequest.newBuilder()
@@ -78,7 +81,7 @@ public class DocumentRef<T> {
             try {
                 response = Documents.getServiceStub().get(request);
             } catch (io.grpc.StatusRuntimeException sre) {
-                throw ProtoUtils.mapGrpcError(sre);
+                throw ApiException.fromGrpcServiceException(sre);
             }
 
             if (response.hasDocument()) {
@@ -103,6 +106,7 @@ public class DocumentRef<T> {
      * existing document will be update with the new value.
      *
      * @param content the document content to store (required)
+     * @throws ApiException nitric API exception
      */
     public void set(T content) {
         Contracts.requireNonNull(content, "content");
@@ -126,12 +130,13 @@ public class DocumentRef<T> {
         try {
             Documents.getServiceStub().set(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
     }
 
     /**
      * Delete this document reference from the database if it exists.
+     * @throws ApiException nitric API exception
      */
     public void delete() {
         var request = DocumentDeleteRequest.newBuilder()
@@ -141,7 +146,7 @@ public class DocumentRef<T> {
         try {
             Documents.getServiceStub().delete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
     }
 
@@ -150,13 +155,13 @@ public class DocumentRef<T> {
      *
      * @param name the name of the sub collection (required)
      * @return a new sub collection for the parent collection
+     * @throws ApiException nitric API exception
      */
     public Collection collection(String name) {
         Contracts.requireNonBlank(name, "name");
 
         if (key.collection.parent != null) {
-            var msg = "cannot make a collection a under sub collection document";
-            throw newUnsupportedSubDocOperation(msg);
+            throw new InvalidArgumentException("cannot make a collection a under sub collection document");
         }
 
         return new Collection(name, key);
@@ -168,12 +173,13 @@ public class DocumentRef<T> {
      *
      * @param name the name of the sub collection (required)
      * @return a new collection query object
+     * @throws ApiException nitric API exception
      */
     public Query<Map> query(String name) {
         Contracts.requireNonBlank(name, "name");
 
         if (key.collection.parent != null) {
-            throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
+            throw new InvalidArgumentException("Max collection depth 1 exceeded");
         }
 
         var collectionGroup = new CollectionGroup(name, key);
@@ -186,13 +192,14 @@ public class DocumentRef<T> {
      * @param name the name of the sub collection (required)
      * @param type the query value type (required)
      * @return a new collection query object
+     * @throws ApiException nitric API exception
      */
     public <K> Query<K> query(String name, Class<K> type) {
         Contracts.requireNonBlank(name, "name");
         Contracts.requireNonNull(type, "type");
 
         if (key.collection.parent != null) {
-            throw newUnsupportedSubDocOperation("Max collection depth 1 exceeded");
+            throw new InvalidArgumentException("Max collection depth 1 exceeded");
         }
 
         var collectionGroup = new CollectionGroup(name, key);
@@ -207,21 +214,6 @@ public class DocumentRef<T> {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[key=" + key + ", type=" + type + "]";
-    }
-
-    // Package Private Methods ------------------------------------------------
-
-    UnsupportedOperationException newUnsupportedSubDocOperation(String prefix) {
-
-        var msg = String.format(
-                "%s : [%s:id:%s]/[%s:%s]",
-                prefix,
-                key.collection.parent.collection.name,
-                key.collection.parent.id,
-                key.collection.name,
-                key.id);
-
-        return new UnsupportedOperationException(msg);
     }
 
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.document.v1.DocumentQueryRequest;
 import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.util.ProtoUtils;
@@ -48,7 +49,8 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
      * Create a QueryResults object.
      *
      * @param paginateAll specify whether the iterator paginate through all results
-     * @parma query the query to continue
+     * @param query the query to continue
+     * @throws ApiException nitric API exception
      */
     QueryResults(Query<T> query, boolean paginateAll) {
 
@@ -63,7 +65,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         try {
             response = Documents.getServiceStub().query(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         loadPageData(response);
@@ -172,7 +174,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
                     try {
                         response = Documents.getServiceStub().query(request);
                     } catch (io.grpc.StatusRuntimeException sre) {
-                        throw ProtoUtils.mapGrpcError(sre);
+                        throw ApiException.fromGrpcServiceException(sre);
                     }
 
                     queryResults.loadPageData(response);
