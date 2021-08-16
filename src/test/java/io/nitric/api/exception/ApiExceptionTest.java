@@ -24,6 +24,7 @@ import io.grpc.Status;
 import org.junit.Test;
 
 import static junit.framework.TestCase.fail;
+import static junit.framework.TestCase.assertEquals;
 
 public class ApiExceptionTest {
 
@@ -36,6 +37,9 @@ public class ApiExceptionTest {
         if (!(e instanceof CancelledException)) {
             fail();
         }
+
+        var e2 = new CancelledException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -47,6 +51,9 @@ public class ApiExceptionTest {
         if (!(e instanceof UnknownException)) {
             fail();
         }
+
+        var e2 = new UnknownException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -58,6 +65,9 @@ public class ApiExceptionTest {
         if (!(e instanceof InvalidArgumentException)) {
             fail();
         }
+
+        var e2 = new InvalidArgumentException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -69,6 +79,9 @@ public class ApiExceptionTest {
         if (!(e instanceof DeadlineExceededException)) {
             fail();
         }
+
+        var e2 = new DeadlineExceededException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -80,6 +93,9 @@ public class ApiExceptionTest {
         if (!(e instanceof NotFoundException)) {
             fail();
         }
+
+        var e2 = new NotFoundException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -91,6 +107,9 @@ public class ApiExceptionTest {
         if (!(e instanceof AlreadyExistsException)) {
             fail();
         }
+
+        var e2 = new AlreadyExistsException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -102,6 +121,9 @@ public class ApiExceptionTest {
         if (!(e instanceof PermissionDeniedException)) {
             fail();
         }
+
+        var e2 = new PermissionDeniedException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -113,6 +135,9 @@ public class ApiExceptionTest {
         if (!(e instanceof ResourceExhaustedException)) {
             fail();
         }
+
+        var e2 = new ResourceExhaustedException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -124,6 +149,9 @@ public class ApiExceptionTest {
         if (!(e instanceof FailedPreconditionException)) {
             fail();
         }
+
+        var e2 = new FailedPreconditionException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -135,6 +163,9 @@ public class ApiExceptionTest {
         if (!(e instanceof AbortedException)) {
             fail();
         }
+
+        var e2 = new AbortedException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -146,6 +177,9 @@ public class ApiExceptionTest {
         if (!(e instanceof OutOfRangeException)) {
             fail();
         }
+
+        var e2 = new OutOfRangeException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -157,6 +191,9 @@ public class ApiExceptionTest {
         if (!(e instanceof UnimplementedException)) {
             fail();
         }
+
+        var e2 = new UnimplementedException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -168,6 +205,9 @@ public class ApiExceptionTest {
         if (!(e instanceof InternalException)) {
             fail();
         }
+
+        var e2 = new InternalException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -179,6 +219,9 @@ public class ApiExceptionTest {
         if (!(e instanceof UnavailableException)) {
             fail();
         }
+
+        var e2 = new UnavailableException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -190,6 +233,9 @@ public class ApiExceptionTest {
         if (!(e instanceof DataLossException)) {
             fail();
         }
+
+        var e2 = new DataLossException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 
     @Test
@@ -201,5 +247,8 @@ public class ApiExceptionTest {
         if (!(e instanceof UnauthenticatedException)) {
             fail();
         }
+
+        var e2 = new UnauthenticatedException("test");
+        assertEquals(e2.getMessage(), "test");
     }
 }
