@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.nitric.api.exception.InvalidArgumentException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -275,7 +276,7 @@ public class QueryTest {
         try {
             query.stream();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 

@@ -22,6 +22,7 @@ package io.nitric.api.queue;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.nitric.api.exception.InvalidArgumentException;
 import io.nitric.proto.queue.v1.FailedTask;
 import io.nitric.proto.queue.v1.NitricTask;
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
@@ -107,7 +108,7 @@ public class QueuesTest {
         try {
             queue.send(task);
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -195,7 +196,7 @@ public class QueuesTest {
         try {
             queues.receive(10);
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -228,7 +229,7 @@ public class QueuesTest {
         try {
             task.complete();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 

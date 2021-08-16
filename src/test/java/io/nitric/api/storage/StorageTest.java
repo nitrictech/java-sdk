@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
 
+import io.nitric.api.exception.InvalidArgumentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -118,7 +119,7 @@ public class StorageTest {
         try {
             file.read();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -166,7 +167,7 @@ public class StorageTest {
         try {
             file2.write(data);
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -191,7 +192,7 @@ public class StorageTest {
         try {
             file.delete();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 

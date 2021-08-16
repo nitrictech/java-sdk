@@ -70,6 +70,7 @@ public class DocumentRef<T> {
      * Return the collection document reference value.
      *
      * @return the collection document reference value, or null if not found
+     *
      * @throws ApiException nitric API exception
      */
     public T get() {
@@ -106,6 +107,7 @@ public class DocumentRef<T> {
      * existing document will be update with the new value.
      *
      * @param content the document content to store (required)
+     *
      * @throws ApiException nitric API exception
      */
     public void set(T content) {
@@ -136,6 +138,7 @@ public class DocumentRef<T> {
 
     /**
      * Delete this document reference from the database if it exists.
+     *
      * @throws ApiException nitric API exception
      */
     public void delete() {

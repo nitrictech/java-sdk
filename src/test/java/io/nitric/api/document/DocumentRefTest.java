@@ -29,6 +29,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.nitric.api.exception.InvalidArgumentException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -112,7 +113,7 @@ public class DocumentRefTest {
         try {
             docRef.get();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -143,7 +144,7 @@ public class DocumentRefTest {
         try {
             docRef.set(customer);
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -167,7 +168,7 @@ public class DocumentRefTest {
         try {
             docRef.delete();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -278,7 +279,7 @@ public class DocumentRefTest {
         try {
             docRef.collection("payments");
             fail();
-        } catch (UnsupportedOperationException uoe) {
+        } catch (InvalidArgumentException uoe) {
         }
     }
 
