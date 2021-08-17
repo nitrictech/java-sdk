@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.queue.v1.QueueReceiveRequest;
 import io.nitric.proto.queue.v1.QueueReceiveResponse;
 import io.nitric.proto.queue.v1.QueueSendBatchRequest;
@@ -133,7 +134,7 @@ public class Queue {
         try {
             response = Queues.getServiceStub().sendBatch(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         return response.getFailedTasksList()
@@ -158,7 +159,7 @@ public class Queue {
         try {
             response = Queues.getServiceStub().receive(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         return response.getTasksList()

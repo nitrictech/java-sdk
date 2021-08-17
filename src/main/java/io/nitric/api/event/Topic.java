@@ -20,6 +20,7 @@
 
 package io.nitric.api.event;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
@@ -97,7 +98,7 @@ public class Topic {
         try {
             Events.getEventServiceStub().publish(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
     }
 

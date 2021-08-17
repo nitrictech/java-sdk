@@ -30,6 +30,7 @@ import com.google.protobuf.ByteString;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.nitric.api.exception.InvalidArgumentException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -147,7 +148,7 @@ public class SecretsTest {
         try {
             secret3.putAsText("password");
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 
@@ -192,7 +193,7 @@ public class SecretsTest {
         try {
             version.access();
             fail();
-        } catch (IllegalArgumentException iae) {
+        } catch (InvalidArgumentException iae) {
         }
     }
 

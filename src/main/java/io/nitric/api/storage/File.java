@@ -22,6 +22,7 @@ package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.storage.v1.StorageDeleteRequest;
 import io.nitric.proto.storage.v1.StorageReadRequest;
 import io.nitric.proto.storage.v1.StorageReadResponse;
@@ -113,7 +114,7 @@ public class File {
         try {
             response = Storage.getServiceStub().read(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         var body = response.getBody();
@@ -142,7 +143,7 @@ public class File {
         try {
             Storage.getServiceStub().write(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
     }
 
@@ -158,7 +159,7 @@ public class File {
         try {
             Storage.getServiceStub().delete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
    }
 

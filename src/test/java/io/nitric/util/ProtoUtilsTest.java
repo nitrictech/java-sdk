@@ -36,43 +36,6 @@ import static org.junit.Assert.*;
 public class ProtoUtilsTest {
 
     @Test
-    public void test_mapGrpcError_null() {
-        var re1= ProtoUtils.mapGrpcError(null);
-        assertNotNull(re1);
-        assertTrue(re1 instanceof NullPointerException);
-
-        var re2 = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT, null));
-        assertNotNull(re2);
-        assertTrue(re2 instanceof IllegalArgumentException);
-
-        var re3 = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INTERNAL, null));
-        assertNotNull(re3);
-        assertFalse(re3 instanceof IllegalArgumentException);
-    }
-
-    @Test
-    public void test_mapGrpcError_INVALID_ARGUMENT() {
-        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT, null));
-        assertNotNull(e);
-        assertTrue(e instanceof IllegalArgumentException);
-    }
-
-    @Test
-    public void test_mapGrpcError_INVALID_ARGUMENT_with_description() {
-        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INVALID_ARGUMENT.withDescription("test"), null));
-        assertNotNull(e);
-        assertEquals(e.getMessage(), "test");
-        assertTrue(e instanceof IllegalArgumentException);
-    }
-
-    @Test
-    public void test_mapGrpcError_INTERNAL() {
-        var e = ProtoUtils.mapGrpcError(new StatusRuntimeException(Status.INTERNAL, null));
-        assertNotNull(e);
-        assertFalse(e instanceof IllegalArgumentException);
-    }
-
-    @Test
     public void test_toStruct() {
         Map<String, Object> map = Map.of("field1", "value1");
 

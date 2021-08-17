@@ -20,6 +20,7 @@
 
 package io.nitric.api.secret;
 
+import io.nitric.api.exception.ApiException;
 import io.nitric.proto.secret.v1.SecretAccessRequest;
 import io.nitric.proto.secret.v1.SecretAccessResponse;
 import io.nitric.util.Contracts;
@@ -111,7 +112,7 @@ public class SecretVersion {
         try {
             response = Secrets.getServiceStub().access(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ProtoUtils.mapGrpcError(sre);
+            throw ApiException.fromGrpcServiceException(sre);
         }
 
         var secretVersion = new SecretVersion(
