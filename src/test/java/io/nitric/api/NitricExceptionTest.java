@@ -79,6 +79,12 @@ public class NitricExceptionTest {
         test_status(Status.UNAUTHENTICATED, Code.UNAUTHENTICATED);
         test_status(Status.UNIMPLEMENTED, Code.UNIMPLEMENTED);
         test_status(Status.UNKNOWN, Code.UNKNOWN);
+
+        try {
+            NitricException.build(Status.OK.asRuntimeException());
+            fail();
+        } catch (UnsupportedOperationException uoe) {
+        }
     }
 
     private void test_status(Status status, Code code) {
