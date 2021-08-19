@@ -191,7 +191,7 @@ public class NitricException extends RuntimeException {
             case UNKNOWN:
                 return Code.UNKNOWN;
             default:
-                throw new RuntimeException("Unsupported GRPC Code: " + code);
+                throw new UnsupportedOperationException("Unsupported GRPC Code: " + code);
         }
     }
 
