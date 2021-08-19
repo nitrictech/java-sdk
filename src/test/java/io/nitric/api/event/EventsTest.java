@@ -20,6 +20,12 @@
 
 package io.nitric.api.event;
 
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.nitric.api.NitricException;
+import io.nitric.api.NotFoundException;
+import io.nitric.api.storage.Storage;
+import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.proto.event.v1.EventPublishResponse;
 import io.nitric.proto.event.v1.EventServiceGrpc;
 import io.nitric.proto.event.v1.EventServiceGrpc.EventServiceBlockingStub;
@@ -28,6 +34,7 @@ import io.nitric.proto.event.v1.TopicListRequest;
 import io.nitric.proto.event.v1.TopicListResponse;
 import io.nitric.proto.event.v1.TopicServiceGrpc;
 import io.nitric.proto.event.v1.TopicServiceGrpc.TopicServiceBlockingStub;
+import io.nitric.proto.storage.v1.StorageWriteRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -53,6 +60,7 @@ public class EventsTest {
 
     @Test
     public void test_topicServiceStub() {
+        Events.setTopicServiceStub(null);
         assertNotNull(Events.getTopicServiceStub());
 
         var mock = Mockito.mock(TopicServiceBlockingStub.class);
@@ -99,6 +107,18 @@ public class EventsTest {
 
         nitricTopic = list.get(1);
         assertEquals("topic2", nitricTopic.getName());
+
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.list(Mockito.any(TopicListRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INTERNAL)
+        );
+
+        try {
+            Events.topics();
+            fail();
+        } catch (NitricException ne) {
+        }
     }
 
     @Test
@@ -110,14 +130,30 @@ public class EventsTest {
         );
         Events.setEventServiceStub(mock);
 
-        var event = Event.build(Map.of("name", "value"));
-        Events.topic("topic").publish(event);
+        var event1 = Event.build(Map.of("name", "value"));
+        Events.topic("topic").publish(event1);
+
+        var event2 = Event.newBuilder().id("id").payloadType("json").payload(Map.of("name", "value")).build();
+        Events.topic("topic").publish(event2);
+
+        Mockito.verify(mock, Mockito.times(2)).publish(Mockito.any());
 
         try {
             Events.topic("topic").publish(null);
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-null event", iae.getMessage());
+        }
+
+        // Verify GRPC Failure Mode
+        Mockito.when(mock.publish(Mockito.any(EventPublishRequest.class))).thenThrow(
+                new StatusRuntimeException(Status.INTERNAL)
+        );
+
+        try {
+            Events.topic("topic").publish(event1);
+            fail();
+        } catch (NitricException ne) {
         }
     }
 
