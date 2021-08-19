@@ -35,20 +35,30 @@ public class NitricExceptionTest {
         assertEquals("message", ne1.getMessage());
         assertEquals(Code.UNKNOWN, ne1.getCode());
         assertNull(ne1.getCause());
+        System.out.println(ne1.toString());
+        assertEquals("io.nitric.api.NitricException: UNKNOWN: message", ne1.toString());
 
         var npe = new NullPointerException();
         var ne2 = new NitricException("message", npe);
         assertEquals("message", ne2.getMessage());
         assertEquals(Code.UNKNOWN, ne2.getCode());
         assertEquals(npe, ne2.getCause());
+        System.out.println(ne2.toString());
+        assertEquals("io.nitric.api.NitricException: UNKNOWN: message", ne2.toString());
 
         var sre = new StatusRuntimeException(Status.NOT_FOUND);
         var ne3 = new NitricException(Code.NOT_FOUND, "message", sre);
         assertEquals("message", ne3.getMessage());
         assertEquals(Code.NOT_FOUND, ne3.getCode());
         assertEquals(sre, ne3.getCause());
-
         assertEquals("io.nitric.api.NitricException: NOT_FOUND: message", ne3.toString());
+
+        var ne4 = new NitricException(null, null, null);
+        assertNull(ne4.getMessage());
+        assertEquals(Code.UNKNOWN, ne4.getCode());
+        assertNull(ne4.getCause());
+        System.out.println(ne4.toString());
+        assertEquals("io.nitric.api.NitricException: UNKNOWN", ne4.toString());
     }
 
     @Test

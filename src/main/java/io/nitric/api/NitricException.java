@@ -99,7 +99,7 @@ public class NitricException extends RuntimeException {
      */
     public NitricException(Code code, String message, Throwable cause) {
         super(message, cause);
-        this.code = code;
+        this.code = (code != null) ? code : Code.UNKNOWN;
     }
 
     // Public Methods ----------------------------------------------------------
