@@ -23,8 +23,6 @@ package io.nitric.api.event;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.nitric.api.NitricException;
-import io.nitric.api.NotFoundException;
-import io.nitric.api.storage.Storage;
 import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.proto.event.v1.EventPublishResponse;
 import io.nitric.proto.event.v1.EventServiceGrpc;
@@ -34,7 +32,6 @@ import io.nitric.proto.event.v1.TopicListRequest;
 import io.nitric.proto.event.v1.TopicListResponse;
 import io.nitric.proto.event.v1.TopicServiceGrpc;
 import io.nitric.proto.event.v1.TopicServiceGrpc.TopicServiceBlockingStub;
-import io.nitric.proto.storage.v1.StorageWriteRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -138,8 +135,9 @@ public class EventsTest {
 
         Mockito.verify(mock, Mockito.times(2)).publish(Mockito.any());
 
+        var topic = Events.topic("topic");
         try {
-            Events.topic("topic").publish(null);
+            topic.publish(null);
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("provide non-null event", iae.getMessage());
@@ -151,7 +149,7 @@ public class EventsTest {
         );
 
         try {
-            Events.topic("topic").publish(event1);
+            topic.publish(event1);
             fail();
         } catch (NitricException ne) {
         }
