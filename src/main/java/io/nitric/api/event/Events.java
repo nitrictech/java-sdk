@@ -20,10 +20,7 @@
 
 package io.nitric.api.event;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.event.v1.EventServiceGrpc;
 import io.nitric.proto.event.v1.EventServiceGrpc.EventServiceBlockingStub;
 import io.nitric.proto.event.v1.TopicListRequest;
@@ -32,7 +29,9 @@ import io.nitric.proto.event.v1.TopicServiceGrpc;
 import io.nitric.proto.event.v1.TopicServiceGrpc.TopicServiceBlockingStub;
 import io.nitric.util.Contracts;
 import io.nitric.util.GrpcChannelProvider;
-import io.nitric.util.ProtoUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -90,8 +89,9 @@ public class Events {
      * List the available event topics.
      *
      * @return the list of available topics
+     * @throws NitricException if a Topic Service API error occurs
      */
-    public static List<Topic> topics() {
+    public static List<Topic> topics() throws NitricException {
 
         var request = TopicListRequest.newBuilder().build();
 
@@ -99,7 +99,7 @@ public class Events {
         try {
             response = getTopicServiceStub().list(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         return response.getTopicsList()

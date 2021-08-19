@@ -27,7 +27,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.document.v1.DocumentQueryRequest;
 import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.util.ProtoUtils;
@@ -50,9 +50,9 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
      *
      * @param paginateAll specify whether the iterator paginate through all results
      * @param query the query to continue
-     * @throws ApiException nitric API exception
+     * @throws NitricException if a Document Service API error occurs
      */
-    QueryResults(Query<T> query, boolean paginateAll) {
+    QueryResults(Query<T> query, boolean paginateAll) throws NitricException {
 
         this.query = query;
         this.pagingToken = query.pagingToken;
@@ -65,7 +65,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         try {
             response = Documents.getServiceStub().query(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         loadPageData(response);
@@ -157,7 +157,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         }
 
         @Override
-        public boolean hasNext() {
+        public boolean hasNext() throws NitricException {
 
             if (index < queryResults.queryData.size()) {
                 return true;
@@ -174,7 +174,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
                     try {
                         response = Documents.getServiceStub().query(request);
                     } catch (io.grpc.StatusRuntimeException sre) {
-                        throw ApiException.fromGrpcServiceException(sre);
+                        throw NitricException.build(sre);
                     }
 
                     queryResults.loadPageData(response);

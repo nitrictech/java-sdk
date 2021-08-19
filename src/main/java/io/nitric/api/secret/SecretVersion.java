@@ -20,11 +20,10 @@
 
 package io.nitric.api.secret;
 
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.secret.v1.SecretAccessRequest;
 import io.nitric.proto.secret.v1.SecretAccessResponse;
 import io.nitric.util.Contracts;
-import io.nitric.util.ProtoUtils;
 
 /**
  * <p>
@@ -93,8 +92,9 @@ public class SecretVersion {
      *
      * @return the version's secret value if found, or throws an exception otherwise
      * @throws io.grpc.StatusRuntimeException if the secret value was not found
+     * @throws NitricException if a Secret Service API error occurs
      */
-    public SecretValue access() {
+    public SecretValue access() throws NitricException {
         var protoSecret = io.nitric.proto.secret.v1.Secret.newBuilder()
             .setName(getSecret().getName())
             .build();
@@ -112,7 +112,7 @@ public class SecretVersion {
         try {
             response = Secrets.getServiceStub().access(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         var secretVersion = new SecretVersion(

@@ -18,26 +18,9 @@
  * #L%
  */
 
-package io.nitric.api.exception;
-
 /**
- * UnknownException
- *
- * Not return enough error information provided will be converted to this error.
+ * <p>
+ *  Provides the API exception classes.
+ * </p>
  */
-public class UnknownException extends ApiException {
-
-    /**
-     * UnknownException constructor
-     */
-    public UnknownException(String message) {
-        super(message);
-    }
-
-    /**
-     * UnknownException constructor
-     */
-    public UnknownException(String message, Throwable cause) {
-        super(message, cause);
-    }
-}
+package io.nitric.api;

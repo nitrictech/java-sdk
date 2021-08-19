@@ -29,7 +29,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
 
-import io.nitric.api.exception.InvalidArgumentException;
+import io.nitric.api.NitricException;
+import io.nitric.api.NotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -112,14 +113,14 @@ public class StorageTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.read(Mockito.any(StorageReadRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         var file = bucket.file("ANY KEY");
         try {
             file.read();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -160,14 +161,14 @@ public class StorageTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.write(Mockito.any(StorageWriteRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.NOT_FOUND)
         );
 
         var file2 = Storage.bucket("bucket").file("this key");
         try {
             file2.write(data);
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NotFoundException nfe) {
         }
     }
 
@@ -185,14 +186,14 @@ public class StorageTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.delete(Mockito.any(StorageDeleteRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.NOT_FOUND)
         );
 
         var file = Storage.bucket("bucket").file(KNOWN_KEY);
         try {
             file.delete();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NotFoundException nfe) {
         }
     }
 

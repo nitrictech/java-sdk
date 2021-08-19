@@ -22,7 +22,6 @@ package io.nitric.api.document;
 
 import java.util.Map;
 
-import io.nitric.api.exception.InvalidArgumentException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -217,14 +216,14 @@ public class DocumentsTest {
         try {
             orderDoc.query("payments");
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             assertTrue(iae.getMessage().startsWith("Max collection depth 1 exceeded"));
         }
 
         try {
             orderDoc.query("payments", Map.class);
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             assertTrue(iae.getMessage().startsWith("Max collection depth 1 exceeded"));
         }
     }

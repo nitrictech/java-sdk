@@ -20,18 +20,17 @@
 
 package io.nitric.api.document;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.nitric.api.exception.ApiException;
-import io.nitric.api.exception.InvalidArgumentException;
+import io.nitric.api.NitricException;
+import io.nitric.api.NotFoundException;
 import io.nitric.proto.document.v1.DocumentDeleteRequest;
 import io.nitric.proto.document.v1.DocumentGetRequest;
 import io.nitric.proto.document.v1.DocumentGetResponse;
 import io.nitric.proto.document.v1.DocumentSetRequest;
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
+
+import java.util.Map;
 
 /**
  * Provides an Document Reference class.
@@ -69,11 +68,11 @@ public class DocumentRef<T> {
     /**
      * Return the collection document reference value.
      *
-     * @return the collection document reference value, or null if not found
-     *
-     * @throws ApiException nitric API exception
+     * @return the collection document reference value
+     * @throws NotFoundException if the document was not found
+     * @throws NitricException if a Document Service API error occurs
      */
-    public T get() {
+    public T get() throws NotFoundException, NitricException {
         var request = DocumentGetRequest.newBuilder()
                 .setKey(key.toGrpcKey())
                 .build();
@@ -82,7 +81,7 @@ public class DocumentRef<T> {
             try {
                 response = Documents.getServiceStub().get(request);
             } catch (io.grpc.StatusRuntimeException sre) {
-                throw ApiException.fromGrpcServiceException(sre);
+                throw NitricException.build(sre);
             }
 
             if (response.hasDocument()) {
@@ -107,10 +106,9 @@ public class DocumentRef<T> {
      * existing document will be update with the new value.
      *
      * @param content the document content to store (required)
-     *
-     * @throws ApiException nitric API exception
+     * @throws NitricException if a Document Service API error occurs
      */
-    public void set(T content) {
+    public void set(T content) throws NitricException {
         Contracts.requireNonNull(content, "content");
 
         // Marshal content Struct
@@ -132,16 +130,16 @@ public class DocumentRef<T> {
         try {
             Documents.getServiceStub().set(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
     }
 
     /**
      * Delete this document reference from the database if it exists.
      *
-     * @throws ApiException nitric API exception
+     * @throws NitricException if a Document Service API error occurs
      */
-    public void delete() {
+    public void delete() throws NitricException {
         var request = DocumentDeleteRequest.newBuilder()
                 .setKey(key.toGrpcKey())
                 .build();
@@ -149,7 +147,7 @@ public class DocumentRef<T> {
         try {
             Documents.getServiceStub().delete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
     }
 
@@ -158,13 +156,12 @@ public class DocumentRef<T> {
      *
      * @param name the name of the sub collection (required)
      * @return a new sub collection for the parent collection
-     * @throws ApiException nitric API exception
      */
     public Collection collection(String name) {
         Contracts.requireNonBlank(name, "name");
 
         if (key.collection.parent != null) {
-            throw new InvalidArgumentException("cannot make a collection a under sub collection document");
+            throw new IllegalArgumentException("cannot make a collection a under sub collection document");
         }
 
         return new Collection(name, key);
@@ -176,13 +173,12 @@ public class DocumentRef<T> {
      *
      * @param name the name of the sub collection (required)
      * @return a new collection query object
-     * @throws ApiException nitric API exception
      */
     public Query<Map> query(String name) {
         Contracts.requireNonBlank(name, "name");
 
         if (key.collection.parent != null) {
-            throw new InvalidArgumentException("Max collection depth 1 exceeded");
+            throw new IllegalArgumentException("Max collection depth 1 exceeded");
         }
 
         var collectionGroup = new CollectionGroup(name, key);
@@ -195,14 +191,13 @@ public class DocumentRef<T> {
      * @param name the name of the sub collection (required)
      * @param type the query value type (required)
      * @return a new collection query object
-     * @throws ApiException nitric API exception
      */
     public <K> Query<K> query(String name, Class<K> type) {
         Contracts.requireNonBlank(name, "name");
         Contracts.requireNonNull(type, "type");
 
         if (key.collection.parent != null) {
-            throw new InvalidArgumentException("Max collection depth 1 exceeded");
+            throw new IllegalArgumentException("Max collection depth 1 exceeded");
         }
 
         var collectionGroup = new CollectionGroup(name, key);

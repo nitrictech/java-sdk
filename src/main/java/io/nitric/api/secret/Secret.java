@@ -20,15 +20,13 @@
 
 package io.nitric.api.secret;
 
-import java.nio.charset.StandardCharsets;
-
 import com.google.protobuf.ByteString;
-
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.secret.v1.SecretPutRequest;
 import io.nitric.proto.secret.v1.SecretPutResponse;
 import io.nitric.util.Contracts;
-import io.nitric.util.ProtoUtils;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Provides a named Secret class.
@@ -108,8 +106,9 @@ public class Secret {
      * </code></pre>
      *
      * @param value the secret value to store (required)
+     * @throws NitricException if a Secret Service API error occurs
      */
-    public SecretVersion put(byte[] value) {
+    public SecretVersion put(byte[] value) throws NitricException {
         Contracts.requireNonNull(value, "value");
 
         var secret = io.nitric.proto.secret.v1.Secret.newBuilder()
@@ -125,7 +124,7 @@ public class Secret {
         try {
             response = Secrets.getServiceStub().put(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         return new SecretVersion(this, response.getSecretVersion().getVersion());

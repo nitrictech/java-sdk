@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.queue.v1.QueueReceiveRequest;
 import io.nitric.proto.queue.v1.QueueReceiveResponse;
 import io.nitric.proto.queue.v1.QueueSendBatchRequest;
@@ -116,8 +116,9 @@ public class Queue {
      *
      * @param tasks the list of task to send as a batch (required)
      * @return the list of tasks which failed to send, or an empty list if all were successfully sent
+     * @throws NitricException if a Queue Service API error occurs
      */
-    public List<FailedTask> sendBatch(List<Task> tasks) {
+    public List<FailedTask> sendBatch(List<Task> tasks) throws NitricException {
         Contracts.requireNonNull(tasks, "tasks");
 
         if (tasks.isEmpty()) {
@@ -134,7 +135,7 @@ public class Queue {
         try {
             response = Queues.getServiceStub().sendBatch(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         return response.getFailedTasksList()
@@ -148,8 +149,9 @@ public class Queue {
      *
      * @param limit the maximum number of tasks to receive from the queue
      * @return the tasks from the client queue
+     * @throws NitricException if a Queue Service API error occurs
      */
-    public List<ReceivedTask> receive(int limit) {
+    public List<ReceivedTask> receive(int limit) throws NitricException {
         var request = QueueReceiveRequest.newBuilder()
                 .setQueue(name)
                 .setDepth(limit)
@@ -159,7 +161,7 @@ public class Queue {
         try {
             response = Queues.getServiceStub().receive(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         return response.getTasksList()

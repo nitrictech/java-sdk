@@ -20,21 +20,11 @@
 
 package io.nitric.api.document;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.util.Collections;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.nitric.api.exception.InvalidArgumentException;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.nitric.api.NitricException;
+import io.nitric.api.NotFoundException;
 import io.nitric.api.document.model.Customer;
 import io.nitric.api.document.model.Order;
 import io.nitric.proto.document.v1.Document;
@@ -46,6 +36,13 @@ import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.proto.document.v1.DocumentSetRequest;
 import io.nitric.proto.document.v1.DocumentSetResponse;
 import io.nitric.util.ProtoUtils;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Collections;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Provides CollectionDocRef test case.
@@ -106,14 +103,14 @@ public class DocumentRefTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.get(Mockito.any(DocumentGetRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.NOT_FOUND)
         );
 
         var docRef =  Documents.collection("customers").doc("id", Customer.class);
         try {
             docRef.get();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NotFoundException nfe) {
         }
     }
 
@@ -137,14 +134,14 @@ public class DocumentRefTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.set(Mockito.any(DocumentSetRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         var docRef = Documents.collection("customers").doc("id", Customer.class);
         try {
             docRef.set(customer);
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -161,14 +158,14 @@ public class DocumentRefTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.delete(Mockito.any(DocumentDeleteRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         var docRef = Documents.collection("customers").doc("id");
         try {
             docRef.delete();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -279,7 +276,7 @@ public class DocumentRefTest {
         try {
             docRef.collection("payments");
             fail();
-        } catch (InvalidArgumentException uoe) {
+        } catch (IllegalArgumentException uoe) {
         }
     }
 
