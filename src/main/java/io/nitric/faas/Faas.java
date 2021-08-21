@@ -209,9 +209,10 @@ public class Faas {
                                         .setTriggerResponse(grpcResponse)
                                         .build());
                     } catch (Throwable error) {
+                        var type = trigger.getContext().isHttp() ? "HTTP" : "Topic";
                         logException(error,
-                                     "onNext() error occurred handling trigger %s with function: %s",
-                                     trigger,
+                                     "error handling %s trigger with function '%s' : ",
+                                     type,
                                      function.getClass().getName());
                     }
                     break;
