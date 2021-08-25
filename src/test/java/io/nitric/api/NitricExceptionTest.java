@@ -22,6 +22,8 @@ package io.nitric.api;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.nitric.proto.error.v1.ErrorDetails;
+import io.nitric.proto.error.v1.ErrorDetailsOrBuilder;
 import org.junit.Test;
 
 import static io.nitric.api.NitricException.Code;
@@ -47,10 +49,34 @@ public class NitricExceptionTest {
         assertEquals(npe, ne2.getCause());
 
         var sre = new StatusRuntimeException(Status.NOT_FOUND);
-        var ne3 = new NitricException(Code.NOT_FOUND, "message", sre);
+        var ne3 = new NitricException(Code.NOT_FOUND, "message", sre, null);
         assertEquals("message", ne3.getMessage());
         assertEquals(Code.NOT_FOUND, ne3.getCode());
         assertEquals(sre, ne3.getCause());
+
+        var ne4 = new NitricException(null, "message", sre, null);
+        assertEquals("message", ne4.getMessage());
+        assertEquals(Code.UNKNOWN, ne4.getCode());
+        assertEquals(sre, ne4.getCause());
+
+        var ed = ErrorDetails.newBuilder()
+                .setMessage("message")
+                .setCause("cause")
+                .setService("service")
+                .setPlugin("plugin")
+                .setArgs("args")
+                .build();
+
+        var ne5 = new NitricException(Code.NOT_FOUND, "", sre, ed);
+        assertEquals(ne5.toString(), "io.nitric.api.NitricException[\n" +
+                "    code: NOT_FOUND\n" +
+                "    message: message\n" +
+                "    cause: cause\n" +
+                "    service: service\n" +
+                "    plugin: plugin\n" +
+                "    args: args\n" +
+                "]");
+
     }
 
     @Test

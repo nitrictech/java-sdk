@@ -112,22 +112,9 @@ public class NitricException extends RuntimeException {
     /*
      * Enforce package builder patterns.
      */
-    NitricException(Code code, String message, StatusRuntimeException cause) {
+    NitricException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
         super(message, cause);
         this.code = (code != null) ? code : Code.UNKNOWN;
-
-        ErrorDetails errorDetails = null;
-        com.google.rpc.Status status = StatusProto.fromThrowable(cause);
-        for (Any any : status.getDetailsList()) {
-            if (any.is(ErrorDetails.class)) {
-                try {
-                    errorDetails = any.unpack(ErrorDetails.class);
-                } catch (InvalidProtocolBufferException ipbe) {
-                    ipbe.printStackTrace();
-                }
-                break;
-            }
-        }
 
         if (errorDetails != null) {
             this.message = (errorDetails.getMessage() != null) ? errorDetails.getMessage() : message;
@@ -244,13 +231,26 @@ public class NitricException extends RuntimeException {
 
         var code = fromGrpcCode(sre.getStatus().getCode());
 
+        ErrorDetails errorDetails = null;
+        com.google.rpc.Status status = StatusProto.fromThrowable(sre);
+        for (Any any : status.getDetailsList()) {
+            if (any.is(ErrorDetails.class)) {
+                try {
+                    errorDetails = any.unpack(ErrorDetails.class);
+                } catch (InvalidProtocolBufferException ipbe) {
+                    ipbe.printStackTrace();
+                }
+                break;
+            }
+        }
+
         switch (sre.getStatus().getCode()) {
             case NOT_FOUND:
-                return new io.nitric.api.NotFoundException(code, sre.getMessage(), sre);
+                return new io.nitric.api.NotFoundException(code, sre.getMessage(), sre, errorDetails);
             case UNAVAILABLE:
-                return new io.nitric.api.UnavailableException(code, sre.getMessage(), sre);
+                return new io.nitric.api.UnavailableException(code, sre.getMessage(), sre, errorDetails);
            default:
-               return new NitricException(code, sre.getMessage(), sre);
+               return new NitricException(code, sre.getMessage(), sre, errorDetails);
         }
     }
 

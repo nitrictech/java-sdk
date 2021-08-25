@@ -21,6 +21,7 @@
 package io.nitric.api;
 
 import io.grpc.StatusRuntimeException;
+import io.nitric.proto.error.v1.ErrorDetails;
 
 /**
  * <p>
@@ -33,8 +34,8 @@ public class UnavailableException extends NitricException {
     /*
      * Enforce package builder patterns.
      */
-    UnavailableException(Code code, String message, StatusRuntimeException cause) {
-        super(code, message, cause);
+    UnavailableException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
+        super(code, message, cause, errorDetails);
     }
 
 }

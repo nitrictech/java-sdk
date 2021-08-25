@@ -209,9 +209,9 @@ public class Faas {
                                         .setTriggerResponse(grpcResponse)
                                         .build());
                     } catch (Throwable error) {
-                        var type = "HTTP";
-                        if (trigger.getContext() != null && trigger.getContext().isTopic()) {
-                            type = "Topic";
+                        var type = "<null>";
+                        if (trigger != null) {
+                            type = trigger.getContext().isHttp() ? "HTTP" : "Topic";
                         }
                         logException(error,
                                      "error handling %s trigger with function '%s' : ",

@@ -21,6 +21,7 @@
 package io.nitric.api;
 
 import io.grpc.StatusRuntimeException;
+import io.nitric.proto.error.v1.ErrorDetails;
 
 /**
  * Provides a Nitric API resource not found exception class.
@@ -30,8 +31,8 @@ public class NotFoundException extends NitricException {
     /*
      * Enforce package builder patterns.
      */
-    NotFoundException(Code code, String message, StatusRuntimeException cause) {
-        super(code, message, cause);
+    NotFoundException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
+        super(code, message, cause, errorDetails);
     }
 
 }
