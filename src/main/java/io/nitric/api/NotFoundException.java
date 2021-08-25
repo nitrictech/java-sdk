@@ -20,19 +20,17 @@
 
 package io.nitric.api;
 
+import io.grpc.StatusRuntimeException;
+
 /**
  * Provides a Nitric API resource not found exception class.
  */
 public class NotFoundException extends NitricException {
 
-    /**
-     * Create a Nitric API resource Not Found Exception with the given code, message and cause.
-     *
-     * @param code the GRPC error code
-     * @param message the error message
-     * @param cause the error cause
+    /*
+     * Enforce package builder patterns.
      */
-    public NotFoundException(Code code, String message, Throwable cause) {
+    NotFoundException(Code code, String message, StatusRuntimeException cause) {
         super(code, message, cause);
     }
 

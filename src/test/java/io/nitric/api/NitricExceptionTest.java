@@ -35,30 +35,22 @@ public class NitricExceptionTest {
         assertEquals("message", ne1.getMessage());
         assertEquals(Code.UNKNOWN, ne1.getCode());
         assertNull(ne1.getCause());
-        System.out.println(ne1.toString());
-        assertEquals("io.nitric.api.NitricException: UNKNOWN: message", ne1.toString());
+        assertEquals(ne1.toString(), "io.nitric.api.NitricException[\n" +
+        "    code: UNKNOWN\n" +
+        "    message: message\n" +
+        "]");
 
         var npe = new NullPointerException();
         var ne2 = new NitricException("message", npe);
         assertEquals("message", ne2.getMessage());
         assertEquals(Code.UNKNOWN, ne2.getCode());
         assertEquals(npe, ne2.getCause());
-        System.out.println(ne2.toString());
-        assertEquals("io.nitric.api.NitricException: UNKNOWN: message", ne2.toString());
 
         var sre = new StatusRuntimeException(Status.NOT_FOUND);
         var ne3 = new NitricException(Code.NOT_FOUND, "message", sre);
         assertEquals("message", ne3.getMessage());
         assertEquals(Code.NOT_FOUND, ne3.getCode());
         assertEquals(sre, ne3.getCause());
-        assertEquals("io.nitric.api.NitricException: NOT_FOUND: message", ne3.toString());
-
-        var ne4 = new NitricException(null, null, null);
-        assertNull(ne4.getMessage());
-        assertEquals(Code.UNKNOWN, ne4.getCode());
-        assertNull(ne4.getCause());
-        System.out.println(ne4.toString());
-        assertEquals("io.nitric.api.NitricException: UNKNOWN", ne4.toString());
     }
 
     @Test
@@ -80,10 +72,17 @@ public class NitricExceptionTest {
         test_status(Status.UNIMPLEMENTED, Code.UNIMPLEMENTED);
         test_status(Status.UNKNOWN, Code.UNKNOWN);
 
+        var nfe = NitricException.build(Status.NOT_FOUND.asRuntimeException());
+        assertTrue(nfe instanceof NotFoundException);
+
+        var ue = NitricException.build(Status.UNAVAILABLE.asRuntimeException());
+        assertTrue(ue instanceof UnavailableException);
+
         try {
             NitricException.build(Status.OK.asRuntimeException());
             fail();
         } catch (UnsupportedOperationException uoe) {
+            // Ignore
         }
     }
 

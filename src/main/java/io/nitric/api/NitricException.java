@@ -20,7 +20,11 @@
 
 package io.nitric.api;
 
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.StatusProto;
+import io.nitric.proto.error.v1.ErrorDetails;
 import io.nitric.util.Contracts;
 
 /**
@@ -71,6 +75,11 @@ public class NitricException extends RuntimeException {
     }
 
     final Code code;
+    final String message;
+    final String errorCause;
+    final String service;
+    final String plugin;
+    final String args;
 
     // Constructors -----------------------------------------------------------
 
@@ -80,6 +89,11 @@ public class NitricException extends RuntimeException {
     NitricException(String message) {
         super(message);
         this.code = Code.UNKNOWN;
+        this.errorCause = null;
+        this.message = message;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
     /*
@@ -88,18 +102,46 @@ public class NitricException extends RuntimeException {
     NitricException(String message, Throwable cause) {
         super(message, cause);
         this.code = Code.UNKNOWN;
+        this.message = message;
+        this.errorCause = null;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
-    /**
-     * Create a Nitric API Exception with the given code, message and cause.
-     *
-     * @param code the GRPC code
-     * @param message the error message
-     * @param cause the error cause
+    /*
+     * Enforce package builder patterns.
      */
-    public NitricException(Code code, String message, Throwable cause) {
+    NitricException(Code code, String message, StatusRuntimeException cause) {
         super(message, cause);
         this.code = (code != null) ? code : Code.UNKNOWN;
+
+        ErrorDetails errorDetails = null;
+        com.google.rpc.Status status = StatusProto.fromThrowable(cause);
+        for (Any any : status.getDetailsList()) {
+            if (any.is(ErrorDetails.class)) {
+                try {
+                    errorDetails = any.unpack(ErrorDetails.class);
+                } catch (InvalidProtocolBufferException ipbe) {
+                    ipbe.printStackTrace();
+                }
+                break;
+            }
+        }
+
+        if (errorDetails != null) {
+            this.message = (errorDetails.getMessage() != null) ? errorDetails.getMessage() : message;
+            this.errorCause = errorDetails.getCause();
+            this.service = errorDetails.getService();
+            this.plugin = errorDetails.getPlugin();
+            this.args = errorDetails.getArgs();
+        } else {
+            this.message = message;
+            this.errorCause = null;
+            this.service = null;
+            this.plugin = null;
+            this.args = null;
+        }
     }
 
     // Public Methods ----------------------------------------------------------
@@ -114,21 +156,79 @@ public class NitricException extends RuntimeException {
     }
 
     /**
+     * Return the error message.
+     *
+     * @return the error message
+     */
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Return the cause of the error.
+     *
+     * @return the cause of the error.
+     */
+    public String getErrorCause() {
+        return errorCause;
+    }
+
+    /**
+     * Return the API service invoked, e.g. 'Service.Method'.
+     *
+     * @return the name of the API service invoked.
+     */
+    public String getService() {
+        return service;
+    }
+
+    /**
+     * Return the name of the service plugin invoked, e.g. 'PluginService.Method'.
+     *
+     * @return the name of the service plugin invoked.
+     */
+    public String getPlugin() {
+        return plugin;
+    }
+
+    /**
+     * Return the plugin method arguments. Please note only non-sensitive data should be returned.
+     *
+     * @return the plugin method arguments
+     */
+    public String getArgs() {
+        return args;
+    }
+
+    /**
      * Return the string representation of this object.
      *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
+
         var builder = new StringBuilder()
                 .append(getClass().getName())
-                .append(": ")
-                .append(getCode());
+                .append("[");
 
-        String message = getLocalizedMessage();
-        if (message != null) {
-            builder.append(": ").append(message);
+        final var indent = "\n    ";
+        builder.append(indent + "code: " + getCode());
+        builder.append(indent + "message: " + getMessage());
+        if (getErrorCause() != null) {
+            builder.append(indent + "cause: " + getErrorCause());
         }
+        if (getService() != null) {
+            builder.append(indent + "service: " + getService());
+        }
+        if (getPlugin() != null) {
+            builder.append(indent + "plugin: " + getPlugin());
+        }
+        if (getArgs() != null) {
+            builder.append(indent + "args: " + getArgs());
+        }
+        builder.append("\n]");
 
         return builder.toString();
     }

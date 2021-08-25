@@ -171,7 +171,7 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <encoding>UTF-8</encoding>
-                    <excludes>**/proto/**</excludes>
+                    <excludes>**/proto/**, io/envoyproxy/**</excludes>
                     <consoleOutput>true</consoleOutput>
                     <failsOnViolation>true</failsOnViolation>
                     <failsOnError>true</failsOnError>
@@ -200,6 +200,7 @@
                     <projectName>Nitric Java SDK</projectName>
                     <failOnMissingHeader>true</failOnMissingHeader>
                     <excludes>
+                        <exclude>**/envoyproxy/**</exclude>
                         <exclude>**/proto/**</exclude>
                     </excludes>
                     <excludedScopes>test,provided</excludedScopes>
