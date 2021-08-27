@@ -59,19 +59,19 @@ public class NitricExceptionTest {
         assertEquals(Code.UNKNOWN, ne4.getCode());
         assertEquals(sre, ne4.getCause());
 
-        var es = ErrorScope.newBuilder()
+        var es1 = ErrorScope.newBuilder()
                 .setService("service")
                 .setPlugin("plugin")
                 .putArgs("key", "value")
                 .build();
 
-        var ed = ErrorDetails.newBuilder()
+        var ed1 = ErrorDetails.newBuilder()
                 .setMessage("message")
                 .setCause("cause")
-                .setScope(es)
+                .setScope(es1)
                 .build();
 
-        var ne5 = new NitricException(Code.NOT_FOUND, "", sre, ed);
+        var ne5 = new NitricException(Code.NOT_FOUND, "", sre, ed1);
         assertEquals(ne5.toString(),
                 "io.nitric.api.NitricException[\n" +
                         "    code: NOT_FOUND\n" +
@@ -80,6 +80,19 @@ public class NitricExceptionTest {
                         "    service: service\n" +
                         "    plugin: plugin\n" +
                         "    args: {key=value}\n" +
+                        "]"
+        );
+
+        var ed2 = ErrorDetails.newBuilder()
+                .setCause("cause")
+                .build();
+
+        var ne6 = new NitricException(Code.NOT_FOUND, "message", sre, ed2);
+        assertEquals(ne6.toString(),
+                "io.nitric.api.NitricException[\n" +
+                        "    code: NOT_FOUND\n" +
+                        "    message: message\n" +
+                        "    cause: cause\n" +
                         "]"
         );
     }

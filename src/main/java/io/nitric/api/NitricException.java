@@ -77,22 +77,12 @@ public class NitricException extends RuntimeException {
         UNKNOWN
     }
 
-    static class Scope {
-        final String service;
-        final String plugin;
-        final Map<String, String> args;
-
-        Scope(String service, String plugin, Map<String, String> args) {
-            this.service = service;
-            this.plugin = plugin;
-            this.args = args;
-        }
-    }
-
     final Code code;
     final String message;
     final String errorCause;
-    final Scope scope;
+    final String service;
+    final String plugin;
+    final Map<String, String> args;
 
     // Constructors -----------------------------------------------------------
 
@@ -104,7 +94,9 @@ public class NitricException extends RuntimeException {
         this.code = Code.UNKNOWN;
         this.message = message;
         this.errorCause = null;
-        this.scope = null;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
     /*
@@ -115,7 +107,9 @@ public class NitricException extends RuntimeException {
         this.code = Code.UNKNOWN;
         this.message = message;
         this.errorCause = null;
-        this.scope = null;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
     /*
@@ -126,18 +120,17 @@ public class NitricException extends RuntimeException {
         this.code = (code != null) ? code : Code.UNKNOWN;
 
         if (ed != null) {
-            this.message = (ed.getMessage() != null) ? ed.getMessage() : message;
+            this.message = (ed.getMessage().isBlank()) ? message : ed.getMessage();
             this.errorCause = ed.getCause();
-            var es = ed.getScope();
-            if (es != null) {
-                this.scope = new Scope(es.getService(), es.getPlugin(), es.getArgsMap());
-            } else {
-                this.scope = null;
-            }
+            this.service = ed.getScope().getService();
+            this.plugin = ed.getScope().getPlugin();
+            this.args = ed.getScope().getArgsMap();
         } else {
             this.message = message;
             this.errorCause = null;
-            this.scope = null;
+            this.service = null;
+            this.plugin = null;
+            this.args = null;
         }
     }
 
@@ -159,7 +152,7 @@ public class NitricException extends RuntimeException {
      */
     @Override
     public String getMessage() {
-        return message;
+        return (message != null) ? message : "";
     }
 
     /**
@@ -168,7 +161,7 @@ public class NitricException extends RuntimeException {
      * @return the cause of the error.
      */
     public String getErrorCause() {
-        return errorCause;
+        return (errorCause != null) ? errorCause : "";
     }
 
     /**
@@ -177,7 +170,7 @@ public class NitricException extends RuntimeException {
      * @return the name of the API service invoked.
      */
     public String getService() {
-        return (scope != null) ? scope.service : null;
+        return (service != null) ? service : "";
     }
 
     /**
@@ -186,7 +179,7 @@ public class NitricException extends RuntimeException {
      * @return the name of the service plugin invoked.
      */
     public String getPlugin() {
-        return (scope != null) ? scope.plugin : null;
+        return (plugin != null) ? plugin : "";
     }
 
     /**
@@ -195,7 +188,7 @@ public class NitricException extends RuntimeException {
      * @return the plugin method arguments
      */
     public Map<String, String> getArgs() {
-        return (scope != null) ? scope.args : Collections.emptyMap();
+        return (args != null) ? args : Collections.emptyMap();
     }
 
     /**
@@ -212,14 +205,16 @@ public class NitricException extends RuntimeException {
 
         final var indent = "\n    ";
         builder.append(indent + "code: " + getCode());
-        builder.append(indent + "message: " + getMessage());
-        if (getErrorCause() != null) {
+        if (!getMessage().isBlank()) {
+            builder.append(indent + "message: " + getMessage());
+        }
+        if (!getErrorCause().isBlank()) {
             builder.append(indent + "cause: " + getErrorCause());
         }
-        if (getService() != null) {
+        if (!getService().isBlank()) {
             builder.append(indent + "service: " + getService());
         }
-        if (getPlugin() != null) {
+        if (!getPlugin().isBlank()) {
             builder.append(indent + "plugin: " + getPlugin());
         }
         if (!getArgs().isEmpty()) {
