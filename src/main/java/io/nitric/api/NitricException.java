@@ -27,6 +27,9 @@ import io.grpc.protobuf.StatusProto;
 import io.nitric.proto.error.v1.ErrorDetails;
 import io.nitric.util.Contracts;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * <p>
  *  Provides a Nitric Service API exception class. NitricException objects may be thrown by the Service API when
@@ -74,12 +77,22 @@ public class NitricException extends RuntimeException {
         UNKNOWN
     }
 
+    static class Scope {
+        final String service;
+        final String plugin;
+        final Map<String, String> args;
+
+        Scope(String service, String plugin, Map<String, String> args) {
+            this.service = service;
+            this.plugin = plugin;
+            this.args = args;
+        }
+    }
+
     final Code code;
     final String message;
     final String errorCause;
-    final String service;
-    final String plugin;
-    final String args;
+    final Scope scope;
 
     // Constructors -----------------------------------------------------------
 
@@ -89,11 +102,9 @@ public class NitricException extends RuntimeException {
     NitricException(String message) {
         super(message);
         this.code = Code.UNKNOWN;
-        this.errorCause = null;
         this.message = message;
-        this.service = null;
-        this.plugin = null;
-        this.args = null;
+        this.errorCause = null;
+        this.scope = null;
     }
 
     /*
@@ -104,30 +115,29 @@ public class NitricException extends RuntimeException {
         this.code = Code.UNKNOWN;
         this.message = message;
         this.errorCause = null;
-        this.service = null;
-        this.plugin = null;
-        this.args = null;
+        this.scope = null;
     }
 
     /*
      * Enforce package builder patterns.
      */
-    NitricException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
+    NitricException(Code code, String message, StatusRuntimeException cause, ErrorDetails ed) {
         super(message, cause);
         this.code = (code != null) ? code : Code.UNKNOWN;
 
-        if (errorDetails != null) {
-            this.message = (errorDetails.getMessage() != null) ? errorDetails.getMessage() : message;
-            this.errorCause = errorDetails.getCause();
-            this.service = errorDetails.getService();
-            this.plugin = errorDetails.getPlugin();
-            this.args = errorDetails.getArgs();
+        if (ed != null) {
+            this.message = (ed.getMessage() != null) ? ed.getMessage() : message;
+            this.errorCause = ed.getCause();
+            var es = ed.getScope();
+            if (es != null) {
+                this.scope = new Scope(es.getService(), es.getPlugin(), es.getArgsMap());
+            } else {
+                this.scope = null;
+            }
         } else {
             this.message = message;
             this.errorCause = null;
-            this.service = null;
-            this.plugin = null;
-            this.args = null;
+            this.scope = null;
         }
     }
 
@@ -167,7 +177,7 @@ public class NitricException extends RuntimeException {
      * @return the name of the API service invoked.
      */
     public String getService() {
-        return service;
+        return (scope != null) ? scope.service : null;
     }
 
     /**
@@ -176,7 +186,7 @@ public class NitricException extends RuntimeException {
      * @return the name of the service plugin invoked.
      */
     public String getPlugin() {
-        return plugin;
+        return (scope != null) ? scope.plugin : null;
     }
 
     /**
@@ -184,8 +194,8 @@ public class NitricException extends RuntimeException {
      *
      * @return the plugin method arguments
      */
-    public String getArgs() {
-        return args;
+    public Map<String, String> getArgs() {
+        return (scope != null) ? scope.args : Collections.emptyMap();
     }
 
     /**
@@ -196,7 +206,7 @@ public class NitricException extends RuntimeException {
     @Override
     public String toString() {
 
-        var builder = new StringBuilder()
+        final var builder = new StringBuilder()
                 .append(getClass().getName())
                 .append("[");
 
@@ -212,7 +222,7 @@ public class NitricException extends RuntimeException {
         if (getPlugin() != null) {
             builder.append(indent + "plugin: " + getPlugin());
         }
-        if (getArgs() != null) {
+        if (!getArgs().isEmpty()) {
             builder.append(indent + "args: " + getArgs());
         }
         builder.append("\n]");
