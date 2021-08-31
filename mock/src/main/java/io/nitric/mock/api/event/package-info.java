@@ -20,7 +20,7 @@
 
 /**
  * <p>
- *  Provides a Nitric Document Service API Mockito helper class.
+ *  Provides a Nitric Event Service API Mockito helper class.
  * </p>
  *
  * <p>
@@ -31,5 +31,5 @@
  * TODO...
  * </code></pre>
  */
-package io.nitric.mock.api.document;
+package io.nitric.mock.api.event;
 

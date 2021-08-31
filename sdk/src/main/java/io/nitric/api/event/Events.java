@@ -108,9 +108,12 @@ public class Events {
                 .collect(Collectors.toList());
     }
 
-    // Package Private Methods ------------------------------------------------
-
-    static EventServiceBlockingStub getEventServiceStub() {
+    /**
+     * Return the Membrane GRPC Event Service Stub.
+     *
+     * @return the Membrane GRPC Event Service Stub
+     */
+    public static EventServiceBlockingStub getEventServiceStub() {
         if (eventServiceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
             eventServiceStub = EventServiceGrpc.newBlockingStub(channel);
@@ -118,11 +121,21 @@ public class Events {
         return eventServiceStub;
     }
 
-    static void setEventServiceStub(EventServiceBlockingStub stub) {
+    /**
+     * Set the Membrane GRPC Event Service Stub.
+     *
+     * @param stub the Membrane GRPC Event Service Stub
+     */
+    public static void setEventServiceStub(EventServiceBlockingStub stub) {
         eventServiceStub = stub;
     }
 
-    static TopicServiceBlockingStub getTopicServiceStub() {
+    /**
+     * Return the Membrane GRPC Topic Service Stub.
+     *
+     * @return the Membrane GRPC Topic Service Stub
+     */
+    public static TopicServiceBlockingStub getTopicServiceStub() {
         if (topicServiceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
             topicServiceStub = TopicServiceGrpc.newBlockingStub(channel);
@@ -130,7 +143,12 @@ public class Events {
         return topicServiceStub;
     }
 
-    static void setTopicServiceStub(TopicServiceBlockingStub stub) {
+    /**
+     * Set the Membrane GRPC Topic Service Stub.
+     *
+     * @param stub the Membrane GRPC Topic Service Stub
+     */
+    public static void setTopicServiceStub(TopicServiceBlockingStub stub) {
         topicServiceStub = stub;
     }
 
