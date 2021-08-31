@@ -1,14 +1,29 @@
 # Ignore IDE files
-/.settings/
-/.idea/
-/.vscode/
-/java-sdk.iml
+.vscode/
 .classpath
 .project
+.settings/
 
-# Ignore build files
-/contracts/proto/validate
-/src/main/java/io/nitric/proto
-/src/main/java/io/envoyproxy
-/target/
-/dependency-reduced-pom.xml
+# Examples Project
+examples/.classpath
+examples/.project
+examples/.settings/
+examples/target/
+
+# Mock Project
+mock/.classpath
+mock/.project
+mock/.settings/
+mock/target/
+
+# SDK Prject
+sdk/contracts/proto/validate
+sdk/src/main/java/io/nitric/proto
+sdk/src/main/java/io/envoyproxy
+sdk/.classpath
+sdk/.idea/
+sdk/.project
+sdk/.settings/
+sdk/target/
+sdk/java-sdk.iml
+sdk/.idea/
