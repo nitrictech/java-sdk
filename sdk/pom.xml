@@ -54,7 +54,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>3.12.4</version>
-            <scope>test</scope>
         </dependency>        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -87,7 +86,7 @@
                 </executions>
                 <configuration>
                     <url>https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto</url>
-                    <outputDirectory>contracts/proto/validate</outputDirectory>
+                    <outputDirectory>contracts/proto/validate/v1</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
