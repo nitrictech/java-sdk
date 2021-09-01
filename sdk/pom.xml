@@ -15,6 +15,7 @@
 
     <properties>
         <io.grpc.version>1.36.0</io.grpc.version>
+        <sonar.projectKey>nitrictech_java-sdk</sonar.projectKey>
     </properties>
 
     <dependencies>

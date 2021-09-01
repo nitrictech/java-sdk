@@ -14,6 +14,10 @@
 
     <name>Nitric Java SDK Mock</name>
 
+    <properties>
+        <sonar.projectKey>nitrictech_java-sdk-mock</sonar.projectKey>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.nitric</groupId>
