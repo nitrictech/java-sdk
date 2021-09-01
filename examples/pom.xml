@@ -14,6 +14,10 @@
 
     <name>Nitric Java SDK Examples</name>
 
+    <properties>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.nitric</groupId>

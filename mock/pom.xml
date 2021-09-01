@@ -16,6 +16,7 @@
 
     <properties>
         <sonar.projectKey>nitrictech_java-sdk-mock</sonar.projectKey>
+        <sonar.skip>false</sonar.skip>
     </properties>
 
     <dependencies>

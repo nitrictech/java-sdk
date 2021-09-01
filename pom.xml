@@ -50,6 +50,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <sonar.organization>nitrictech</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.skip>true</sonar.skip>
     </properties>
 
     <scm>
