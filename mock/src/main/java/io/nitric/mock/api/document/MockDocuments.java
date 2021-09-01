@@ -36,6 +36,7 @@ import io.nitric.proto.document.v1.DocumentGetResponse;
 import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.proto.document.v1.DocumentServiceGrpc;
 import io.nitric.proto.document.v1.DocumentSetResponse;
+import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
 
 /**
@@ -58,9 +59,9 @@ public class MockDocuments {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * Return the GRPC DocumentService stub.
+     * Return the Mockito DocumentService stub.
      *
-     * @return the GRPC DocumentService stub
+     * @return the Mockito DocumentService stub
      */
     public DocumentServiceGrpc.DocumentServiceBlockingStub getMock() {
         return mock;
@@ -69,9 +70,11 @@ public class MockDocuments {
     /**
      * Specify what to return when the DocumentService Get method is invoked.
      *
-     * @return the MockDocuments object
+     * @return the MockDocuments object (required)
      */
     public MockDocuments whenGet(Object object) {
+        Contracts.requireNonNull(object, "object");
+
         var map = new ObjectMapper().convertValue(object, Map.class);
         var struct = ProtoUtils.toStruct(map);
 
@@ -90,10 +93,12 @@ public class MockDocuments {
     /**
      * Specify the error to throw when the DocumentService Get method is invoked.
      *
-     * @param status the GRPC error status
+     * @param status the GRPC error status (required)
      * @return the MockDocuments object
      */
     public MockDocuments whenGetError(io.grpc.Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(mock.get(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );
@@ -116,10 +121,12 @@ public class MockDocuments {
     /**
      * Specify the error to throw when the DocumentService Set method is invoked.
      *
-     * @param status the GRPC error status
+     * @param status the GRPC error status (required)
      * @return the MockDocuments object
      */
     public MockDocuments whenSetError(io.grpc.Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(mock.set(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );
@@ -142,10 +149,12 @@ public class MockDocuments {
     /**
      * Specify the error to throw when the DocumentService Delete method is invoked.
      *
-     * @param status the GRPC error status
+     * @param status the GRPC error status (required)
      * @return the MockDocuments object
      */
     public MockDocuments whenDeleteError(io.grpc.Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(mock.delete(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );
@@ -170,11 +179,14 @@ public class MockDocuments {
     /**
      * Specify the results to return when the DocumentService Query method is invoked.
      *
-     * @param collection the document collection name
-     * @param results the result set list
+     * @param collection the document collection name (required)
+     * @param results the result set list (required)
      * @return the MockDocuments object
      */
     public MockDocuments whenQuery(String collection, List results) {
+        Contracts.requireNonBlank(collection, "collection");
+        Contracts.requireNonNull(results, "results");
+
         var documents = createDocuments(collection, results);
 
         Mockito.when(mock.query(Mockito.any())).thenReturn(
@@ -191,6 +203,8 @@ public class MockDocuments {
      * @return the MockDocuments object
      */
     public MockDocuments whenQueryError(io.grpc.Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(mock.query(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );

@@ -109,9 +109,9 @@ public class Events {
     }
 
     /**
-     * Return the Membrane GRPC Event Service Stub.
+     * Return the Membrane GRPC Event Service stub.
      *
-     * @return the Membrane GRPC Event Service Stub
+     * @return the Membrane GRPC Event Service stub
      */
     public static EventServiceBlockingStub getEventServiceStub() {
         if (eventServiceStub == null) {
@@ -122,18 +122,18 @@ public class Events {
     }
 
     /**
-     * Set the Membrane GRPC Event Service Stub.
+     * Set the Membrane GRPC Event Service stub.
      *
-     * @param stub the Membrane GRPC Event Service Stub
+     * @param stub the Membrane GRPC Event Service stub
      */
     public static void setEventServiceStub(EventServiceBlockingStub stub) {
         eventServiceStub = stub;
     }
 
     /**
-     * Return the Membrane GRPC Topic Service Stub.
+     * Return the Membrane GRPC Topic Service stub.
      *
-     * @return the Membrane GRPC Topic Service Stub
+     * @return the Membrane GRPC Topic Service stub
      */
     public static TopicServiceBlockingStub getTopicServiceStub() {
         if (topicServiceStub == null) {
@@ -144,9 +144,9 @@ public class Events {
     }
 
     /**
-     * Set the Membrane GRPC Topic Service Stub.
+     * Set the Membrane GRPC Topic Service stub.
      *
-     * @param stub the Membrane GRPC Topic Service Stub
+     * @param stub the Membrane GRPC Topic Service stub
      */
     public static void setTopicServiceStub(TopicServiceBlockingStub stub) {
         topicServiceStub = stub;

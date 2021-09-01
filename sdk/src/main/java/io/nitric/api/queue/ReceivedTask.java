@@ -91,6 +91,15 @@ public class ReceivedTask extends Task {
     }
 
     /**
+     * Return a new ReceivedTask builder.
+     *
+     * @return a new ReceivedTask builder
+     */
+    public static ReceivedTaskBuilder newReceivedTaskBuilder() {
+        return new ReceivedTaskBuilder();
+    }
+
+    /**
      * Return the string representation of this object.
      *
      * @return the string representation of this object
@@ -104,6 +113,91 @@ public class ReceivedTask extends Task {
                 + ", leaseId=" + leaseId
                 + ", queue=" + queue
                 + "]";
+    }
+
+    // Inner Classes ----------------------------------------------------------
+
+    /**
+     * Provides a ReceivedTask builder class.
+     */
+    public static class ReceivedTaskBuilder {
+
+        String id;
+        String payloadType;
+        Map<String, Object> payload;
+        String leaseId;
+        String queue;
+
+        /*
+         * Enforce builder pattern.
+         */
+        ReceivedTaskBuilder() {
+        }
+
+        // Public Methods -----------------------------------------------------
+
+        /**
+         * Set the task id.
+         *
+         * @param id the task id
+         * @return the builder object
+         */
+        public ReceivedTaskBuilder id(String id) {
+            this.id = id;
+            return this;
+        }
+
+        /**
+         * Set the task payload type.
+         *
+         * @param payloadType the task payload type
+         * @return the builder object
+         */
+        public ReceivedTaskBuilder payloadType(String payloadType) {
+            this.payloadType = payloadType;
+            return this;
+        }
+
+        /**
+         * Set the task payload.
+         *
+         * @param payload the task payload (required)
+         * @return the builder object
+         */
+        public ReceivedTaskBuilder payload(Map<String, Object> payload) {
+            this.payload = payload;
+            return this;
+        }
+
+        /**
+         * Set the received task leaseId.
+         *
+         * @param leaseId the received task leaseId
+         * @return the builder object
+         */
+        public ReceivedTaskBuilder leaseId(String leaseId) {
+            this.leaseId = leaseId;
+            return this;
+        }
+
+        /**
+         * Set the received task queue name.
+         *
+         * @param queue the received task queue name
+         * @return the builder object
+         */
+        public ReceivedTaskBuilder queue(String queue) {
+            this.queue = queue;
+            return this;
+        }
+
+        /**
+         * @return a new ReceivedTask
+         */
+        public ReceivedTask build() {
+            Contracts.requireNonNull(payload, "payload");
+            return new ReceivedTask(id, payloadType, payload, leaseId, queue);
+        }
     }
 
 }

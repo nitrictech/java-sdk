@@ -87,9 +87,12 @@ public class Queues {
         return new Queue(name);
     }
 
-    // Package Private Methods ------------------------------------------------
-
-    static QueueServiceBlockingStub getServiceStub() {
+    /**
+     * Return the Membrane GRPC Queue Service Stub.
+     *
+     * @return the Membrane GRPC Queue Service Stub
+     */
+    public static QueueServiceBlockingStub getServiceStub() {
         if (serviceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
             serviceStub = QueueServiceGrpc.newBlockingStub(channel);
@@ -97,7 +100,12 @@ public class Queues {
         return serviceStub;
     }
 
-    static void setServiceStub(QueueServiceBlockingStub stub) {
+    /**
+     * Set the Membrane GRPC Queue Service stub.
+     *
+     * @param stub the Membrane GRPC Queue Service stub
+     */
+    public static void setServiceStub(QueueServiceBlockingStub stub) {
         serviceStub = stub;
     }
 

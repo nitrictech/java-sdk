@@ -107,7 +107,6 @@ public class Task {
     public static class Builder {
 
         String id;
-        String leaseId;
         String payloadType;
         Map<String, Object> payload;
 

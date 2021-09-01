@@ -22,7 +22,6 @@ package examples.queues;
 // [START import]
 import io.nitric.api.queue.Queues;
 import io.nitric.api.queue.ReceivedTask;
-import java.util.Map;
 import java.util.List;
 // [END import]
 

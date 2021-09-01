@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.mockito.Mockito;
 
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.nitric.api.event.Events;
 import io.nitric.proto.event.v1.EventPublishResponse;
@@ -31,6 +32,7 @@ import io.nitric.proto.event.v1.EventServiceGrpc;
 import io.nitric.proto.event.v1.NitricTopic;
 import io.nitric.proto.event.v1.TopicListResponse;
 import io.nitric.proto.event.v1.TopicServiceGrpc;
+import io.nitric.util.Contracts;
 
 
 /**
@@ -44,7 +46,7 @@ public class MockEvents {
     TopicServiceGrpc.TopicServiceBlockingStub topicMock;
 
     /**
-     * Create a new MockDocuments object.
+     * Create a new MockEvents object.
      */
     public MockEvents() {
         eventMock = Mockito.mock(EventServiceGrpc.EventServiceBlockingStub.class);
@@ -56,44 +58,32 @@ public class MockEvents {
     // Public Methods ---------------------------------------------------------
 
     /**
-     * Return the GRPC EventService stub.
+     * Return the Mockito EventService stub.
      *
-     * @return the GRPC EventService stub
+     * @return the Mockito EventService stub
      */
     public EventServiceGrpc.EventServiceBlockingStub getEventMock() {
         return eventMock;
     }
 
     /**
-     * Return the GRPC TopicService stub.
+     * Return the Mockito TopicService stub.
      *
-     * @return the GRPC TopicService stub
+     * @return the Mockito TopicService stub
      */
     public TopicServiceGrpc.TopicServiceBlockingStub getTopicMock() {
         return topicMock;
     }
 
     /**
-     * Enable the TopicService List method for unit testing. The service
-     * will return an empty list of topics.
-     *
-     * @return the MockEvents object
-     */
-    public MockEvents whenList() {
-        Mockito.when(topicMock.list(Mockito.any())).thenReturn(
-            TopicListResponse.newBuilder().build()
-        );
-
-        return this;
-    }
-
-    /**
      * Specify what to return when the TopicService List method is invoked.
      *
-     * @param topics the result topic list
+     * @param topics the result topic list (required)
      * @return the MockEvents object
      */
     public MockEvents whenList(List<String> topics) {
+        Contracts.requireNonNull(topics, "topics");
+
         final var response = TopicListResponse.newBuilder();
         topics.forEach(topic -> {
             response.addTopics(NitricTopic.newBuilder().setName(topic).build());
@@ -109,10 +99,12 @@ public class MockEvents {
     /**
      * Specify the error to throw when the TopicService List method is invoked.
      *
-     * @param status the GRPC error status
+     * @param status the GRPC error status (required)
      * @return the MockEvents object
      */
-    public MockEvents whenListError(io.grpc.Status status) {
+    public MockEvents whenListError(Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(topicMock.list(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );
@@ -136,10 +128,12 @@ public class MockEvents {
     /**
      * Specify the error to throw when the TopicService List method is invoked.
      *
-     * @param status the GRPC error status
+     * @param status the GRPC error status (required)
      * @return the MockEvents object
      */
-    public MockEvents whenPublishError(io.grpc.Status status) {
+    public MockEvents whenPublishError(Status status) {
+        Contracts.requireNonNull(status, "status");
+
         Mockito.when(eventMock.publish(Mockito.any())).thenThrow(
                 new StatusRuntimeException(status)
         );
