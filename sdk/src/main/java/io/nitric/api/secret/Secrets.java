@@ -133,9 +133,12 @@ public class Secrets {
         return new Secret(name);
     }
 
-    // Package Private Methods ------------------------------------------------
-
-    static SecretServiceBlockingStub getServiceStub() {
+    /**
+     * Return the Membrane GRPC Secret Service Stub.
+     *
+     * @return the Membrane GRPC Secret Service Stub
+     */
+    public static SecretServiceBlockingStub getServiceStub() {
         if (serviceStub == null) {
             var channel = GrpcChannelProvider.getChannel();
             serviceStub = SecretServiceGrpc.newBlockingStub(channel);
@@ -143,7 +146,12 @@ public class Secrets {
         return serviceStub;
     }
 
-    static void setServiceStub(SecretServiceBlockingStub stub) {
+    /**
+     * Set the Membrane GRPC Secret Service stub.
+     *
+     * @param stub the Membrane GRPC Secret Service stub
+     */
+    public static void setServiceStub(SecretServiceBlockingStub stub) {
         serviceStub = stub;
     }
 

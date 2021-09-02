@@ -41,11 +41,9 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenGet() {
-        var md = new MockDocuments();
-
         var customer1 = new Customer("jd@email.com", "John", "Doe");
 
-        md.whenGet(customer1);
+        var md = new MockDocuments().whenGet(customer1);
 
         var customer2 = Documents.collection("customers").doc("jd@email.com", Customer.class).get();
 
@@ -57,9 +55,7 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenGetError() {
-        var md = new MockDocuments();
-
-        md.whenGetError(Status.NOT_FOUND);
+        var md = new MockDocuments().whenGetError(Status.NOT_FOUND);
 
         try {
             Documents.collection("customers").doc("jd@email.com", Customer.class).get();
@@ -71,8 +67,7 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenSet() {
-        var md = new MockDocuments();
-        md.whenSet();
+        var md = new MockDocuments().whenSet();
 
         var customer1 = new Customer("jd@email.com", "John", "Doe");
 
@@ -83,9 +78,7 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenSetError() {
-        var md = new MockDocuments();
-
-        md.whenSetError(Status.INTERNAL);
+        var md = new MockDocuments().whenSetError(Status.INTERNAL);
 
         var customer1 = new Customer("jd@email.com", "John", "Doe");
 
@@ -99,8 +92,7 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenDelete() {
-        var md = new MockDocuments();
-        md.whenDelete();
+        var md = new MockDocuments().whenDelete();
 
         Documents.collection("customers").doc("jd@email.com").delete();
 
@@ -109,9 +101,7 @@ public class MockDocumentsTest {
 
     @Test
     public void test_whenDeleteError() {
-        var md = new MockDocuments();
-
-        md.whenDeleteError(Status.INTERNAL);
+        var md = new MockDocuments().whenDeleteError(Status.INTERNAL);
 
         try {
             Documents.collection("customers").doc("jd@email.com").delete();

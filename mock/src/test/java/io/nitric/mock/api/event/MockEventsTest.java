@@ -47,9 +47,7 @@ public class MockEventsTest {
 
     @Test
     public void test_whenList() {
-        var me = new MockEvents();
-
-        me.whenList(Collections.emptyList());
+        var me = new MockEvents().whenList(Collections.emptyList());
 
         var topics1 = Events.topics();
         assertNotNull(topics1);
@@ -72,9 +70,7 @@ public class MockEventsTest {
 
     @Test
     public void test_whenListError() {
-        var me = new MockEvents();
-
-        me.whenListError(Status.INTERNAL);
+        var me = new MockEvents().whenListError(Status.INTERNAL);
 
         try {
             Events.topics();
@@ -86,9 +82,7 @@ public class MockEventsTest {
 
     @Test
     public void test_whenPublish() {
-        var me = new MockEvents();
-
-        me.whenPublish();
+        var me = new MockEvents().whenPublish();
 
         var event = Event.build(Map.of("key", "value"));
         Events.topic("topic").publish(event);
@@ -98,9 +92,7 @@ public class MockEventsTest {
 
     @Test
     public void test_whenPublishError() {
-        var me = new MockEvents();
-
-        me.whenPublishError(Status.INTERNAL);
+        var me = new MockEvents().whenPublishError(Status.INTERNAL);
 
         var event = Event.build(Map.of("key", "value"));
         var topic = Events.topic("topic");

@@ -255,6 +255,8 @@ public class NitricException extends RuntimeException {
         }
 
         switch (sre.getStatus().getCode()) {
+            case INVALID_ARGUMENT:
+                return new io.nitric.api.InvalidArgumentException(code, sre.getMessage(), sre, errorDetails);
             case NOT_FOUND:
                 return new io.nitric.api.NotFoundException(code, sre.getMessage(), sre, errorDetails);
             case UNAVAILABLE:

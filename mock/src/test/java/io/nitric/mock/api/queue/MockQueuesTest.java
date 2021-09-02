@@ -18,7 +18,7 @@
  * #L%
  */
 
- package io.nitric.mock.api.queue;
+package io.nitric.mock.api.queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,8 +48,6 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenSendTask() {
-        var mq = new MockQueues();
-
         var task = Task.newBuilder()
             .id("id")
             .payloadType("application/json")
@@ -60,7 +58,7 @@ public class MockQueuesTest {
             .message("Failed to queue task")
             .build();
 
-        mq.whenSendTask(failedTask1);
+        var mq = new MockQueues().whenSendTask(failedTask1);
 
         var queue = Queues.queue("queue");
         var failedTask2 = queue.send(task);
@@ -79,15 +77,13 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenSendTaskError() {
-        var mq = new MockQueues();
+        var mq = new MockQueues().whenSendTaskError(Status.INTERNAL);
 
         var task = Task.newBuilder()
             .id("id")
             .payloadType("application/json")
             .payload(Map.of("status", "ready"))
             .build();
-
-        mq.whenSendTaskError(Status.INTERNAL);
 
         var queue = Queues.queue("queue");
         try {
@@ -100,8 +96,6 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenSendBatch() {
-        var mq = new MockQueues();
-
         var task = Task.newBuilder()
             .id("id")
             .payloadType("application/json")
@@ -115,7 +109,7 @@ public class MockQueuesTest {
             .build();
         var failedTaskList1 = List.of(failedTask1);
 
-        mq.whenSendBatch(failedTaskList1);
+        var mq = new MockQueues().whenSendBatch(failedTaskList1);
 
         var queue = Queues.queue("queue");
         var failedTaskList2 = queue.sendBatch(taskList);
@@ -138,9 +132,7 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenSendBatchError() {
-        var mq = new MockQueues();
-
-        mq.whenSendBatchError(Status.INTERNAL);
+        var mq = new MockQueues().whenSendBatchError(Status.INTERNAL);
 
         var task = Task.newBuilder()
             .id("id")
@@ -160,8 +152,6 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenReceive() {
-        var mq = new MockQueues();
-
         var task = ReceivedTask.newReceivedTaskBuilder()
             .id("id")
             .payloadType("application/json")
@@ -171,7 +161,7 @@ public class MockQueuesTest {
             .build();
         var taskList = List.of(task);
 
-        mq.whenReceive(taskList);
+        var mq = new MockQueues().whenReceive(taskList);
 
         var queue = Queues.queue("queue");
         var taskList2 = queue.receive(1);
@@ -185,9 +175,7 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenReceiveError() {
-        var mq = new MockQueues();
-
-        mq.whenReceiveError(Status.INTERNAL);
+        var mq = new MockQueues().whenReceiveError(Status.INTERNAL);
 
         var queue = Queues.queue("queue");
         try {
@@ -200,9 +188,7 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenComplete() {
-        var mq = new MockQueues();
-
-        mq.whenComplete();
+        var mq = new MockQueues().whenComplete();
 
         var task = ReceivedTask.newReceivedTaskBuilder()
             .id("id")
@@ -219,9 +205,7 @@ public class MockQueuesTest {
 
     @Test
     public void test_whenCompleteError() {
-        var mq = new MockQueues();
-
-        mq.whenCompleteError(Status.INTERNAL);
+        var mq = new MockQueues().whenCompleteError(Status.INTERNAL);
 
         var task = ReceivedTask.newReceivedTaskBuilder()
             .id("id")

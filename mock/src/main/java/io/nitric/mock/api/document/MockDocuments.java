@@ -77,14 +77,12 @@ public class MockDocuments {
 
         var map = new ObjectMapper().convertValue(object, Map.class);
         var struct = ProtoUtils.toStruct(map);
-
         var document = Document.newBuilder().setContent(struct).build();
-
+        
         Mockito.when(mock.get(Mockito.any())).thenReturn(
-                DocumentGetResponse
-                    .newBuilder()
-                    .setDocument(document)
-                    .build()
+            DocumentGetResponse.newBuilder()
+                .setDocument(document)
+                .build()
         );
 
         return this;
@@ -100,7 +98,7 @@ public class MockDocuments {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.get(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -113,8 +111,9 @@ public class MockDocuments {
      */
     public MockDocuments whenSet() {
         Mockito.when(mock.set(Mockito.any())).thenReturn(
-                DocumentSetResponse.newBuilder().build()
+            DocumentSetResponse.newBuilder().build()
         );
+
         return this;
     }
 
@@ -128,7 +127,7 @@ public class MockDocuments {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.set(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -141,7 +140,7 @@ public class MockDocuments {
      */
     public MockDocuments whenDelete() {
         Mockito.when(mock.delete(Mockito.any())).thenReturn(
-                DocumentDeleteResponse.newBuilder().build()
+            DocumentDeleteResponse.newBuilder().build()
         );
         return this;
     }
@@ -156,7 +155,7 @@ public class MockDocuments {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.delete(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -170,7 +169,7 @@ public class MockDocuments {
      */
     public MockDocuments whenQuery() {
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                DocumentQueryResponse.newBuilder().build()
+            DocumentQueryResponse.newBuilder().build()
         );
 
         return this;
@@ -190,7 +189,9 @@ public class MockDocuments {
         var documents = createDocuments(collection, results);
 
         Mockito.when(mock.query(Mockito.any())).thenReturn(
-                DocumentQueryResponse.newBuilder().addAllDocuments(documents).build()
+            DocumentQueryResponse.newBuilder()
+                .addAllDocuments(documents)
+                .build()        
         );
 
         return this;
@@ -206,7 +207,7 @@ public class MockDocuments {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.query(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;

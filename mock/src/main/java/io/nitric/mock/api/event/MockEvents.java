@@ -106,7 +106,7 @@ public class MockEvents {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(topicMock.list(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -135,7 +135,7 @@ public class MockEvents {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(eventMock.publish(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;

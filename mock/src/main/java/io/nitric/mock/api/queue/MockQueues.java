@@ -98,7 +98,7 @@ public class MockQueues {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.sendBatch(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -154,7 +154,7 @@ public class MockQueues {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.sendBatch(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -202,7 +202,7 @@ public class MockQueues {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.receive(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
@@ -231,7 +231,7 @@ public class MockQueues {
         Contracts.requireNonNull(status, "status");
 
         Mockito.when(mock.complete(Mockito.any())).thenThrow(
-                new StatusRuntimeException(status)
+            new StatusRuntimeException(status)
         );
 
         return this;
