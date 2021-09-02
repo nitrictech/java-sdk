@@ -20,6 +20,9 @@
 
 package io.nitric.api;
 
+import io.grpc.StatusRuntimeException;
+import io.nitric.proto.error.v1.ErrorDetails;
+
 /**
  * <p>
  *  Provides a Nitric API service unavailable exception class. If this exception is thrown application code may
@@ -28,15 +31,11 @@ package io.nitric.api;
  */
 public class UnavailableException extends NitricException {
 
-    /**
-     * Create a Nitric Service Unavailable Exception with the given code, message and cause.
-     *
-     * @param code the GRPC error code
-     * @param message the error message
-     * @param cause the error cause
+    /*
+     * Enforce package builder patterns.
      */
-    public UnavailableException(Code code, String message, Throwable cause) {
-        super(code, message, cause);
+    UnavailableException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
+        super(code, message, cause, errorDetails);
     }
 
 }

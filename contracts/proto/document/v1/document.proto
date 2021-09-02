@@ -2,6 +2,7 @@ syntax = "proto3";
 package nitric.document.v1;
 
 import "google/protobuf/struct.proto";
+import "validate/validate.proto";
 
 // protoc plugin options for code generation
 option go_package = "nitric/v1;v1";
@@ -31,9 +32,13 @@ service DocumentService {
 
 // Message Types
 
+// Provides a Collection type for storing documents
 message Collection {
   // The collection name
-  string name = 1;
+  string name = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
 
   // Optional parent key, required when the collection is a sub-collection of another document
   Key parent = 2;
@@ -42,18 +47,21 @@ message Collection {
 // Provides a document identifying key type
 message Key {
   // The item collection
-  Collection collection = 1;
+  Collection collection = 1 [(validate.rules).message.required = true];
 
   // The items unique id
-  string id = 2;
+  string id = 2 [(validate.rules).string = {
+    min_bytes: 1,
+    max_bytes: 256,
+  }];
 }
 
 // Provides a return document type
 message Document {
   // The document content (JSON object)
-  google.protobuf.Struct content = 1;
+  google.protobuf.Struct content = 1 [(validate.rules).message.required = true];
   // The document's unique key, including collection/sub-collections
-  Key key = 2;
+  Key key = 2 [(validate.rules).message.required = true];
 }
 
 message ExpressionValue {
@@ -75,16 +83,18 @@ message Expression {
   // The query operand or attribute
   string operand = 1;
   // The query operator [ == | < | <= | > | >= | startsWith ]
-  string operator = 2;
+  string operator = 2 [(validate.rules).string = {
+    in: ["==", "<", "<=", ">", ">=", "startsWith"]
+  }];
   // The query expression value
-  ExpressionValue value = 3;
+  ExpressionValue value = 3 [(validate.rules).message.required = true];
 }
 
 // Service Request & Response Messages
 
 message DocumentGetRequest {
   // Key of the document to retrieve
-  Key key = 1;
+  Key key = 1 [(validate.rules).message.required = true];
 }
 
 message DocumentGetResponse {
@@ -94,23 +104,23 @@ message DocumentGetResponse {
 
 message DocumentSetRequest {
   // Key of the document to set
-  Key key = 1;
+  Key key = 1 [(validate.rules).message.required = true];
   // The document content to store (JSON object)
-  google.protobuf.Struct content = 3;
+  google.protobuf.Struct content = 3 [(validate.rules).message.required = true];
 }
 
 message DocumentSetResponse {}
 
 message DocumentDeleteRequest {
   // Key of the document to delete
-  Key key = 1;
+  Key key = 1 [(validate.rules).message.required = true];
 }
 
 message DocumentDeleteResponse {}
 
 message DocumentQueryRequest {
   // The collection to query
-  Collection collection = 1;
+  Collection collection = 1 [(validate.rules).message.required = true];
   // Optional query expressions
   repeated Expression expressions = 3;
   // Optional query fetch limit
@@ -128,7 +138,7 @@ message DocumentQueryResponse {
 
 message DocumentQueryStreamRequest {
   // The collection to query
-  Collection collection = 1;
+  Collection collection = 1 [(validate.rules).message.required = true];
   // Optional query expressions
   repeated Expression expressions = 3;
   // Optional query fetch limit

@@ -20,8 +20,16 @@
 
 package io.nitric.api;
 
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.StatusRuntimeException;
+import io.grpc.protobuf.StatusProto;
+import io.nitric.proto.error.v1.ErrorDetails;
 import io.nitric.util.Contracts;
+import io.nitric.util.ProtoUtils;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * <p>
@@ -29,7 +37,6 @@ import io.nitric.util.Contracts;
  *  performing underlying GRPC service calls.
  * </p>
  *
- * @see IllegalArgumentException
  * @see NotFoundException
  * @see UnavailableException
  */
@@ -72,6 +79,11 @@ public class NitricException extends RuntimeException {
     }
 
     final Code code;
+    final String message;
+    final Map<String, Object> details;
+    final String service;
+    final String plugin;
+    final Map<String, String> args;
 
     // Constructors -----------------------------------------------------------
 
@@ -81,6 +93,11 @@ public class NitricException extends RuntimeException {
     NitricException(String message) {
         super(message);
         this.code = Code.UNKNOWN;
+        this.message = message;
+        this.details = null;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
     /*
@@ -89,18 +106,33 @@ public class NitricException extends RuntimeException {
     NitricException(String message, Throwable cause) {
         super(message, cause);
         this.code = Code.UNKNOWN;
+        this.message = message;
+        this.details = null;
+        this.service = null;
+        this.plugin = null;
+        this.args = null;
     }
 
-    /**
-     * Create a Nitric API Exception with the given code, message and cause.
-     *
-     * @param code the GRPC code
-     * @param message the error message
-     * @param cause the error cause
+    /*
+     * Enforce package builder patterns.
      */
-    public NitricException(Code code, String message, Throwable cause) {
+    NitricException(Code code, String message, StatusRuntimeException cause, ErrorDetails ed) {
         super(message, cause);
-        this.code = code;
+        this.code = (code != null) ? code : Code.UNKNOWN;
+
+        if (ed != null) {
+            this.message = (ed.getMessage().isBlank()) ? message : ed.getMessage();
+            this.details = ProtoUtils.toMap(ed.getDetails());
+            this.service = ed.getScope().getService();
+            this.plugin = ed.getScope().getPlugin();
+            this.args = ed.getScope().getArgsMap();
+        } else {
+            this.message = message;
+            this.details = null;
+            this.service = null;
+            this.plugin = null;
+            this.args = null;
+        }
     }
 
     // Public Methods ----------------------------------------------------------
@@ -115,21 +147,85 @@ public class NitricException extends RuntimeException {
     }
 
     /**
+     * Return the error message.
+     *
+     * @return the error message
+     */
+    @Override
+    public String getMessage() {
+        return (message != null) ? message : "";
+    }
+
+    /**
+     * Return the cause of the error.
+     *
+     * @return the cause of the error.
+     */
+    public Map<String, Object> getDetails() {
+        return (details != null) ? details : Collections.emptyMap();
+    }
+
+    /**
+     * Return the API service invoked, e.g. 'Service.Method'.
+     *
+     * @return the name of the API service invoked.
+     */
+    public String getService() {
+        return (service != null) ? service : "";
+    }
+
+    /**
+     * Return the name of the service plugin invoked, e.g. 'PluginService.Method'.
+     *
+     * @return the name of the service plugin invoked.
+     */
+    public String getPlugin() {
+        return (plugin != null) ? plugin : "";
+    }
+
+    /**
+     * Return the plugin method arguments. Please note only non-sensitive data should be returned.
+     *
+     * @return the plugin method arguments
+     */
+    public Map<String, String> getArgs() {
+        return (args != null) ? args : Collections.emptyMap();
+    }
+
+    /**
      * Return the string representation of this object.
      *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
-        var builder = new StringBuilder()
-                .append(getClass().getName())
-                .append(": ")
-                .append(getCode());
 
-        String message = getLocalizedMessage();
-        if (message != null) {
-            builder.append(": ").append(message);
+        final var builder = new StringBuilder()
+                .append(getClass().getName())
+                .append("[");
+
+        final var indent = "\n    ";
+        builder.append(indent + "code: " + getCode());
+        if (!getMessage().isBlank()) {
+            builder.append(indent + "message: " + getMessage());
         }
+        if (!getDetails().isEmpty()) {
+            if (getDetails().size() == 1 && getDetails().containsKey("cause")) {
+                builder.append(indent + "cause: " + getDetails().get("cause"));
+            } else {
+                builder.append(indent + "details: " + getDetails());
+            }
+        }
+        if (!getService().isBlank()) {
+            builder.append(indent + "service: " + getService());
+        }
+        if (!getPlugin().isBlank()) {
+            builder.append(indent + "plugin: " + getPlugin());
+        }
+        if (!getArgs().isEmpty()) {
+            builder.append(indent + "args: " + getArgs());
+        }
+        builder.append("\n]");
 
         return builder.toString();
     }
@@ -145,15 +241,26 @@ public class NitricException extends RuntimeException {
 
         var code = fromGrpcCode(sre.getStatus().getCode());
 
+        ErrorDetails errorDetails = null;
+        com.google.rpc.Status status = StatusProto.fromThrowable(sre);
+        for (Any any : status.getDetailsList()) {
+            if (any.is(ErrorDetails.class)) {
+                try {
+                    errorDetails = any.unpack(ErrorDetails.class);
+                } catch (InvalidProtocolBufferException ipbe) {
+                    ipbe.printStackTrace();
+                }
+                break;
+            }
+        }
+
         switch (sre.getStatus().getCode()) {
-            case INVALID_ARGUMENT:
-                return new io.nitric.api.InvalidArgumentException(code, sre.getMessage(), sre);
             case NOT_FOUND:
-                return new io.nitric.api.NotFoundException(code, sre.getMessage(), sre);
+                return new io.nitric.api.NotFoundException(code, sre.getMessage(), sre, errorDetails);
             case UNAVAILABLE:
-                return new io.nitric.api.UnavailableException(code, sre.getMessage(), sre);
+                return new io.nitric.api.UnavailableException(code, sre.getMessage(), sre, errorDetails);
            default:
-               return new NitricException(code, sre.getMessage(), sre);
+               return new NitricException(code, sre.getMessage(), sre, errorDetails);
         }
     }
 

@@ -2,6 +2,7 @@ syntax = "proto3";
 package nitric.event.v1;
 
 import "google/protobuf/struct.proto";
+import "validate/validate.proto";
 
 // protoc plugin options for code generation
 option go_package = "nitric/v1;v1";
@@ -20,9 +21,12 @@ service EventService {
 // Request to publish an event to a topic
 message EventPublishRequest {
   // The name of the topic to publish the event to
-  string topic = 1;
+  string topic = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
   // The event to be published
-  NitricEvent event = 2;
+  NitricEvent event = 2 [(validate.rules).message.required = true];
 }
 
 // Result of publishing an event

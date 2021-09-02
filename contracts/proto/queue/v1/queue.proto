@@ -2,6 +2,7 @@ syntax = "proto3";
 package nitric.queue.v1;
 
 import "google/protobuf/struct.proto";
+import "validate/validate.proto";
 
 // protoc plugin options for code generation
 option go_package = "nitric/v1;v1";
@@ -27,9 +28,12 @@ service QueueService {
 message QueueSendRequest {
   // The Nitric name for the queue
   // this will automatically be resolved to the provider specific queue identifier.
-  string queue = 1;
+  string queue = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
   // The task to push to the queue
-  NitricTask task = 2;
+  NitricTask task = 2 [(validate.rules).message.required = true];
 }
 
 // Result of pushing a single task to a queue
@@ -38,9 +42,12 @@ message QueueSendResponse {}
 message QueueSendBatchRequest {
   // The Nitric name for the queue
   // this will automatically be resolved to the provider specific queue identifier.
-  string queue = 1;
+  string queue = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
   // Array of tasks to push to the queue
-  repeated NitricTask tasks = 2;
+  repeated NitricTask tasks = 2 [(validate.rules).repeated.min_items = 1];
 }
 
 // Response for sending a collection of tasks
@@ -52,7 +59,10 @@ message QueueSendBatchResponse {
 message QueueReceiveRequest {
   // The nitric name for the queue
   // this will automatically be resolved to the provider specific queue identifier.
-  string queue = 1;
+  string queue = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
   // The max number of items to pop off the queue, may be capped by provider specific limitations
   int32 depth = 2;
 }
@@ -65,9 +75,13 @@ message QueueReceiveResponse {
 message QueueCompleteRequest {
   // The nitric name for the queue
   //  this will automatically be resolved to the provider specific queue identifier.
-  string queue = 1;
+  string queue = 1 [(validate.rules).string = {
+    pattern:   "^\\w+([.\\-]\\w+)*$",
+    max_bytes: 256,
+  }];
+
   // Lease id of the task to be completed
-  string lease_id = 2;
+  string lease_id = 2 [(validate.rules).string.min_len = 1];
 }
 
 message QueueCompleteResponse {}

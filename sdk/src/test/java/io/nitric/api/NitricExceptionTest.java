@@ -22,8 +22,14 @@ package io.nitric.api;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Map;
+
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import io.nitric.proto.error.v1.ErrorDetails;
+import io.nitric.proto.error.v1.ErrorScope;
+import io.nitric.util.ProtoUtils;
+
 import org.junit.jupiter.api.Test;
 
 import static io.nitric.api.NitricException.Code;
@@ -36,6 +42,10 @@ public class NitricExceptionTest {
         assertEquals("message", ne1.getMessage());
         assertEquals(Code.UNKNOWN, ne1.getCode());
         assertNull(ne1.getCause());
+        assertEquals(ne1.toString(), "io.nitric.api.NitricException[\n" +
+        "    code: UNKNOWN\n" +
+        "    message: message\n" +
+        "]");
 
         var npe = new NullPointerException();
         var ne2 = new NitricException("message", npe);
@@ -44,12 +54,55 @@ public class NitricExceptionTest {
         assertEquals(npe, ne2.getCause());
 
         var sre = new StatusRuntimeException(Status.NOT_FOUND);
-        var ne3 = new NitricException(Code.NOT_FOUND, "message", sre);
+        var ne3 = new NitricException(Code.NOT_FOUND, "message", sre, null);
         assertEquals("message", ne3.getMessage());
         assertEquals(Code.NOT_FOUND, ne3.getCode());
         assertEquals(sre, ne3.getCause());
 
-        assertEquals("io.nitric.api.NitricException: NOT_FOUND: message", ne3.toString());
+        var ne4 = new NitricException(null, "message", sre, null);
+        assertEquals("message", ne4.getMessage());
+        assertEquals(Code.UNKNOWN, ne4.getCode());
+        assertEquals(sre, ne4.getCause());
+
+        var es1 = ErrorScope.newBuilder()
+                .setService("service")
+                .setPlugin("plugin")
+                .putArgs("key", "value")
+                .build();
+
+        Map<String, Object> detailsMap = Map.of("cause", "document not found");
+        var detailsStruct = ProtoUtils.toStruct(detailsMap);
+
+        var ed1 = ErrorDetails.newBuilder()
+                .setMessage("message")
+                .setDetails(detailsStruct)
+                .setScope(es1)
+                .build();
+
+        var ne5 = new NitricException(Code.NOT_FOUND, "", sre, ed1);
+        assertEquals(ne5.toString(),
+                "io.nitric.api.NitricException[\n" +
+                        "    code: NOT_FOUND\n" +
+                        "    message: message\n" +
+                        "    cause: document not found\n" +
+                        "    service: service\n" +
+                        "    plugin: plugin\n" +
+                        "    args: {key=value}\n" +
+                        "]"
+        );
+
+        var ed2 = ErrorDetails.newBuilder()
+                .setDetails(detailsStruct)
+                .build();
+
+        var ne6 = new NitricException(Code.NOT_FOUND, "message", sre, ed2);
+        assertEquals(ne6.toString(),
+                "io.nitric.api.NitricException[\n" +
+                        "    code: NOT_FOUND\n" +
+                        "    message: message\n" +
+                        "    cause: document not found\n" +
+                        "]"
+        );
     }
 
     @Test

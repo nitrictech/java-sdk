@@ -88,7 +88,7 @@
                 </executions>
                 <configuration>
                     <url>https://raw.githubusercontent.com/envoyproxy/protoc-gen-validate/main/validate/validate.proto</url>
-                    <outputDirectory>contracts/proto/validate/v1</outputDirectory>
+                    <outputDirectory>../contracts/proto/validate</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -96,7 +96,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
                 <configuration>
-                    <protoSourceRoot>contracts/proto</protoSourceRoot>
+                    <protoSourceRoot>../contracts/proto</protoSourceRoot>
                     <outputDirectory>src/main/java</outputDirectory>
                     <clearOutputDirectory>false</clearOutputDirectory>
                     <protocArtifact>com.google.protobuf:protoc:3.12.0:exe:${os.detected.classifier}</protocArtifact>
