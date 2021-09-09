@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.nitric.api.exception.InvalidArgumentException;
+import io.nitric.api.NitricException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -270,13 +270,13 @@ public class QueryTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.query(Mockito.any(DocumentQueryRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         try {
             query.stream();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 

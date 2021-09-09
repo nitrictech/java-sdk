@@ -7,6 +7,8 @@
 .project
 
 # Ignore build files
+/contracts/proto/validate
 /src/main/java/io/nitric/proto
+/src/main/java/io/envoyproxy
 /target/
 /dependency-reduced-pom.xml

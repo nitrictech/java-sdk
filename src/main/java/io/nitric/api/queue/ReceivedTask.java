@@ -20,12 +20,11 @@
 
 package io.nitric.api.queue;
 
-import java.util.Map;
-
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
 import io.nitric.util.Contracts;
-import io.nitric.util.ProtoUtils;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -75,8 +74,10 @@ public class ReceivedTask extends Task {
 
     /**
      * Complete the received task using its lease id.
+     *
+     * @throws NitricException if a Queue Service API error occurs
      */
-    public void complete() {
+    public void complete() throws NitricException {
         var request = QueueCompleteRequest.newBuilder()
                 .setQueue(queue)
                 .setLeaseId(leaseId)
@@ -85,7 +86,7 @@ public class ReceivedTask extends Task {
         try {
             Queues.getServiceStub().complete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
     }
 

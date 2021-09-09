@@ -20,7 +20,7 @@
 
 package io.nitric.api.event;
 
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.event.v1.EventPublishRequest;
 import io.nitric.util.Contracts;
 import io.nitric.util.ProtoUtils;
@@ -75,8 +75,9 @@ public class Topic {
      * Publish the given event to this topic.
      *
      * @param event the even to publish (required)
+     * @throws NitricException if a Topic Service API error occurs
      */
-    public void publish(Event event) {
+    public void publish(Event event) throws NitricException {
         Contracts.requireNonNull(event, "event");
 
         var struct = ProtoUtils.toStruct(event.payload);
@@ -98,7 +99,7 @@ public class Topic {
         try {
             Events.getEventServiceStub().publish(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
     }
 

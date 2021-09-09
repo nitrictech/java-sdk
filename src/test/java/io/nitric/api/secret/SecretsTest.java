@@ -20,27 +20,23 @@
 
 package io.nitric.api.secret;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.nio.charset.StandardCharsets;
-
 import com.google.protobuf.ByteString;
-
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.nitric.api.exception.InvalidArgumentException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-
+import io.nitric.api.NitricException;
 import io.nitric.proto.secret.v1.SecretAccessRequest;
 import io.nitric.proto.secret.v1.SecretAccessResponse;
 import io.nitric.proto.secret.v1.SecretPutRequest;
 import io.nitric.proto.secret.v1.SecretPutResponse;
 import io.nitric.proto.secret.v1.SecretServiceGrpc;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecretsTest {
@@ -148,7 +144,7 @@ public class SecretsTest {
         try {
             secret3.putAsText("password");
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -193,7 +189,7 @@ public class SecretsTest {
         try {
             version.access();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 

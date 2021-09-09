@@ -22,7 +22,7 @@ package io.nitric.api.queue;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.nitric.api.exception.InvalidArgumentException;
+import io.nitric.api.NitricException;
 import io.nitric.proto.queue.v1.FailedTask;
 import io.nitric.proto.queue.v1.NitricTask;
 import io.nitric.proto.queue.v1.QueueCompleteRequest;
@@ -102,13 +102,13 @@ public class QueuesTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.sendBatch(Mockito.any(QueueSendBatchRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         try {
             queue.send(task);
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -190,13 +190,13 @@ public class QueuesTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.receive(Mockito.any(QueueReceiveRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         try {
             queues.receive(10);
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 
@@ -223,13 +223,13 @@ public class QueuesTest {
 
         // Verify GRPC Failure Mode
         Mockito.when(mock.complete(Mockito.any(QueueCompleteRequest.class))).thenThrow(
-                new StatusRuntimeException(Status.INVALID_ARGUMENT)
+                new StatusRuntimeException(Status.INTERNAL)
         );
 
         try {
             task.complete();
             fail();
-        } catch (InvalidArgumentException iae) {
+        } catch (NitricException ne) {
         }
     }
 

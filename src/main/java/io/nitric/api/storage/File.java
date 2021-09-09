@@ -21,14 +21,13 @@
 package io.nitric.api.storage;
 
 import com.google.protobuf.ByteString;
-
-import io.nitric.api.exception.ApiException;
+import io.nitric.api.NitricException;
+import io.nitric.api.NotFoundException;
 import io.nitric.proto.storage.v1.StorageDeleteRequest;
 import io.nitric.proto.storage.v1.StorageReadRequest;
 import io.nitric.proto.storage.v1.StorageReadResponse;
 import io.nitric.proto.storage.v1.StorageWriteRequest;
 import io.nitric.util.Contracts;
-import io.nitric.util.ProtoUtils;
 
 /**
  * <p>
@@ -102,8 +101,10 @@ public class File {
      * Retrieve an item from a bucket with the given key if it exists.
      *
      * @return the storage item data is it exists, or null otherwise
+     * @throws NotFoundException if the storage bucket or item was not found
+     * @throws NitricException if a Storage Service API error occurs
      */
-    public byte[] read() {
+    public byte[] read() throws NotFoundException, NitricException {
 
         var request = StorageReadRequest.newBuilder()
                 .setBucketName(bucket)
@@ -114,7 +115,7 @@ public class File {
         try {
             response = Storage.getServiceStub().read(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
 
         var body = response.getBody();
@@ -127,8 +128,10 @@ public class File {
      * whether an item already exists in the bucket for the given key.
      *
      * @param data the item data
+     * @throws NotFoundException if the storage bucket was not found
+     * @throws NitricException if a Storage Service API error occurs
      */
-    public void write(byte[] data) {
+    public void write(byte[] data) throws NotFoundException, NitricException {
         Contracts.requireNonBlank(key, "key");
         Contracts.requireNonNull(data, "data");
 
@@ -143,14 +146,17 @@ public class File {
         try {
             Storage.getServiceStub().write(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
     }
 
     /**
      * Delete an item from a bucket with the given key if it exists.
+     *
+     * @throws NotFoundException if the storage bucket or item was not found
+     * @throws NitricException if a Storage Service API error occurs
      */
-    public void delete() {
+    public void delete() throws NotFoundException, NitricException {
         var request = StorageDeleteRequest.newBuilder()
                 .setBucketName(bucket)
                 .setKey(key)
@@ -159,9 +165,9 @@ public class File {
         try {
             Storage.getServiceStub().delete(request);
         } catch (io.grpc.StatusRuntimeException sre) {
-            throw ApiException.fromGrpcServiceException(sre);
+            throw NitricException.build(sre);
         }
-   }
+    }
 
     /**
      * Return the string representation of this object.

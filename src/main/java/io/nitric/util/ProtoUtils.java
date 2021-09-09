@@ -31,9 +31,6 @@ import com.google.protobuf.NullValue;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Value;
 
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-
 /**
  * <p>
  * Provides protobuf utility functions.
