@@ -22,11 +22,12 @@ The Java SDK supports the use of the cloud-portable [Nitric](https://nitric.io) 
 ### Using the [Nitric CLI](https://github.com/nitric-tech/cli)
 
 ```bash
-nitric make:project example
- ? Include an example service? function/java11
- ? Name for the example service?
- ✔ Making Project getting-started
- ✔ Making Service example
+nitric make:stack example
+? Service template
+  official/TypeScript Stack
+  official/Python Stack
+❯ official/Java Stack
+  official/Go Stack
 ```
 
 ### Adding to an existing project
@@ -35,7 +36,7 @@ nitric make:project example
 <dependency>
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0-SNAPSHOT</version>
 </dependency>
 ```
 
