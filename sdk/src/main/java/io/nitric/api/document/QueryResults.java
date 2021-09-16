@@ -44,6 +44,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
     final boolean paginateAll;
     Map<String, String> pagingToken;
     List<ResultDoc<T>> queryData;
+    ObjectMapper objectMapper;
 
     /**
      * Create a QueryResults object.
@@ -57,6 +58,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         this.query = query;
         this.pagingToken = query.pagingToken;
         this.paginateAll = paginateAll;
+        this.objectMapper = query.objectMapper;
 
         // Perform initial query
         var request = buildDocQueryRequest(this.query.expressions);
@@ -127,8 +129,6 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         // Marshall response data
         queryData = new ArrayList<>(response.getDocumentsCount());
 
-        var objectMapper = new ObjectMapper();
-
         response.getDocumentsList().forEach(doc -> {
             var key = Key.buildFromGrpcKey(doc.getKey());
             var map = ProtoUtils.toMap(doc.getContent());
@@ -137,6 +137,9 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
                 queryData.add(new ResultDoc(key, map));
 
             } else {
+                if (objectMapper == null) {
+                    objectMapper = new ObjectMapper();
+                }
                 var value = objectMapper.convertValue(map, query.type);
                 queryData.add(new ResultDoc<>(key, value));
             }

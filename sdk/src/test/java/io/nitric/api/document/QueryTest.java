@@ -279,6 +279,26 @@ public class QueryTest {
     }
 
     @Test
+    public void test_objectMapper() {
+        var collection = new Collection("customers", null);
+        var query = new Query<Customer>(collection.toGrpcCollection(), Customer.class);
+        assertNull(query.objectMapper);
+
+        var objectMapper = new ObjectMapper();
+        query.objectMapper(objectMapper);
+        assertSame(objectMapper, query.objectMapper);
+
+        var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
+        Mockito.when(mock.query(Mockito.any())).thenReturn(
+                DocumentQueryResponse.newBuilder().build()
+        );
+        Documents.setServiceStub(mock);
+
+        var results = newOrderQuery().objectMapper(objectMapper).fetch();
+        assertSame(objectMapper, results.objectMapper);
+    }
+
+    @Test
     public void test_toString() {
         var parentKey = new Key(new Collection("customers", null), "customers:123");
         var collection = new Collection("orders", parentKey);
