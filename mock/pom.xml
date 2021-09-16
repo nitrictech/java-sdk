@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.nitric</groupId>
         <artifactId>java-sdk-parent</artifactId>
-        <version>0.10.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
 
     <artifactId>java-sdk-mock</artifactId>
