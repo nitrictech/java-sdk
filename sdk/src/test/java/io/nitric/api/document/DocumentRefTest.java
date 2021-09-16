@@ -58,7 +58,7 @@ public class DocumentRefTest {
         var collection = new Collection("customers", null);
         var key = new Key(collection, "123");
         var document = new DocumentRef<Map>(key, Map.class);
-        assertEquals("DocumentRef[key=Key[collection=Collection[name=customers, parent=null], id=123], type=interface java.util.Map]",
+        assertEquals("DocumentRef[key=Key[collection=Collection[name=customers, parent=null], id=123], type=interface java.util.Map, objectMapper=null]",
                 document.toString());
     }
 
@@ -282,6 +282,15 @@ public class DocumentRefTest {
             fail();
         } catch (IllegalArgumentException uoe) {
         }
+    }
+
+    @Test void test_objectMapper() {
+        var docRef = new Documents().collection("customers").doc("customer-1");
+        assertNull(docRef.objectMapper);
+
+        var objectMapper = new ObjectMapper();
+        docRef.objectMapper(objectMapper);
+        assertSame(objectMapper, docRef.objectMapper);
     }
 
 }

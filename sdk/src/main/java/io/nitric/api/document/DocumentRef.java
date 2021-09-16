@@ -22,7 +22,6 @@ package io.nitric.api.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.nitric.api.InvalidArgumentException;
 import io.nitric.api.NitricException;
 import io.nitric.api.NotFoundException;
 import io.nitric.proto.document.v1.DocumentDeleteRequest;
@@ -41,6 +40,7 @@ public class DocumentRef<T> {
 
     final Key key;
     final Class<T> type;
+    ObjectMapper objectMapper;
 
     // Constructor ------------------------------------------------------------
 
@@ -68,9 +68,9 @@ public class DocumentRef<T> {
     }
 
     /**
-     * Return the collection document reference value.
+     * Return the document reference content value.
      *
-     * @return the collection document reference value
+     * @return the document reference content value
      * @throws NotFoundException if the document was not found
      * @throws NitricException if a Document Service API error occurs
      */
@@ -93,7 +93,9 @@ public class DocumentRef<T> {
                     return (T) map;
 
                 } else {
-                    var objectMapper = new ObjectMapper();
+                    if (objectMapper == null) {
+                        objectMapper = new ObjectMapper();
+                    }
                     return objectMapper.convertValue(map, type);
                 }
 
@@ -119,7 +121,9 @@ public class DocumentRef<T> {
             contentMap = (Map) content;
 
         } else {
-            var objectMapper = new ObjectMapper();
+            if (objectMapper == null) {
+                objectMapper = new ObjectMapper();
+            }
             contentMap = objectMapper.convertValue(content, Map.class);
         }
         var contentStruct = ProtoUtils.toStruct(contentMap);
@@ -207,13 +211,28 @@ public class DocumentRef<T> {
     }
 
     /**
+     * Set the Document content object marshalling ObjectMapper.
+     *
+     * @param objectMapper the Document content object marshalling ObjectMapper
+     * @return this Document Ref object
+     */
+    public DocumentRef<T> objectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    /**
      * Return the string representation of this object.
      *
      * @return the string representation of this object
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[key=" + key + ", type=" + type + "]";
+        return getClass().getSimpleName()
+            + "[key=" + key
+            + ", type=" + type
+            + ", objectMapper=" + objectMapper
+            + "]";
     }
 
 }
