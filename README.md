@@ -36,7 +36,7 @@ nitric make:stack example
 <dependency>
     <groupId>io.nitric</groupId>
     <artifactId>java-sdk</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>[lastest maven version]</version>
 </dependency>
 ```
 
