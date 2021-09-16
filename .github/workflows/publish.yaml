@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          submodules: recursive
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v2
         with:
@@ -20,10 +18,28 @@ jobs:
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
+      
+       # Remove leading 'v' from version string
+      - name: Normalize version string
+        id: normalize_version
+        run: |
+          version="${{ github.event.release.tag_name }}"
+          echo "::set-output name=VERSION::`echo ${version:1}`"
+
+      - name: Set Version Production
+        if: "!github.event.release.prerelease"
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ steps.normalize_version.outputs.VERSION }}
+
+      - name: Set Version Snapshot
+        if: "github.event.release.prerelease"
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ steps.normalize_version.outputs.VERSION }}-SNAPSHOT
+
+
       - name: Install gpg secret key
         run: |
           cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
+
       - name: Publish to Maven Central repository
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
