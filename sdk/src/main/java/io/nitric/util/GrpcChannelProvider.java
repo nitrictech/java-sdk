@@ -25,7 +25,7 @@ import io.grpc.ManagedChannelBuilder;
 
 /**
  * <p>
- *  Provides a gRPC Managed Channel object by use by Nitric Service Clients.
+ *  Provides Nitric Membrane GRPC Channel objects by use by Nitric clients.
  * </p>
  *
  * <p>
@@ -64,16 +64,23 @@ public class GrpcChannelProvider {
 
         synchronized (LOCK) {
             if (channel == null || channel.isShutdown() || channel.isTerminated()) {
-                var target = getEnvVar(NITRIC_SERVICE_HOST_ENV_VAR_NAME, NITRIC_SERVICE_HOST_DEFAULT)
-                        + ":" + getEnvVar(NITRIC_SERVICE_PORT_ENV_VAR_NAME, NITRIC_SERVICE_PORT_DEFAULT);
-
-                channel = ManagedChannelBuilder.forTarget(target)
+                channel = ManagedChannelBuilder.forTarget(getTarget())
                         .usePlaintext()
                         .build();
             }
         }
 
         return channel;
+    }
+
+    /**
+     * Return the Membrane Server connection target.
+     *
+     * @return the Membrane Server connection target.
+     */
+    public static String getTarget() {
+        return getEnvVar(NITRIC_SERVICE_HOST_ENV_VAR_NAME, NITRIC_SERVICE_HOST_DEFAULT)
+            + ":" + getEnvVar(NITRIC_SERVICE_PORT_ENV_VAR_NAME, NITRIC_SERVICE_PORT_DEFAULT);
     }
 
     // Protected Methods ------------------------------------------------------

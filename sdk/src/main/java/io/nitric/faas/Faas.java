@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.grpc.StatusRuntimeException;
+import io.grpc.Status.Code;
 import io.grpc.stub.StreamObserver;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
@@ -115,9 +117,9 @@ public class Faas {
         try {
             finishedLatch.await();
         } catch (InterruptedException e) {
-            logException(e,
-                         "Stream was prematurely terminated for function: %s, error: %s \n",
-                         function.getClass().getSimpleName());
+            logError(e,
+                     "Stream was prematurely terminated for function: %s, error: %s \n",
+                     function.getClass().getSimpleName());
             // Restore thread interrupted state
             Thread.currentThread().interrupt();
         } finally {
@@ -159,7 +161,7 @@ public class Faas {
         LOGGER.log(Level.SEVERE, msg);
     }
 
-    static void logException(Throwable error, String format, Object...args) {
+    static void logError(Throwable error, String format, Object...args) {
         String msg = String.format(format, args);
         LOGGER.log(Level.SEVERE, msg, error);
     }
@@ -193,6 +195,7 @@ public class Faas {
                     // We have an init ack from the membrane
                     // XXX: NO OP for now
                     break;
+
                 case TRIGGER_REQUEST:
                     Trigger trigger = null;
                     try {
@@ -208,13 +211,29 @@ public class Faas {
                                         .setId(serverMessage.getId())
                                         .setTriggerResponse(grpcResponse)
                                         .build());
+
                     } catch (Throwable error) {
-                        logException(error,
-                                     "onNext() error occurred handling trigger %s with function: %s",
-                                     trigger,
-                                     function.getClass().getName());
+                        var buffer = new StringBuffer("error handling Trigger ");
+
+                        if (trigger.getContext().isHttp()) {
+                            var context = trigger.getContext().asHttp();
+                            buffer.append("HTTP ")
+                                .append(context.getMethod())
+                                .append(" '")
+                                .append(context.getPath())
+                                .append("'");
+                        } else {
+                            var context = trigger.getContext().asTopic();
+                            buffer.append("Topic '")
+                                .append(context.getTopic())
+                                .append("'");
+                        }
+                        buffer.append(" with ")
+                            .append(function.getClass().getName());
+                        logError(error, buffer.toString());
                     }
                     break;
+
                 default:
                     logError("onNext() default case %s reached with function: %s \n",
                              serverMessage.getContentCase(),
@@ -225,7 +244,16 @@ public class Faas {
 
         @Override
         public void onError(Throwable error) {
-            logException(error, "onError() occurred with function: %s", function.getClass().getName());
+            if (error instanceof StatusRuntimeException) {
+                var sre = (StatusRuntimeException) error;
+                if (sre.getStatus().getCode().equals(Code.UNAVAILABLE)) {
+                    logError(error,
+                             "error occurred connecting to Nitric membrane on %s",
+                             GrpcChannelProvider.getTarget());
+                    return;
+                }
+            }
+            logError(error, "error occurred");
         }
 
         @Override

@@ -198,7 +198,7 @@ public class FaasTest {
         }
 
         try {
-            Faas.logException(new NullPointerException(), "name: %s", "value");
+            Faas.logError(new NullPointerException(), "name: %s", "value");
         } catch (Exception e) {
             fail();
         }
