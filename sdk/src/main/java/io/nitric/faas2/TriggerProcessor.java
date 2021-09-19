@@ -22,8 +22,10 @@ package io.nitric.faas2;
 
 import java.util.List;
 
+import io.nitric.faas2.event.EventContext;
 import io.nitric.faas2.event.EventHandler;
 import io.nitric.faas2.event.EventMiddleware;
+import io.nitric.faas2.http.HttpContext;
 import io.nitric.faas2.http.HttpHandler;
 import io.nitric.faas2.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.TriggerRequest;
@@ -98,6 +100,22 @@ class TriggerProcessor {
         var context = Marshaller.toHttpContext(triggerRequest);
 
         try {
+            // Process HTTP Middlewares
+            var middleware = buildHttpMiddlewareChain();
+
+            if (middleware != null) {
+                context = middleware.handle(context, middleware.getNext());
+            }
+
+            if (context == null) {
+                // TODO: log null response ?
+                return TriggerResponse.newBuilder().build();
+
+            } else if (context.getResponse().getStatus() > 0) {
+                return Marshaller.toHttpTriggerResponse(context.getResponse());
+            }
+
+            // Process Event Handlers
             var resultCtx = httpHandler.handle(context);
 
             if (resultCtx != null) {
@@ -124,6 +142,22 @@ class TriggerProcessor {
         var context = Marshaller.toEventContext(triggerRequest);
 
         try {
+            // Process Event Middlewares
+            var middleware = buildEventMiddlewareChain();
+
+            if (middleware != null) {
+                context = middleware.handle(context, middleware.getNext());
+            }
+
+            if (context == null) {
+                // TODO: log null response ?
+                return TriggerResponse.newBuilder().build();
+
+            } else if (context.getResponse().isSuccess()) {
+                return Marshaller.toTopicTriggerResponse(context.getResponse());
+            }
+
+            // Process Event Handlers
             var resultCtx = eventHandler.handle(context);
 
             if (resultCtx != null) {
@@ -142,6 +176,71 @@ class TriggerProcessor {
                           eventHandler.getClass().getName());
 
             return null;
+        }
+    }
+
+    EventMiddleware buildEventMiddlewareChain() {
+        if (eventMiddlewares.isEmpty()) {
+            return null;
+        }
+
+        var firstMiddleware = eventMiddlewares.get(0);
+
+        var middleware = firstMiddleware;
+
+        for (int i = 1; i < eventMiddlewares.size(); i++) {
+            var next = eventMiddlewares.get(i);
+            middleware.setNext(next);
+            middleware = next;
+        }
+
+        middleware.setNext(new FinalEventMiddleware());
+
+        return firstMiddleware;
+    }
+
+
+    HttpMiddleware buildHttpMiddlewareChain() {
+        if (httpMiddlewares.isEmpty()) {
+            return null;
+        }
+
+        var firstMiddleware = httpMiddlewares.get(0);
+
+        var middleware = firstMiddleware;
+
+        for (int i = 1; i < httpMiddlewares.size(); i++) {
+            var next = httpMiddlewares.get(i);
+            middleware.setNext(next);
+            middleware = next;
+        }
+
+        middleware.setNext(new FinalHttpMiddleware());
+
+        return firstMiddleware;
+    }
+
+    // Inner Classes -----------------------------------------------------------------
+
+    /**
+     * Provides the final HttpMiddleware in the chain which simply returns the context.
+     */
+    static class FinalHttpMiddleware extends HttpMiddleware {
+
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            return context;
+        }
+    }
+
+    /**
+     * Provides the final EventMiddleware in the chain which simply returns the context.
+     */
+    static class FinalEventMiddleware extends EventMiddleware {
+
+        @Override
+        public EventContext handle(EventContext context, EventMiddleware next) {
+            return context;
         }
     }
 
