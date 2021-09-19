@@ -43,7 +43,7 @@ class Marshaller {
      */
     private Marshaller() {
     }
-    
+
     static EventContext toEventContext(TriggerRequest trigger) {
         if (!trigger.hasTopic()) {
             throw new IllegalArgumentException("trigger must be Topic type");
@@ -113,5 +113,5 @@ class Marshaller {
 
         return trBuilder.build();
     }
-    
+
 }

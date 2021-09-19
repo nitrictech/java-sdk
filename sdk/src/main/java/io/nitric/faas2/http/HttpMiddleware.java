@@ -20,6 +20,8 @@
 
 package io.nitric.faas2.http;
 
+import io.nitric.util.Contracts;
+
 /**
  * <p>
  * Provides an HTTP Middleware handler class.
@@ -31,7 +33,10 @@ package io.nitric.faas2.http;
  * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
  * </p>
  */
-public interface HttpMiddleware {
+public abstract class HttpMiddleware {
+
+    /** The next HttpMiddleware to execute. */
+    protected HttpMiddleware next;
 
     /**
      * Handle the Http Request and invoke the next handler in the chain.
@@ -40,6 +45,26 @@ public interface HttpMiddleware {
      * @param next the next HttpMiddleware handler to invoke in the chain
      * @return the context object returned by the next handler
      */
-    public HttpContext handle(HttpContext context, HttpMiddleware next);
+    public abstract HttpContext handle(HttpContext context, HttpMiddleware next);
+
+    /**
+     * Return the next HttpMiddleware to process request context.
+     *
+     * @return the next HttpMiddleware to process request context
+     */
+    public HttpMiddleware getNext() {
+        return next;
+    }
+
+    /**
+     * Set the next HttpMiddleware to process request context.
+     *
+     * @param middleware the next HttpMiddleware to process request context (required)
+     */
+    public void setNext(HttpMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        this.next = middleware;
+    }
 
 }

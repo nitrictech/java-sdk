@@ -20,6 +20,8 @@
 
 package io.nitric.faas2.event;
 
+import io.nitric.util.Contracts;
+
 /**
  * <p>
  * Provides an Event Handler middleware class.
@@ -31,7 +33,10 @@ package io.nitric.faas2.event;
  * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
  * </p>
  */
-public interface EventMiddleware {
+public abstract class EventMiddleware {
+
+    /** The next EventMiddleware to execute. */
+    protected EventMiddleware next;
 
     /**
      * Handle the Event Request and invoke the next handler in the chain.
@@ -40,6 +45,26 @@ public interface EventMiddleware {
      * @param next the next EventMiddleware handler to invoke in the chain
      * @return the context object returned by the next handler
      */
-    public EventContext handle(EventContext context, EventMiddleware next);
+    public abstract EventContext handle(EventContext context, EventMiddleware next);
+
+    /**
+     * Return the next EventMiddleware to process request context.
+     *
+     * @return the next EventMiddleware to process request context
+     */
+    public EventMiddleware getNext() {
+        return next;
+    }
+
+    /**
+     * Set the next EventMiddleware to process request context.
+     *
+     * @param middleware the next EventMiddleware to process request context (required)
+     */
+    public void setNext(EventMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        this.next = middleware;
+    }
 
 }
