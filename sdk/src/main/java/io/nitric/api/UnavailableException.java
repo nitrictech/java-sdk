@@ -24,18 +24,21 @@ import io.grpc.StatusRuntimeException;
 import io.nitric.proto.error.v1.ErrorDetails;
 
 /**
- * <p>
- *  Provides a Nitric API service unavailable exception class. If this exception is thrown application code may
- *  try this operation again later if it is a transient error.
- * </p>
+ * Provides a Nitric API service Unavailable exception class. If this exception is thrown application code may
+ * try this operation again later if it is a transient error.
  */
 public class UnavailableException extends NitricException {
 
-    /*
-     * Enforce package builder patterns.
+    /**
+     * Create a new Nitric service UnavailableException with the given information.
+     *
+     * @param code the GRPC status code
+     * @param message the error message
+     * @param cause the error root cause
+     * @param ed the structured GRPC error details
      */
-    UnavailableException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
-        super(code, message, cause, errorDetails);
+    public UnavailableException(Code code, String message, StatusRuntimeException cause, ErrorDetails ed) {
+        super(code, message, cause, ed);
     }
 
 }

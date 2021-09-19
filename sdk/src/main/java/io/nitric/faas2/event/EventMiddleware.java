@@ -22,17 +22,24 @@ package io.nitric.faas2.event;
 
 /**
  * <p>
- * Provides an Event Handler class.
+ * Provides an Event Handler middleware class.
+ * </p>
+ *
+ * <p>
+ * Middleware handlers follow the 'Chain of Responsibility' design pattern whereby they
+ * invoke the next handler which can handle the request. This pattern is equivalent
+ * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
  * </p>
  */
-public interface EventHandler {
+public interface EventMiddleware {
 
     /**
-     * Handle the EventContext...
+     * Handle the Event Request and invoke the next handler in the chain.
      *
-     * @param context the EventContext request/response context
+     * @param context the Event request/response context
+     * @param next the next EventMiddleware handler to invoke in the chain
      * @return the context object returned by the next handler
      */
-    public EventContext handle(EventContext context);
+    public EventContext handle(EventContext context, EventMiddleware next);
 
 }
