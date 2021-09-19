@@ -20,52 +20,48 @@
 
 package io.nitric.faas2;
 
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import java.util.List;
 
-import com.google.protobuf.ByteString;
-
-import io.nitric.faas2.event.EventContext;
 import io.nitric.faas2.event.EventHandler;
-import io.nitric.faas2.event.EventRequest;
-import io.nitric.faas2.event.EventResponse;
-import io.nitric.faas2.http.HttpContext;
+import io.nitric.faas2.event.EventMiddleware;
 import io.nitric.faas2.http.HttpHandler;
-import io.nitric.faas2.http.HttpRequest;
-import io.nitric.faas2.http.HttpResponse;
-import io.nitric.proto.faas.v1.HeaderValue;
-import io.nitric.proto.faas.v1.HttpResponseContext;
-import io.nitric.proto.faas.v1.TopicResponseContext;
+import io.nitric.faas2.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
-import io.nitric.util.Contracts;
 
 /**
  * Provides a Nitric TriggerRequest processor class.
  */
-public class TriggerProcessor {
+class TriggerProcessor {
 
-    private EventHandler eventHandler;
-    private HttpHandler httpHandler;
-    private Logger logger;
+    final EventHandler eventHandler;
+    final HttpHandler httpHandler;
+    final List<EventMiddleware> eventMiddlewares;
+    final List<HttpMiddleware> httpMiddlewares;
 
     // Constructor ------------------------------------------------------------
 
     /**
-     * Create a Nitric TriggerProcessor object with the given handlers and logger.
+     * Create a Nitric TriggerProcessor object with the given handlers and middlewares.
      *
-     * @param eventHandler the Topic event handler
-     * @param httpHandler the HTTP handler
-     * @param logger the logger instance
+     * @param eventHandler the Event handler function
+     * @param httpHandler the HTTP handler function
+     * @param eventMiddlewares the EventMiddleware list
+     * @param httpMiddlewares the HttptMiddleware list
      */
-    public TriggerProcessor(EventHandler eventHandler, HttpHandler httpHandler, Logger logger) {
+    protected TriggerProcessor(
+        EventHandler eventHandler,
+        HttpHandler httpHandler,
+        List<EventMiddleware> eventMiddlewares,
+        List<HttpMiddleware> httpMiddlewares
+    ) {
         this.eventHandler = eventHandler;
         this.httpHandler = httpHandler;
-        this.logger = logger;
+        this.eventMiddlewares = eventMiddlewares;
+        this.httpMiddlewares = httpMiddlewares;
     }
 
-    // Public Methods ---------------------------------------------------------
+    // Protected --------------------------------------------------------------
 
     /**
      * Process the given GRPC TriggerRequest and return a TriggerResponse object.
@@ -73,41 +69,21 @@ public class TriggerProcessor {
      * @param triggerRequest the GRPC TriggerRequest object
      * @return the GRPC TriggerResponse object
      */
-    public TriggerResponse process(TriggerRequest triggerRequest) {
+    protected TriggerResponse process(TriggerRequest triggerRequest) {
 
         if (triggerRequest.hasHttp()) {
-            if (httpHandler == null) {
-                throw new IllegalArgumentException("No HttpHandler has been registered");
+            if (httpHandler == null && httpMiddlewares.isEmpty()) {
+                throw new IllegalArgumentException("No HTTP handler or middlewares have been registered");
             }
 
-            var context = toHttpContext(triggerRequest);
-
-            var resultContext = httpHandler.handle(context, null);
-
-            if (resultContext != null) {
-                return toHttpTriggerResponse(resultContext.getResponse());
-
-            } else {
-                // TODO: log null response
-                return TriggerResponse.newBuilder().build();
-            }
+            return processHttpTrigger(triggerRequest);
 
         } else if (triggerRequest.hasTopic()) {
-            if (eventHandler == null) {
-                throw new IllegalArgumentException("No EventHandler has been registered");
+            if (eventHandler == null && eventMiddlewares.isEmpty()) {
+                throw new IllegalArgumentException("No Event handler or middlewares have been registered");
             }
 
-            var context = toEventContext(triggerRequest);
-
-            var resultContext = eventHandler.handle(context, null);
-
-            if (resultContext != null) {
-                return toTopicTriggerResponse(resultContext.getResponse());
-
-            } else {
-                // TODO: log null response
-                return TriggerResponse.newBuilder().build();
-            }
+            return processTopicTrigger(triggerRequest);
 
         } else {
             String msg = "Trigger type is not supported: " + triggerRequest;
@@ -115,80 +91,58 @@ public class TriggerProcessor {
         }
     }
 
-    // Package Private Methods ------------------------------------------------
+    // Private Methods ------------------------------------------------
 
-    EventContext toEventContext(TriggerRequest trigger) {
-        Contracts.requireNonNull(trigger, "trigger");
+    TriggerResponse processHttpTrigger(TriggerRequest triggerRequest) {
 
-        if (!trigger.hasTopic()) {
-            throw new IllegalArgumentException("trigger must be Topic type");
+        var context = Marshaller.toHttpContext(triggerRequest);
+
+        try {
+            var resultCtx = httpHandler.handle(context);
+
+            if (resultCtx != null) {
+                return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
+
+            } else {
+                // TODO: log null response ?
+                return TriggerResponse.newBuilder().build();
+            }
+
+        } catch (Throwable error) {
+            Faas.logError(error,
+                          "error handling Trigger HTTP % '%s' with %s",
+                          context.getRequest().getMethod(),
+                          context.getRequest().getPath(),
+                          httpHandler.getClass().getName());
+
+            return null;
         }
-
-        var request = new EventRequest(
-            trigger.getTopic().getTopic(),
-            trigger.getMimeType(),
-            trigger.getData().toByteArray()
-        );
-
-        var response = new EventResponse();
-
-        return new EventContext(request, response);
     }
 
-    HttpContext toHttpContext(TriggerRequest trigger) {
-        Contracts.requireNonNull(trigger, "trigger");
+    TriggerResponse processTopicTrigger(TriggerRequest triggerRequest) {
 
-        if (!trigger.hasHttp()) {
-            throw new IllegalArgumentException("trigger must be HTTP type");
+        var context = Marshaller.toEventContext(triggerRequest);
+
+        try {
+            var resultCtx = eventHandler.handle(context);
+
+            if (resultCtx != null) {
+                return Marshaller.toTopicTriggerResponse(resultCtx.getResponse());
+
+            } else {
+                // TODO: log null response ?
+                // TODO: should default to success true or false?
+                return TriggerResponse.newBuilder().build();
+            }
+
+        } catch (Throwable error) {
+            Faas.logError(error,
+                          "error handling Trigger Topic % with %s",
+                          context.getRequest().getTopic(),
+                          eventHandler.getClass().getName());
+
+            return null;
         }
-
-        var http = trigger.getHttp();
-
-        Map<String, String> headers = http.getHeadersMap()
-            .entrySet()
-            .stream()
-            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getValue(0)));
-
-        var request = new HttpRequest(
-            http.getMethod(),
-            http.getPath(),
-            headers,
-            http.getQueryParamsMap(),
-            trigger.getMimeType(),
-            trigger.getData().toByteArray()
-        );
-
-        var response = new HttpResponse();
-
-        return new HttpContext(request, response);
-    }
-
-    TriggerResponse toTopicTriggerResponse(EventResponse response) {
-        var trBuilder = TriggerResponse.newBuilder();
-
-        trBuilder.setData(ByteString.copyFrom(response.getData()));
-
-        var topicCtxBuilder = TopicResponseContext.newBuilder().setSuccess(response.isSuccess());
-
-        trBuilder.setTopic(topicCtxBuilder);
-
-        return trBuilder.build();
-    }
-
-    TriggerResponse toHttpTriggerResponse(HttpResponse response) {
-        var trBuilder = TriggerResponse.newBuilder();
-
-        trBuilder.setData(ByteString.copyFrom(response.getData()));
-
-        var httpCtxBuilder = HttpResponseContext.newBuilder();
-        httpCtxBuilder.setStatus(response.getStatus());
-        response.getHeaders().entrySet().forEach(e -> {
-            httpCtxBuilder.putHeaders(e.getKey(), HeaderValue.newBuilder().addValue(e.getValue()).build());
-        });
-
-        trBuilder.setHttp(httpCtxBuilder);
-
-        return trBuilder.build();
     }
 
 }

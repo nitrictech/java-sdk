@@ -22,24 +22,18 @@ package io.nitric.faas2.http;
 
 /**
  * <p>
- * Provides an Http Handler middleware class.
+ * Provides an Http Handler class.
  * </p>
- *
- * <p>
- * Handlers follow the 'Chain of Responsibility' design pattern whereby they
- * invoke the next handler which can handle the request. This pattern is equivalent
- * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
- * </p>
+
  */
 public interface HttpHandler {
 
     /**
-     * Handle the Http Request and invoke the next handler in the chain.
+     * Handle the HttpContext request and return HttpContext response.
      *
      * @param context the HTTP request/response context
-     * @param next the next HTTP handler to invoke in the chain
-     * @return the context object returned by the next handler
+     * @return the HttpContext response
      */
-    public HttpContext handle(HttpContext context, HttpHandler next);
+    public HttpContext handle(HttpContext context);
 
 }

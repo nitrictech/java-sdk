@@ -20,6 +20,8 @@
 
 package io.nitric.faas2;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -27,13 +29,12 @@ import java.util.logging.Logger;
 
 import io.grpc.stub.StreamObserver;
 import io.nitric.faas2.event.EventHandler;
+import io.nitric.faas2.event.EventMiddleware;
 import io.nitric.faas2.http.HttpHandler;
+import io.nitric.faas2.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
-import io.nitric.proto.faas.v1.ServerMessage;
-import io.nitric.proto.faas.v1.TriggerRequest;
-import io.nitric.proto.faas.v1.TriggerResponse;
 import io.nitric.util.Contracts;
 import io.nitric.util.GrpcChannelProvider;
 
@@ -47,8 +48,49 @@ import io.nitric.util.GrpcChannelProvider;
  * </p>
  *
  * <pre><code class="code">
- * TODO...
- * </code></pre>
+ * import io.nitric.api.NotFoundException;
+ * import io.nitric.api.document.Documents;
+ * import io.nitric.faas2.Faas;
+ * import io.nitric.faas2.http.HttpContext;
+ * import io.nitric.faas2.http.HttpHandler;
+ * 
+ * public class ReadFunction implements HttpHandler {
+ * 
+ *     final Documents documents;
+ * 
+ *     public ReadFunction(Documents documents) {
+ *         this.documents = documents;
+ *     }
+ * 
+ *     public HttpContext handle(HttpContext context) {
+ * 
+ *         var paths = context.getRequest().getPath().split("/");
+ *         var id = paths[paths.length - 1];
+ * 
+ *         try {
+ *             var json = documents.collection("examples")
+ *                 .doc(id)
+ *                 .getJson();
+ * 
+ *             context.getResponse()
+ *                 .status(200)
+ *                 .addHeader("Content-Type", "application/json")
+ *                 .data(json);
+ * 
+ *         } catch (NotFoundException nfe) {
+ *             context.getResponse()
+ *                 .status(404)
+ *                 .data("Document not found: " + id);
+ *         }
+ * 
+ *         return context;
+ *     }
+ * 
+ *     public static void main(String[] args) {
+ *         var read = new ReadFunction(new Documents());
+ *         new Faas().http(read).start();
+ *     }
+ * } </code></pre>
  *
  * @see NitricFunction
  */
@@ -60,32 +102,80 @@ public class Faas {
 
     private EventHandler eventHandler;
     private HttpHandler httpHandler;
+    private List<EventMiddleware> eventMiddlewares = new ArrayList<>();
+    private List<HttpMiddleware> httpMiddlewares = new ArrayList<>();
 
     // Public Methods -------------------------------------------------------------------
 
     /**
-     * Register a Faas EventHandler.
+     * Register a EventHandler function.
      *
      * @param eventHandler the EventHandler to register (required)
-     * @return the Faas object for chaining
+     * @return this chainable Faas object
      */
-    public Faas setHandler(EventHandler eventHandler) {
+    public Faas event(EventHandler eventHandler) {
         Contracts.requireNonNull(eventHandler, "eventHandler");
+
+        if (httpHandler != null || !httpMiddlewares.isEmpty()) {
+            String msg = "Cannot register a EventHander if a HttpHandler or HttpMiddleware added";
+            throw new IllegalArgumentException(msg);
+        }
 
         this.eventHandler = eventHandler;
         return this;
     }
 
     /**
-     * Register a Faas HttpHandler.
+     * Register a HttpHandler function.
      *
      * @param httpHandler the HttpHandler to register (required)
-     * @return the Faas object for chaining
+     * @return this chainable Faas object
      */
-    public Faas setHandler(HttpHandler httpHandler) {
+    public Faas http(HttpHandler httpHandler) {
         Contracts.requireNonNull(httpHandler, "httpHandler");
 
+        if (eventHandler != null || !eventMiddlewares.isEmpty()) {
+            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware added";
+            throw new IllegalArgumentException(msg);
+        }
+
         this.httpHandler = httpHandler;
+        return this;
+    }
+
+    /**
+     * Add an EventMiddleware handler object.
+     *
+     * @param middleware the EventMiddleware handler object (required)
+     * @return this chainable Faas object
+     */
+    public Faas addMiddleware(EventMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        if (httpHandler != null || !httpMiddlewares.isEmpty()) {
+            String msg = "Cannot register a EventHander if a HttpHandler or HttpMiddleware added";
+            throw new IllegalArgumentException(msg);
+        }
+
+        eventMiddlewares.add(middleware);
+        return this;
+    }
+
+    /**
+     * Add an HttpMiddleware handler object.
+     *
+     * @param middleware the HttpMiddleware handler object (required)
+     * @return this chainable Faas object
+     */
+    public Faas addMiddleware(HttpMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        if (eventHandler != null || !eventMiddlewares.isEmpty()) {
+            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware added";
+            throw new IllegalArgumentException(msg);
+        }
+
+        httpMiddlewares.add(middleware);
         return this;
     }
 
@@ -94,11 +184,20 @@ public class Faas {
      * This method will block until the stream has terminated.
      */
     public void start() {
-        if (eventHandler == null && httpHandler == null) {
-            throw new IllegalArgumentException("No trigger handler functions have been registered");
+
+        if (eventHandler == null
+            && httpHandler == null
+            && eventMiddlewares.isEmpty()
+            && httpMiddlewares.isEmpty()) {
+
+            throw new IllegalArgumentException("No handler or middleware functions have been registered");
         }
 
-        var triggerProcesor = new TriggerProcessor(eventHandler, httpHandler, LOGGER);
+        var triggerProcesor = new TriggerProcessor(
+            eventHandler,
+            httpHandler,
+            eventMiddlewares,
+            httpMiddlewares);
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -162,86 +261,14 @@ public class Faas {
         return this;
     }
 
-    // Package Private Methods ------------------------------------------------
-
-    static void logError(String format, Object...args) {
+    protected static void logError(String format, Object...args) {
         String msg = String.format(format, args);
         LOGGER.log(Level.SEVERE, msg);
     }
 
-    static void logError(Throwable error, String format, Object...args) {
+    protected static void logError(Throwable error, String format, Object...args) {
         String msg = String.format(format, args);
         LOGGER.log(Level.SEVERE, msg, error);
-    }
-
-    // Inner Classes ----------------------------------------------------------
-
-    /**
-     * Provides the FaaS GRCP function stream handler.
-     */
-    static class FaasStreamObserver implements StreamObserver<ServerMessage> {
-
-        final TriggerProcessor triggerProcessor;
-        final AtomicReference<StreamObserver<ClientMessage>> clientObserver;
-        final CountDownLatch finishedLatch;
-
-        FaasStreamObserver(
-            TriggerProcessor triggerProcessor,
-            AtomicReference<StreamObserver<ClientMessage>> clientObserver,
-            CountDownLatch finishedLatch
-        ) {
-            this.triggerProcessor = triggerProcessor;
-            this.clientObserver = clientObserver;
-            this.finishedLatch = finishedLatch;
-        }
-
-        @Override
-        public void onNext(ServerMessage serverMessage) {
-            // We got a new message from the server
-            switch (serverMessage.getContentCase()) {
-                case INIT_RESPONSE:
-                    // We have an init ack from the membrane
-                    // XXX: NO OP for now
-                    break;
-
-                case TRIGGER_REQUEST:
-                    TriggerRequest request = null;
-                    try {
-                        request = serverMessage.getTriggerRequest();
-
-                        TriggerResponse response = triggerProcessor.process(request);
-
-                        // Write back the response to the server
-                        clientObserver.get().onNext(
-                                ClientMessage
-                                        .newBuilder()
-                                        .setId(serverMessage.getId())
-                                        .setTriggerResponse(response)
-                                        .build());
-
-                    } catch (Throwable error) {
-                        logError(error, "onNext() error occurred handling trigger %s", request);
-                    }
-                    break;
-
-                default:
-                    logError("onNext() default case %s reached",
-                             serverMessage.getContentCase());
-                    break;
-            }
-        }
-
-        @Override
-        public void onError(Throwable error) {
-            logError(error, "onError() occurred");
-        }
-
-        @Override
-        public void onCompleted() {
-            // The server has indicated that streaming is now over we can exit
-            // Unlock from exit
-            finishedLatch.countDown();
-        }
     }
 
 }
