@@ -18,31 +18,22 @@
  * #L%
  */
 
+package io.nitric.faas.http;
+
 /**
  * <p>
- *  Provides the Function as a Service (FaaS) classes.
+ * Provides an Http Handler class.
  * </p>
- *
- * <p>
- *  The example below illustrates the FaaS API.
- * </p>
- *
- * <pre><code class="code">
- * import io.nitric.faas.Faas;
- * import io.nitric.faas.Trigger;
- * import io.nitric.faas.Response;
- *
- * public class Handler implements NitricFunction {
- *
- *     &commat;Override
- *     public Response handle(Trigger trigger) {
- *         return trigger.buildResponse("Hello World");
- *     }
- *
- *     public static void main(String... args) {
- *         Faas.start(new Handler());
- *     }
- * }
- * </code></pre>
+
  */
-package io.nitric.faas;
+public interface HttpHandler {
+
+    /**
+     * Handle the HttpContext request and return HttpContext response.
+     *
+     * @param context the HTTP request/response context
+     * @return the HttpContext response
+     */
+    public HttpContext handle(HttpContext context);
+
+}

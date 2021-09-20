@@ -53,7 +53,6 @@
 
     <modules>
         <module>sdk</module>
-        <module>mock</module>
         <module>examples</module>
     </modules>
 

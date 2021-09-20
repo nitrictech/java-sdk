@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import io.nitric.faas.event.EventHandler;
+import io.nitric.faas.http.HttpHandler;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.ServerMessage;
@@ -43,7 +45,7 @@ public class FaasTest {
     // Test a basic start scenario
     @Test
     public void start() {
-        NitricFunction handler = Mockito.mock(NitricFunction.class);
+        final HttpHandler handler = Mockito.mock(HttpHandler.class);
 
         // Create mock stub here...
         // it will be mocked to produce fake streams
@@ -78,7 +80,7 @@ public class FaasTest {
         // We can by completing the server stream
         CountDownLatch functionCompleteLatch = new CountDownLatch(1);
         Executors.newCachedThreadPool().submit(() -> {
-            faas.startFunction(handler);
+            faas.http(handler).start();
             functionCompleteLatch.countDown();
         });
 
@@ -109,18 +111,18 @@ public class FaasTest {
 
     @Test
     public void handleTopicTrigger() {
-        NitricFunction handler = Mockito.mock(NitricFunction.class);
+        final EventHandler handler = Mockito.mock(EventHandler.class);
         // Create mock stub here...
         // it will be mocked to produce fake streams
         var mockStub = Mockito.mock(FaasServiceGrpc.FaasServiceStub.class);
 
-        Mockito.when(handler.handle(Mockito.any())).then(invocation -> {
+        // Mockito.when(handler.handle(Mockito.any())).then(invocation -> {
             // Here we can get the real stream observer that is sent to use when the function is
             // started
-            Trigger trigger = invocation.getArgument(0);
-            // return the client stream
-            return trigger.buildResponse("test");
-        });
+            // Trigger trigger = invocation.getArgument(0);
+            // // return the client stream
+            // return trigger.buildResponse("test");
+        // });
 
         // Can use to verify we received client messages
         StreamObserver<ClientMessage> mockServerStream = Mockito.mock(StreamObserver.class);
@@ -149,7 +151,7 @@ public class FaasTest {
         // We can by completing the server stream
         CountDownLatch functionCompleteLatch = new CountDownLatch(1);
         Executors.newCachedThreadPool().submit(() -> {
-            faas.startFunction(handler);
+            faas.event(handler).start();
             functionCompleteLatch.countDown();
         });
 

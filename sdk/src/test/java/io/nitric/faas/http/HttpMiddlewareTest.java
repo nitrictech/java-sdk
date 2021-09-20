@@ -18,22 +18,34 @@
  * #L%
  */
 
-package io.nitric.faas2.http;
+package io.nitric.faas.http;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+import org.junit.jupiter.api.Test;
 
 /**
- * <p>
- * Provides an Http Handler class.
- * </p>
-
+ * Provides an HttpMiddleware test case.
  */
-public interface HttpHandler {
+public class HttpMiddlewareTest {
 
-    /**
-     * Handle the HttpContext request and return HttpContext response.
-     *
-     * @param context the HTTP request/response context
-     * @return the HttpContext response
-     */
-    public HttpContext handle(HttpContext context);
+    @Test
+    public void test_next() {
+        var middleware1 = new TestEventMiddleware();
+
+        var middleware2 = new TestEventMiddleware();
+
+        middleware1.setNext(middleware2);
+
+        assertSame(middleware2, middleware1.getNext());
+    }
+
+    public static class TestEventMiddleware extends HttpMiddleware {
+
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            return null;
+        }
+    }
 
 }

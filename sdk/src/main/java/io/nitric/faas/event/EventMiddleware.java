@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.faas2.event;
+package io.nitric.faas.event;
 
 import io.nitric.util.Contracts;
 
