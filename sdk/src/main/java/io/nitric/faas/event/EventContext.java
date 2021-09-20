@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.faas2.event;
+package io.nitric.faas.event;
 
 import java.nio.charset.StandardCharsets;
 
@@ -224,12 +224,12 @@ public class EventContext {
         }
 
         /**
-         * Get the trigger data as UTF-8 encode text, or empty string if not defined.
+         * Get the trigger data as UTF-8 encode text, or null if not defined.
          *
-         * @return the trigger data as UTF-8 encode text, or empty string if not defined
+         * @return the trigger data as UTF-8 encode text, or null if not defined
          */
         public String getDataAsText() {
-            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : "";
+            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : null;
         }
 
         /**

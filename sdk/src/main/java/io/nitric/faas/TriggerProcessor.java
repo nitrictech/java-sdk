@@ -18,16 +18,16 @@
  * #L%
  */
 
-package io.nitric.faas2;
+package io.nitric.faas;
 
 import java.util.List;
 
-import io.nitric.faas2.event.EventContext;
-import io.nitric.faas2.event.EventHandler;
-import io.nitric.faas2.event.EventMiddleware;
-import io.nitric.faas2.http.HttpContext;
-import io.nitric.faas2.http.HttpHandler;
-import io.nitric.faas2.http.HttpMiddleware;
+import io.nitric.faas.event.EventContext;
+import io.nitric.faas.event.EventHandler;
+import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.http.HttpContext;
+import io.nitric.faas.http.HttpHandler;
+import io.nitric.faas.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
 
@@ -110,9 +110,6 @@ class TriggerProcessor {
             if (context == null) {
                 // TODO: log null response ?
                 return TriggerResponse.newBuilder().build();
-
-            } else if (context.getResponse().getStatus() > 0) {
-                return Marshaller.toHttpTriggerResponse(context.getResponse());
             }
 
             // Process Event Handlers
@@ -152,9 +149,6 @@ class TriggerProcessor {
             if (context == null) {
                 // TODO: log null response ?
                 return TriggerResponse.newBuilder().build();
-
-            } else if (context.getResponse().isSuccess()) {
-                return Marshaller.toTopicTriggerResponse(context.getResponse());
             }
 
             // Process Event Handlers

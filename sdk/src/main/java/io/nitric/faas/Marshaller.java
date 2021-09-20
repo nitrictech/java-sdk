@@ -18,15 +18,15 @@
  * #L%
  */
 
-package io.nitric.faas2;
+package io.nitric.faas;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.protobuf.ByteString;
 
-import io.nitric.faas2.event.EventContext;
-import io.nitric.faas2.http.HttpContext;
+import io.nitric.faas.event.EventContext;
+import io.nitric.faas.http.HttpContext;
 import io.nitric.proto.faas.v1.HeaderValue;
 import io.nitric.proto.faas.v1.HttpResponseContext;
 import io.nitric.proto.faas.v1.TopicResponseContext;
@@ -89,7 +89,9 @@ class Marshaller {
     static TriggerResponse toTopicTriggerResponse(EventContext.Response response) {
         var trBuilder = TriggerResponse.newBuilder();
 
-        trBuilder.setData(ByteString.copyFrom(response.getData()));
+        if (response.getData() != null) {
+            trBuilder.setData(ByteString.copyFrom(response.getData()));
+        }
 
         var topicCtxBuilder = TopicResponseContext.newBuilder().setSuccess(response.isSuccess());
 
@@ -101,7 +103,9 @@ class Marshaller {
     static TriggerResponse toHttpTriggerResponse(HttpContext.Response response) {
         var trBuilder = TriggerResponse.newBuilder();
 
-        trBuilder.setData(ByteString.copyFrom(response.getData()));
+        if (response.getData() != null) {
+            trBuilder.setData(ByteString.copyFrom(response.getData()));
+        }
 
         var httpCtxBuilder = HttpResponseContext.newBuilder();
         httpCtxBuilder.setStatus(response.getStatus());

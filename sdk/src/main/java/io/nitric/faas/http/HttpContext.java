@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.faas2.http;
+package io.nitric.faas.http;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -256,28 +256,36 @@ public class HttpContext {
          * @return The method of the HTTP Request that raised this trigger
          */
         public String getMethod() {
-            return this.method;
+            return method;
         }
 
         /**
          * @return The path of the HTTP Request that raised this trigger
          */
         public String getPath() {
-            return this.path;
+            return path;
         }
 
         /**
          * @return The headers of the HTTP Request that raised this trigger
          */
         public Map<String, String> getHeaders() {
-            return Collections.unmodifiableMap(this.headers);
+            if (headers != null) {
+                return Collections.unmodifiableMap(headers);
+            } else {
+                return Collections.emptyMap();
+            }
         }
 
         /**
          * @return The query parameters of the HTTP Request that raised this trigger
          */
         public Map<String, String> getQueryParams() {
-            return Collections.unmodifiableMap(this.queryParams);
+            if (queryParams != null) {
+                return Collections.unmodifiableMap(queryParams);
+            } else {
+                return Collections.emptyMap();
+            }
         }
 
         /**
@@ -295,16 +303,16 @@ public class HttpContext {
          * @return the data of the trigger
          */
         public byte[] getData() {
-            return this.data;
+            return data;
         }
 
         /**
-         * Get the trigger data as UTF-8 encode text, or empty string if not defined.
+         * Get the trigger data as UTF-8 encode text, or null if not defined.
          *
-         * @return the trigger data as UTF-8 encode text, or empty string if not defined
+         * @return the trigger data as UTF-8 encode text, or null if not defined
          */
         public String getDataAsText() {
-            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : "";
+            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : null;
         }
 
         /**
@@ -338,7 +346,7 @@ public class HttpContext {
      */
     public static class Response {
 
-        int status;
+        int status = 200;
         Map<String, String> headers = new HashMap<>();
         byte[] data;
 

@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.faas2.http;
+package io.nitric.faas.http;
 
 import io.nitric.util.Contracts;
 

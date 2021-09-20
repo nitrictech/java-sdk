@@ -18,7 +18,7 @@
  * #L%
  */
 
-package io.nitric.faas2;
+package io.nitric.faas;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;

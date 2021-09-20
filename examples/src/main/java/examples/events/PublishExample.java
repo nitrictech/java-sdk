@@ -21,27 +21,30 @@
 package examples.events;
 // [START import]
 import io.nitric.faas.Faas;
-import io.nitric.faas.Trigger;
-import io.nitric.faas.NitricFunction;
-import io.nitric.faas.Response;
+import io.nitric.faas.http.HttpContext;
+import io.nitric.faas.http.HttpHandler;
 import io.nitric.api.event.Events;
 import io.nitric.api.event.Event;
 import java.util.Map;
 // [END import]
 
 // [START snippet]
-public class PublishExample implements NitricFunction {
+public class PublishExample implements HttpHandler {
 
     @Override
-    public Response handle(Trigger trigger) {
+    public HttpContext handle(HttpContext ctx) {
         var topic = new Events().topic("my-topic");
         topic.publish(Event.build(Map.of("Content", "of event")));
 
-        return trigger.buildResponse("Successfully published message");
+        ctx.getResponse().data("Successfully published message");
+
+        return ctx;
     }
 
     public static void main(String[] args) {
-        Faas.start(new PublishExample());
+        new Faas()
+            .http(new PublishExample())
+            .start();
     }
 }
 // [END snippet]
