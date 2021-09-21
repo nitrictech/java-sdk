@@ -36,6 +36,8 @@ import org.junit.jupiter.api.Test;
 public class EventContextTest {
 
     final byte[] data = "data".getBytes(StandardCharsets.UTF_8);
+    final byte[] longData = "A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo"
+            .getBytes(StandardCharsets.UTF_8);
 
     @Test
     public void test_request() {
@@ -45,13 +47,13 @@ public class EventContextTest {
         assertNull(request.getData());
         assertNull(request.getDataAsText());
 
-        request = new EventContext.Request("topic", "mimeType", data);
+        request = new EventContext.Request("topic", "mimeType", longData);
         assertEquals("topic", request.getTopic());
         assertEquals("mimeType", request.getMimeType());
-        assertEquals(new String(data), new String(request.getData()));
-        assertEquals("data", request.getDataAsText());
+        assertEquals(new String(longData), new String(request.getData()));
+        assertEquals("A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo", request.getDataAsText());
 
-        assertEquals("Request[topic=topic, mimeType=mimeType, data=data]", request.toString());
+        assertEquals("Request[topic=topic, mimeType=mimeType, data=A third-party OAuth application (JetBrai...]", request.toString());
     }
 
     @Test
@@ -61,18 +63,18 @@ public class EventContextTest {
         assertNull(response.getData());
         assertNull(response.getDataAsText());
 
-        response.success(true).data("data");
+        response.success(true).data(longData);
 
         assertTrue(response.isSuccess());
-        assertEquals("data", response.getDataAsText());
-        assertEquals(new String("data"), new String(response.getData()));
+        assertEquals(new String(longData), response.getDataAsText());
+        assertEquals(new String(longData), new String(response.getData()));
 
         var response2 = new EventContext.Response(response);
         assertTrue(response2.isSuccess());
-        assertEquals("data", response2.getDataAsText());
-        assertEquals(new String("data"), new String(response2.getData()));
+        assertEquals(new String(longData), response2.getDataAsText());
+        assertEquals(new String(longData), new String(response2.getData()));
 
-        assertEquals("Response[success=true, data=data]", response2.toString());
+        assertEquals("Response[success=true, data=A third-party OAuth application (JetBrai...]", response2.toString());
     }
 
     @Test
@@ -115,6 +117,11 @@ public class EventContextTest {
         assertFalse(response.isSuccess());
         assertNull(response.getData());
         assertNull(response.getDataAsText());
+
+        var ctx2 = EventContext.newBuilder()
+                .data(longData)
+                .build();
+        assertEquals(new String(longData), ctx2.getRequest().getDataAsText());
     }
 
 }
