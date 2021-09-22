@@ -20,6 +20,9 @@
 
 package io.nitric.faas;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -67,10 +70,21 @@ class Marshaller {
 
         var http = trigger.getHttp();
 
-        Map<String, String> headers = http.getHeadersMap()
-            .entrySet()
-            .stream()
-            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().getValue(0)));
+        // Marshall Proto HeaderValue into List<String> header values
+        final Map<String, List<String>> headers = new HashMap<>();
+        http.getHeadersMap().forEach((name, headerValue) -> {
+            List<String> valueList = headers.get(name);
+            if (valueList == null) {
+                valueList = new ArrayList<>();
+                headers.put(name, valueList);
+            }
+            for (int i = 0; i < headerValue.getValueCount(); i++) {
+                String value = headerValue.getValue(i);
+                if (!valueList.contains(value)) {
+                    valueList.add(value);
+                }
+            }
+        });
 
         var request = new HttpContext.Request(
             http.getMethod(),
@@ -109,8 +123,10 @@ class Marshaller {
 
         var httpCtxBuilder = HttpResponseContext.newBuilder();
         httpCtxBuilder.setStatus(response.getStatus());
-        response.getHeaders().entrySet().forEach(e -> {
-            httpCtxBuilder.putHeaders(e.getKey(), HeaderValue.newBuilder().addValue(e.getValue()).build());
+        response.getHeaders().forEach((name, valueList) -> {
+            var hvBuilder = HeaderValue.newBuilder();
+            valueList.forEach(value -> hvBuilder.addValue(value));
+            httpCtxBuilder.putHeaders(name, hvBuilder.build());
         });
 
         trBuilder.setHttp(httpCtxBuilder);
