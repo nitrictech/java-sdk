@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-
-import com.google.api.Http;
 
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,10 @@ import org.junit.jupiter.api.Test;
 public class HttpContextTest {
 
     final byte[] data = "data".getBytes(StandardCharsets.UTF_8);
-    final Map<String, String> headers = Map.of("header", "value");
+    final byte[] longData = "A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo"
+            .getBytes(StandardCharsets.UTF_8);
+
+    final Map<String, List<String>> headers = Map.of("header", Arrays.asList("value1", "value2"));
     final Map<String, String> params = Map.of("param", "value");
 
     @Test
@@ -52,16 +55,16 @@ public class HttpContextTest {
         assertTrue(request.getHeaders().isEmpty());
         assertTrue(request.getQueryParams().isEmpty());
 
-        var request2 = new HttpContext.Request("method", "path", headers, params, "mimeType", data);
+        var request2 = new HttpContext.Request("method", "path", headers, params, "mimeType", longData);
         assertEquals("method", request2.getMethod());
         assertEquals("path", request2.getPath());
         assertEquals("mimeType", request2.getMimeType());
-        assertEquals("data", new String(request2.getData()));
-        assertEquals("data", request2.getDataAsText());
-        assertEquals("{header=value}", request2.getHeaders().toString());
+        assertEquals("A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo", new String(request2.getData()));
+        assertEquals("A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo", request2.getDataAsText());
+        assertEquals("{header=[value1, value2]}", request2.getHeaders().toString());
         assertEquals("{param=value}", request2.getQueryParams().toString());
 
-        assertEquals("Request[method=method, path=path, headers={header=value}, queryParams{param=value}, mimeType=mimeType, data=data]",
+        assertEquals("Request[method=method, path=path, headers={header=[value1, value2]}, queryParams{param=value}, mimeType=mimeType, data=A third-party OAuth application (JetBrai...]",
                      request2.toString());
     }
 
@@ -76,22 +79,31 @@ public class HttpContextTest {
         var response2 = new HttpContext.Response()
             .status(404)
             .headers(headers)
-            .data(data);
+            .data(longData);
 
         assertEquals(404, response2.getStatus());
         assertEquals(headers, response2.getHeaders());
-        assertEquals("data", new String(response2.getData()));
-        assertEquals("data", response2.getDataAsText());
+        assertEquals(new String(longData), new String(response2.getData()));
+        assertEquals(new String(longData), response2.getDataAsText());
 
         var response3 = new HttpContext.Response(response2);
 
         assertEquals(404, response3.getStatus());
         assertEquals(headers, response3.getHeaders());
-        assertEquals("data", new String(response3.getData()));
-        assertEquals("data", response3.getDataAsText());
+        assertEquals(new String(longData), new String(response3.getData()));
+        assertEquals(new String(longData), response3.getDataAsText());
 
-        assertEquals("Response[status=404, headers={header=value}, data=data]",
+        assertEquals("Response[status=404, headers={header=[value1, value2]}, data=A third-party OAuth application (JetBrains...]",
                      response3.toString());
+
+        var response4 = new HttpContext.Response()
+                .data("data")
+                .addHeader("header2", "value2")
+                .addHeader("header2", "value2");
+
+        assertEquals("data", new String(response4.getData()));
+        assertEquals("data", response4.getDataAsText());
+        assertEquals("[value2]", response4.getHeaders().get("header2").toString());
     }
 
     @Test
@@ -110,7 +122,7 @@ public class HttpContextTest {
         assertEquals("mimeType", request2.getMimeType());
         assertEquals("data", new String(request2.getData()));
         assertEquals("data", request2.getDataAsText());
-        assertEquals("{header=value}", request2.getHeaders().toString());
+        assertEquals("{header=[value1, value2]}", request2.getHeaders().toString());
         assertEquals("{param=value}", request2.getQueryParams().toString());
 
         var response2 = ctx.getResponse();
@@ -120,11 +132,11 @@ public class HttpContextTest {
         assertEquals("data", new String(response2.getData()));
         assertEquals("data", response2.getDataAsText());
 
-        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=value}, queryParams{param=value}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=value}, data=data]]",
+        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams{param=value}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
                      ctx.toString());
 
         var ctx2 = new HttpContext(ctx);
-        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=value}, queryParams{param=value}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=value}, data=data]]",
+        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams{param=value}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
                      ctx2.toString());
     }
 
@@ -145,7 +157,7 @@ public class HttpContextTest {
         assertEquals("mimeType", request.getMimeType());
         assertEquals("data", new String(request.getData()));
         assertEquals("data", request.getDataAsText());
-        assertEquals("{header=value}", request.getHeaders().toString());
+        assertEquals("{header=[value1, value2]}", request.getHeaders().toString());
         assertEquals("{param=value}", request.getQueryParams().toString());
 
         var response = ctx.getResponse();
@@ -153,6 +165,18 @@ public class HttpContextTest {
         assertTrue(response.getHeaders().isEmpty());
         assertNull(response.getData());
         assertNull(response.getDataAsText());
+
+        var ctx2 = HttpContext.newBuilder()
+                .data("data")
+                .addHeader("header", "value1")
+                .addHeader("header", "value2")
+                .addHeader("header", "value1")
+                .addQueryParam("name", "value1")
+                .addQueryParam("name", "value1")
+                .build();
+        assertEquals("data", ctx2.getRequest().getDataAsText());
+        assertEquals("Request[method=null, path=null, headers={header=[value1, value2]}, queryParams{name=value1}, mimeType=null, data=data]",
+                ctx2.getRequest().toString());
     }
 
 }

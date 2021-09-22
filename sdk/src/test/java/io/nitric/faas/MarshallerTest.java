@@ -63,10 +63,10 @@ public class MarshallerTest {
         assertEquals("text/plain", req.getMimeType());
         assertEquals("GET", req.getMethod());
         assertEquals("/test/", req.getPath());
-        assertEquals(req.getHeaders().get("x-nitric-test"), "test");
+        assertEquals("test", req.getHeaders().get("x-nitric-test").get(0));
         assertEquals(req.getQueryParams().get("id"), "test");
 
-        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=test}, queryParams{id=test}, mimeType=text/plain, data=Hello World]",
+        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams{id=test}, mimeType=text/plain, data=Hello World]",
                      req.toString());
      }
 

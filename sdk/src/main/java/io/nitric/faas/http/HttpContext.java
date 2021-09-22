@@ -20,12 +20,14 @@
 
 package io.nitric.faas.http;
 
+import io.nitric.util.Contracts;
+
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import io.nitric.util.Contracts;
 
 /**
  * Provides a Http Context object.
@@ -114,8 +116,8 @@ public class HttpContext {
 
         String method;
         String path;
-        Map<String, String> headers;
-        Map<String, String> queryParams;
+        Map<String, List<String>> headers = new HashMap<>();
+        Map<String, String> queryParams = new HashMap<>();
         String mimeType;
         byte[] data;
 
@@ -144,22 +146,65 @@ public class HttpContext {
         /**
          * Set the HTTP request headers.
          *
-         * @param headers the HTTP request headers
+         * @param headers the HTTP request headers (required)
          * @return this chainable builder object
          */
-        public Builder headers(Map<String, String> headers) {
+        public Builder headers(Map<String, List<String>> headers) {
+            Contracts.requireNonNull(headers, "headers");
+
             this.headers = headers;
+            return this;
+        }
+
+        /**
+         * Add a header with the given name and value.
+         *
+         * @param name the header name to add (required)
+         * @param value the header value to add (required)
+         * @return this chainable builder object
+         */
+        public Builder addHeader(String name, String value) {
+            Contracts.requireNonBlank(name, "name");
+            Contracts.requireNonBlank(value, "value");
+
+            var values = headers.get(name);
+            if (values == null) {
+                values = new ArrayList<>();
+                values.add(value);
+                headers.put(name, values);
+            } else {
+                if (!values.contains(value)) {
+                    values.add(value);
+                }
+            }
             return this;
         }
 
         /**
          * Set the HTTP request query parameters.
          *
-         * @param queryParams the HTTP request query parameters
+         * @param queryParams the HTTP request query parameters (required)
          * @return this chainable builder object
          */
         public Builder queryParams(Map<String, String> queryParams) {
+            Contracts.requireNonNull(queryParams, "queryParams");
+
             this.queryParams = queryParams;
+            return this;
+        }
+
+        /**
+         * Add a query parameter with the given name and value.
+         *
+         * @param name the query parameter name to add (required)
+         * @param value the query parameter value to add (required)
+         * @return this chainable builder object
+         */
+        public Builder addQueryParam(String name, String value) {
+            Contracts.requireNonBlank(name, "name");
+            Contracts.requireNonBlank(value, "value");
+
+            queryParams.put(name, value);
             return this;
         }
 
@@ -217,7 +262,7 @@ public class HttpContext {
 
         final String method;
         final String path;
-        final Map<String, String> headers;
+        final Map<String, List<String>> headers;
         final Map<String, String> queryParams;
         final String mimeType;
         final byte[] data;
@@ -237,7 +282,7 @@ public class HttpContext {
         public Request(
             String method,
             String path,
-            Map<String, String> headers,
+            Map<String, List<String>> headers,
             Map<String, String> queryParams,
             String mimeType,
             byte[] data
@@ -269,7 +314,7 @@ public class HttpContext {
         /**
          * @return The headers of the HTTP Request that raised this trigger
          */
-        public Map<String, String> getHeaders() {
+        public Map<String, List<String>> getHeaders() {
             if (headers != null) {
                 return Collections.unmodifiableMap(headers);
             } else {
@@ -347,7 +392,7 @@ public class HttpContext {
     public static class Response {
 
         int status = 200;
-        Map<String, String> headers = new HashMap<>();
+        Map<String, List<String>> headers = new HashMap<>();
         byte[] data;
 
         // Constructors -----------------------------------------------------------
@@ -398,7 +443,7 @@ public class HttpContext {
          *
          * @return the map of HTTP response headers
          */
-        public Map<String, String> getHeaders() {
+        public Map<String, List<String>> getHeaders() {
             return this.headers;
         }
 
@@ -413,17 +458,27 @@ public class HttpContext {
             Contracts.requireNonBlank(name, "name");
             Contracts.requireNonBlank(value, "value");
 
-            headers.put(name, value);
+            var values = headers.get(name);
+            if (values == null) {
+                values = new ArrayList<>();
+                values.add(value);
+                headers.put(name, values);
+            } else {
+                if (!values.contains(value)) {
+                    values.add(value);
+                }
+            }
             return this;
         }
 
         /**
          * Set the HTTP response headers.
          *
-         * @param headers the HTTP response headers
+         * @param headers the HTTP response headers (required)
          * @return this chainable Response object
          */
-        public Response headers(Map<String, String> headers) {
+        public Response headers(Map<String, List<String>> headers) {
+            Contracts.requireNonNull(headers, "headers");
             this.headers = headers;
             return this;
         }
