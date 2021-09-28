@@ -91,8 +91,6 @@ import io.nitric.util.GrpcChannelProvider;
  *         new Faas().http(read).start();
  *     }
  * } </code></pre>
- *
- * @see NitricFunction
  */
 public class Faas {
 
@@ -100,6 +98,7 @@ public class Faas {
 
     private FaasServiceGrpc.FaasServiceStub stub = null;
 
+    private TriggerProcessor triggerProcessor = new TriggerProcessor();
     private EventHandler eventHandler;
     private HttpHandler httpHandler;
     private List<EventMiddleware> eventMiddlewares = new ArrayList<>();
@@ -117,7 +116,7 @@ public class Faas {
         Contracts.requireNonNull(eventHandler, "eventHandler");
 
         if (httpHandler != null || !httpMiddlewares.isEmpty()) {
-            String msg = "Cannot register a EventHander if a HttpHandler or HttpMiddleware added";
+            String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
@@ -135,7 +134,7 @@ public class Faas {
         Contracts.requireNonNull(httpHandler, "httpHandler");
 
         if (eventHandler != null || !eventMiddlewares.isEmpty()) {
-            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware added";
+            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
@@ -153,7 +152,7 @@ public class Faas {
         Contracts.requireNonNull(middleware, "middleware");
 
         if (httpHandler != null || !httpMiddlewares.isEmpty()) {
-            String msg = "Cannot register a EventHander if a HttpHandler or HttpMiddleware added";
+            String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
@@ -171,11 +170,24 @@ public class Faas {
         Contracts.requireNonNull(middleware, "middleware");
 
         if (eventHandler != null || !eventMiddlewares.isEmpty()) {
-            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware added";
+            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
         httpMiddlewares.add(middleware);
+        return this;
+    }
+
+    /**
+     * Configure the gRPC TriggerRequest processor.
+     *
+     * @param processor the gRPC TriggerRequest processor (required)
+     * @return this chainable Faas object
+     */
+    public Faas triggerProcessor(TriggerProcessor processor) {
+        Contracts.requireNonNull(processor, "processor");
+
+        this.triggerProcessor = processor;
         return this;
     }
 
@@ -185,19 +197,10 @@ public class Faas {
      */
     public void start() {
 
-        if (eventHandler == null
-            && httpHandler == null
-            && eventMiddlewares.isEmpty()
-            && httpMiddlewares.isEmpty()) {
-
-            throw new IllegalArgumentException("No handler or middleware functions have been registered");
-        }
-
-        var triggerProcesor = new TriggerProcessor(
-            eventHandler,
-            httpHandler,
-            eventMiddlewares,
-            httpMiddlewares);
+        triggerProcessor.setEventHandler(eventHandler);
+        triggerProcessor.setEventMiddlewares(eventMiddlewares);
+        triggerProcessor.setHttpHandler(httpHandler);
+        triggerProcessor.setHttpMiddlewares(httpMiddlewares);
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -215,7 +218,7 @@ public class Faas {
         CountDownLatch finishedLatch = new CountDownLatch(1);
 
         // Begin the stream
-        var observer = this.stub.triggerStream(new FaasStreamObserver(triggerProcesor, clientObserver, finishedLatch));
+        var observer = this.stub.triggerStream(new FaasStreamObserver(triggerProcessor, clientObserver, finishedLatch));
 
         // Set atomic reference for the client to send messages back to the server
         // In the server message stream observer loop (see above)

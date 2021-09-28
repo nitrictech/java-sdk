@@ -35,11 +35,12 @@ import io.nitric.proto.faas.v1.HttpResponseContext;
 import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
+import io.nitric.util.Contracts;
 
 /**
  * Provides GRPC, Event and HTTP object marshalling functions.
  */
-class Marshaller {
+public class Marshaller {
 
     /*
      * Enforce static usage.
@@ -47,7 +48,15 @@ class Marshaller {
     private Marshaller() {
     }
 
-    static EventContext toEventContext(TriggerRequest trigger) {
+    /**
+     * Create a new EventContext from the given GRPC Topic TriggerRequest.
+     *
+     * @param trigger the Topic TriggerRequest (required)
+     * @return a new EventContext object
+     */
+    public static EventContext toEventContext(TriggerRequest trigger) {
+        Contracts.requireNonNull(trigger, "trigger");
+
         if (!trigger.hasTopic()) {
             throw new IllegalArgumentException("trigger must be Topic type");
         }
@@ -63,9 +72,17 @@ class Marshaller {
         return new EventContext(request, response);
     }
 
-    static HttpContext toHttpContext(TriggerRequest trigger) {
+    /**
+     * Create a new HttpContext from the given GRPC HTTP TriggerRequest.
+     *
+     * @param trigger the HTTP TriggerRequest (required)
+     * @return a new HttpContext object
+     */
+    public static HttpContext toHttpContext(TriggerRequest trigger) {
+        Contracts.requireNonNull(trigger, "trigger");
+
         if (!trigger.hasHttp()) {
-            throw new IllegalArgumentException("trigger must be HTTP type");
+            throw new IllegalArgumentException("trigger must be HTTP type: " + trigger);
         }
 
         var http = trigger.getHttp();
@@ -86,13 +103,20 @@ class Marshaller {
             }
         });
 
+        // TODO: review when proto contract update to support multiple queryParam values
+        // Marshall Proto QueryParams into List<String>
+        final Map<String, List<String>> queryParams = new HashMap<>();
+        http.getQueryParamsMap().forEach((name, value) -> {
+            queryParams.put(name, List.of(value));
+        });
+
         var request = new HttpContext.Request(
-            http.getMethod(),
-            http.getPath(),
-            headers,
-            http.getQueryParamsMap(),
-            trigger.getMimeType(),
-            trigger.getData().toByteArray()
+                http.getMethod(),
+                http.getPath(),
+                headers,
+                queryParams,
+                trigger.getMimeType(),
+                trigger.getData().toByteArray()
         );
 
         var response = new HttpContext.Response();
@@ -100,7 +124,15 @@ class Marshaller {
         return new HttpContext(request, response);
     }
 
-    static TriggerResponse toTopicTriggerResponse(EventContext.Response response) {
+    /**
+     * Create a new GRPC Topic TriggerResponse from the given EventContext response.
+     *
+     * @param response the EventContext response (required)
+     * @return new GRPC Topic TriggerResponse
+     */
+    public static TriggerResponse toTopicTriggerResponse(EventContext.Response response) {
+        Contracts.requireNonNull(response, "response");
+
         var trBuilder = TriggerResponse.newBuilder();
 
         if (response.getData() != null) {
@@ -114,7 +146,13 @@ class Marshaller {
         return trBuilder.build();
     }
 
-    static TriggerResponse toHttpTriggerResponse(HttpContext.Response response) {
+    /**
+     * Create a new GRPC HTTP TriggerResponse from the given HttpContext.Response object.
+     *
+     * @param response the HttpContext response (required)
+     * @return new GRPC HTTP TriggerResponse
+     */
+    public static TriggerResponse toHttpTriggerResponse(HttpContext.Response response) {
         var trBuilder = TriggerResponse.newBuilder();
 
         if (response.getData() != null) {

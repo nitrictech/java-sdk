@@ -21,6 +21,8 @@
 package io.nitric.faas;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventHandler;
@@ -30,48 +32,64 @@ import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
+import io.nitric.util.Contracts;
 
 /**
  * Provides a Nitric TriggerRequest processor class.
  */
-class TriggerProcessor {
+public class TriggerProcessor {
 
-    final EventHandler eventHandler;
-    final HttpHandler httpHandler;
-    final List<EventMiddleware> eventMiddlewares;
-    final List<HttpMiddleware> httpMiddlewares;
-
-    // Constructor ------------------------------------------------------------
-
-    /**
-     * Create a Nitric TriggerProcessor object with the given handlers and middlewares.
-     *
-     * @param eventHandler the Event handler function
-     * @param httpHandler the HTTP handler function
-     * @param eventMiddlewares the EventMiddleware list
-     * @param httpMiddlewares the HttptMiddleware list
-     */
-    protected TriggerProcessor(
-        EventHandler eventHandler,
-        HttpHandler httpHandler,
-        List<EventMiddleware> eventMiddlewares,
-        List<HttpMiddleware> httpMiddlewares
-    ) {
-        this.eventHandler = eventHandler;
-        this.httpHandler = httpHandler;
-        this.eventMiddlewares = eventMiddlewares;
-        this.httpMiddlewares = httpMiddlewares;
-    }
+    EventHandler eventHandler;
+    HttpHandler httpHandler;
+    List<EventMiddleware> eventMiddlewares;
+    List<HttpMiddleware> httpMiddlewares;
 
     // Protected --------------------------------------------------------------
 
     /**
-     * Process the given GRPC TriggerRequest and return a TriggerResponse object.
+     * Set the Topic TriggerRequest EventHandler object.
      *
-     * @param triggerRequest the GRPC TriggerRequest object
-     * @return the GRPC TriggerResponse object
+     * @param eventHandler the Topic TriggerRequest EventHandler object.
+     */
+    protected void setEventHandler(EventHandler eventHandler) {
+        this.eventHandler = eventHandler;
+    }
+
+    /**
+     * Set the HTTP TriggerRequest HttpHandler object.
+     *
+     * @param httpHandler the HTTP TriggerRequest HttpHandler object.
+     */
+    protected void setHttpHandler(HttpHandler httpHandler) {
+        this.httpHandler = httpHandler;
+    }
+
+    /**
+     * Set the Topic TriggerRequest EventMiddlewares.
+     *
+     * @param eventMiddlewares the list of Topic TriggerRequest EventMiddleware objects.
+     */
+    protected void setEventMiddlewares(List<EventMiddleware> eventMiddlewares) {
+        this.eventMiddlewares = eventMiddlewares;
+    }
+
+    /**
+     * Set the HTTP TriggerRequest HttpMiddlewares.
+     *
+     * @param httpMiddlewares the list of HTTP TriggerRequest HttpMiddleware objects.
+     */
+    protected void setHttpMiddlewares(List<HttpMiddleware> httpMiddlewares) {
+        this.httpMiddlewares = httpMiddlewares;
+    }
+
+    /**
+     * Process the given gRPC TriggerRequest and return a TriggerResponse object.
+     *
+     * @param triggerRequest the gRPC TriggerRequest object (required)
+     * @return the gRPC TriggerResponse object
      */
     protected TriggerResponse process(TriggerRequest triggerRequest) {
+        Contracts.requireNonNull(triggerRequest, "triggerRequest");
 
         if (triggerRequest.hasHttp()) {
             if (httpHandler == null && httpMiddlewares.isEmpty()) {
@@ -93,9 +111,14 @@ class TriggerProcessor {
         }
     }
 
-    // Private Methods ------------------------------------------------
-
-    TriggerResponse processHttpTrigger(TriggerRequest triggerRequest) {
+    /**
+     * Process the gRPC HTTP TriggerRequest and return a TriggerResponse.
+     *
+     * @param triggerRequest HTTP TriggerRequest (required)
+     * @return a HTTP TriggerResponse
+     */
+    protected TriggerResponse processHttpTrigger(TriggerRequest triggerRequest) {
+        Contracts.requireNonNull(triggerRequest, "triggerRequest");
 
         var context = Marshaller.toHttpContext(triggerRequest);
 
@@ -113,14 +136,18 @@ class TriggerProcessor {
             }
 
             // Process Event Handlers
-            var resultCtx = httpHandler.handle(context);
+            if (httpHandler != null) {
+                var resultCtx = httpHandler.handle(context);
 
-            if (resultCtx != null) {
-                return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
+                if (resultCtx != null) {
+                    return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
 
+                } else {
+                    // TODO: log null response ?
+                    return TriggerResponse.newBuilder().build();
+                }
             } else {
-                // TODO: log null response ?
-                return TriggerResponse.newBuilder().build();
+                return Marshaller.toHttpTriggerResponse(context.getResponse());
             }
 
         } catch (Throwable error) {
@@ -134,7 +161,14 @@ class TriggerProcessor {
         }
     }
 
-    TriggerResponse processTopicTrigger(TriggerRequest triggerRequest) {
+    /**
+     * Process the gRPC Topic TriggerRequest and return a Topic TriggerResponse.
+     *
+     * @param triggerRequest Topic TriggerRequest (required)
+     * @return a Topic TriggerResponse
+     */
+    protected TriggerResponse processTopicTrigger(TriggerRequest triggerRequest) {
+        Contracts.requireNonNull(triggerRequest, "triggerRequest");
 
         var context = Marshaller.toEventContext(triggerRequest);
 
@@ -173,8 +207,13 @@ class TriggerProcessor {
         }
     }
 
-    EventMiddleware buildEventMiddlewareChain() {
-        if (eventMiddlewares.isEmpty()) {
+    /**
+     * Build a EventMiddleware chain from the configured eventMiddlewares, or null if none defined.
+     *
+     * @return a new EventMiddleware chain from the configured eventMiddlewares.
+     */
+    protected EventMiddleware buildEventMiddlewareChain() {
+        if (eventMiddlewares == null || eventMiddlewares.isEmpty()) {
             return null;
         }
 
@@ -193,9 +232,13 @@ class TriggerProcessor {
         return firstMiddleware;
     }
 
-
-    HttpMiddleware buildHttpMiddlewareChain() {
-        if (httpMiddlewares.isEmpty()) {
+    /**
+     * Build a HttpMiddleware chain from the configured eventMiddlewares, or null if none defined.
+     *
+     * @return a new HttpMiddleware chain from the configured eventMiddlewares.
+     */
+    protected HttpMiddleware buildHttpMiddlewareChain() {
+        if (httpMiddlewares == null || httpMiddlewares.isEmpty()) {
             return null;
         }
 
@@ -219,7 +262,7 @@ class TriggerProcessor {
     /**
      * Provides the final HttpMiddleware in the chain which simply returns the context.
      */
-    static class FinalHttpMiddleware extends HttpMiddleware {
+    protected static class FinalHttpMiddleware extends HttpMiddleware {
 
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
@@ -230,7 +273,7 @@ class TriggerProcessor {
     /**
      * Provides the final EventMiddleware in the chain which simply returns the context.
      */
-    static class FinalEventMiddleware extends EventMiddleware {
+    protected static class FinalEventMiddleware extends EventMiddleware {
 
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
