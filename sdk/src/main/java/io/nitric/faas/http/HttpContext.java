@@ -117,7 +117,7 @@ public class HttpContext {
         String method;
         String path;
         Map<String, List<String>> headers = new HashMap<>();
-        Map<String, String> queryParams = new HashMap<>();
+        Map<String, List<String>> queryParams = new HashMap<>();
         String mimeType;
         byte[] data;
 
@@ -140,19 +140,6 @@ public class HttpContext {
          */
         public Builder path(String path) {
             this.path = path;
-            return this;
-        }
-
-        /**
-         * Set the HTTP request headers.
-         *
-         * @param headers the HTTP request headers (required)
-         * @return this chainable builder object
-         */
-        public Builder headers(Map<String, List<String>> headers) {
-            Contracts.requireNonNull(headers, "headers");
-
-            this.headers = headers;
             return this;
         }
 
@@ -181,19 +168,6 @@ public class HttpContext {
         }
 
         /**
-         * Set the HTTP request query parameters.
-         *
-         * @param queryParams the HTTP request query parameters (required)
-         * @return this chainable builder object
-         */
-        public Builder queryParams(Map<String, String> queryParams) {
-            Contracts.requireNonNull(queryParams, "queryParams");
-
-            this.queryParams = queryParams;
-            return this;
-        }
-
-        /**
          * Add a query parameter with the given name and value.
          *
          * @param name the query parameter name to add (required)
@@ -204,7 +178,7 @@ public class HttpContext {
             Contracts.requireNonBlank(name, "name");
             Contracts.requireNonBlank(value, "value");
 
-            queryParams.put(name, value);
+            queryParams.put(name, List.of(value));
             return this;
         }
 
@@ -263,7 +237,7 @@ public class HttpContext {
         final String method;
         final String path;
         final Map<String, List<String>> headers;
-        final Map<String, String> queryParams;
+        final Map<String, List<String>> queryParams;
         final String mimeType;
         final byte[] data;
 
@@ -283,7 +257,7 @@ public class HttpContext {
             String method,
             String path,
             Map<String, List<String>> headers,
-            Map<String, String> queryParams,
+            Map<String, List<String>> queryParams,
             String mimeType,
             byte[] data
         ) {
@@ -298,21 +272,46 @@ public class HttpContext {
         // Public Methods ---------------------------------------------------------
 
         /**
-         * @return The method of the HTTP Request that raised this trigger
+         * Return the HTTP request method [ GET | POST | PUT | DELETE ].
+         *
+         * @return the HTTP request method
          */
         public String getMethod() {
-            return method;
+            return (method != null) ? method  : "";
         }
 
         /**
-         * @return The path of the HTTP Request that raised this trigger
+         * Return HTTP request path, or an empty string if not defined.
+         *
+         * @return HTTP request path, or an empty string if not defined
          */
         public String getPath() {
-            return path;
+            return (path != null) ? path : "";
         }
 
         /**
-         * @return The headers of the HTTP Request that raised this trigger
+         * Return the first HTTP header value for the given name, or null not found.
+         *
+         * @param name the HTTP header name (required)
+         * @return the first HTTP header value for the given name, or null not found.
+         */
+        public String getHeader(String name) {
+            Contracts.requireNonBlank(name, "name");
+
+            if (headers != null) {
+                List<String> values = headers.get(name);
+                return (values != null && values.size() > 0) ? values.get(0) : null;
+
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Return an immutable map of HTTP request header values. If no headers are present an empty map will be
+         * returned.
+         *
+         * @return map of HTTP request header values
          */
         public Map<String, List<String>> getHeaders() {
             if (headers != null) {
@@ -323,9 +322,30 @@ public class HttpContext {
         }
 
         /**
-         * @return The query parameters of the HTTP Request that raised this trigger
+         * Return the first HTTP query parameter value for the given name, or null not found.
+         *
+         * @param name the HTTP query parameter name (required)
+         * @return the first HTTP query parameter value for the given name, or null not found.
          */
-        public Map<String, String> getQueryParams() {
+        public String getQueryParam(String name) {
+            Contracts.requireNonBlank(name, "name");
+
+            if (queryParams != null) {
+                List<String> values = queryParams.get(name);
+                return (values != null && values.size() > 0) ? values.get(0) : null;
+
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * Return an immutable map of HTTP request query parameters. If no parameters are present then an empty map
+         * will be returned.
+         *
+         * @return an immutable map of HTTP request query parameter values
+         */
+        public Map<String, List<String>> getQueryParams() {
             if (queryParams != null) {
                 return Collections.unmodifiableMap(queryParams);
             } else {
@@ -334,30 +354,30 @@ public class HttpContext {
         }
 
         /**
-         * Return the trigger mime type.
+         * Return the HTTP request MIME Type or "Content-Type" header value, or an empty string if not defined.
          *
-         * @return the trigger mime type
+         * @return the HTTP request MIME Type or "Content-Type" header value
          */
         public String getMimeType() {
-            return mimeType;
+            return (mimeType != null) ? mimeType : "";
         }
 
         /**
-         * Get the trigger data.
+         * Return the HTTP request body data. If no data is present a zero length array will be returned.
          *
-         * @return the data of the trigger
+         * @return the HTTP request body data
          */
         public byte[] getData() {
             return data;
         }
 
         /**
-         * Get the trigger data as UTF-8 encode text, or null if not defined.
+         * Return the HTTP request body data as UTF-8 encode text, or an empty string if not defined.
          *
-         * @return the trigger data as UTF-8 encode text, or null if not defined
+         * @return the HTTP request body data as UTF-8 encode text, or an empty string if not defined.
          */
         public String getDataAsText() {
-            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : null;
+            return (data != null) ? new String(data, StandardCharsets.UTF_8) : "";
         }
 
         /**
@@ -367,7 +387,7 @@ public class HttpContext {
          */
         @Override
         public String toString() {
-            String dataSample = "null";
+            String dataSample = "";
             if (data != null) {
                 dataSample = getDataAsText();
                 if (dataSample.length() > 40) {
@@ -379,7 +399,7 @@ public class HttpContext {
                     + "[method=" + method
                     + ", path=" + path
                     + ", headers=" + headers
-                    + ", queryParams" + queryParams
+                    + ", queryParams=" + queryParams
                     + ", mimeType=" + mimeType
                     + ", data=" + dataSample
                     + "]";

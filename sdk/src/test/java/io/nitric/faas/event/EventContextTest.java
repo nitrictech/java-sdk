@@ -42,10 +42,10 @@ public class EventContextTest {
     @Test
     public void test_request() {
         var request = new EventContext.Request(null, null, null);
-        assertNull(request.getTopic());
-        assertNull(request.getMimeType());
+        assertEquals("", request.getTopic());
+        assertEquals("", request.getMimeType());
         assertNull(request.getData());
-        assertNull(request.getDataAsText());
+        assertEquals("", request.getDataAsText());
 
         request = new EventContext.Request("topic", "mimeType", longData);
         assertEquals("topic", request.getTopic());

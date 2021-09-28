@@ -202,16 +202,16 @@ public class EventContext {
          * @return The name of the topic that raised the trigger
          */
         public String getTopic() {
-            return topic;
+            return (topic != null) ? topic : "";
         }
 
         /**
-         * Return the trigger mime type.
+         * Return the trigger mime type, or an empty string if not defined.
          *
-         * @return the trigger mime type
+         * @return the trigger mime type, or an empty string if not defined.
          */
         public String getMimeType() {
-            return mimeType;
+            return (mimeType != null) ? mimeType : "";
         }
 
         /**
@@ -224,12 +224,12 @@ public class EventContext {
         }
 
         /**
-         * Get the trigger data as UTF-8 encode text, or null if not defined.
+         * Get the trigger data as UTF-8 encode text, or an empty string if not defined.
          *
-         * @return the trigger data as UTF-8 encode text, or null if not defined
+         * @return the trigger data as UTF-8 encode text, or an empty string if not defined
          */
         public String getDataAsText() {
-            return (getData() != null) ? new String(getData(), StandardCharsets.UTF_8) : null;
+            return (data != null) ? new String(data, StandardCharsets.UTF_8) : "";
         }
 
         /**
@@ -239,7 +239,7 @@ public class EventContext {
          */
         @Override
         public String toString() {
-            String dataSample = "null";
+            String dataSample = "";
             if (data != null) {
                 dataSample = getDataAsText();
                 if (dataSample.length() > 40) {

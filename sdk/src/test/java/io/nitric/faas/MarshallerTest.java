@@ -34,14 +34,14 @@ import io.nitric.proto.faas.v1.TopicTriggerContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 
 /**
- * Provides Mashaller Unit Test.
+ * Provides Marshaller Unit Test.
  */
 public class MarshallerTest {
 
     final static String LONG_DATA = "Another two syncons at the Robertstown sub-station should be switched on in the coming week, and while...";
 
     @Test
-    public void test_from_grpc_http() {
+    public void test_toHttpContext() {
         var triggerContext = HttpTriggerContext.newBuilder()
                 .setMethod("GET")
                 .setPath("/test/");
@@ -55,64 +55,123 @@ public class MarshallerTest {
                 .setHttp(triggerContext.build())
                 .build();
 
-        var ctx = Marshaller.toHttpContext(triggerRequest);
-        assertNotNull(ctx);
+        var ctx1 = Marshaller.toHttpContext(triggerRequest);
+        assertNotNull(ctx1);
 
-        var req = ctx.getRequest();
-        assertEquals("Hello World", req.getDataAsText());
-        assertEquals("text/plain", req.getMimeType());
-        assertEquals("GET", req.getMethod());
-        assertEquals("/test/", req.getPath());
-        assertEquals("test", req.getHeaders().get("x-nitric-test").get(0));
-        assertEquals(req.getQueryParams().get("id"), "test");
+        var req1 = ctx1.getRequest();
+        assertEquals("GET", req1.getMethod());
+        assertEquals("/test/", req1.getPath());
+        assertEquals("text/plain", req1.getMimeType());
+        assertEquals("Hello World", req1.getDataAsText());
+        assertEquals("test", req1.getHeader("x-nitric-test"));
+        assertEquals("[test]", req1.getHeaders().get("x-nitric-test").toString());
+        assertEquals("test", req1.getQueryParam("id"));
+        assertEquals("[test]", req1.getQueryParams().get("id").toString());
 
-        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams{id=test}, mimeType=text/plain, data=Hello World]",
-                     req.toString());
-     }
+        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams={id=[test]}, mimeType=text/plain, data=Hello World]",
+                     req1.toString());
+
+        // Test No Data
+        var triggerContext2 = HttpTriggerContext.newBuilder();
+
+        var triggerRequest2 = TriggerRequest.newBuilder()
+                .setHttp(triggerContext2.build())
+                .build();
+
+        var ctx2 = Marshaller.toHttpContext(triggerRequest2);
+        assertNotNull(ctx2);
+
+        var req2 = ctx2.getRequest();
+        assertNotNull(req2);
+        assertEquals("", req2.getMethod());
+        assertEquals("", req2.getPath());
+        assertEquals("", req2.getMimeType());
+        assertEquals("", req2.getDataAsText());
+        assertTrue(req2.getHeaders().isEmpty());
+        assertTrue(req2.getQueryParams().isEmpty());
+
+        // Invalid Trigger Type
+        var triggerContext3 = TopicTriggerContext.newBuilder()
+                .setTopic("topic3");
+
+        var triggerRequest3 = TriggerRequest.newBuilder()
+                .setTopic(triggerContext3.build())
+                .build();
+
+        try {
+            Marshaller.toHttpContext(triggerRequest3);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
+    }
 
     @Test
-    public void test_http_trigger_response() {
-        var triggerContext = HttpTriggerContext
+    public void test_toHttpTriggerResponse() {
+        var triggerContext1 = HttpTriggerContext
                 .newBuilder()
                 .setMethod("GET")
                 .setPath("/test/");
 
-        triggerContext.putHeaders("x-nitric-test", HeaderValue.newBuilder().addValue("test").build());
-        triggerContext.putQueryParams("id", "test");
+        triggerContext1.putHeaders("x-nitric-test", HeaderValue.newBuilder().addValue("test").build());
+        triggerContext1.putQueryParams("id", "test");
 
-        var triggerRequest = TriggerRequest.newBuilder()
+        var triggerRequest1 = TriggerRequest.newBuilder()
                 .setData(ByteString.copyFrom(LONG_DATA, StandardCharsets.UTF_8))
                 .setMimeType("text/plain")
-                .setHttp(triggerContext.build())
+                .setHttp(triggerContext1.build())
                 .build();
 
-        var ctx = Marshaller.toHttpContext(triggerRequest);
-        assertNotNull(ctx);
+        var ctx1 = Marshaller.toHttpContext(triggerRequest1);
+        assertNotNull(ctx1);
 
-        var req = ctx.getRequest();
+        ctx1.getResponse()
+            .status(404)
+            .addHeader("header", "value1")
+            .addHeader("header", "value2")
+            .data(LONG_DATA);
 
-        assertEquals(LONG_DATA, req.getDataAsText());
+        var resp1 = Marshaller.toHttpTriggerResponse(ctx1.getResponse());
+        assertNotNull(resp1);
+
+        assertEquals(LONG_DATA, resp1.getData().toStringUtf8());
+
+        assertTrue(resp1.hasHttp());
+        assertFalse(resp1.hasTopic());
+
+        var htr1 = resp1.getHttp();
+        assertEquals(404, htr1.getStatus());
+        assertEquals(1, htr1.getHeadersCount());
+        var hv = htr1.getHeadersMap().get("header");
+        assertNotNull(hv);
+        assertEquals(2, hv.getValueCount());
+        assertEquals("value1", hv.getValue(0));
+        assertEquals("value2", hv.getValue(1));
 
         // Response without data
-        var response = Marshaller.toHttpTriggerResponse(ctx.getResponse());
-        assertNotNull(response);
-        assertEquals(0, response.getData().toByteArray().length);
-        assertEquals(200, response.getHttp().getStatus());
-        assertTrue(response.hasHttp());
-        assertFalse(response.hasTopic());
+        var triggerContext2 = HttpTriggerContext
+                .newBuilder();
 
-        // response with data
-        ctx.getResponse().status(500);
-        ctx.getResponse().data(LONG_DATA);
+        var triggerRequest2 = TriggerRequest.newBuilder()
+                .setHttp(triggerContext2.build())
+                .build();
 
-        var response2 = Marshaller.toHttpTriggerResponse(ctx.getResponse());
-        assertNotNull(response2);
-        assertEquals(LONG_DATA, response2.getData().toStringUtf8());
-        assertEquals(500, response2.getHttp().getStatus());
+        var ctx2 = Marshaller.toHttpContext(triggerRequest2);
+        assertNotNull(ctx2);
+
+        var resp2 = Marshaller.toHttpTriggerResponse(ctx2.getResponse());
+        assertNotNull(resp2);
+
+        assertTrue(resp2.getData().isEmpty());
+
+        assertTrue(resp1.hasHttp());
+        assertFalse(resp1.hasTopic());
+
+        var htr2 = resp2.getHttp();
+        assertEquals(200, htr2.getStatus());
+        assertEquals(0, htr2.getHeadersCount());
     }
 
-    @Test
-    public void test_from_grpc_topic() {
+    @Test void test_toTopicContext() {
         var triggerContext = TopicTriggerContext.newBuilder()
                 .setTopic("topic");
 
@@ -125,126 +184,87 @@ public class MarshallerTest {
         var ctx = Marshaller.toEventContext(triggerRequest);
         assertNotNull(ctx);
 
-        var response = Marshaller.toTopicTriggerResponse(ctx.getResponse());
+        var request = ctx.getRequest();
+        assertNotNull(request);
+        assertEquals("topic", request.getTopic());
+        assertEquals("text/plain", request.getMimeType());
+        assertEquals("Hello World", request.getDataAsText());
+        assertEquals("Hello World", new String(request.getData(), StandardCharsets.UTF_8));
 
-        // assertEquals("Hello World", response.getData().toStringUtf8());
-        assertTrue(response.hasTopic());
-        assertFalse(response.hasHttp());
-        // assertTrue(response.getTopic().getSuccess());
-    }
+        // Test No Data
+        var triggerContext2 = TopicTriggerContext.newBuilder();
 
-    @Test
-    public void test_no_data() {
-        var triggerContext = TopicTriggerContext
-                .newBuilder()
-                .setTopic("test");
-
-        var triggerRequest = TriggerRequest
-                .newBuilder()
-                .setTopic(triggerContext.build())
+        var triggerRequest2 = TriggerRequest.newBuilder()
+                .setTopic(triggerContext2.build())
                 .build();
 
-        // var trigger = FunctionTrigger.buildTrigger(triggerRequest);
+        var ctx2 = Marshaller.toEventContext(triggerRequest2);
+        assertNotNull(ctx2);
 
-        // assertNotNull(trigger.getData());
-        // assertEquals(0, trigger.getData().length);
-        // assertEquals("", trigger.getDataAsText());
+        var request2 = ctx2.getRequest();
+        assertNotNull(request2);
+        assertEquals("", request2.getTopic());
+        assertEquals("", request2.getMimeType());
+        assertEquals("", request2.getDataAsText());
+        assertNotNull(request2.getData());
+        assertEquals(0, request2.getData().length);
 
-        // var response = trigger.buildResponse((byte[]) null);
-        // assertNotNull(response);
-        // assertNull(response.getData());
+        // Invalid Trigger Type
+        var triggerContext3 = HttpTriggerContext.newBuilder()
+                .setMethod("PUT");
+
+        var triggerRequest3 = TriggerRequest.newBuilder()
+                .setHttp(triggerContext3.build())
+                .build();
+
+        try {
+            Marshaller.toEventContext(triggerRequest3);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
     }
 
     @Test
-    public void http_response_context() {
-        // var headers = Map.of("x-nitric-test", "test");
+    public void test_toTopicTriggerResponse() {
+        var triggerContext1 = TopicTriggerContext.newBuilder()
+                .setTopic("topic");
 
-        // var ctx = new HttpResponseContext()
-        //         .setStatus(200)
-        //         .addHeader("x-nitric-test", "test");
-        // assertEquals(200, ctx.getStatus());
-        // assertEquals(headers.toString(), ctx.getHeaders().toString());
+        var triggerRequest1 = TriggerRequest.newBuilder()
+                .setData(ByteString.copyFrom("Hello World", StandardCharsets.UTF_8))
+                .setMimeType("text/plain")
+                .setTopic(triggerContext1.build())
+                .build();
 
-        // ctx = new HttpResponseContext()
-        //         .setStatus(200)
-        //         .setHeaders(headers);
-        // assertEquals(200, ctx.getStatus());
-        // assertEquals(headers.toString(), ctx.getHeaders().toString());
+        var ctx1 = Marshaller.toEventContext(triggerRequest1);
 
-        // assertEquals("HttpResponseContext[status=200, headers={x-nitric-test=test}]", ctx.toString());
-    }
+        ctx1.getResponse()
+                .success(true)
+                .data(LONG_DATA);
 
-    @Test
-    public void http_response_to_grpc() {
-        // var ctx = new HttpResponseContext()
-        //         .setStatus(200)
-        //         .addHeader("x-nitric-test", "test");
+        var resp1 = Marshaller.toTopicTriggerResponse(ctx1.getResponse());
+        assertNotNull(resp1);
 
-        // var response = new Response("Hello World".getBytes(StandardCharsets.UTF_8), ctx);
+        assertEquals(LONG_DATA, resp1.getData().toStringUtf8());
 
-        // var grpcResponse = response.toGrpcTriggerResponse();
+        assertFalse(resp1.hasHttp());
+        assertTrue(resp1.hasTopic());
 
-        // assertEquals(grpcResponse.getData().toString(StandardCharsets.UTF_8), "Hello World");
-        // assertTrue(grpcResponse.hasHttp());
-        // assertEquals(200, grpcResponse.getHttp().getStatus());
-        // assertEquals(Map.of("x-nitric-test", "test"), grpcResponse.getHttp().getHeadersMap());
-    }
+        assertNotNull(resp1.getTopic());
+        assertEquals(true, resp1.getTopic().getSuccess());
 
-    @Test
-    public void topic_response_context() {
-        // var ctx = new TopicResponseContext().setSuccess(false);
-        // assertFalse(ctx.isSuccess());
+        // No Data
+        var ctx2 = Marshaller.toEventContext(triggerRequest1);
 
-        // ctx.setSuccess(true);
-        // assertTrue(ctx.isSuccess());
+        var resp2 = Marshaller.toTopicTriggerResponse(ctx2.getResponse());
+        assertNotNull(resp2);
 
-        // assertEquals("TopicResponseContext[success=true]", ctx.toString());
-    }
+        assertTrue(resp2.getData().isEmpty());
 
-    @Test
-    public void topic_response_data() {
-        // var ctx = new TopicResponseContext();
+        assertFalse(resp2.hasHttp());
+        assertTrue(resp2.hasTopic());
 
-        // var response = new Response(null, ctx);
-        // assertNull(response.getData());
-        // assertNull(response.getDataAsText());
-
-        // response = new Response("data".getBytes(StandardCharsets.UTF_8), ctx);
-        // assertNotNull(response.getData());
-        // assertEquals("data", response.getDataAsText());
-
-        // response = new Response(null, ctx);
-        // response.setData("data".getBytes(StandardCharsets.UTF_8));
-        // assertNotNull(response.getData());
-        // assertEquals("data", response.getDataAsText());
-
-        // response = new Response(null, ctx);
-        // response.setDataAsText("data");
-        // assertNotNull(response.getData());
-        // assertEquals("data", response.getDataAsText());
-    }
-
-    @Test
-    public void topic_response_to_grpc() {
-        // var ctx = new TopicResponseContext()
-        //         .setSuccess(false);
-
-        // var response = new Response("Hello World".getBytes(StandardCharsets.UTF_8), ctx);
-
-        // var grpcResponse = response.toGrpcTriggerResponse();
-
-        // assertEquals(grpcResponse.getData().toString(StandardCharsets.UTF_8), "Hello World");
-        // assertTrue(grpcResponse.hasTopic());
-        // assertFalse(grpcResponse.getTopic().getSuccess());
-    }
-
-    @Test
-    public void topic_context_toString() {
-        // var trc = new TopicResponseContext();
-        // trc.setSuccess(true);
-        // var resp = new Response("test".getBytes(StandardCharsets.UTF_8), trc);
-
-        // assertEquals(resp.toString(), "Response[context=TopicResponseContext[success=true], data=test]");
+        assertNotNull(resp2.getTopic());
+        assertEquals(false, resp2.getTopic().getSuccess());
     }
 
 }
