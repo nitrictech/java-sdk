@@ -22,8 +22,7 @@ package io.nitric.faas.http;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Provides an HttpMiddlewareAdapter test case.
@@ -34,11 +33,12 @@ public class HttpMiddlewareAdapterTest {
     public void test_handle() {
         var handler = new TestHttpHandler();
 
-        var httpMiddlewareAdapter = new HttpMiddlewareAdapter(handler);
+        var middlewareAdapter = new HttpMiddlewareAdapter(handler);
+        assertSame(handler, middlewareAdapter.getHandler());
 
         var context = HttpContext.newBuilder().method("GET").build();
 
-        var ctx = httpMiddlewareAdapter.handle(context, new FinalHttpMiddleware());
+        var ctx = middlewareAdapter.handle(context, new FinalHttpMiddleware());
         assertNotNull(ctx);
 
         assertTrue(handler.called);

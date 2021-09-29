@@ -22,18 +22,15 @@ package io.nitric.faas;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.protobuf.ByteString;
 import io.nitric.faas.event.EventContext;
-import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpContext;
-import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.faas.v1.HttpResponseContext;
-import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
 import io.nitric.util.Contracts;
@@ -42,6 +39,8 @@ import io.nitric.util.Contracts;
  * Provides a Nitric TriggerRequest processor class.
  */
 public class TriggerProcessor {
+
+    static final ThreadLocal<String> middlewareThreadLocal = new ThreadLocal<>();
 
     List<EventMiddleware> eventMiddlewares;
     List<HttpMiddleware> httpMiddlewares;
@@ -109,26 +108,21 @@ public class TriggerProcessor {
         var middleware = buildHttpMiddlewareChain();
 
         try {
-            // Process HTTP Middlewares
             var resultCtx = middleware.handle(context, middleware.getNext());
 
-            if (resultCtx != null) {
-                return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
-
-            } else {
-                return TriggerResponse.newBuilder()
-                        .setHttp(HttpResponseContext.newBuilder().setStatus(500))
-                        .setData(ByteString.copyFrom("Error occurred see logs for details", StandardCharsets.UTF_8))
-                        .build();
-            }
+            return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
 
         } catch (Throwable error) {
             Faas.logError(error,
-                    "error handling Trigger HTTP %s '%s' with %s",
+                    "error handling Trigger HTTP %s '%s' with: %s",
                     context.getRequest().getMethod(),
                     context.getRequest().getPath(),
-                    httpMiddlewares);
-            return null;
+                    middlewareThreadLocal.get());
+
+            return TriggerResponse.newBuilder()
+                    .setHttp(HttpResponseContext.newBuilder().setStatus(500))
+                    .setData(ByteString.copyFrom("Error occurred see logs for details", StandardCharsets.UTF_8))
+                    .build();
         }
     }
 
@@ -146,24 +140,15 @@ public class TriggerProcessor {
         var middleware = buildEventMiddlewareChain();
 
         try {
-            // Process Event Middlewares
             var resultCtx = middleware.handle(context, middleware.getNext());
 
-            if (resultCtx != null) {
-                return Marshaller.toTopicTriggerResponse(resultCtx.getResponse());
-
-            } else {
-                Faas.logError("error handling handling Trigger Topic '%s', no context returned by %s",
-                              context.getRequest().getTopic(),
-                              eventMiddlewares);
-                return null;
-            }
+            return Marshaller.toTopicTriggerResponse(resultCtx.getResponse());
 
         } catch (Throwable error) {
             Faas.logError(error,
-                    "error handling Trigger Topic '%s' with %s",
+                    "error handling Trigger Topic '%s' with: %s",
                     context.getRequest().getTopic(),
-                    eventMiddlewares);
+                    middlewareThreadLocal.get());
             return null;
         }
     }
@@ -178,12 +163,12 @@ public class TriggerProcessor {
             throw new IllegalStateException("no httpMiddlewares have been configured");
         }
 
-        var firstMiddleware = eventMiddlewares.get(0);
+        EventMiddleware firstMiddleware = new EventMiddlewareWrapper(eventMiddlewares.get(0));
 
         var middleware = firstMiddleware;
 
         for (int i = 1; i < eventMiddlewares.size(); i++) {
-            var next = eventMiddlewares.get(i);
+            var next = new EventMiddlewareWrapper(eventMiddlewares.get(i));
             middleware.setNext(next);
             middleware = next;
         }
@@ -203,12 +188,12 @@ public class TriggerProcessor {
             throw new IllegalStateException("no httpMiddlewares have been configured");
         }
 
-        var firstMiddleware = httpMiddlewares.get(0);
+        HttpMiddleware firstMiddleware = new HttpMiddlewareWrapper(httpMiddlewares.get(0));
 
         var middleware = firstMiddleware;
 
         for (int i = 1; i < httpMiddlewares.size(); i++) {
-            var next = httpMiddlewares.get(i);
+            var next = new HttpMiddlewareWrapper(httpMiddlewares.get(i));
             middleware.setNext(next);
             middleware = next;
         }
@@ -239,6 +224,76 @@ public class TriggerProcessor {
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
             return context;
+        }
+    }
+
+    /**
+     * Provides an EventMiddleware wrapper to accurately report processing errors.
+     */
+    protected static class EventMiddlewareWrapper extends EventMiddleware {
+
+        final EventMiddleware target;
+
+        /**
+         * Create new EventMiddleware wrapper object with given target.
+         *
+         * @param target the target middleware to process
+         */
+        protected EventMiddlewareWrapper(EventMiddleware target) {
+            this.target = target;
+        }
+
+        @Override
+        public EventContext handle(EventContext context, EventMiddleware next) {
+            // Stash the target name for error reporting
+            if (target instanceof EventMiddlewareAdapter) {
+                var wrapper = (EventMiddlewareAdapter) target;
+                middlewareThreadLocal.set(wrapper.getHandler().getClass().getName());
+            } else {
+                middlewareThreadLocal.set(target.getClass().getName());
+            }
+
+            var resultCtx = target.handle(context, next);
+            if (resultCtx == null) {
+                throw new IllegalStateException("invoked handle() method returned null context");
+            }
+
+            return next.handle(resultCtx, next.getNext());
+        }
+    }
+
+    /**
+     * Provides an HttpMiddleware wrapper to accurately report processing errors.
+     */
+    protected static class HttpMiddlewareWrapper extends HttpMiddleware {
+
+        final HttpMiddleware target;
+
+        /**
+         * Create new HttpMiddleware wrapper object with given target.
+         *
+         * @param target the target middleware to process
+         */
+        protected HttpMiddlewareWrapper(HttpMiddleware target) {
+            this.target = target;
+        }
+
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            // Stash the target name for error reporting
+            if (target instanceof HttpMiddlewareAdapter) {
+                var wrapper = (HttpMiddlewareAdapter) target;
+                middlewareThreadLocal.set(wrapper.getHandler().getClass().getName());
+            } else {
+                middlewareThreadLocal.set(target.getClass().getName());
+            }
+
+            var resultCtx = target.handle(context, next);
+            if (resultCtx == null) {
+                throw new IllegalStateException("invoked handle() method returned null context");
+            }
+
+            return next.handle(resultCtx, next.getNext());
         }
     }
 

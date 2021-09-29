@@ -98,11 +98,10 @@ public class Faas {
 
     private static final Logger LOGGER = Logger.getLogger("Faas");
 
-    private FaasServiceGrpc.FaasServiceStub stub = null;
-
-    private TriggerProcessor triggerProcessor = new TriggerProcessor();
-    private List<EventMiddleware> eventMiddlewares = new ArrayList<>();
-    private List<HttpMiddleware> httpMiddlewares = new ArrayList<>();
+    FaasServiceGrpc.FaasServiceStub stub = null;
+    TriggerProcessor triggerProcessor = new TriggerProcessor();
+    List<EventMiddleware> eventMiddlewares = new ArrayList<>();
+    List<HttpMiddleware> httpMiddlewares = new ArrayList<>();
 
     // Public Methods -------------------------------------------------------------------
 
@@ -114,11 +113,6 @@ public class Faas {
      */
     public Faas event(EventHandler eventHandler) {
         Contracts.requireNonNull(eventHandler, "eventHandler");
-
-        if (!httpMiddlewares.isEmpty()) {
-            String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
-            throw new IllegalArgumentException(msg);
-        }
 
         eventMiddlewares.add(new EventMiddlewareAdapter(eventHandler));
         return this;
@@ -133,11 +127,6 @@ public class Faas {
     public Faas http(HttpHandler httpHandler) {
         Contracts.requireNonNull(httpHandler, "httpHandler");
 
-        if (!eventMiddlewares.isEmpty()) {
-            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
-            throw new IllegalArgumentException(msg);
-        }
-
         httpMiddlewares.add(new HttpMiddlewareAdapter(httpHandler));
         return this;
     }
@@ -151,11 +140,6 @@ public class Faas {
     public Faas addMiddleware(EventMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
 
-        if (!httpMiddlewares.isEmpty()) {
-            String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
-            throw new IllegalArgumentException(msg);
-        }
-
         eventMiddlewares.add(middleware);
         return this;
     }
@@ -168,11 +152,6 @@ public class Faas {
      */
     public Faas addMiddleware(HttpMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
-
-        if (!eventMiddlewares.isEmpty()) {
-            String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
-            throw new IllegalArgumentException(msg);
-        }
 
         httpMiddlewares.add(middleware);
         return this;
@@ -244,7 +223,7 @@ public class Faas {
         }
     }
 
-    // Package Methods --------------------------------------------------------
+    // Protected Methods ------------------------------------------------------
 
     /**
      * Set the gRPC stub to use for this FaaS instance.
@@ -258,11 +237,24 @@ public class Faas {
         return this;
     }
 
+    /**
+     * Log the given error message and arguments.
+     *
+     * @param format the error message format
+     * @param args the message arguments
+     */
     protected static void logError(String format, Object...args) {
         String msg = String.format(format, args);
         LOGGER.log(Level.SEVERE, msg);
     }
 
+    /**
+     * Log the given exception, error message and arguments.
+     *
+     * @param error the exception
+     * @param format the error message format
+     * @param args the message arguments
+     */
     protected static void logError(Throwable error, String format, Object...args) {
         String msg = String.format(format, args);
         LOGGER.log(Level.SEVERE, msg, error);

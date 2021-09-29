@@ -20,6 +20,7 @@
 
 package io.nitric.faas.http;
 
+import io.nitric.faas.event.EventHandler;
 import io.nitric.util.Contracts;
 
 /**
@@ -54,5 +55,14 @@ public class HttpMiddlewareAdapter extends HttpMiddleware {
         var ctx  = handler.handle(context);
 
         return next.handle(ctx, next.getNext());
+    }
+
+    /**
+     * Return the wrapped HttpHandler object.
+     *
+     * @return the wrapped HttpHandler object
+     */
+    public HttpHandler getHandler() {
+        return handler;
     }
 }
