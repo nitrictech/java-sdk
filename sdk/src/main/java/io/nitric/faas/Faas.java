@@ -65,7 +65,6 @@ import io.nitric.util.GrpcChannelProvider;
  *     }
  *
  *     public HttpContext handle(HttpContext context) {
- *
  *         var paths = context.getRequest().getPath().split("/");
  *         var id = paths[paths.length - 1];
  *
@@ -75,7 +74,6 @@ import io.nitric.util.GrpcChannelProvider;
  *                 .getJson();
  *
  *             context.getResponse()
- *                 .status(200)
  *                 .addHeader("Content-Type", "application/json")
  *                 .data(json);
  *
