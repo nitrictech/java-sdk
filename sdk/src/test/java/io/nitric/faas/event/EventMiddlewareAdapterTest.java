@@ -22,8 +22,7 @@ package io.nitric.faas.event;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Provides an EventMiddlewareAdapter test case.
@@ -34,11 +33,12 @@ public class EventMiddlewareAdapterTest {
     public void test_handle() {
         var handler = new TestEventHandler();
 
-        var eventMiddlewareAdapter = new EventMiddlewareAdapter(handler);
+        var middlewareAdapter = new EventMiddlewareAdapter(handler);
+        assertSame(handler, middlewareAdapter.getHandler());
 
         var context = EventContext.newBuilder().topic("topic").build();
 
-        var ctx = eventMiddlewareAdapter.handle(context, new FinalEventMiddleware());
+        var ctx = middlewareAdapter.handle(context, new FinalEventMiddleware());
         assertNotNull(ctx);
 
         assertTrue(handler.called);

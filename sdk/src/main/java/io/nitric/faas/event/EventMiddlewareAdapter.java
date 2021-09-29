@@ -55,4 +55,13 @@ public class EventMiddlewareAdapter extends EventMiddleware {
 
         return next.handle(ctx, next.getNext());
     }
+
+    /**
+     * Return the wrapped EventHandler object.
+     *
+     * @return the wrapped EventHandler object
+     */
+    public EventHandler getHandler() {
+        return handler;
+    }
 }

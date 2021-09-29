@@ -24,8 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventHandler;
+import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpHandler;
+import io.nitric.faas.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.ServerMessage;
@@ -40,7 +44,57 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Provide Faas unit test.
+ */
 public class FaasTest {
+
+    @Test
+    public void test_properties() {
+        var faas = new Faas();
+
+        assertTrue(faas.eventMiddlewares.isEmpty());
+        assertTrue(faas.httpMiddlewares.isEmpty());
+        assertNotNull(faas.triggerProcessor);
+
+        var eventHandler = new EventHandler() {
+            public EventContext handle(EventContext context) {
+                return context;
+            }
+        };
+        faas.event(eventHandler);
+        assertEquals(1, faas.eventMiddlewares.size());
+
+        var httpHandler = new HttpHandler() {
+            public HttpContext handle(HttpContext context) {
+                return context;
+            }
+        };
+        faas.http(httpHandler);
+        assertEquals(1, faas.httpMiddlewares.size());
+
+        var eventMiddleware = new EventMiddleware() {
+            public EventContext handle(EventContext context, EventMiddleware next) {
+                return context;
+            }
+        };
+        faas.addMiddleware(eventMiddleware);
+        assertEquals(2, faas.eventMiddlewares.size());
+        assertSame(eventMiddleware, faas.eventMiddlewares.get(1));
+
+        var httpMiddleware = new HttpMiddleware() {
+            public HttpContext handle(HttpContext context, HttpMiddleware next) {
+                return context;
+            }
+        };
+        faas.addMiddleware(httpMiddleware);
+        assertEquals(2, faas.httpMiddlewares.size());
+        assertSame(httpMiddleware, faas.httpMiddlewares.get(1));
+
+        var triggerProcessor = new TriggerProcessor();
+        faas.triggerProcessor(triggerProcessor);
+        assertSame(triggerProcessor, faas.triggerProcessor);
+    }
 
     // Test a basic start scenario
     @Test
