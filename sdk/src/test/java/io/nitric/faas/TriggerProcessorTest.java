@@ -20,27 +20,22 @@
 
 package io.nitric.faas;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import com.google.protobuf.ByteString;
-
 import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
-import org.junit.jupiter.api.Test;
-
-import io.nitric.proto.faas.v1.HeaderValue;
+import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.faas.v1.HttpTriggerContext;
 import io.nitric.proto.faas.v1.TopicTriggerContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Provides a TriggerProcessorTest unit test.
@@ -51,25 +46,65 @@ public class TriggerProcessorTest {
     public void test_setters() {
         var processor = new TriggerProcessor();
 
-        var eventHandler = new MyEventHandler();
-        processor.setEventHandler(eventHandler);
-        assertSame(eventHandler, processor.eventHandler);
-
-        var eventMiddleware = new MyEventMiddleware();
+        var eventMiddleware = new TestEventMiddleware();
         List<EventMiddleware> eventMiddlewares = List.of(eventMiddleware);
         processor.setEventMiddlewares(eventMiddlewares);
         assertEquals(1, processor.eventMiddlewares.size());
         assertSame(eventMiddleware, processor.eventMiddlewares.get(0));
 
-        var httpHandler = new MyHttpHandler();
-        processor.setHttpHandler(httpHandler);
-        assertSame(httpHandler, processor.httpHandler);
-
-        var httpMiddleware = new MyHttpMiddleware();
+        var httpMiddleware = new TestHttpMiddleware();
         List<HttpMiddleware> httpMiddlewares = List.of(httpMiddleware);
         processor.setHttpMiddlewares(httpMiddlewares);
         assertEquals(1, processor.httpMiddlewares.size());
         assertSame(httpMiddleware, processor.httpMiddlewares.get(0));
+    }
+
+    @Test
+    public void test_buildEventMiddlewareChain() {
+        var processor = new TriggerProcessor();
+
+        try {
+            processor.buildEventMiddlewareChain();
+            fail();
+        } catch (IllegalStateException ise) {
+        }
+
+        var eventMiddleware1 = new TestEventMiddleware();
+        var eventMiddleware2 = new TestEventMiddleware();
+
+        List<EventMiddleware> eventMiddlewares = List.of(eventMiddleware1, eventMiddleware2);
+
+        processor.setEventMiddlewares(eventMiddlewares);
+
+        var first = processor.buildEventMiddlewareChain();
+        assertSame(eventMiddleware1, first);
+        assertSame(eventMiddleware2, first.getNext());
+        assertNotNull(first.getNext().getNext());
+        assertNull(first.getNext().getNext().getNext());
+    }
+
+    @Test
+    public void test_buildHttpMiddlewareChain() {
+        var processor = new TriggerProcessor();
+
+        try {
+            processor.buildHttpMiddlewareChain();
+            fail();
+        } catch (IllegalStateException ise) {
+        }
+
+        var httpMiddleware1 = new TestHttpMiddleware();
+        var httpMiddleware2 = new TestHttpMiddleware();
+
+        List<HttpMiddleware> httpMiddlewares = List.of(httpMiddleware1, httpMiddleware2);
+
+        processor.setHttpMiddlewares(httpMiddlewares);
+
+        var first = processor.buildHttpMiddlewareChain();
+        assertSame(httpMiddleware1, first);
+        assertSame(httpMiddleware2, first.getNext());
+        assertNotNull(first.getNext().getNext());
+        assertNull(first.getNext().getNext().getNext());
     }
 
     @Test
@@ -82,15 +117,19 @@ public class TriggerProcessorTest {
         } catch (IllegalArgumentException iae) {
         }
 
-        // Test Handler
-        final var handlerName = MyHttpHandler.class.getSimpleName();
+        // Test Handler & Middlewares
+        final var handlerName = TestHttpHandler.class.getSimpleName();
+        final var middlewareName = TestHttpHandler.class.getSimpleName();
+
+        var handler = new TestHttpHandler();
+        var middleware = new TestHttpMiddleware();
 
         var triggerProcessor1 = new TriggerProcessor();
-        triggerProcessor1.setHttpHandler(new MyHttpHandler());
+        triggerProcessor1.setHttpMiddlewares(List.of(middleware, new HttpMiddlewareAdapter(handler)));
 
         var request1 = TriggerRequest.newBuilder()
-                .setHttp(HttpTriggerContext.newBuilder().setMethod("GET"))
-                .build();
+            .setHttp(HttpTriggerContext.newBuilder().setMethod("GET"))
+            .build();
 
         var res1 = triggerProcessor1.processHttpTrigger(request1);
 
@@ -98,20 +137,28 @@ public class TriggerProcessorTest {
         assertTrue(res1.hasHttp());
         assertFalse(res1.hasTopic());
 
-        assertEquals(1, res1.getHttp().getHeadersMap().size());
+        assertEquals(2, res1.getHttp().getHeadersMap().size());
         assertEquals(1, res1.getHttp().getHeadersMap().get(handlerName).getValueCount());
+        assertEquals(1, res1.getHttp().getHeadersMap().get(middlewareName).getValueCount());
 
         assertEquals(404, res1.getHttp().getStatus());
         assertEquals(handlerName, res1.getData().toStringUtf8());
+        assertTrue(middleware.invokedTime > 0);
+        assertTrue(handler.invokedTime > 0);
+        assertTrue(middleware.invokedTime < handler.invokedTime);
 
-        // Test Middleware & No Handler
-        final var middlewareName = MyHttpMiddleware.class.getSimpleName();
+        // Test Null context result
+        var nullMiddleware = new HttpMiddleware() {
+            public HttpContext handle(HttpContext context, HttpMiddleware next) {
+                return null;
+            }
+        };
 
         var triggerProcessor2 = new TriggerProcessor();
-        triggerProcessor2.setHttpMiddlewares(List.of(new MyHttpMiddleware(), new MyHttpMiddleware()));
+        triggerProcessor2.setHttpMiddlewares(List.of(nullMiddleware));
 
         var request2 = TriggerRequest.newBuilder()
-                .setHttp(HttpTriggerContext.newBuilder().setMethod("POST"))
+                .setHttp(HttpTriggerContext.newBuilder().setMethod("PUT"))
                 .build();
 
         var res2 = triggerProcessor2.processHttpTrigger(request2);
@@ -120,74 +167,233 @@ public class TriggerProcessorTest {
         assertTrue(res2.hasHttp());
         assertFalse(res2.hasTopic());
 
-        assertEquals(1, res2.getHttp().getHeadersMap().size());
-        assertEquals(2, res2.getHttp().getHeadersMap().get(middlewareName).getValueCount());
+        assertEquals(500, res2.getHttp().getStatus());
+        assertEquals("Error occurred see logs for details", res2.getData().toStringUtf8());
 
-        // TODO: resolve status code handling
-        assertEquals(200, res2.getHttp().getStatus());
-        assertEquals(middlewareName, res2.getData().toStringUtf8());
+        // Test Error thrown
+        var errorMiddleware = new HttpMiddleware() {
+            public HttpContext handle(HttpContext context, HttpMiddleware next) {
+                throw new NullPointerException();
+            }
+        };
 
-        // Test Middleware and Handler
         var triggerProcessor3 = new TriggerProcessor();
-        triggerProcessor3.setHttpHandler(new MyHttpHandler());
-        triggerProcessor3.setHttpMiddlewares(List.of(new MyHttpMiddleware(), new MyHttpMiddleware()));
+        triggerProcessor3.setHttpMiddlewares(List.of(errorMiddleware));
 
         var request3 = TriggerRequest.newBuilder()
-                .setHttp(HttpTriggerContext.newBuilder().setMethod("PUT"))
+                .setHttp(HttpTriggerContext.newBuilder().setMethod("DELETE").setPath("/customer"))
                 .build();
 
         var res3 = triggerProcessor3.processHttpTrigger(request3);
-
-        assertNotNull(res3);
-        assertTrue(res3.hasHttp());
-        assertFalse(res3.hasTopic());
-
-        assertEquals(2, res3.getHttp().getHeadersMap().size());
-        assertEquals(1, res3.getHttp().getHeadersMap().get(handlerName).getValueCount());
-        assertEquals(2, res3.getHttp().getHeadersMap().get(middlewareName).getValueCount());
-
-        assertEquals(404, res3.getHttp().getStatus());
-        assertEquals(handlerName, res3.getData().toStringUtf8());
+        assertNull(res3);
     }
 
     @Test
     public void test_processTopicTrigger() {
+
+        // Null Trigger
+        try {
+            new TriggerProcessor().processTopicTrigger(null);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
+
+        // Test Handler & Middlewares
+        final var handlerName = TestEventHandler.class.getSimpleName();
+        final var middlewareName = TestEventHandler.class.getSimpleName();
+
+        var handler = new TestEventHandler();
+        var middleware = new TestEventMiddleware();
+
+        var triggerProcessor1 = new TriggerProcessor();
+        triggerProcessor1.setEventMiddlewares(List.of(middleware, new EventMiddlewareAdapter(handler)));
+
+        var request1 = TriggerRequest.newBuilder()
+                .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
+                .build();
+
+        var res1 = triggerProcessor1.processTopicTrigger(request1);
+
+        assertNotNull(res1);
+        assertFalse(res1.hasHttp());
+        assertTrue(res1.hasTopic());
+
+        assertFalse(res1.getTopic().getSuccess());
+        assertEquals(handlerName, res1.getData().toStringUtf8());
+
+        assertTrue(middleware.invokedTime > 0);
+        assertTrue(handler.invokedTime > 0);
+        assertTrue(middleware.invokedTime < handler.invokedTime);
+
+        // Test Null context result
+        var nullMiddleware = new EventMiddleware() {
+            public EventContext handle(EventContext context, EventMiddleware next) {
+                return null;
+            }
+        };
+
+        var triggerProcessor2 = new TriggerProcessor();
+        triggerProcessor2.setEventMiddlewares(List.of(nullMiddleware));
+
+        var request2 = TriggerRequest.newBuilder()
+                .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
+                .build();
+
+        var res2 = triggerProcessor2.processTopicTrigger(request2);
+        assertNull(res2);
+
+        // Test Error thrown
+        var errorMiddleware = new EventMiddleware() {
+            public EventContext handle(EventContext context, EventMiddleware next) {
+                throw new NullPointerException();
+            }
+        };
+
+        var triggerProcessor3 = new TriggerProcessor();
+        triggerProcessor3.setEventMiddlewares(List.of(errorMiddleware));
+
+        var request3 = TriggerRequest.newBuilder()
+                .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
+                .build();
+
+        var res3 = triggerProcessor3.processTopicTrigger(request3);
+        assertNull(res3);
     }
 
     @Test
     public void test_process() {
-    }
+        var triggerProcessor = new TriggerProcessor();
 
-    @Test
-    public void test_buildEventMiddlewareChain() {
-    }
+        // Test null parameter
+        try {
+            triggerProcessor.process(null);
+            fail();
+        } catch (IllegalArgumentException iae) {
+        }
 
-    @Test
-    public void test_buildHttpMiddlewareChain() {
+        // Test no trigger type
+        var request1 = TriggerRequest.newBuilder().build();
+        try {
+            triggerProcessor.process(request1);
+            fail();
+        } catch (UnsupportedOperationException uoe) {
+            uoe.printStackTrace();
+        }
+
+        // Test no Http middleware
+        var request2 = TriggerRequest.newBuilder()
+                .setHttp(HttpTriggerContext.newBuilder().setMethod("DELETE").setPath("/customer"))
+                .build();
+        try {
+            triggerProcessor.process(request2);
+            fail();
+        } catch (IllegalStateException iae) {
+            assertEquals("No HTTP handler or middlewares have been registered", iae.getMessage());
+        }
+
+        // Test no Event middleware
+        var request3 = TriggerRequest.newBuilder()
+                .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
+                .build();
+        try {
+            triggerProcessor.process(request3);
+            fail();
+        } catch (IllegalStateException iae) {
+            assertEquals("No Event handler or middlewares have been registered", iae.getMessage());
+        }
+
+        // Test Http Middleware
+        var httpMiddleware = new TestHttpMiddleware();
+
+        triggerProcessor.setHttpMiddlewares(List.of(httpMiddleware));
+
+        var request4 = TriggerRequest.newBuilder()
+                .setHttp(HttpTriggerContext.newBuilder().setMethod("GET"))
+                .build();
+
+        var res4 = triggerProcessor.process(request4);
+
+        assertNotNull(res4);
+        assertTrue(res4.hasHttp());
+        assertFalse(res4.hasTopic());
+
+        assertEquals(httpMiddleware.getClass().getSimpleName(), res4.getData().toStringUtf8());
+
+        assertEquals(1, res4.getHttp().getHeadersMap().size());
+        assertEquals(200, res4.getHttp().getStatus());
+        assertTrue(httpMiddleware.invokedTime > 0);
+
+        // Test Event Middleware
+        var eventMiddleware = new TestEventMiddleware();
+
+        triggerProcessor.setEventMiddlewares(List.of(eventMiddleware));
+
+        var request5 = TriggerRequest.newBuilder()
+                .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
+                .build();
+
+        var res5 = triggerProcessor.process(request5);
+
+        assertNotNull(res5);
+        assertFalse(res5.hasHttp());
+        assertTrue(res5.hasTopic());
+
+        assertEquals(eventMiddleware.getClass().getSimpleName(), res5.getData().toStringUtf8());
+
+        assertEquals(false, res5.getTopic().getSuccess());
+        assertTrue(eventMiddleware.invokedTime > 0);
     }
 
     // Inner Classes ----------------------------------------------------------
 
-    public static class MyEventHandler implements EventHandler {
+    public static class TestEventHandler implements EventHandler {
+        long invokedTime;
+
         @Override
         public EventContext handle(EventContext context) {
+            invokedTime = System.currentTimeMillis();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException iae) {
+            }
             context.getResponse().data(getClass().getSimpleName());
             return context;
         }
     }
 
-    public static class MyEventMiddleware extends EventMiddleware {
+    public static class TestEventMiddleware extends EventMiddleware {
+        long invokedTime;
+
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
+            invokedTime = System.currentTimeMillis();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException iae) {
+            }
             context.getResponse().data(getClass().getSimpleName());
-
             return next.handle(context, next.getNext());
         }
     }
 
-    public static class MyHttpHandler implements HttpHandler {
+    public static class NullEventMiddleware extends HttpMiddleware {
+
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            return null;
+        }
+    }
+
+    public static class TestHttpHandler implements HttpHandler {
+        long invokedTime;
+
         @Override
         public HttpContext handle(HttpContext context) {
+            invokedTime = System.currentTimeMillis();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException iae) {
+            }
             context.getResponse()
                     .status(404)
                     .addHeader(getClass().getSimpleName(), toString())
@@ -196,9 +402,16 @@ public class TriggerProcessorTest {
         }
     }
 
-    public static class MyHttpMiddleware extends HttpMiddleware {
+    public static class TestHttpMiddleware extends HttpMiddleware {
+        long invokedTime;
+
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            invokedTime = System.currentTimeMillis();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException iae) {
+            }
             context.getResponse()
                     .addHeader(getClass().getSimpleName(), toString())
                     .data(getClass().getSimpleName());
@@ -206,4 +419,5 @@ public class TriggerProcessorTest {
             return next.handle(context, next.getNext());
         }
     }
+
 }

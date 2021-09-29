@@ -30,8 +30,10 @@ import java.util.logging.Logger;
 import io.grpc.stub.StreamObserver;
 import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
@@ -99,8 +101,6 @@ public class Faas {
     private FaasServiceGrpc.FaasServiceStub stub = null;
 
     private TriggerProcessor triggerProcessor = new TriggerProcessor();
-    private EventHandler eventHandler;
-    private HttpHandler httpHandler;
     private List<EventMiddleware> eventMiddlewares = new ArrayList<>();
     private List<HttpMiddleware> httpMiddlewares = new ArrayList<>();
 
@@ -115,12 +115,12 @@ public class Faas {
     public Faas event(EventHandler eventHandler) {
         Contracts.requireNonNull(eventHandler, "eventHandler");
 
-        if (httpHandler != null || !httpMiddlewares.isEmpty()) {
+        if (!httpMiddlewares.isEmpty()) {
             String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
-        this.eventHandler = eventHandler;
+        eventMiddlewares.add(new EventMiddlewareAdapter(eventHandler));
         return this;
     }
 
@@ -133,12 +133,12 @@ public class Faas {
     public Faas http(HttpHandler httpHandler) {
         Contracts.requireNonNull(httpHandler, "httpHandler");
 
-        if (eventHandler != null || !eventMiddlewares.isEmpty()) {
+        if (!eventMiddlewares.isEmpty()) {
             String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
 
-        this.httpHandler = httpHandler;
+        httpMiddlewares.add(new HttpMiddlewareAdapter(httpHandler));
         return this;
     }
 
@@ -151,7 +151,7 @@ public class Faas {
     public Faas addMiddleware(EventMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
 
-        if (httpHandler != null || !httpMiddlewares.isEmpty()) {
+        if (!httpMiddlewares.isEmpty()) {
             String msg = "Cannot register a EventHandler if a HttpHandler or HttpMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
@@ -169,7 +169,7 @@ public class Faas {
     public Faas addMiddleware(HttpMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
 
-        if (eventHandler != null || !eventMiddlewares.isEmpty()) {
+        if (!eventMiddlewares.isEmpty()) {
             String msg = "Cannot register a HttpHandler if a EventHandler or EventMiddleware already added";
             throw new IllegalArgumentException(msg);
         }
@@ -197,9 +197,7 @@ public class Faas {
      */
     public void start() {
 
-        triggerProcessor.setEventHandler(eventHandler);
         triggerProcessor.setEventMiddlewares(eventMiddlewares);
-        triggerProcessor.setHttpHandler(httpHandler);
         triggerProcessor.setHttpMiddlewares(httpMiddlewares);
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
@@ -236,11 +234,7 @@ public class Faas {
             finishedLatch.await();
 
         } catch (InterruptedException e) {
-            var handlerName = (eventHandler != null)
-                ? eventHandler.getClass().getSimpleName() : httpHandler.getClass().getSimpleName();
-            logError(e,
-                     "Stream was prematurely terminated for function: %s, error: %s \n",
-                     handlerName);
+            logError(e, "Stream was prematurely terminated, error: \n");
             // Restore thread interrupted state
             Thread.currentThread().interrupt();
 
