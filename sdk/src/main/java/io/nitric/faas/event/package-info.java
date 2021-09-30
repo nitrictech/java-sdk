@@ -20,7 +20,12 @@
 
 /**
  * <p>
- *  Provides the API exception classes.
+ *  Provides the FaaS Event context and middleware classes.
+ * </p>
+ *
+ * <p>
+ *  Event handler functions are configured in the Nitric stack definition file to handle to Topic event
+ *  notifications.
  * </p>
  */
-package io.nitric.api;
+package io.nitric.faas.event;

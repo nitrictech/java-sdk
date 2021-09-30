@@ -18,9 +18,24 @@
  * #L%
  */
 
+package io.nitric.faas.event;
+
 /**
  * <p>
- *  Provides the API exception classes.
+ * Provides an Event Handler interface.
  * </p>
+ *
+ * @see EventContext
+ * @see EventMiddleware
  */
-package io.nitric.api;
+public interface EventHandler {
+
+    /**
+     * Handle the topic subscription event.
+     *
+     * @param context the EventContext request/response context
+     * @return the context object returned by the next handler
+     */
+    public EventContext handle(EventContext context);
+
+}

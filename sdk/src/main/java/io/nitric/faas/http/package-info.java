@@ -20,7 +20,11 @@
 
 /**
  * <p>
- *  Provides the API exception classes.
+ *  Provides the FaaS HTTP context and middleware classes.
+ * </p>
+ *
+ * <p>
+ *  HTTP handler functions are configured in the Nitric stack definition file, typically with an associated API gateway.
  * </p>
  */
-package io.nitric.api;
+package io.nitric.faas.http;

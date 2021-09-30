@@ -18,9 +18,24 @@
  * #L%
  */
 
+package io.nitric.faas.http;
+
 /**
  * <p>
- *  Provides the API exception classes.
+ * Provides an HTTP Handler interface.
  * </p>
+ *
+ * @see HttpContext
+ * @see HttpMiddleware
  */
-package io.nitric.api;
+public interface HttpHandler {
+
+    /**
+     * Handle the HTTP request.
+     *
+     * @param context the HTTP request/response context
+     * @return the HttpContext response
+     */
+    public HttpContext handle(HttpContext context);
+
+}

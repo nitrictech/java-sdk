@@ -20,6 +20,7 @@
 
 package io.nitric.api.document;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.nitric.api.NitricException;
@@ -102,6 +103,29 @@ public class DocumentRef<T> {
             } else {
                 return null;
             }
+    }
+
+    /**
+     * Return the document reference content as JSON text.
+     *
+     * @return the document reference content as JSON text
+     * @throws NotFoundException if the document was not found
+     * @throws NitricException if a Document Service API error occurs
+     */
+    public String getJson() throws NotFoundException, NitricException {
+        Object object = get();
+
+        if (objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+
+        } catch (JsonProcessingException jpe) {
+            String msg = "error fetching JSON content for doc ref: " + getKey();
+            throw new RuntimeException(msg, jpe);
+        }
     }
 
     /**

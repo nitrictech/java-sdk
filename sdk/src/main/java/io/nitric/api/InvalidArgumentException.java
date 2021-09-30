@@ -24,15 +24,20 @@ import io.grpc.StatusRuntimeException;
 import io.nitric.proto.error.v1.ErrorDetails;
 
 /**
- * Provides a Nitric API resource not found exception class.
+ * Provides a Nitric service InvalidArgument exception class.
  */
 public class InvalidArgumentException extends NitricException {
 
-    /*
-     * Enforce package builder patterns.
+    /**
+     * Create a new service InvalidArgumentException with the given information.
+     *
+     * @param code the GRPC status code
+     * @param message the error message
+     * @param cause the error root cause
+     * @param ed the structured GRPC error details
      */
-    InvalidArgumentException(Code code, String message, StatusRuntimeException cause, ErrorDetails errorDetails) {
-        super(code, message, cause, errorDetails);
+    public InvalidArgumentException(Code code, String message, StatusRuntimeException cause, ErrorDetails ed) {
+        super(code, message, cause, ed);
     }
 
 }
