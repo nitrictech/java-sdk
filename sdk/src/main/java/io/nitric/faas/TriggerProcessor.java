@@ -119,7 +119,7 @@ public class TriggerProcessor {
 
             return TriggerResponse.newBuilder()
                     .setHttp(HttpResponseContext.newBuilder().setStatus(500))
-                    .setData(ByteString.copyFrom("Error occurred see logs for details", StandardCharsets.UTF_8))
+                    .setData(ByteString.copyFrom("Error occurred see logs for details.", StandardCharsets.UTF_8))
                     .build();
         }
     }
