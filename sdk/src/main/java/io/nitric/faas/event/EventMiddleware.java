@@ -35,6 +35,9 @@ import io.nitric.util.Contracts;
  */
 public abstract class EventMiddleware {
 
+    /** The final middleware in the chain. */
+    public static EventMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
+
     /** The next EventMiddleware to execute. */
     protected EventMiddleware next;
 
@@ -48,12 +51,13 @@ public abstract class EventMiddleware {
     public abstract EventContext handle(EventContext context, EventMiddleware next);
 
     /**
-     * Return the next EventMiddleware to process request context.
+     * Return the next EventMiddleware to process request context. If no next
+     * middleware configured, then this method will return the FinalMiddleware.
      *
      * @return the next EventMiddleware to process request context
      */
     public EventMiddleware getNext() {
-        return next;
+        return (next != null) ? next : FINAL_MIDDLEWARE;
     }
 
     /**
@@ -65,6 +69,70 @@ public abstract class EventMiddleware {
         Contracts.requireNonNull(middleware, "middleware");
 
         this.next = middleware;
+    }
+
+    // Inner Classes ----------------------------------------------------------
+
+    /**
+     * Provides a EventHandler to EventMiddleware adapter class.
+     */
+    public static class HandlerAdapter extends EventMiddleware {
+
+        /** The EventHandler to adapt. */
+        protected final EventHandler handler;
+
+        /**
+         * Create a new EventMiddleware adapter from the given EventHandler object.
+         *
+         * @param handler the EventHandler to adapt to middleware
+         */
+        public HandlerAdapter(EventHandler handler) {
+            Contracts.requireNonNull(handler, "handler");
+
+            this.handler = handler;
+        }
+
+        /**
+         * Handle the Event Request and invoke the next handler in the chain.
+         *
+         * @param context the Event request/response context
+         * @param next the next EventMiddleware handler to invoke in the chain
+         * @return the context object returned by the next handler
+         */
+        @Override
+        public EventContext handle(EventContext context, EventMiddleware next) {
+
+            var ctx  = handler.handle(context);
+
+            return next.handle(ctx, next.getNext());
+        }
+
+        /**
+         * Return the wrapped EventHandler object.
+         *
+         * @return the wrapped EventHandler object
+         */
+        public EventHandler getHandler() {
+            return handler;
+        }
+    }
+
+    /**
+     * Provides the final EventMiddleware in the chain which simply returns the context.
+     */
+    public static class FinalMiddleware extends EventMiddleware {
+
+        /**
+         * This method will simply return the context and not invoke the next middleware.
+         *
+         * @param context the Event request/response context
+         * @param next the next EventMiddleware handler which will be ignored
+         * @return the passed context
+         */
+        @Override
+        public EventContext handle(EventContext context, EventMiddleware next) {
+            return context;
+        }
     }
 
 }

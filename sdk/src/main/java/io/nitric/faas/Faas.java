@@ -30,10 +30,8 @@ import java.util.logging.Logger;
 import io.grpc.stub.StreamObserver;
 import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
-import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
-import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
@@ -112,7 +110,7 @@ public class Faas {
     public Faas event(EventHandler eventHandler) {
         Contracts.requireNonNull(eventHandler, "eventHandler");
 
-        eventMiddlewares.add(new EventMiddlewareAdapter(eventHandler));
+        eventMiddlewares.add(new EventMiddleware.HandlerAdapter(eventHandler));
         return this;
     }
 
@@ -125,7 +123,7 @@ public class Faas {
     public Faas http(HttpHandler httpHandler) {
         Contracts.requireNonNull(httpHandler, "httpHandler");
 
-        httpMiddlewares.add(new HttpMiddlewareAdapter(httpHandler));
+        httpMiddlewares.add(new HttpMiddleware.HandlerAdapter(httpHandler));
         return this;
     }
 

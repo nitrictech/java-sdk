@@ -35,6 +35,9 @@ import io.nitric.util.Contracts;
  */
 public abstract class HttpMiddleware {
 
+    /** The final middleware in the chain. */
+    public static HttpMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
+
     /** The next HttpMiddleware to execute. */
     protected HttpMiddleware next;
 
@@ -48,12 +51,13 @@ public abstract class HttpMiddleware {
     public abstract HttpContext handle(HttpContext context, HttpMiddleware next);
 
     /**
-     * Return the next HttpMiddleware to process request context.
+     * Return the next HttpMiddleware to process request context. If no next
+     * middleware configured, then this method will return the FinalMiddleware.
      *
      * @return the next HttpMiddleware to process request context
      */
     public HttpMiddleware getNext() {
-        return next;
+        return (next != null) ? next : FINAL_MIDDLEWARE;
     }
 
     /**
@@ -66,4 +70,69 @@ public abstract class HttpMiddleware {
 
         this.next = middleware;
     }
+
+    // Inner Classes ----------------------------------------------------------
+
+    /**
+     * Provides a HttpHandler to HttpMiddleware adapter class.
+     */
+    public static class HandlerAdapter extends HttpMiddleware {
+
+        /** The HttpHandler to adapt. */
+        protected final HttpHandler handler;
+
+        /**
+         * Create a new HttpMiddleware adapter from the given HttpHandler object.
+         *
+         * @param handler the HttpHandler to adapt to middleware
+         */
+        public HandlerAdapter(HttpHandler handler) {
+            Contracts.requireNonNull(handler, "handler");
+
+            this.handler = handler;
+        }
+
+        /**
+         * Handle the Http Request and invoke the next handler in the chain.
+         *
+         * @param context the HTTP request/response context
+         * @param next the next HttpMiddleware handler to invoke in the chain
+         * @return the context object returned by the next handler
+         */
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+
+            var ctx  = handler.handle(context);
+
+            return next.handle(ctx, next.getNext());
+        }
+
+        /**
+         * Return the wrapped HttpHandler object.
+         *
+         * @return the wrapped HttpHandler object
+         */
+        public HttpHandler getHandler() {
+            return handler;
+        }
+    }
+
+    /**
+     * Provides the final HttpMiddleware in the chain which simply returns the context.
+     */
+    public static class FinalMiddleware extends HttpMiddleware {
+
+        /**
+         * This method will simply return the context and not invoke the next middleware.
+         *
+         * @param context the HTTP request/response context
+         * @param next the next HttpMiddleware handler which will be ignored
+         * @return the passed context
+         */
+        @Override
+        public HttpContext handle(HttpContext context, HttpMiddleware next) {
+            return context;
+        }
+    }
+
 }
