@@ -111,38 +111,27 @@ public class Faas {
     // Public Methods -------------------------------------------------------------------
 
     /**
-     * Register a EventHandler function.
+     * Add an Event handler function. Event middleware and handler functions are processed
+     * in the order they are added to the Faas.
      *
-     * @param eventHandler the EventHandler to register (required)
+     * @param handler the EventHandler to add (required)
      * @return this chainable Faas object
      */
-    public Faas event(EventHandler eventHandler) {
-        Contracts.requireNonNull(eventHandler, "eventHandler");
+    public Faas event(EventHandler handler) {
+        Contracts.requireNonNull(handler, "handler");
 
-        eventMiddlewares.add(new EventMiddleware.HandlerAdapter(eventHandler));
+        eventMiddlewares.add(new EventMiddleware.HandlerAdapter(handler));
         return this;
     }
 
     /**
-     * Register a HttpHandler function.
+     * Add an Event processing middleware. Event middleware and handler functions are processed
+     * in the order they are added to the Faas.
      *
-     * @param httpHandler the HttpHandler to register (required)
+     * @param middleware the EventMiddleware to add (required)
      * @return this chainable Faas object
      */
-    public Faas http(HttpHandler httpHandler) {
-        Contracts.requireNonNull(httpHandler, "httpHandler");
-
-        httpMiddlewares.add(new HttpMiddleware.HandlerAdapter(httpHandler));
-        return this;
-    }
-
-    /**
-     * Add an EventMiddleware handler object.
-     *
-     * @param middleware the EventMiddleware handler object (required)
-     * @return this chainable Faas object
-     */
-    public Faas addMiddleware(EventMiddleware middleware) {
+    public Faas event(EventMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
 
         eventMiddlewares.add(middleware);
@@ -150,12 +139,27 @@ public class Faas {
     }
 
     /**
-     * Add an HttpMiddleware handler object.
+     * Add an HTTP handler function. HTTP middleware and handler functions are processed
+     * in the order they are added to the Faas.
      *
-     * @param middleware the HttpMiddleware handler object (required)
+     * @param handler the HttpHandler to add (required)
      * @return this chainable Faas object
      */
-    public Faas addMiddleware(HttpMiddleware middleware) {
+    public Faas http(HttpHandler handler) {
+        Contracts.requireNonNull(handler, "handler");
+
+        httpMiddlewares.add(new HttpMiddleware.HandlerAdapter(handler));
+        return this;
+    }
+
+    /**
+     * Add an HTTP request processing middleware. HTTP middleware and handler functions
+     * are processed in the order they are added to the Faas.
+     *
+     * @param middleware the HttpMiddleware to add (required)
+     * @return this chainable Faas object
+     */
+    public Faas http(HttpMiddleware middleware) {
         Contracts.requireNonNull(middleware, "middleware");
 
         httpMiddlewares.add(middleware);

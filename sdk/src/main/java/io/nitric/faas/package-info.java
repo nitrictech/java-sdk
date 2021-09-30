@@ -176,7 +176,7 @@
  *         var handler = new ReadHandler(documents);
  *
  *         new Faas()
- *             .addMiddleware(middleware)
+ *             .http(middleware)
  *             .http(handler)
  *             .start();
  *     }

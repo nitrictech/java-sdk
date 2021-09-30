@@ -78,7 +78,7 @@ public class FaasTest {
                 return context;
             }
         };
-        faas.addMiddleware(eventMiddleware);
+        faas.event(eventMiddleware);
         assertEquals(2, faas.eventMiddlewares.size());
         assertSame(eventMiddleware, faas.eventMiddlewares.get(1));
 
@@ -87,7 +87,7 @@ public class FaasTest {
                 return context;
             }
         };
-        faas.addMiddleware(httpMiddleware);
+        faas.http(httpMiddleware);
         assertEquals(2, faas.httpMiddlewares.size());
         assertSame(httpMiddleware, faas.httpMiddlewares.get(1));
 
