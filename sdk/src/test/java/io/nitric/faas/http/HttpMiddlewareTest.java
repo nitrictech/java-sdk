@@ -20,9 +20,9 @@
 
 package io.nitric.faas.http;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Provides an HttpMiddleware test case.
@@ -31,20 +31,48 @@ public class HttpMiddlewareTest {
 
     @Test
     public void test_next() {
-        var middleware1 = new TestEventMiddleware();
+        var middleware1 = new TestHttpMiddleware();
 
-        var middleware2 = new TestEventMiddleware();
+        var middleware2 = new TestHttpMiddleware();
 
         middleware1.setNext(middleware2);
 
         assertSame(middleware2, middleware1.getNext());
     }
 
-    public static class TestEventMiddleware extends HttpMiddleware {
+    @Test
+    public void test_adapter_handle() {
+        var handler = new TestHttpHandler();
+
+        var middlewareAdapter = new HttpMiddleware.HandlerAdapter(handler);
+        assertSame(handler, middlewareAdapter.getHandler());
+
+        var context = HttpContext.newBuilder().method("GET").build();
+
+        var ctx = middlewareAdapter.handle(context, HttpMiddleware.FINAL_MIDDLEWARE);
+        assertNotNull(ctx);
+
+        assertTrue(handler.called);
+    }
+
+    // Inner Classes ----------------------------------------------------------
+
+    public static class TestHttpMiddleware extends HttpMiddleware {
 
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
             return null;
+        }
+    }
+
+    public static class TestHttpHandler implements HttpHandler {
+
+        boolean called;
+
+        @Override
+        public HttpContext handle(HttpContext context) {
+            called = true;
+            return context;
         }
     }
 

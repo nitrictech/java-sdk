@@ -20,15 +20,14 @@
 
 package io.nitric.faas.event;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Provides an EventMiddleware test case.
  */
 public class EventMiddlewareTest {
-
 
     @Test
     public void test_next() {
@@ -39,6 +38,34 @@ public class EventMiddlewareTest {
         middleware1.setNext(middleware2);
 
         assertSame(middleware2, middleware1.getNext());
+    }
+
+    @Test
+    public void test_adapter_handle() {
+        var handler = new TestEventHandler();
+
+        var middlewareAdapter = new EventMiddleware.HandlerAdapter(handler);
+        assertSame(handler, middlewareAdapter.getHandler());
+
+        var context = EventContext.newBuilder().topic("topic").build();
+
+        var ctx = middlewareAdapter.handle(context, EventMiddleware.FINAL_MIDDLEWARE);
+        assertNotNull(ctx);
+
+        assertTrue(handler.called);
+    }
+
+    // Inner Classes -----------------------------------------------------------------
+
+    static class TestEventHandler implements EventHandler {
+
+        boolean called;
+
+        @Override
+        public EventContext handle(EventContext context) {
+            called = true;
+            return context;
+        }
     }
 
     public static class TestEventMiddleware extends EventMiddleware {

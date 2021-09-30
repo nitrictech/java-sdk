@@ -27,11 +27,9 @@ import io.nitric.api.NotFoundException;
 import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
-import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
-import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.error.v1.ErrorDetails;
 import io.nitric.proto.error.v1.ErrorScope;
 import io.nitric.proto.faas.v1.HttpTriggerContext;
@@ -85,8 +83,7 @@ public class TriggerProcessorTest {
         var first = processor.buildEventMiddlewareChain();
         assertSame(eventMiddleware1, ((TriggerProcessor.EventMiddlewareWrapper) first).target);
         assertSame(eventMiddleware2, ((TriggerProcessor.EventMiddlewareWrapper) first.getNext()).target);
-        assertNotNull(first.getNext().getNext());
-        assertNull(first.getNext().getNext().getNext());
+        assertSame(EventMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 
     @Test
@@ -109,8 +106,7 @@ public class TriggerProcessorTest {
         var first = processor.buildHttpMiddlewareChain();
         assertSame(httpMiddleware1, ((TriggerProcessor.HttpMiddlewareWrapper) first).target);
         assertSame(httpMiddleware2, ((TriggerProcessor.HttpMiddlewareWrapper) first.getNext()).target);
-        assertNotNull(first.getNext().getNext());
-        assertNull(first.getNext().getNext().getNext());
+        assertSame(HttpMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 
     @Test
@@ -131,7 +127,7 @@ public class TriggerProcessorTest {
         var middleware = new TestHttpMiddleware();
 
         var triggerProcessor1 = new TriggerProcessor();
-        triggerProcessor1.setHttpMiddlewares(List.of(middleware, new HttpMiddlewareAdapter(handler)));
+        triggerProcessor1.setHttpMiddlewares(List.of(middleware, new HttpMiddleware.HandlerAdapter(handler)));
 
         var request1 = TriggerRequest.newBuilder()
             .setHttp(HttpTriggerContext.newBuilder().setMethod("GET"))
@@ -189,7 +185,7 @@ public class TriggerProcessorTest {
         assertEquals("Error occurred see logs for details", res3.getData().toStringUtf8());
 
         // Test error thrown handler
-        HttpMiddleware errorHandlerMiddleware = new HttpMiddlewareAdapter(new ErrorHttpHandler());
+        HttpMiddleware errorHandlerMiddleware = new HttpMiddleware.HandlerAdapter(new ErrorHttpHandler());
 
         var triggerProcessor4 = new TriggerProcessor();
         triggerProcessor4.setHttpMiddlewares(List.of(middleware, errorHandlerMiddleware));
@@ -223,7 +219,7 @@ public class TriggerProcessorTest {
         var middleware = new TestEventMiddleware();
 
         var triggerProcessor1 = new TriggerProcessor();
-        triggerProcessor1.setEventMiddlewares(List.of(middleware, new EventMiddlewareAdapter(handler)));
+        triggerProcessor1.setEventMiddlewares(List.of(middleware, new EventMiddleware.HandlerAdapter(handler)));
 
         var request1 = TriggerRequest.newBuilder()
                 .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
@@ -269,7 +265,7 @@ public class TriggerProcessorTest {
         assertNull(res3);
 
         // Test error thrown handler
-        EventMiddleware errorHandlerMiddleware = new EventMiddlewareAdapter(new ErrorEventHandler());
+        EventMiddleware errorHandlerMiddleware = new EventMiddleware.HandlerAdapter(new ErrorEventHandler());
 
         var triggerProcessor4 = new TriggerProcessor();
         triggerProcessor4.setEventMiddlewares(List.of(middleware, errorHandlerMiddleware));

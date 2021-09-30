@@ -20,20 +20,18 @@
 
 package io.nitric.faas;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import com.google.protobuf.ByteString;
 import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventMiddleware;
-import io.nitric.faas.event.EventMiddlewareAdapter;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpMiddleware;
-import io.nitric.faas.http.HttpMiddlewareAdapter;
 import io.nitric.proto.faas.v1.HttpResponseContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
 import io.nitric.util.Contracts;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Provides a Nitric TriggerRequest processor class.
@@ -173,8 +171,6 @@ public class TriggerProcessor {
             middleware = next;
         }
 
-        middleware.setNext(new FinalEventMiddleware());
-
         return firstMiddleware;
     }
 
@@ -198,34 +194,10 @@ public class TriggerProcessor {
             middleware = next;
         }
 
-        middleware.setNext(new FinalHttpMiddleware());
-
         return firstMiddleware;
     }
 
     // Inner Classes -----------------------------------------------------------------
-
-    /**
-     * Provides the final EventMiddleware in the chain which simply returns the context.
-     */
-    protected static class FinalEventMiddleware extends EventMiddleware {
-
-        @Override
-        public EventContext handle(EventContext context, EventMiddleware next) {
-            return context;
-        }
-    }
-
-    /**
-     * Provides the final HttpMiddleware in the chain which simply returns the context.
-     */
-    protected static class FinalHttpMiddleware extends HttpMiddleware {
-
-        @Override
-        public HttpContext handle(HttpContext context, HttpMiddleware next) {
-            return context;
-        }
-    }
 
     /**
      * Provides an EventMiddleware wrapper to accurately report processing errors.
@@ -246,9 +218,9 @@ public class TriggerProcessor {
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
             // Stash the target name for error reporting
-            if (target instanceof EventMiddlewareAdapter) {
-                var wrapper = (EventMiddlewareAdapter) target;
-                middlewareThreadLocal.set(wrapper.getHandler().getClass().getName());
+            if (target instanceof EventMiddleware.HandlerAdapter) {
+                var adapter = (EventMiddleware.HandlerAdapter) target;
+                middlewareThreadLocal.set(adapter.getHandler().getClass().getName());
             } else {
                 middlewareThreadLocal.set(target.getClass().getName());
             }
@@ -281,9 +253,9 @@ public class TriggerProcessor {
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
             // Stash the target name for error reporting
-            if (target instanceof HttpMiddlewareAdapter) {
-                var wrapper = (HttpMiddlewareAdapter) target;
-                middlewareThreadLocal.set(wrapper.getHandler().getClass().getName());
+            if (target instanceof HttpMiddleware.HandlerAdapter) {
+                var adapter = (HttpMiddleware.HandlerAdapter) target;
+                middlewareThreadLocal.set(adapter.getHandler().getClass().getName());
             } else {
                 middlewareThreadLocal.set(target.getClass().getName());
             }
