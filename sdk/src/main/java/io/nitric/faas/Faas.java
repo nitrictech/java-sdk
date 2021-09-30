@@ -40,7 +40,9 @@ import io.nitric.util.GrpcChannelProvider;
 
 /**
  * <p>
- *  Provides a Nitric FaaS (Function as a Service) server.
+ *  Provides a Nitric FaaS (Function as a Service) server for Event and HTTP handler functions and middleware. The
+ *  Faas server connects to the Nitric Membrane via a gRPC channel and then waits to process HTTP and Topic events
+ *  from the Membrane.
  * </p>
  *
  * <p>
@@ -54,7 +56,7 @@ import io.nitric.util.GrpcChannelProvider;
  * import io.nitric.faas.http.HttpContext;
  * import io.nitric.faas.http.HttpHandler;
  *
- * public class ReadFunction implements HttpHandler {
+ * public class ReadHandler implements HttpHandler {
  *
  *     final Documents documents;
  *
@@ -85,10 +87,17 @@ import io.nitric.util.GrpcChannelProvider;
  *     }
  *
  *     public static void main(String[] args) {
- *         var read = new ReadFunction(new Documents());
- *         new Faas().http(read).start();
+ *         var documents = new Documents();
+ *         var handler = new ReadHandler(documents);
+ *
+ *         new Faas().http(handler).start();
  *     }
  * } </code></pre>
+ *
+ * @see EventHandler
+ * @see EventMiddleware
+ * @see HttpHandler
+ * @see HttpMiddleware
  */
 public class Faas {
 

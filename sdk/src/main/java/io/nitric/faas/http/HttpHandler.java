@@ -22,14 +22,16 @@ package io.nitric.faas.http;
 
 /**
  * <p>
- * Provides an Http Handler class.
+ * Provides an HTTP Handler interface.
  * </p>
-
+ *
+ * @see HttpContext
+ * @see HttpMiddleware
  */
 public interface HttpHandler {
 
     /**
-     * Handle the HttpContext request and return HttpContext response.
+     * Handle the HTTP request.
      *
      * @param context the HTTP request/response context
      * @return the HttpContext response

@@ -30,7 +30,71 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Provides a Http Context object.
+ * <p>
+ * Provides an HTTP Context class. The HttpContext object is composed of an immutable Request object and a
+ * mutable Response object.
+ * </p>
+ *
+ * <p>
+ * Function handlers and middleware can set properties and data on the response object during the request cycle.
+ * </p>
+ *
+ * <h3>Handler Example</h3>
+ *
+ * <p>
+ * The example below is creating a new customer document, and renders a success message to the HTTP response.
+ * If an error occurred a HTTP 500 status code is set an error message is rendered.
+ * </p>
+ *
+ * <pre><code class="code">
+ * &#64;Override
+ * public HttpContext handle(HttpContext context) {
+ *     Stream&lt;ResultDoc&lt;Customer&gt;&gt; stream = documents.collection("customers")
+ *         .query(Customer.class)
+ *         .stream();
+ *
+ *     List&lt;Customer&gt; customers = stream
+ *          .map(ResultDoc::getContent)
+ *          .collect(Collectors.toUnmodifiableList());
+ *
+ *     try {
+ *         var json = new ObjectMapper().writeValueAsString(customers);
+ *
+ *         context.getResponse()
+ *             .addHeader("Content-Type", "application/json")
+ *             .data(json);
+ *
+ *     } catch (IOException ioe) {
+ *         logger.error(ioe);
+ *
+ *         context.getResponse()
+ *             .status(500)
+ *             .data("Error querying customers: " + ioe.toString());
+ *     }
+ *
+ *     return context;
+ * }
+ * </code></pre>
+ *
+ * <h3>Unit Test Example</h3>
+ *
+ * <p>
+ *  A HttpContext Builder class is also provided to support unit testing of function handlers.
+ * </p>
+ *
+ * <pre><code class="code">
+ * var context = HttpContext.newBuilder()
+ *     .method("GET")
+ *     .path("/customers")
+ *     .build();
+ *
+ * var function = new ListHandler(documents);
+ *
+ * var ctx = function.handle(context);
+ * </code></pre>
+ *
+ * @see HttpHandler
+ * @see HttpMiddleware
  */
 public class HttpContext {
 
@@ -54,7 +118,7 @@ public class HttpContext {
     }
 
     /**
-     * Create a new HTTP context object from the given context.
+     * Provides a copy construct creating a new Event context object from the given context parameter.
      *
      * @param context the HTTP context object to copy (required)
      */

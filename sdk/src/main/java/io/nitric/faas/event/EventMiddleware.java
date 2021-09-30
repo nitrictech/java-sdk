@@ -24,14 +24,11 @@ import io.nitric.util.Contracts;
 
 /**
  * <p>
- * Provides an Event Handler middleware class.
+ * Provides a Event Handler middleware class.
  * </p>
  *
- * <p>
- * Middleware handlers follow the 'Chain of Responsibility' design pattern whereby they
- * invoke the next handler which can handle the request. This pattern is equivalent
- * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
- * </p>
+ * @see EventContext
+ * @see EventHandler
  */
 public abstract class EventMiddleware {
 
@@ -118,7 +115,8 @@ public abstract class EventMiddleware {
     }
 
     /**
-     * Provides the final EventMiddleware in the chain which simply returns the context.
+     * Provides the final EventMiddleware in the chain. This handler will simply return the context and not invoke the
+     * next middleware.
      */
     public static class FinalMiddleware extends EventMiddleware {
 
@@ -127,7 +125,7 @@ public abstract class EventMiddleware {
          *
          * @param context the Event request/response context
          * @param next the next EventMiddleware handler which will be ignored
-         * @return the passed context
+         * @return the context invoked with
          */
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
