@@ -46,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class TriggerProcessorTest {
 
+    private final static String HTTP_ERROR_MSG = "Error occurred see logs for details.";
+
     @Test
     public void test_setters() {
         var processor = new TriggerProcessor();
@@ -166,7 +168,7 @@ public class TriggerProcessorTest {
         assertFalse(res2.hasTopic());
 
         assertEquals(500, res2.getHttp().getStatus());
-        assertEquals("Error occurred see logs for details", res2.getData().toStringUtf8());
+        assertEquals(HTTP_ERROR_MSG, res2.getData().toStringUtf8());
 
         // Test error thrown middleware
         HttpMiddleware errorMiddleware = new ErrorHttpMiddleware();
@@ -182,7 +184,7 @@ public class TriggerProcessorTest {
         assertNotNull(res3);
 
         assertEquals(500, res3.getHttp().getStatus());
-        assertEquals("Error occurred see logs for details", res3.getData().toStringUtf8());
+        assertEquals(HTTP_ERROR_MSG, res3.getData().toStringUtf8());
 
         // Test error thrown handler
         HttpMiddleware errorHandlerMiddleware = new HttpMiddleware.HandlerAdapter(new ErrorHttpHandler());
@@ -198,7 +200,7 @@ public class TriggerProcessorTest {
         assertNotNull(res4);
 
         assertEquals(500, res4.getHttp().getStatus());
-        assertEquals("Error occurred see logs for details", res4.getData().toStringUtf8());
+        assertEquals(HTTP_ERROR_MSG, res4.getData().toStringUtf8());
     }
 
     @Test
