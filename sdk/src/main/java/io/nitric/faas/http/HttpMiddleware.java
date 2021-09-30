@@ -24,14 +24,11 @@ import io.nitric.util.Contracts;
 
 /**
  * <p>
- * Provides an HTTP Middleware handler class.
+ * Provides a HTTP Middleware handler class.
  * </p>
  *
- * <p>
- * Middleware Handlers follow the 'Chain of Responsibility' design pattern whereby they
- * invoke the next handler which can handle the request. This pattern is equivalent
- * to the J2EE Servlet Filters or JavaScript front-end middleware design patterns.
- * </p>
+ * @see HttpContext
+ * @see HttpHandler
  */
 public abstract class HttpMiddleware {
 
@@ -118,7 +115,8 @@ public abstract class HttpMiddleware {
     }
 
     /**
-     * Provides the final HttpMiddleware in the chain which simply returns the context.
+     * Provides the final HttpMiddleware in the chain. This handler will simply return the context and not invoke the
+     * next middleware.
      */
     public static class FinalMiddleware extends HttpMiddleware {
 
@@ -127,7 +125,7 @@ public abstract class HttpMiddleware {
          *
          * @param context the HTTP request/response context
          * @param next the next HttpMiddleware handler which will be ignored
-         * @return the passed context
+         * @return the context invoked with
          */
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {

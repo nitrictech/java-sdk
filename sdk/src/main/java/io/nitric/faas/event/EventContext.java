@@ -25,7 +25,67 @@ import java.nio.charset.StandardCharsets;
 import io.nitric.util.Contracts;
 
 /**
- * Provides a Event Context object.
+ * <p>
+ * Provides an Event Context class. The EventContext object is composed of an immutable Request object and a
+ * mutable Response object.
+ * </p>
+ *
+ * <p>
+ * Function handlers and middleware can set properties and data on the response object during the request cycle.
+ * </p>
+ *
+ * <h3>Handler Example</h3>
+ *
+ * <p>
+ * The example below is creating a new customer document, and specifying the event was successful processed in
+ * the context response success status. If an error occurred the response success status is set to false.
+ * </p>
+ *
+ * <pre><code class="code">
+ * &#64;Override
+ * public EventContext handle(EventContext context) {
+ *     try {
+ *         var json = context.getRequest().getDataAsText();
+ *         var customer = new ObjectMapper().readValue(json, Customer.class);
+ *         var id = UUID.randomUUID().toString();
+ *
+ *         documents.collection("customer")
+ *             .doc(id, Customer.class)
+ *             .set(customer);
+ *
+ *         context.getResponse().success(true);
+ *
+ *     } catch (IOException ioe) {
+ *         logger.error(ioe);
+ *
+ *         context.getResponse().success(false);
+ *     }
+ *
+ *     return context;
+ * }
+ * </code></pre>
+ *
+ * <h3>Unit Test Example</h3>
+ *
+ * <p>
+ *  A EventContext Builder class is also provided to support unit testing of function handlers.
+ * </p>
+ *
+ * <pre><code class="code">
+ * var json = "{ \"email\": \"user@server.com\" }";
+ *
+ * var context = EventContext.newBuilder()
+ *     .topic("createCustomer")
+ *     .data(json)
+ *     .build();
+ *
+ * var function = new CreateHandler(documents);
+ *
+ * var ctx = function.handle(context);
+ * </code></pre>
+ *
+ * @see EventHandler
+ * @see EventMiddleware
  */
 public class EventContext {
 
@@ -49,7 +109,7 @@ public class EventContext {
     }
 
     /**
-     * Create a new EventContext object from the given context.
+     * Provides a copy construct creating a new Event context object from the given context parameter.
      *
      * @param context the context object to copy (required)
      */

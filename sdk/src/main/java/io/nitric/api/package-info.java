@@ -20,7 +20,7 @@
 
 /**
  * <p>
- *  Provides then Nitric API exception classes.
+ *  Provides the API exception classes.
  * </p>
  */
 package io.nitric.api;

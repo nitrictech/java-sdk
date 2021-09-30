@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class NitricException extends RuntimeException {
 
-    /** The GRPC error code. */
+    /** The gRPC status error codes. */
     public enum Code {
         /** Operation was aborted. */
         ABORTED,

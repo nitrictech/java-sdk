@@ -18,24 +18,14 @@
  * #L%
  */
 
-package io.nitric.faas.event;
-
 /**
  * <p>
- * Provides an Event Handler interface.
+ *  Provides the FaaS Event context and middleware classes.
  * </p>
  *
- * @see EventContext
- * @see EventMiddleware
+ * <p>
+ *  Event handler functions are configured in the Nitric stack definition file to handle to Topic event
+ *  notifications.
+ * </p>
  */
-public interface EventHandler {
-
-    /**
-     * Handle the topic subscription event.
-     *
-     * @param context the EventContext request/response context
-     * @return the context object returned by the next handler
-     */
-    public EventContext handle(EventContext context);
-
-}
+package io.nitric.faas.event;
