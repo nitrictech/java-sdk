@@ -50,7 +50,7 @@
  *
  *     &#64;Override
  *     public void error(Throwable error, String format, Object... args) {
- *         System.err.printf("ERROR: " + format + "\n", args);
+ *         System.out.printf("ERROR: " + format + "\n", args);
  *         error.printStackTrace();
  *     }
  * }

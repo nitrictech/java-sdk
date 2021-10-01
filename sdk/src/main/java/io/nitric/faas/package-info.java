@@ -150,7 +150,7 @@
  *        var ctx = next.handle(context, next.getNext());
  *
  *        var duration = System.currentTimeMillis() - start;
- *        logger.info("HTTP %s %s -> %s handled in %s ms\n",
+ *        logger.info("HTTP %s %s -&gt; %s handled in %s ms\n",
  *                    ctx.getRequest().getMethod(),
  *                    ctx.getRequest().getPath(),
  *                    next.getClass().getSimpleName(),
