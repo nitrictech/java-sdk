@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.grpc.StatusRuntimeException;
 import io.grpc.Status.Code;
 import io.grpc.stub.StreamObserver;
+import io.nitric.faas.logger.Logger;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.ServerMessage;
 import io.nitric.proto.faas.v1.TriggerRequest;
@@ -40,6 +41,7 @@ class FaasStreamObserver implements StreamObserver<ServerMessage> {
     final TriggerProcessor triggerProcessor;
     final AtomicReference<StreamObserver<ClientMessage>> clientObserver;
     final CountDownLatch finishedLatch;
+    final Logger logger;
 
     // Constructor ------------------------------------------------------------
 
@@ -49,15 +51,18 @@ class FaasStreamObserver implements StreamObserver<ServerMessage> {
      * @param triggerProcessor the GRPC TriggerProcessor
      * @param clientObserver the client observer
      * @param finishedLatch the finish latch
+     * @param logger the Faas logger
      */
     protected FaasStreamObserver(
         TriggerProcessor triggerProcessor,
         AtomicReference<StreamObserver<ClientMessage>> clientObserver,
-        CountDownLatch finishedLatch
+        CountDownLatch finishedLatch,
+        Logger logger
     ) {
         this.triggerProcessor = triggerProcessor;
         this.clientObserver = clientObserver;
         this.finishedLatch = finishedLatch;
+        this.logger = logger;
     }
 
     // Public Methods ---------------------------------------------------------
@@ -88,7 +93,7 @@ class FaasStreamObserver implements StreamObserver<ServerMessage> {
                 break;
 
             default:
-                Faas.logError("onNext() default case %s reached", serverMessage.getContentCase());
+                logger.error("onNext() default case %s reached", serverMessage.getContentCase());
                 break;
         }
     }
@@ -98,13 +103,13 @@ class FaasStreamObserver implements StreamObserver<ServerMessage> {
         if (error instanceof StatusRuntimeException) {
             var sre = (StatusRuntimeException) error;
             if (sre.getStatus().getCode().equals(Code.UNAVAILABLE)) {
-                Faas.logError(error,
+                logger.error(error,
                          "error occurred connecting to Nitric membrane on %s",
                          GrpcChannelProvider.getTarget());
                 return;
             }
         }
-        Faas.logError(error, "error occurred");
+        logger.error(error, "error occurred");
     }
 
     @Override

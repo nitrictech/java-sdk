@@ -30,6 +30,7 @@ import io.nitric.faas.event.EventMiddleware;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.faas.logger.JUtilLogger;
 import io.nitric.proto.error.v1.ErrorDetails;
 import io.nitric.proto.error.v1.ErrorScope;
 import io.nitric.proto.faas.v1.HttpTriggerContext;
@@ -156,6 +157,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor2 = new TriggerProcessor();
         triggerProcessor2.setHttpMiddlewares(List.of(middleware, nullMiddleware));
+        triggerProcessor2.setLogger(new JUtilLogger("Faas"));
 
         var request2 = TriggerRequest.newBuilder()
                 .setHttp(HttpTriggerContext.newBuilder().setMethod("PUT"))
@@ -175,6 +177,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor3 = new TriggerProcessor();
         triggerProcessor3.setHttpMiddlewares(List.of(middleware, errorMiddleware));
+        triggerProcessor3.setLogger(new JUtilLogger("Faas"));
 
         var request3 = TriggerRequest.newBuilder()
                 .setHttp(HttpTriggerContext.newBuilder().setMethod("DELETE").setPath("/customer"))
@@ -191,6 +194,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor4 = new TriggerProcessor();
         triggerProcessor4.setHttpMiddlewares(List.of(middleware, errorHandlerMiddleware));
+        triggerProcessor4.setLogger(new JUtilLogger("Faas"));
 
         var request4 = TriggerRequest.newBuilder()
                 .setHttp(HttpTriggerContext.newBuilder().setMethod("DELETE").setPath("/customer"))
@@ -245,6 +249,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor2 = new TriggerProcessor();
         triggerProcessor2.setEventMiddlewares(List.of(middleware, nullMiddleware));
+        triggerProcessor2.setLogger(new JUtilLogger("Faas"));
 
         var request2 = TriggerRequest.newBuilder()
                 .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
@@ -261,6 +266,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor3 = new TriggerProcessor();
         triggerProcessor3.setEventMiddlewares(List.of(middleware, errorMiddleware));
+        triggerProcessor3.setLogger(new JUtilLogger("Faas"));
 
         var request3 = TriggerRequest.newBuilder()
                 .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
@@ -277,6 +283,7 @@ public class TriggerProcessorTest {
 
         var triggerProcessor4 = new TriggerProcessor();
         triggerProcessor4.setEventMiddlewares(List.of(middleware, errorHandlerMiddleware));
+        triggerProcessor4.setLogger(new JUtilLogger("Faas"));
 
         var request4 = TriggerRequest.newBuilder()
                 .setTopic(TopicTriggerContext.newBuilder().setTopic("orders"))
