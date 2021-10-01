@@ -245,19 +245,4 @@ public class FaasTest {
         }
     }
 
-    @Test
-    public void logging() {
-        try {
-            Faas.logError("name: %s", "value");
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            Faas.logError(new NullPointerException(), "name: %s", "value");
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
 }

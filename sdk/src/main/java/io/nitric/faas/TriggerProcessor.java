@@ -26,6 +26,7 @@ import io.nitric.faas.event.EventMiddleware;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpMiddleware;
 import io.nitric.proto.faas.v1.HeaderValue;
+import io.nitric.faas.logger.Logger;
 import io.nitric.proto.faas.v1.HttpResponseContext;
 import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
@@ -44,6 +45,7 @@ public class TriggerProcessor {
 
     List<EventMiddleware> eventMiddlewares;
     List<HttpMiddleware> httpMiddlewares;
+    Logger logger;
 
     // Protected --------------------------------------------------------------
 
@@ -63,6 +65,16 @@ public class TriggerProcessor {
      */
     protected void setHttpMiddlewares(List<HttpMiddleware> httpMiddlewares) {
         this.httpMiddlewares = httpMiddlewares;
+    }
+
+    /**
+     * Configure the TriggerProcessor logger.
+     *
+     * @param logger the error logger (required)
+     */
+    public void setLogger(Logger logger) {
+        Contracts.requireNonNull(logger, "logger");
+        this.logger = logger;
     }
 
     /**
@@ -113,7 +125,7 @@ public class TriggerProcessor {
             return Marshaller.toHttpTriggerResponse(resultCtx.getResponse());
 
         } catch (Throwable error) {
-            Faas.logError(error,
+            logger.error(error,
                     "error handling Trigger HTTP %s '%s' with: %s",
                     context.getRequest().getMethod(),
                     context.getRequest().getPath(),
@@ -150,7 +162,7 @@ public class TriggerProcessor {
             return Marshaller.toTopicTriggerResponse(resultCtx.getResponse());
 
         } catch (Throwable error) {
-            Faas.logError(error,
+            logger.error(error,
                     "error handling Trigger Topic '%s' with: %s",
                     context.getRequest().getTopic(),
                     middlewareThreadLocal.get());

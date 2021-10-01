@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import io.grpc.stub.StreamObserver;
 import io.nitric.faas.event.EventHandler;
 import io.nitric.faas.event.EventMiddleware;
 import io.nitric.faas.http.HttpHandler;
 import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.faas.logger.Logger;
+import io.nitric.faas.logger.JUtilLogger;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
@@ -101,8 +101,7 @@ import io.nitric.util.GrpcChannelProvider;
  */
 public class Faas {
 
-    private static final Logger LOGGER = Logger.getLogger("Faas");
-
+    Logger logger = new JUtilLogger("Faa");
     FaasServiceGrpc.FaasServiceStub stub = null;
     TriggerProcessor triggerProcessor = new TriggerProcessor();
     List<EventMiddleware> eventMiddlewares = new ArrayList<>();
@@ -167,6 +166,19 @@ public class Faas {
     }
 
     /**
+     * Configure the Faas server logger.
+     *
+     * @param logger the Faas server logger (required)
+     * @return this chainable Faas object
+     */
+    public Faas logger(Logger logger) {
+        Contracts.requireNonNull(logger, "logger");
+
+        this.logger = logger;
+        return this;
+    }
+
+    /**
      * Configure the gRPC TriggerRequest processor.
      *
      * @param processor the gRPC TriggerRequest processor (required)
@@ -187,6 +199,7 @@ public class Faas {
 
         triggerProcessor.setEventMiddlewares(eventMiddlewares);
         triggerProcessor.setHttpMiddlewares(httpMiddlewares);
+        triggerProcessor.setLogger(logger);
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -204,7 +217,8 @@ public class Faas {
         CountDownLatch finishedLatch = new CountDownLatch(1);
 
         // Begin the stream
-        var observer = this.stub.triggerStream(new FaasStreamObserver(triggerProcessor, clientObserver, finishedLatch));
+        var fso = new FaasStreamObserver(triggerProcessor, clientObserver, finishedLatch, logger);
+        var observer = this.stub.triggerStream(fso);
 
         // Set atomic reference for the client to send messages back to the server
         // In the server message stream observer loop (see above)
@@ -222,7 +236,7 @@ public class Faas {
             finishedLatch.await();
 
         } catch (InterruptedException e) {
-            logError(e, "Stream was prematurely terminated, error: \n");
+            logger.error(e, "Stream was prematurely terminated, error: \n");
             // Restore thread interrupted state
             Thread.currentThread().interrupt();
 
@@ -244,29 +258,6 @@ public class Faas {
     protected Faas stub(FaasServiceGrpc.FaasServiceStub stub) {
         this.stub = stub;
         return this;
-    }
-
-    /**
-     * Log the given error message and arguments.
-     *
-     * @param format the error message format
-     * @param args the message arguments
-     */
-    protected static void logError(String format, Object...args) {
-        String msg = String.format(format, args);
-        LOGGER.log(Level.SEVERE, msg);
-    }
-
-    /**
-     * Log the given exception, error message and arguments.
-     *
-     * @param error the exception
-     * @param format the error message format
-     * @param args the message arguments
-     */
-    protected static void logError(Throwable error, String format, Object...args) {
-        String msg = String.format(format, args);
-        LOGGER.log(Level.SEVERE, msg, error);
     }
 
 }
