@@ -534,7 +534,7 @@ public class HttpContext {
         }
 
         /**
-         * Add a header with the given name and value.
+         * Add an HTTP header with the given name and value.
          *
          * @param name the header name to add (required)
          * @param value the header value to add (required)
@@ -566,6 +566,18 @@ public class HttpContext {
         public Response headers(Map<String, List<String>> headers) {
             Contracts.requireNonNull(headers, "headers");
             this.headers = headers;
+            return this;
+        }
+
+        /**
+         * Set the HTTP request 'Content-Type' header value.
+         *
+         * @param contentType the HTTP Content-Type header value (required)
+         * @return this chainable Response object
+         */
+        public Response contentType(String contentType) {
+            Contracts.requireNonBlank(contentType, "contentType");
+            addHeader("Content-Type", contentType);
             return this;
         }
 

@@ -103,11 +103,13 @@ public class HttpContextTest {
 
         var response4 = new HttpContext.Response()
                 .data("data")
+                .contentType("application/json")
                 .addHeader("header2", "value2")
                 .addHeader("header2", "value2");
 
         assertEquals("data", new String(response4.getData()));
         assertEquals("data", response4.getDataAsText());
+        assertEquals("[application/json]", response4.getHeaders().get("Content-Type").toString());
         assertEquals("[value2]", response4.getHeaders().get("header2").toString());
     }
 
