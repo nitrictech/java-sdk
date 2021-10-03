@@ -39,13 +39,18 @@
  * public class SystemLogger implements Logger {
  *
  *     &#64;Override
+ *     public void info(String format, Object... args) {
+ *         System.out.printf("INFO: " + format + "\n", args);
+ *     }
+ *
+ *     &#64;Override
  *     public void error(String format, Object... args) {
- *         System.out.printf("ERROR: " + format + "\n", args);
+ *         System.err.printf("ERROR: " + format + "\n", args);
  *     }
  *
  *     &#64;Override
  *     public void error(Throwable error, String format, Object... args) {
- *         System.out.printf("ERROR: " + format + "\n", args);
+ *         System.err.printf("ERROR: " + format + "\n", args);
  *         error.printStackTrace();
  *     }
  * }

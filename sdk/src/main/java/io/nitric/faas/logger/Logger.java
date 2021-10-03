@@ -26,6 +26,14 @@ package io.nitric.faas.logger;
 public interface Logger {
 
     /**
+     * Log the given information level message and arguments.
+     *
+     * @param format the error message format
+     * @param args the message arguments
+     */
+    void info(String format, Object...args);
+
+    /**
      * Log the given error message and arguments.
      *
      * @param format the error message format

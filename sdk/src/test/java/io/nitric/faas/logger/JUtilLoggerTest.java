@@ -33,6 +33,7 @@ public class JUtilLoggerTest {
     public void logging() {
         Logger logger = new JUtilLogger("Faas");
         try {
+            logger.info("name: %s", "value");
             logger.error("name: %s", "value");
         } catch (Exception e) {
             fail();
