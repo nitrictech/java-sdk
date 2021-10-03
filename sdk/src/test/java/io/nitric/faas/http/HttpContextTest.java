@@ -153,7 +153,7 @@ public class HttpContextTest {
                 .addHeader("header", "value1")
                 .addHeader("header", "value2")
                 .addQueryParam("param", "value")
-                .mimeType("mimeType")
+                .contentType("mimeType")
                 .data(data)
                 .build();
 
@@ -163,7 +163,7 @@ public class HttpContextTest {
         assertEquals("mimeType", request.getMimeType());
         assertEquals("data", new String(request.getData()));
         assertEquals("data", request.getDataAsText());
-        assertEquals("{header=[value1, value2]}", request.getHeaders().toString());
+        assertEquals("{header=[value1, value2], Content-Type=[mimeType]}", request.getHeaders().toString());
         assertEquals("{param=[value]}", request.getQueryParams().toString());
 
         var response = ctx.getResponse();

@@ -224,19 +224,27 @@ public class TriggerProcessor {
     /**
      * Provides an EventMiddleware wrapper to accurately report processing errors.
      */
-    protected static class EventMiddlewareWrapper extends EventMiddleware {
+    public static class EventMiddlewareWrapper extends EventMiddleware {
 
         final EventMiddleware target;
 
         /**
          * Create new EventMiddleware wrapper object with given target.
          *
-         * @param target the target middleware to process
+         * @param target the target middleware to process (required)
          */
-        protected EventMiddlewareWrapper(EventMiddleware target) {
+        public EventMiddlewareWrapper(EventMiddleware target) {
+            Contracts.requireNonNull(target, "target");
             this.target = target;
         }
 
+        /**
+         * Handle the Event request delegating to the target middleware.
+         *
+         * @param context the Event request/response context
+         * @param next the next Event Middleware handler to invoke in the chain
+         * @return the processed Event context
+         */
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
             // Stash the target name for error reporting
@@ -254,24 +262,41 @@ public class TriggerProcessor {
 
             return next.handle(resultCtx, next.getNext());
         }
+
+        /**
+         * Return the wrapped target middleware.
+         *
+         * @return the wrapped target middleware
+         */
+        public EventMiddleware getTarget() {
+            return target;
+        }
     }
 
     /**
      * Provides an HttpMiddleware wrapper to accurately report processing errors.
      */
-    protected static class HttpMiddlewareWrapper extends HttpMiddleware {
+    public static class HttpMiddlewareWrapper extends HttpMiddleware {
 
         final HttpMiddleware target;
 
         /**
          * Create new HttpMiddleware wrapper object with given target.
          *
-         * @param target the target middleware to process
+         * @param target the target middleware to process (required)
          */
-        protected HttpMiddlewareWrapper(HttpMiddleware target) {
+        public HttpMiddlewareWrapper(HttpMiddleware target) {
+            Contracts.requireNonNull(target, "target");
             this.target = target;
         }
 
+        /**
+         * Handle the HTTP request delegating to the target middleware.
+         *
+         * @param context the HTTP request/response context
+         * @param next the next HttpMiddleware handler to invoke in the chain
+         * @return the processed HTTP context
+         */
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
             // Stash the target name for error reporting
@@ -288,6 +313,15 @@ public class TriggerProcessor {
             }
 
             return next.handle(resultCtx, next.getNext());
+        }
+
+        /**
+         * Return the wrapped target middleware.
+         *
+         * @return the wrapped target middleware
+         */
+        public HttpMiddleware getTarget() {
+            return target;
         }
     }
 

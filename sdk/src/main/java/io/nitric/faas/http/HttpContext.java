@@ -61,7 +61,7 @@ import java.util.Map;
  *         var json = new ObjectMapper().writeValueAsString(customers);
  *
  *         context.getResponse()
- *             .addHeader("Content-Type", "application/json")
+ *             .contentType("application/json")
  *             .data(json);
  *
  *     } catch (IOException ioe) {
@@ -247,13 +247,15 @@ public class HttpContext {
         }
 
         /**
-         * Set the HTTP request mime-type.
+         * Set the HTTP request 'Content-Type' header value and mime-type.
          *
-         * @param mimeType the HTTP request mime-type
+         * @param contentType the HTTP request Content-Type (required)
          * @return this chainable builder object
          */
-        public Builder mimeType(String mimeType) {
-            this.mimeType = mimeType;
+        public Builder contentType(String contentType) {
+            Contracts.requireNonBlank(contentType, "contentType");
+            addHeader("Content-Type", contentType);
+            this.mimeType = contentType;
             return this;
         }
 
