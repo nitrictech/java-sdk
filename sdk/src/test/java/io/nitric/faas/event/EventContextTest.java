@@ -59,7 +59,7 @@ public class EventContextTest {
     @Test
     public void test_response() {
         var response = new EventContext.Response();
-        assertFalse(response.isSuccess());
+        assertTrue(response.isSuccess());
         assertNull(response.getData());
         assertNull(response.getDataAsText());
 
@@ -75,6 +75,9 @@ public class EventContextTest {
         assertEquals(new String(longData), new String(response2.getData()));
 
         assertEquals("Response[success=true, data=A third-party OAuth application (JetBrai...]", response2.toString());
+
+        var response3 = new EventContext.Response(response).success(false);
+        assertFalse(response3.isSuccess());
     }
 
     @Test
@@ -114,7 +117,7 @@ public class EventContextTest {
         assertEquals("data", request.getDataAsText());
 
         var response = ctx.getResponse();
-        assertFalse(response.isSuccess());
+        assertTrue(response.isSuccess());
         assertNull(response.getData());
         assertNull(response.getDataAsText());
 

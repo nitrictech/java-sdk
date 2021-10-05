@@ -28,28 +28,17 @@ import io.nitric.api.event.Event;
 import java.util.Map;
 // [END import]
 
-// [START snippet]
-public class EventIDsExample implements HttpHandler {
-
-    @Override
-    public HttpContext handle(HttpContext ctx) {
+public class EventIDsExample {
+    public static void Example() {
+        // [START snippet]
         var topic = new Events().topic("my-topic");
+
         topic.publish(
             Event.newBuilder()
                 .id("1234")
                 .payload(Map.of("Content", "of event"))
                 .build()
             );
-
-        ctx.getResponse().data("Successfully published message");
-
-        return ctx;
-    }
-
-    public static void main(String[] args) {
-        new Faas()
-            .http(new EventIDsExample())
-            .start();;
+        // [END snippet]
     }
 }
-// [END snippet]

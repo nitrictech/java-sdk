@@ -319,7 +319,7 @@ public class EventContext {
      */
     public static class Response {
 
-        boolean success;
+        boolean success = true;
         byte[] data;
 
         // Constructors -----------------------------------------------------------

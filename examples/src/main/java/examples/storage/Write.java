@@ -28,6 +28,7 @@ public class Write {
     public static void Example() {
         // [START snippet]
         var bucket = new Storage().bucket("my-bucket");
+
         try {
             bucket.file("/path/to/file").write("Hello World".getBytes("utf-8"));
         } catch (UnsupportedEncodingException ex) {
