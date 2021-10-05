@@ -27,6 +27,7 @@ public class Delete {
     public static void Example() {
         // [START snippet]
         var bucket = new Storage().bucket("my-bucket");
+
         bucket.file("/path/to/file").delete();
         // [END snippet]
     }

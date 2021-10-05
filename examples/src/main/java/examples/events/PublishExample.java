@@ -28,23 +28,12 @@ import io.nitric.api.event.Event;
 import java.util.Map;
 // [END import]
 
-// [START snippet]
-public class PublishExample implements HttpHandler {
-
-    @Override
-    public HttpContext handle(HttpContext ctx) {
+public class PublishExample {
+    public static void Example() {
+        // [START snippet]
         var topic = new Events().topic("my-topic");
+
         topic.publish(Event.build(Map.of("Content", "of event")));
-
-        ctx.getResponse().data("Successfully published message");
-
-        return ctx;
-    }
-
-    public static void main(String[] args) {
-        new Faas()
-            .http(new PublishExample())
-            .start();
+        // [END snippet]
     }
 }
-// [END snippet]

@@ -238,7 +238,7 @@ public class MarshallerTest {
         var ctx1 = Marshaller.toEventContext(triggerRequest1);
 
         ctx1.getResponse()
-                .success(true)
+                .success(false)
                 .data(LONG_DATA);
 
         var resp1 = Marshaller.toTopicTriggerResponse(ctx1.getResponse());
@@ -250,9 +250,9 @@ public class MarshallerTest {
         assertTrue(resp1.hasTopic());
 
         assertNotNull(resp1.getTopic());
-        assertEquals(true, resp1.getTopic().getSuccess());
+        assertEquals(false, resp1.getTopic().getSuccess());
 
-        // No Data
+        // Defaults (No Data)
         var ctx2 = Marshaller.toEventContext(triggerRequest1);
 
         var resp2 = Marshaller.toTopicTriggerResponse(ctx2.getResponse());
@@ -264,7 +264,7 @@ public class MarshallerTest {
         assertTrue(resp2.hasTopic());
 
         assertNotNull(resp2.getTopic());
-        assertEquals(false, resp2.getTopic().getSuccess());
+        assertEquals(true, resp2.getTopic().getSuccess());
     }
 
 }

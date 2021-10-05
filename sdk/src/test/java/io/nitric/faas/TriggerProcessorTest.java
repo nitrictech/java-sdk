@@ -233,7 +233,7 @@ public class TriggerProcessorTest {
         assertFalse(res1.hasHttp());
         assertTrue(res1.hasTopic());
 
-        assertFalse(res1.getTopic().getSuccess());
+        assertTrue(res1.getTopic().getSuccess());
         assertEquals(handlerName, res1.getData().toStringUtf8());
 
         assertTrue(middleware.invokedTime > 0);
@@ -251,7 +251,10 @@ public class TriggerProcessorTest {
                 .build();
 
         var res2 = triggerProcessor2.processTopicTrigger(request2);
-        assertNull(res2);
+        assertNotNull(res2);
+        assertFalse(res2.hasHttp());
+        assertTrue(res2.hasTopic());
+        assertFalse(res2.getTopic().getSuccess());
 
         // Test Error thrown
         EventMiddleware errorMiddleware = new ErrorEventMiddleware();
@@ -264,7 +267,10 @@ public class TriggerProcessorTest {
                 .build();
 
         var res3 = triggerProcessor3.processTopicTrigger(request3);
-        assertNull(res3);
+        assertNotNull(res3);
+        assertFalse(res3.hasHttp());
+        assertTrue(res3.hasTopic());
+        assertFalse(res3.getTopic().getSuccess());
 
         // Test error thrown handler
         EventMiddleware errorHandlerMiddleware = new EventMiddleware.HandlerAdapter(new ErrorEventHandler());
@@ -277,7 +283,10 @@ public class TriggerProcessorTest {
                 .build();
 
         var res4 = triggerProcessor4.processTopicTrigger(request4);
-        assertNull(res4);
+        assertNotNull(res4);
+        assertFalse(res4.hasHttp());
+        assertTrue(res4.hasTopic());
+        assertFalse(res4.getTopic().getSuccess());
     }
 
     @Test
@@ -360,7 +369,7 @@ public class TriggerProcessorTest {
 
         assertEquals(eventMiddleware.getClass().getSimpleName(), res5.getData().toStringUtf8());
 
-        assertEquals(false, res5.getTopic().getSuccess());
+        assertEquals(true, res5.getTopic().getSuccess());
         assertTrue(eventMiddleware.invokedTime > 0);
     }
 

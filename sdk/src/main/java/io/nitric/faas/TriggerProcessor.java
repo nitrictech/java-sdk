@@ -25,7 +25,9 @@ import io.nitric.faas.event.EventContext;
 import io.nitric.faas.event.EventMiddleware;
 import io.nitric.faas.http.HttpContext;
 import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.proto.faas.v1.HeaderValue;
 import io.nitric.proto.faas.v1.HttpResponseContext;
+import io.nitric.proto.faas.v1.TopicResponseContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
 import io.nitric.proto.faas.v1.TriggerResponse;
 import io.nitric.util.Contracts;
@@ -117,8 +119,13 @@ public class TriggerProcessor {
                     context.getRequest().getPath(),
                     middlewareThreadLocal.get());
 
+            var httpContext = HttpResponseContext.newBuilder()
+                    .setStatus(500)
+                    .putHeaders("Content-Type", HeaderValue.newBuilder().addValue("text/plain").build())
+                    .build();
+
             return TriggerResponse.newBuilder()
-                    .setHttp(HttpResponseContext.newBuilder().setStatus(500))
+                    .setHttp(httpContext)
                     .setData(ByteString.copyFrom("Error occurred see logs for details.", StandardCharsets.UTF_8))
                     .build();
         }
@@ -147,7 +154,10 @@ public class TriggerProcessor {
                     "error handling Trigger Topic '%s' with: %s",
                     context.getRequest().getTopic(),
                     middlewareThreadLocal.get());
-            return null;
+
+            return TriggerResponse.newBuilder()
+                    .setTopic(TopicResponseContext.newBuilder().setSuccess(false))
+                    .build();
         }
     }
 
