@@ -183,8 +183,16 @@ public class HttpContextTest {
                 .addQueryParam("name", "value2")
                 .build();
         assertEquals("data", ctx2.getRequest().getDataAsText());
-        assertEquals("Request[method=null, path=null, headers={header=[value1, value2]}, queryParams={name=[value2]}, mimeType=null, data=data]",
+        assertEquals("Request[method=null, path=null, headers={header=[value1, value2]}, queryParams={name=[value1, value2]}, mimeType=null, data=data]",
                 ctx2.getRequest().toString());
+
+        var ctx3 = HttpContext.newBuilder()
+                .request(ctx2.getRequest())
+                .contentType("application/json")
+                .build();
+        assertEquals("data", ctx3.getRequest().getDataAsText());
+        assertEquals("Request[method=null, path=null, headers={header=[value1, value2], Content-Type=[application/json]}, queryParams={name=[value1, value2]}, mimeType=application/json, data=data]",
+                ctx3.getRequest().toString());
     }
 
 }

@@ -84,8 +84,8 @@ public class TriggerProcessorTest {
         processor.setEventMiddlewares(eventMiddlewares);
 
         var first = processor.buildEventMiddlewareChain();
-        assertSame(eventMiddleware1, ((TriggerProcessor.EventMiddlewareWrapper) first).target);
-        assertSame(eventMiddleware2, ((TriggerProcessor.EventMiddlewareWrapper) first.getNext()).target);
+        assertSame(eventMiddleware1, ((TriggerProcessor.EventMiddlewareWrapper) first).getTarget());
+        assertSame(eventMiddleware2, ((TriggerProcessor.EventMiddlewareWrapper) first.getNext()).getTarget());
         assertSame(EventMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 
@@ -107,8 +107,8 @@ public class TriggerProcessorTest {
         processor.setHttpMiddlewares(httpMiddlewares);
 
         var first = processor.buildHttpMiddlewareChain();
-        assertSame(httpMiddleware1, ((TriggerProcessor.HttpMiddlewareWrapper) first).target);
-        assertSame(httpMiddleware2, ((TriggerProcessor.HttpMiddlewareWrapper) first.getNext()).target);
+        assertSame(httpMiddleware1, ((TriggerProcessor.HttpMiddlewareWrapper) first).getTarget());
+        assertSame(httpMiddleware2, ((TriggerProcessor.HttpMiddlewareWrapper) first.getNext()).getTarget());
         assertSame(HttpMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 

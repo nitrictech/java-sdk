@@ -186,6 +186,24 @@ public class HttpContext {
         byte[] data;
 
         /**
+         * Copy the request values.
+         *
+         * @param request the request values to copy (required)
+         * @return this chainable builder object
+         */
+        public Builder request(Request request) {
+            Contracts.requireNonNull(request, "request");
+
+            method = request.method;
+            path = request.path;
+            headers.putAll(request.getHeaders());
+            queryParams.putAll(request.getQueryParams());
+            mimeType = request.mimeType;
+            data = request.data;
+            return this;
+        }
+
+        /**
          * Set the HTTP request method [ GET | POST | DELETE | PUT ].
          *
          * @param method The HTTP request method [ GET | POST | DELETE | PUT ]
@@ -242,7 +260,16 @@ public class HttpContext {
             Contracts.requireNonBlank(name, "name");
             Contracts.requireNonBlank(value, "value");
 
-            queryParams.put(name, List.of(value));
+            var values = queryParams.get(name);
+            if (values == null) {
+                values = new ArrayList<>();
+                values.add(value);
+                queryParams.put(name, values);
+            } else {
+                if (!values.contains(value)) {
+                    values.add(value);
+                }
+            }
             return this;
         }
 
