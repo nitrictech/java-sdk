@@ -18,17 +18,13 @@
  * #L%
  */
 
-package examples.storage;
-// [START import]
-import io.nitric.api.storage.Storage;
-// [END import]
-
-public class Delete {
-    public static void Example() {
-        // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
-
-        bucket.file("/path/to/file").delete();
-        // [END snippet]
-    }
-}
+/**
+ * <p>
+ *  Provides the FaaS HTTP context and middleware classes.
+ * </p>
+ *
+ * <p>
+ *  HTTP handler functions are configured in the Nitric stack definition file, typically with an associated API gateway.
+ * </p>
+ */
+package io.nitric.faas.http;

@@ -18,17 +18,24 @@
  * #L%
  */
 
-package examples.storage;
-// [START import]
-import io.nitric.api.storage.Storage;
-// [END import]
+package io.nitric.faas.event;
 
-public class Delete {
-    public static void Example() {
-        // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
+/**
+ * <p>
+ * Provides an Event Handler interface.
+ * </p>
+ *
+ * @see EventContext
+ * @see EventMiddleware
+ */
+public interface EventHandler {
 
-        bucket.file("/path/to/file").delete();
-        // [END snippet]
-    }
+    /**
+     * Handle the topic subscription event.
+     *
+     * @param context the EventContext request/response context
+     * @return the context object returned by the next handler
+     */
+    public EventContext handle(EventContext context);
+
 }

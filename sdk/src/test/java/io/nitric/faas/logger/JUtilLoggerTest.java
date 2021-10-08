@@ -18,17 +18,31 @@
  * #L%
  */
 
-package examples.storage;
-// [START import]
-import io.nitric.api.storage.Storage;
-// [END import]
+package io.nitric.faas.logger;
 
-public class Delete {
-    public static void Example() {
-        // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
+import org.junit.jupiter.api.Test;
 
-        bucket.file("/path/to/file").delete();
-        // [END snippet]
+import static org.junit.jupiter.api.Assertions.fail;
+
+/**
+ * Provides a Java Util Logger unit test.
+ */
+public class JUtilLoggerTest {
+
+    @Test
+    public void logging() {
+        Logger logger = new JUtilLogger("Faas");
+        try {
+            logger.info("name: %s", "value");
+            logger.error("name: %s", "value");
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            logger.error(new NullPointerException(), "name: %s", "value");
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

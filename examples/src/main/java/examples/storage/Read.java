@@ -27,6 +27,7 @@ public class Read {
     public static void Example() {
         // [START snippet]
         var bucket = new Storage().bucket("my-bucket");
+
         var file = bucket.file("/path/to/file").read();
         // [END snippet]
     }
