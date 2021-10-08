@@ -20,6 +20,7 @@
 
 package io.nitric.faas;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,11 +104,11 @@ public class Marshaller {
             }
         });
 
-        // TODO: review when proto contract update to support multiple queryParam values
         // Marshall Proto QueryParams into List<String>
         final Map<String, List<String>> queryParams = new HashMap<>();
-        http.getQueryParamsMap().forEach((name, value) -> {
-            queryParams.put(name, List.of(value));
+        http.getQueryParamsMap().forEach((name, queryValue) -> {
+            var valueList = queryValue.getValueList().stream().collect(Collectors.toList());
+            queryParams.put(name, valueList);
         });
 
         var request = new HttpContext.Request(

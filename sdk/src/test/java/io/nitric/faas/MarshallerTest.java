@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.protobuf.ByteString;
 
+import io.nitric.proto.faas.v1.QueryValue;
 import org.junit.jupiter.api.Test;
 
 import io.nitric.proto.faas.v1.HeaderValue;
@@ -46,8 +47,9 @@ public class MarshallerTest {
                 .setMethod("GET")
                 .setPath("/test/");
 
+        var queryValue = QueryValue.newBuilder().addValue("test1").addValue("test2").build();
+        triggerContext.putQueryParams("id", queryValue);
         triggerContext.putHeaders("x-nitric-test", HeaderValue.newBuilder().addValue("test").build());
-        triggerContext.putQueryParams("id", "test");
 
         var triggerRequest = TriggerRequest.newBuilder()
                 .setData(ByteString.copyFrom("Hello World", StandardCharsets.UTF_8))
@@ -65,10 +67,10 @@ public class MarshallerTest {
         assertEquals("Hello World", req1.getDataAsText());
         assertEquals("test", req1.getHeader("x-nitric-test"));
         assertEquals("[test]", req1.getHeaders().get("x-nitric-test").toString());
-        assertEquals("test", req1.getQueryParam("id"));
-        assertEquals("[test]", req1.getQueryParams().get("id").toString());
+        assertEquals("test1", req1.getQueryParam("id"));
+        assertEquals("[test1, test2]", req1.getQueryParams().get("id").toString());
 
-        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams={id=[test]}, mimeType=text/plain, data=Hello World]",
+        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams={id=[test1, test2]}, mimeType=text/plain, data=Hello World]",
                      req1.toString());
 
         // Test No Data
@@ -112,8 +114,9 @@ public class MarshallerTest {
                 .setMethod("GET")
                 .setPath("/test/");
 
+        var queryValue = QueryValue.newBuilder().addValue("test").build();
+        triggerContext1.putQueryParams("id", queryValue);
         triggerContext1.putHeaders("x-nitric-test", HeaderValue.newBuilder().addValue("test").build());
-        triggerContext1.putQueryParams("id", "test");
 
         var triggerRequest1 = TriggerRequest.newBuilder()
                 .setData(ByteString.copyFrom(LONG_DATA, StandardCharsets.UTF_8))
