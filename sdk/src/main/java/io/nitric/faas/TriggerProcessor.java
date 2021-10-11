@@ -260,7 +260,7 @@ public class TriggerProcessor {
                 throw new IllegalStateException("invoked handle() method returned null context");
             }
 
-            return next.handle(resultCtx, next.getNext());
+            return resultCtx;
         }
 
         /**
@@ -312,7 +312,7 @@ public class TriggerProcessor {
                 throw new IllegalStateException("invoked handle() method returned null context");
             }
 
-            return next.handle(resultCtx, next.getNext());
+            return resultCtx;
         }
 
         /**

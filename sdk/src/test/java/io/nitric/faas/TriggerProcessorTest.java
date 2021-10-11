@@ -149,6 +149,7 @@ public class TriggerProcessorTest {
         assertEquals(404, res1.getHttp().getStatus());
         assertEquals(handlerName, res1.getData().toStringUtf8());
         assertTrue(middleware.invokedTime > 0);
+        assertEquals(1, handler.invokedCount);
         assertTrue(handler.invokedTime > 0);
         assertTrue(middleware.invokedTime < handler.invokedTime);
 
@@ -241,6 +242,7 @@ public class TriggerProcessorTest {
         assertEquals(handlerName, res1.getData().toStringUtf8());
 
         assertTrue(middleware.invokedTime > 0);
+        assertEquals(1, handler.invokedCount);
         assertTrue(handler.invokedTime > 0);
         assertTrue(middleware.invokedTime < handler.invokedTime);
 
@@ -404,10 +406,12 @@ public class TriggerProcessorTest {
     // Inner Classes ----------------------------------------------------------
 
     public static class TestEventHandler implements EventHandler {
+        int invokedCount;
         long invokedTime;
 
         @Override
         public EventContext handle(EventContext context) {
+            invokedCount++;
             invokedTime = System.currentTimeMillis();
             try {
                 Thread.sleep(1);
@@ -452,9 +456,11 @@ public class TriggerProcessorTest {
     }
 
     public static class TestHttpHandler implements HttpHandler {
+        int invokedCount;
         long invokedTime;
 
         public HttpContext handle(HttpContext context) {
+            invokedCount++;
             invokedTime = System.currentTimeMillis();
             try {
                 Thread.sleep(1);
