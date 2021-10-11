@@ -86,7 +86,7 @@ public class TriggerProcessorTest {
         var first = processor.buildEventMiddlewareChain();
         assertSame(eventMiddleware1, ((TriggerProcessor.EventMiddlewareWrapper) first).getTarget());
         assertSame(eventMiddleware2, ((TriggerProcessor.EventMiddlewareWrapper) first.getNext()).getTarget());
-        assertSame(EventMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
+        assertSame(EventMiddleware.FinalMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TriggerProcessorTest {
         var first = processor.buildHttpMiddlewareChain();
         assertSame(httpMiddleware1, ((TriggerProcessor.HttpMiddlewareWrapper) first).getTarget());
         assertSame(httpMiddleware2, ((TriggerProcessor.HttpMiddlewareWrapper) first.getNext()).getTarget());
-        assertSame(HttpMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
+        assertSame(HttpMiddleware.FinalMiddleware.FINAL_MIDDLEWARE, first.getNext().getNext());
     }
 
     @Test
@@ -410,15 +410,16 @@ public class TriggerProcessorTest {
         long invokedTime;
 
         @Override
-        public EventContext handle(EventContext context) {
+        public EventContext.Response handle(EventContext context) {
             invokedCount++;
             invokedTime = System.currentTimeMillis();
             try {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse().data(getClass().getSimpleName());
-            return context;
+            var resp = context.getResponse();
+            resp.data(getClass().getSimpleName());
+            return resp;
         }
     }
 
@@ -444,7 +445,7 @@ public class TriggerProcessorTest {
     }
 
     public static class ErrorEventHandler implements EventHandler {
-        public EventContext handle(EventContext context) {
+        public EventContext.Response handle(EventContext context) {
             throw createNitricException();
         }
     }
@@ -459,18 +460,18 @@ public class TriggerProcessorTest {
         int invokedCount;
         long invokedTime;
 
-        public HttpContext handle(HttpContext context) {
+        public HttpContext.Response handle(HttpContext context) {
             invokedCount++;
             invokedTime = System.currentTimeMillis();
             try {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse()
-                    .status(404)
+            var response = context.getResponse();
+            response.status(404)
                     .addHeader(getClass().getSimpleName(), toString())
                     .data(getClass().getSimpleName());
-            return context;
+            return response;
         }
     }
 
@@ -498,7 +499,7 @@ public class TriggerProcessorTest {
     }
 
     public static class ErrorHttpHandler implements HttpHandler {
-        public HttpContext handle(HttpContext context) {
+        public HttpContext.Response handle(HttpContext context) {
             throw createNitricException();
         }
     }

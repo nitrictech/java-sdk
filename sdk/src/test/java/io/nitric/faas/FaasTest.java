@@ -58,16 +58,16 @@ public class FaasTest {
         assertNotNull(faas.triggerProcessor);
 
         var eventHandler = new EventHandler() {
-            public EventContext handle(EventContext context) {
-                return context;
+            public EventContext.Response handle(EventContext context) {
+                return context.getResponse();
             }
         };
         faas.event(eventHandler);
         assertEquals(1, faas.eventMiddlewares.size());
 
         var httpHandler = new HttpHandler() {
-            public HttpContext handle(HttpContext context) {
-                return context;
+            public HttpContext.Response handle(HttpContext context) {
+                return context.getResponse();
             }
         };
         faas.http(httpHandler);

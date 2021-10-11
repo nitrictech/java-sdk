@@ -57,11 +57,12 @@
  *
  *     &#64;Override
  *     public HttpContext handle(HttpContext context) {
- *         context.getResponse()
- *            .addHeader("Content-Type", "text/plain")
- *            .data("hello world!");
+ *         var resp = context.getResponse();
  *
- *         return context;
+ *         resp.contentType("text/plain")
+ *             .data("hello world!");
+ *
+ *         return resp;
  *     }
  *
  *     public static void main(String[] args) {
@@ -101,22 +102,21 @@
  *         var paths = context.getRequest().getPath().split("/");
  *         var id = paths[paths.length - 1];
  *
+ *         var resp = context.getResponse();
  *         try {
  *             var json = documents.collection("customers")
  *                 .doc(id)
  *                 .getJson();
  *
- *             context.getResponse()
- *                 .addHeader("Content-Type", "application/json")
+ *             resp.contentType("application/json")
  *                 .data(json);
  *
  *         } catch (NotFoundException nfe) {
- *             context.getResponse()
- *                 .status(404)
+ *             resp.status(404)
  *                 .data("Document not found: " + id);
  *         }
  *
- *         return context;
+ *         return resp;
  *     }
  *
  *     public static void main(String[] args) {

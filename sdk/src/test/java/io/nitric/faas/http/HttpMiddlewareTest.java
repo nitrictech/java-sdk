@@ -49,7 +49,7 @@ public class HttpMiddlewareTest {
 
         var context = HttpContext.newBuilder().method("GET").build();
 
-        var ctx = middlewareAdapter.handle(context, HttpMiddleware.FINAL_MIDDLEWARE);
+        var ctx = middlewareAdapter.handle(context, HttpMiddleware.FinalMiddleware.FINAL_MIDDLEWARE);
         assertNotNull(ctx);
 
         assertTrue(handler.called);
@@ -70,9 +70,9 @@ public class HttpMiddlewareTest {
         boolean called;
 
         @Override
-        public HttpContext handle(HttpContext context) {
+        public HttpContext.Response handle(HttpContext context) {
             called = true;
-            return context;
+            return context.getResponse();
         }
     }
 

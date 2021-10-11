@@ -22,7 +22,7 @@ package io.nitric.faas.event;
 
 /**
  * <p>
- * Provides an Event Handler interface.
+ * Provides an topic Event Handler interface.
  * </p>
  *
  * @see EventContext
@@ -31,11 +31,11 @@ package io.nitric.faas.event;
 public interface EventHandler {
 
     /**
-     * Handle the topic subscription event.
+     * Handle the topic event.
      *
-     * @param context the EventContext request/response context
-     * @return the context object returned by the next handler
+     * @param context the event context object (required)
+     * @return the event response object, the returned value must not be null
      */
-    public EventContext handle(EventContext context);
+    public EventContext.Response handle(EventContext context);
 
 }

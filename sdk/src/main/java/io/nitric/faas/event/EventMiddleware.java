@@ -32,9 +32,6 @@ import io.nitric.util.Contracts;
  */
 public abstract class EventMiddleware {
 
-    /** The final middleware in the chain. */
-    public static EventMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
-
     /** The next EventMiddleware to execute. */
     protected EventMiddleware next;
 
@@ -54,7 +51,7 @@ public abstract class EventMiddleware {
      * @return the next EventMiddleware to process request context
      */
     public EventMiddleware getNext() {
-        return (next != null) ? next : FINAL_MIDDLEWARE;
+        return (next != null) ? next : FinalMiddleware.FINAL_MIDDLEWARE;
     }
 
     /**
@@ -99,7 +96,13 @@ public abstract class EventMiddleware {
         @Override
         public EventContext handle(EventContext context, EventMiddleware next) {
 
-            var ctx  = handler.handle(context);
+            var response  = handler.handle(context);
+            if (response == null) {
+                var msg = "handler " + handler.getClass().getCanonicalName() + " returned null response object";
+                throw new IllegalStateException(msg);
+            }
+
+            var ctx = new EventContext(context.getRequest(), response);
 
             return next.handle(ctx, next.getNext());
         }
@@ -119,6 +122,9 @@ public abstract class EventMiddleware {
      * next middleware.
      */
     public static class FinalMiddleware extends EventMiddleware {
+
+        /** The final middleware in the chain. */
+        public static final FinalMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
 
         /**
          * This method will simply return the context and not invoke the next middleware.

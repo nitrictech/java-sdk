@@ -32,9 +32,6 @@ import io.nitric.util.Contracts;
  */
 public abstract class HttpMiddleware {
 
-    /** The final middleware in the chain. */
-    public static HttpMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
-
     /** The next HttpMiddleware to execute. */
     protected HttpMiddleware next;
 
@@ -54,7 +51,7 @@ public abstract class HttpMiddleware {
      * @return the next HttpMiddleware to process request context
      */
     public HttpMiddleware getNext() {
-        return (next != null) ? next : FINAL_MIDDLEWARE;
+        return (next != null) ? next : FinalMiddleware.FINAL_MIDDLEWARE;
     }
 
     /**
@@ -99,7 +96,13 @@ public abstract class HttpMiddleware {
         @Override
         public HttpContext handle(HttpContext context, HttpMiddleware next) {
 
-            var ctx  = handler.handle(context);
+            var response  = handler.handle(context);
+            if (response == null) {
+                var msg = "handler " + handler.getClass().getCanonicalName() + " returned null response object";
+                throw new IllegalStateException(msg);
+            }
+
+            var ctx = new HttpContext(context.getRequest(), response);
 
             return next.handle(ctx, next.getNext());
         }
@@ -119,6 +122,9 @@ public abstract class HttpMiddleware {
      * next middleware.
      */
     public static class FinalMiddleware extends HttpMiddleware {
+
+        /** The final middleware in the chain. */
+        public static final HttpMiddleware FINAL_MIDDLEWARE = new FinalMiddleware();
 
         /**
          * This method will simply return the context and not invoke the next middleware.

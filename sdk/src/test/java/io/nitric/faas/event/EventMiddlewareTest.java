@@ -49,7 +49,7 @@ public class EventMiddlewareTest {
 
         var context = EventContext.newBuilder().topic("topic").build();
 
-        var ctx = middlewareAdapter.handle(context, EventMiddleware.FINAL_MIDDLEWARE);
+        var ctx = middlewareAdapter.handle(context, EventMiddleware.FinalMiddleware.FINAL_MIDDLEWARE);
         assertNotNull(ctx);
 
         assertTrue(handler.called);
@@ -62,9 +62,9 @@ public class EventMiddlewareTest {
         boolean called;
 
         @Override
-        public EventContext handle(EventContext context) {
+        public EventContext.Response handle(EventContext context) {
             called = true;
-            return context;
+            return context.getResponse();
         }
     }
 

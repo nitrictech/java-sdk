@@ -33,9 +33,9 @@ public interface HttpHandler {
     /**
      * Handle the HTTP request.
      *
-     * @param context the HTTP request/response context
-     * @return the HttpContext response
+     * @param context the HTTP context object (required)
+     * @return the HTTP response object, the returned value must not be null
      */
-    public HttpContext handle(HttpContext context);
+    public HttpContext.Response handle(HttpContext context);
 
 }
