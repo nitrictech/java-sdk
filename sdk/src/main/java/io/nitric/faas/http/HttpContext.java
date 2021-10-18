@@ -403,7 +403,7 @@ public class HttpContext {
          * @param mimeType the request mime-type
          * @param data the HTTP body data
          * @param pathParams the request URL path parameters
-         * @param extras the request cycle extra attributes
+         * @param extras the request extra attributes
          */
         public Request(
             String method,
@@ -723,10 +723,10 @@ public class HttpContext {
         }
 
         /**
-         * Set the text value for the response, which will be encoded as UTF-8 data.
+         * Set the HTTP response body data with the text value. The text value will be encoded as UTF-8 data.
          *
          * @param text the text value to be encoded UTF-8 data
-         * @return this HttpResponse object for chaining
+         * @return this chainable Response object
          */
         public Response text(String text) {
             Contracts.requireNonNull(text, "text");
@@ -735,12 +735,13 @@ public class HttpContext {
         }
 
         /**
-         * Set the text value for the response, which will be encoded as UTF-8 data. This overloaded <code>text()</code>
-         * method enabled you to easily create formatted response text using: <code>String.format(text, args)</code>
+         * Set the HTTP response body data with the given text format value and args. This overloaded
+         * <code>text()</code> method enabled you to easily create formatted response text using:
+         * <code>String.format(text, args)</code>
          *
          * @param text the text format (required)
          * @param args the text format arguments (required)
-         * @return this HttpResponse object for chaining
+         * @return this chainable Response object
          * @throws java.util.IllegalFormatException if the text format is invalid
          */
         public Response text(String text, Object...args) {

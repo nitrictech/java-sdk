@@ -21,6 +21,9 @@
 package io.nitric.faas.event;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import io.nitric.util.Contracts;
 
@@ -58,7 +61,9 @@ import io.nitric.util.Contracts;
  *     } catch (IOException ioe) {
  *         logger.error(ioe);
  *
- *         context.getResponse().success(false);
+ *         context.getResponse()
+ *              .success(false)
+ *              .text("Error: %s", ioe);
  *     }
  *
  *     return context;
@@ -76,7 +81,7 @@ import io.nitric.util.Contracts;
  *
  * var context = EventContext.newBuilder()
  *     .topic("createCustomer")
- *     .data(json)
+ *     .text(json)
  *     .build();
  *
  * var function = new CreateHandler(documents);
@@ -172,6 +177,7 @@ public class EventContext {
         String topic;
         String mimeType;
         byte[] data;
+        Map<String, Object> extras;
 
         /**
          * Set the Event request topic.
@@ -207,15 +213,36 @@ public class EventContext {
         }
 
         /**
-         * Set the Event request body data as text.
+         * Set the Event request body data with the given text. The text value
+         * will be encoded as UTF-8 data.
          *
-         * @param data the Event request body data (required)
+         * @param text the request body text (required)
          * @return this chainable builder object
          */
-        public Builder data(String data) {
-            Contracts.requireNonBlank(data, "data");
+        public Builder text(String text) {
+            Contracts.requireNonBlank(text, "text");
 
-            this.data = data.getBytes(StandardCharsets.UTF_8);
+            this.data = text.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
+        /**
+         * Add an event extras attribute value with the given key. The event extras map
+         * provide support for middleware enhancements to the context request.
+         *
+         * @param key the extras attribute key (required)
+         * @param value the extras attribute value (required)
+         * @return this chainable builder object
+         */
+        public Builder addExtras(String key, Object value) {
+            Contracts.requireNonBlank(key, "key");
+            Contracts.requireNonNull(value, "value");
+
+            if (extras == null) {
+                extras = new LinkedHashMap<>();
+            }
+            extras.put(key, value);
+
             return this;
         }
 
@@ -225,7 +252,7 @@ public class EventContext {
          * @return a new EventContext object
          */
         public EventContext build() {
-            var request = new EventContext.Request(topic, mimeType, data);
+            var request = new EventContext.Request(topic, mimeType, data, extras);
             var response = new EventContext.Response();
             return new EventContext(request, response);
         }
@@ -239,6 +266,7 @@ public class EventContext {
         final String topic;
         final String mimeType;
         final byte[] data;
+        final Map<String, Object> extras;
 
         // Constructors -----------------------------------------------------------
 
@@ -247,11 +275,13 @@ public class EventContext {
          *
          * @param topic the event topic
          * @param data the event request data
+         * @param extras the request extra attributes
          */
-        public Request(String topic, String mimeType, byte[] data) {
+        public Request(String topic, String mimeType, byte[] data,  Map<String, Object> extras) {
             this.topic = topic;
             this.mimeType = mimeType;
             this.data = data;
+            this.extras = (extras != null) ? Collections.unmodifiableMap(extras) : Collections.emptyMap();
         }
 
         // Public Methods ---------------------------------------------------------
@@ -293,6 +323,16 @@ public class EventContext {
         }
 
         /**
+         * Return the request extras map. The request extras map provides support for custom middleware
+         * enhancement to the context request.
+         *
+         * @return the request extras attributes, or an empty map if not defined
+         */
+        public Map<String, Object> getExtras() {
+            return extras;
+        }
+
+        /**
          * Return the string representation of this object.
          *
          * @return the string representation of this object
@@ -310,6 +350,7 @@ public class EventContext {
                 + "[topic=" + topic
                 + ", mimeType=" + mimeType
                 + ", data=" + dataSample
+                + ", extras=" + extras
                 + "]";
         }
     }
@@ -388,14 +429,34 @@ public class EventContext {
         }
 
         /**
-         * Set the data for this response as UTF-8 encoded text.
+         * Set the Event response body data with the text value. The text value will be encoded as UTF-8 data.
          *
-         * @param text the UTF-8 encode text to set as the data
+         * @param text the text value to be encoded UTF-8 data
          * @return this chainable Response object
          */
-        public Response data(String text) {
+        public Response text(String text) {
             Contracts.requireNonNull(text, "text");
             this.data = text.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
+        /**
+         * Set the Event response body data with the given text format value and args. This overloaded
+         * <code>text()</code> method enables you to easily create formatted response text using:
+         * <code>String.format(text, args)</code>
+         *
+         * @param text the text format (required)
+         * @param args the text format arguments (required)
+         * @return this chainable Response object
+         * @throws java.util.IllegalFormatException if the text format is invalid
+         */
+        public Response text(String text, Object...args) {
+            Contracts.requireNonNull(text, "text");
+            Contracts.requireNonNull(args, "args");
+
+            var resp = String.format(text, args);
+            this.data = resp.getBytes(StandardCharsets.UTF_8);
+
             return this;
         }
 

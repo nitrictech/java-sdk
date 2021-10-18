@@ -417,7 +417,7 @@ public class TriggerProcessorTest {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse().data(getClass().getSimpleName());
+            context.getResponse().text(getClass().getSimpleName());
             return context;
         }
     }
@@ -432,7 +432,7 @@ public class TriggerProcessorTest {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse().data(getClass().getSimpleName());
+            context.getResponse().text(getClass().getSimpleName());
             return next.handle(context, next.getNext());
         }
     }

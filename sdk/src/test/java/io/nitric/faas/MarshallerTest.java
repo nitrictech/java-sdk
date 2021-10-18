@@ -242,7 +242,7 @@ public class MarshallerTest {
 
         ctx1.getResponse()
                 .success(false)
-                .data(LONG_DATA);
+                .text(LONG_DATA);
 
         var resp1 = Marshaller.toTopicTriggerResponse(ctx1.getResponse());
         assertNotNull(resp1);
