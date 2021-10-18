@@ -20,6 +20,7 @@
 
 package io.nitric.faas.http;
 
+import io.nitric.faas.Faas;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +54,14 @@ public class HttpMiddlewareTest {
         assertNotNull(ctx);
 
         assertTrue(handler.called);
+    }
+
+    public void test() {
+        new Faas().http(context -> {
+                context.getResponse().text("Hello World!");
+                return context;
+            })
+            .start();
     }
 
     // Inner Classes ----------------------------------------------------------

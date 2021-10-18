@@ -117,7 +117,9 @@ public class Marshaller {
                 headers,
                 queryParams,
                 trigger.getMimeType(),
-                trigger.getData().toByteArray()
+                trigger.getData().toByteArray(),
+                null,
+                null
         );
 
         var response = new HttpContext.Response();

@@ -70,7 +70,7 @@ public class MarshallerTest {
         assertEquals("test1", req1.getQueryParam("id"));
         assertEquals("[test1, test2]", req1.getQueryParams().get("id").toString());
 
-        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams={id=[test1, test2]}, mimeType=text/plain, data=Hello World]",
+        assertEquals("Request[method=GET, path=/test/, headers={x-nitric-test=[test]}, queryParams={id=[test1, test2]}, mimeType=text/plain, data=Hello World, pathParams={}, extras={}]",
                      req1.toString());
 
         // Test No Data
@@ -131,7 +131,7 @@ public class MarshallerTest {
             .status(404)
             .addHeader("header", "value1")
             .addHeader("header", "value2")
-            .data(LONG_DATA);
+            .text(LONG_DATA);
 
         var resp1 = Marshaller.toHttpTriggerResponse(ctx1.getResponse());
         assertNotNull(resp1);

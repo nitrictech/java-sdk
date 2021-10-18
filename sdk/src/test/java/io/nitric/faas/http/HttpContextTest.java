@@ -44,10 +44,12 @@ public class HttpContextTest {
     final Map<String, List<String>> headers = Map.of("header", Arrays.asList("value1", "value2"));
     final Map<String, List<String>> paramsList = Map.of("param", Arrays.asList("value"));
     final Map<String, String> paramsString = Map.of("param", "value");
+    final Map<String, String> pathParams = Map.of("id", "123");
+    final Map<String, Object> extras = Map.of("value", "{ \"type\": \"json\" }");
 
     @Test
     public void test_request() {
-        var request = new HttpContext.Request(null, null, null, null, null, null);
+        var request = new HttpContext.Request(null, null, null, null, null, null, null, null);
         assertEquals("", request.getMethod());
         assertEquals("", request.getPath());
         assertEquals("", request.getMimeType());
@@ -57,8 +59,10 @@ public class HttpContextTest {
         assertTrue(request.getHeaders().isEmpty());
         assertNull(request.getQueryParam("param"));
         assertTrue(request.getQueryParams().isEmpty());
+        assertTrue(request.getPathParams().isEmpty());
+        assertTrue(request.getExtras().isEmpty());
 
-        var request2 = new HttpContext.Request("method", "path", headers, paramsList, "mimeType", longData);
+        var request2 = new HttpContext.Request("method", "path", headers, paramsList, "mimeType", longData, pathParams, extras);
         assertEquals("method", request2.getMethod());
         assertEquals("path", request2.getPath());
         assertEquals("mimeType", request2.getMimeType());
@@ -68,8 +72,10 @@ public class HttpContextTest {
         assertEquals("{header=[value1, value2]}", request2.getHeaders().toString());
         assertEquals("value", request2.getQueryParam("param"));
         assertEquals("{param=[value]}", request2.getQueryParams().toString());
+        assertEquals("{id=123}", request2.getPathParams().toString());
+        assertEquals("{value={ \"type\": \"json\" }}", request2.getExtras().toString());
 
-        assertEquals("Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=A third-party OAuth application (JetBrai...]",
+        assertEquals("Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=A third-party OAuth application (JetBrai..., pathParams={id=123}, extras={value={ \"type\": \"json\" }}]",
                      request2.toString());
     }
 
@@ -102,7 +108,7 @@ public class HttpContextTest {
                      response3.toString());
 
         var response4 = new HttpContext.Response()
-                .data("data")
+                .text("data")
                 .contentType("application/json")
                 .addHeader("header2", "value2")
                 .addHeader("header2", "value2");
@@ -111,11 +117,27 @@ public class HttpContextTest {
         assertEquals("data", response4.getDataAsText());
         assertEquals("[application/json]", response4.getHeaders().get("Content-Type").toString());
         assertEquals("[value2]", response4.getHeaders().get("header2").toString());
+
+        var response5 = new HttpContext.Response()
+                .contentType("text/plain")
+                .text("Formatted: %s, %s, %s \n", 12, 13.1, false);
+
+        assertEquals("Formatted: 12, 13.1, false \n", new String(response5.getData()));
+        assertEquals("[text/plain]", response5.getHeaders().get("Content-Type").toString());
     }
 
     @Test
     public void test_context() {
-        var request = new HttpContext.Request("method", "path", headers, paramsList, "mimeType", data);
+        var request = new HttpContext.Request(
+                "method",
+                "path",
+                headers,
+                paramsList,
+                "mimeType",
+                data,
+                pathParams,
+                extras
+        );
         var response = new HttpContext.Response().status(404).headers(headers).data(data);
 
         var ctx = new HttpContext(request, response);
@@ -139,11 +161,11 @@ public class HttpContextTest {
         assertEquals("data", new String(response2.getData()));
         assertEquals("data", response2.getDataAsText());
 
-        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
+        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=data, pathParams={id=123}, extras={value={ \"type\": \"json\" }}], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
                      ctx.toString());
 
         var ctx2 = new HttpContext(ctx);
-        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=data], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
+        assertEquals("HttpContext[request=Request[method=method, path=path, headers={header=[value1, value2]}, queryParams={param=[value]}, mimeType=mimeType, data=data, pathParams={id=123}, extras={value={ \"type\": \"json\" }}], response=Response[status=404, headers={header=[value1, value2]}, data=data]]",
                      ctx2.toString());
     }
 
@@ -157,6 +179,8 @@ public class HttpContextTest {
                 .addQueryParam("param", "value")
                 .contentType("mimeType")
                 .data(data)
+                .addPathParam("id", "123")
+                .addExtras("value", "{ \"type\": \"json\" }")
                 .build();
 
         var request = ctx.getRequest();
@@ -167,6 +191,8 @@ public class HttpContextTest {
         assertEquals("data", request.getDataAsText());
         assertEquals("{header=[value1, value2], Content-Type=[mimeType]}", request.getHeaders().toString());
         assertEquals("{param=[value]}", request.getQueryParams().toString());
+        assertEquals("{id=123}", request.getPathParams().toString());
+        assertEquals("{value={ \"type\": \"json\" }}", request.getExtras().toString());
 
         var response = ctx.getResponse();
         assertEquals(200, response.getStatus());
@@ -175,7 +201,7 @@ public class HttpContextTest {
         assertNull(response.getDataAsText());
 
         var ctx2 = HttpContext.newBuilder()
-                .data("data")
+                .data(data)
                 .addHeader("header", "value1")
                 .addHeader("header", "value2")
                 .addHeader("header", "value1")
@@ -183,7 +209,7 @@ public class HttpContextTest {
                 .addQueryParam("name", "value2")
                 .build();
         assertEquals("data", ctx2.getRequest().getDataAsText());
-        assertEquals("Request[method=null, path=null, headers={header=[value1, value2]}, queryParams={name=[value1, value2]}, mimeType=null, data=data]",
+        assertEquals("Request[method=null, path=null, headers={header=[value1, value2]}, queryParams={name=[value1, value2]}, mimeType=null, data=data, pathParams={}, extras={}]",
                 ctx2.getRequest().toString());
 
         var ctx3 = HttpContext.newBuilder()
@@ -191,8 +217,13 @@ public class HttpContextTest {
                 .contentType("application/json")
                 .build();
         assertEquals("data", ctx3.getRequest().getDataAsText());
-        assertEquals("Request[method=null, path=null, headers={header=[value1, value2], Content-Type=[application/json]}, queryParams={name=[value1, value2]}, mimeType=application/json, data=data]",
+        assertEquals("Request[method=null, path=null, headers={header=[value1, value2], Content-Type=[application/json]}, queryParams={name=[value1, value2]}, mimeType=application/json, data=data, pathParams={}, extras={}]",
                 ctx3.getRequest().toString());
+
+        var ctx4 = HttpContext.newBuilder()
+                .text("some text")
+                .build();
+        assertEquals("some text", ctx4.getRequest().getDataAsText());
     }
 
 }

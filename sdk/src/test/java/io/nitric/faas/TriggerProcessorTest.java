@@ -469,7 +469,7 @@ public class TriggerProcessorTest {
             context.getResponse()
                     .status(404)
                     .addHeader(getClass().getSimpleName(), toString())
-                    .data(getClass().getSimpleName());
+                    .text(getClass().getSimpleName());
             return context;
         }
     }
@@ -485,7 +485,7 @@ public class TriggerProcessorTest {
             }
             context.getResponse()
                     .addHeader(getClass().getSimpleName(), toString())
-                    .data(getClass().getSimpleName());
+                    .text(getClass().getSimpleName());
 
             return next.handle(context, next.getNext());
         }
