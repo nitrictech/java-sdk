@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -38,22 +39,25 @@ public class EventContextTest {
     final byte[] data = "data".getBytes(StandardCharsets.UTF_8);
     final byte[] longData = "A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo"
             .getBytes(StandardCharsets.UTF_8);
+    final Map<String, Object> extras = Map.of("value", "{ \"type\": \"json\" }");
 
     @Test
     public void test_request() {
-        var request = new EventContext.Request(null, null, null);
+        var request = new EventContext.Request(null, null, null, null);
         assertEquals("", request.getTopic());
         assertEquals("", request.getMimeType());
         assertNull(request.getData());
         assertEquals("", request.getDataAsText());
+        assertTrue(request.getExtras().isEmpty());
 
-        request = new EventContext.Request("topic", "mimeType", longData);
+        request = new EventContext.Request("topic", "mimeType", longData, extras);
         assertEquals("topic", request.getTopic());
         assertEquals("mimeType", request.getMimeType());
         assertEquals(new String(longData), new String(request.getData()));
         assertEquals("A third-party OAuth application (JetBrains IDE Integration) with gist, read:org, repo", request.getDataAsText());
 
-        assertEquals("Request[topic=topic, mimeType=mimeType, data=A third-party OAuth application (JetBrai...]", request.toString());
+        assertEquals("Request[topic=topic, mimeType=mimeType, data=A third-party OAuth application (JetBrai..., extras={value={ \"type\": \"json\" }}]",
+                     request.toString());
     }
 
     @Test
@@ -78,33 +82,37 @@ public class EventContextTest {
 
         var response3 = new EventContext.Response(response).success(false);
         assertFalse(response3.isSuccess());
+
+        var response4 = new EventContext.Response(response).text("Value: %s", 13);
+        assertEquals("Value: 13", response4.getDataAsText());
     }
 
     @Test
     public void test_context() {
-        var request = new EventContext.Request("topic", "mimeType", data);
-        var response = new EventContext.Response().success(true).data("data");
+        var request = new EventContext.Request("topic", "mimeType", data, extras);
+        var response = new EventContext.Response().success(true).text("data");
 
         var ctx = new EventContext(request, response);
         assertNotNull(ctx.getRequest());
         assertNotNull(ctx.getResponse());
-        assertEquals("EventContext[request=Request[topic=topic, mimeType=mimeType, data=data], response=Response[success=true, data=data]]",
+        assertEquals("EventContext[request=Request[topic=topic, mimeType=mimeType, data=data, extras={value={ \"type\": \"json\" }}], response=Response[success=true, data=data]]",
                      ctx.toString());
 
         var ctx2 = new EventContext(ctx);
         assertNotNull(ctx2.getRequest());
         assertNotNull(ctx2.getResponse());
-        assertEquals("EventContext[request=Request[topic=topic, mimeType=mimeType, data=data], response=Response[success=true, data=data]]",
+        assertEquals("EventContext[request=Request[topic=topic, mimeType=mimeType, data=data, extras={value={ \"type\": \"json\" }}], response=Response[success=true, data=data]]",
                      ctx2.toString());
     }
 
     @Test
     public void test_builder() {
         var ctx = EventContext.newBuilder()
-            .data("data")
-            .mimeType("mimeType")
-            .topic("topic")
-            .build();
+                .text("data")
+                .mimeType("mimeType")
+                .topic("topic")
+                .addExtras("value", "{ \"type\": \"json\" }")
+                .build();
 
         assertNotNull(ctx);
         assertNotNull(ctx.getRequest());
@@ -115,6 +123,8 @@ public class EventContextTest {
         assertEquals("mimeType", request.getMimeType());
         assertEquals(new String("data"), new String(request.getData()));
         assertEquals("data", request.getDataAsText());
+        assertEquals(1, request.getExtras().size());
+        assertEquals("{value={ \"type\": \"json\" }}", request.getExtras().toString());
 
         var response = ctx.getResponse();
         assertTrue(response.isSuccess());

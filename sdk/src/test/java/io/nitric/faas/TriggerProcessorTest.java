@@ -417,7 +417,7 @@ public class TriggerProcessorTest {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse().data(getClass().getSimpleName());
+            context.getResponse().text(getClass().getSimpleName());
             return context;
         }
     }
@@ -432,7 +432,7 @@ public class TriggerProcessorTest {
                 Thread.sleep(1);
             } catch (InterruptedException iae) {
             }
-            context.getResponse().data(getClass().getSimpleName());
+            context.getResponse().text(getClass().getSimpleName());
             return next.handle(context, next.getNext());
         }
     }
@@ -469,7 +469,7 @@ public class TriggerProcessorTest {
             context.getResponse()
                     .status(404)
                     .addHeader(getClass().getSimpleName(), toString())
-                    .data(getClass().getSimpleName());
+                    .text(getClass().getSimpleName());
             return context;
         }
     }
@@ -485,7 +485,7 @@ public class TriggerProcessorTest {
             }
             context.getResponse()
                     .addHeader(getClass().getSimpleName(), toString())
-                    .data(getClass().getSimpleName());
+                    .text(getClass().getSimpleName());
 
             return next.handle(context, next.getNext());
         }

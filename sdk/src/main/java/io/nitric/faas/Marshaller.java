@@ -65,7 +65,8 @@ public class Marshaller {
         var request = new EventContext.Request(
             trigger.getTopic().getTopic(),
             trigger.getMimeType(),
-            trigger.getData().toByteArray()
+            trigger.getData().toByteArray(),
+            null
         );
 
         var response = new EventContext.Response();
@@ -117,7 +118,9 @@ public class Marshaller {
                 headers,
                 queryParams,
                 trigger.getMimeType(),
-                trigger.getData().toByteArray()
+                trigger.getData().toByteArray(),
+                null,
+                null
         );
 
         var response = new HttpContext.Response();

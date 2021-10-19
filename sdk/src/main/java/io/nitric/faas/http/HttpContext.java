@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,14 +63,14 @@ import java.util.Map;
  *
  *         context.getResponse()
  *             .contentType("application/json")
- *             .data(json);
+ *             .text(json);
  *
  *     } catch (IOException ioe) {
  *         logger.error(ioe);
  *
  *         context.getResponse()
  *             .status(500)
- *             .data("Error querying customers: " + ioe.toString());
+ *             .text("Error querying customers: %s", ioe);
  *     }
  *
  *     return context;
@@ -184,6 +185,8 @@ public class HttpContext {
         Map<String, List<String>> queryParams = new HashMap<>();
         String mimeType;
         byte[] data;
+        Map<String, String> pathParams;
+        Map<String, Object> extras;
 
         /**
          * Copy the request values.
@@ -200,6 +203,8 @@ public class HttpContext {
             queryParams.putAll(request.getQueryParams());
             mimeType = request.mimeType;
             data = request.data;
+            pathParams = request.pathParams;
+            extras = request.extras;
             return this;
         }
 
@@ -298,15 +303,56 @@ public class HttpContext {
         }
 
         /**
-         * Set the HTTP request body data as text
+         * Set the HTTP request body data with the given text. The text value
+         * will be encoded as UTF-8 data.
          *
-         * @param data the HTTP request body data (required)
+         * @param text the request body text (required)
          * @return this chainable builder object
          */
-        public Builder data(String data) {
-            Contracts.requireNonBlank(data, "data");
+        public Builder text(String text) {
+            Contracts.requireNonBlank(text, "text");
 
-            this.data = data.getBytes(StandardCharsets.UTF_8);
+            this.data = text.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
+        /**
+         * Add a URL path parameter with the given name and value. The request pathParams map
+         * provide support for middleware enhancements to the context request.
+         *
+         * @param name the URL path parameter name to add (required)
+         * @param value the URL path parameter value to add (required)
+         * @return this chainable builder object
+         */
+        public Builder addPathParam(String name, String value) {
+            Contracts.requireNonBlank(name, "name");
+            Contracts.requireNonBlank(value, "value");
+
+            if (pathParams == null) {
+                pathParams = new LinkedHashMap<>();
+            }
+            pathParams.put(name, value);
+
+            return this;
+        }
+
+        /**
+         * Add a request extras attribute value with the given key. The request extras map
+         * provide support for middleware enhancements to the context request.
+         *
+         * @param key the extras attribute key (required)
+         * @param value the extras attribute value (required)
+         * @return this chainable builder object
+         */
+        public Builder addExtras(String key, Object value) {
+            Contracts.requireNonBlank(key, "key");
+            Contracts.requireNonNull(value, "value");
+
+            if (extras == null) {
+                extras = new LinkedHashMap<>();
+            }
+            extras.put(key, value);
+
             return this;
         }
 
@@ -316,7 +362,16 @@ public class HttpContext {
          * @return a new HttpContext object
          */
         public HttpContext build() {
-            var request = new HttpContext.Request(method, path, headers, queryParams, mimeType, data);
+            var request = new HttpContext.Request(
+                    method,
+                    path,
+                    headers,
+                    queryParams,
+                    mimeType,
+                    data,
+                    pathParams,
+                    extras
+            );
             var response = new HttpContext.Response();
             return new HttpContext(request, response);
         }
@@ -333,6 +388,8 @@ public class HttpContext {
         final Map<String, List<String>> queryParams;
         final String mimeType;
         final byte[] data;
+        final Map<String, String> pathParams;
+        final Map<String, Object> extras;
 
         // Constructors -----------------------------------------------------------
 
@@ -345,6 +402,8 @@ public class HttpContext {
          * @param queryParams the query parameters of the HTTP request
          * @param mimeType the request mime-type
          * @param data the HTTP body data
+         * @param pathParams the request URL path parameters
+         * @param extras the request extra attributes
          */
         public Request(
             String method,
@@ -352,7 +411,9 @@ public class HttpContext {
             Map<String, List<String>> headers,
             Map<String, List<String>> queryParams,
             String mimeType,
-            byte[] data
+            byte[] data,
+            Map<String, String> pathParams,
+            Map<String, Object> extras
         ) {
             this.method = method;
             this.path = path;
@@ -360,6 +421,8 @@ public class HttpContext {
             this.queryParams = queryParams;
             this.mimeType = mimeType;
             this.data = data;
+            this.pathParams = (pathParams != null) ? Collections.unmodifiableMap(pathParams) : Collections.emptyMap();
+            this.extras = (extras != null) ? Collections.unmodifiableMap(extras) : Collections.emptyMap();
         }
 
         // Public Methods ---------------------------------------------------------
@@ -465,12 +528,32 @@ public class HttpContext {
         }
 
         /**
-         * Return the HTTP request body data as UTF-8 encode text, or an empty string if not defined.
+         * Return the HTTP request body data (UTF-8 encoded) as text, or an empty string if not defined.
          *
-         * @return the HTTP request body data as UTF-8 encode text, or an empty string if not defined.
+         * @return the HTTP request body data (UTF-8 encoded) as text, or an empty string if not defined.
          */
         public String getDataAsText() {
             return (data != null) ? new String(data, StandardCharsets.UTF_8) : "";
+        }
+
+        /**
+         * Return the request URL path params map. The request pathParams map provides support for custom
+         * middleware enhancements to the context request.
+         *
+         * @return the request URL path parameters, or an empty map if not defined
+         */
+        public Map<String, String> getPathParams() {
+            return pathParams;
+        }
+
+        /**
+         * Return the request extras map. The request extras map provides support for custom middleware
+         * enhancement to the context request.
+         *
+         * @return the request extras attributes, or an empty map if not defined
+         */
+        public Map<String, Object> getExtras() {
+            return extras;
         }
 
         /**
@@ -495,6 +578,8 @@ public class HttpContext {
                     + ", queryParams=" + queryParams
                     + ", mimeType=" + mimeType
                     + ", data=" + dataSample
+                    + ", pathParams=" + pathParams
+                    + ", extras=" + extras
                     + "]";
         }
     }
@@ -618,9 +703,9 @@ public class HttpContext {
         }
 
         /**
-         * Get the data contained in the response as UTF-8 encode text, or null if not define.
+         * Get the data (UTF-8 encoded) contained in the response as text, or null if not define.
          *
-         * @return the response data as UTF-8 encoded text, or null if not defined
+         * @return the response data (UTF-8 encoded) as text, or null if not defined
          */
         public String getDataAsText() {
             return (data != null) ? new String(data, StandardCharsets.UTF_8) : null;
@@ -638,14 +723,34 @@ public class HttpContext {
         }
 
         /**
-         * Set the data for this response as UTF-8 encoded text.
+         * Set the HTTP response body data with the text value. The text value will be encoded as UTF-8 data.
          *
-         * @param text the UTF-8 encode text to set as the data
-         * @return this HttpResponse object for chaining
+         * @param text the text value to be encoded UTF-8 data
+         * @return this chainable Response object
          */
-        public Response data(String text) {
+        public Response text(String text) {
             Contracts.requireNonNull(text, "text");
             this.data = text.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
+        /**
+         * Set the HTTP response body data with the given text format value and args. This overloaded
+         * <code>text()</code> method enabled you to easily create formatted response text using:
+         * <code>String.format(text, args)</code>
+         *
+         * @param text the text format (required)
+         * @param args the text format arguments (required)
+         * @return this chainable Response object
+         * @throws java.util.IllegalFormatException if the text format is invalid
+         */
+        public Response text(String text, Object...args) {
+            Contracts.requireNonNull(text, "text");
+            Contracts.requireNonNull(args, "args");
+
+            var resp = String.format(text, args);
+            this.data = resp.getBytes(StandardCharsets.UTF_8);
+
             return this;
         }
 
