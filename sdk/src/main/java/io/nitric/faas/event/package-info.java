@@ -18,17 +18,14 @@
  * #L%
  */
 
-package examples.storage;
-// [START import]
-import io.nitric.api.storage.Storage;
-// [END import]
-
-public class Delete {
-    public static void Example() {
-        // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
-
-        bucket.file("/path/to/file").delete();
-        // [END snippet]
-    }
-}
+/**
+ * <p>
+ *  Provides the FaaS Event context and middleware classes.
+ * </p>
+ *
+ * <p>
+ *  Event handler functions are configured in the Nitric stack definition file to handle to Topic event
+ *  notifications.
+ * </p>
+ */
+package io.nitric.faas.event;

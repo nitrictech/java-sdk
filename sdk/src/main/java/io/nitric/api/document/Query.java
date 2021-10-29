@@ -32,6 +32,8 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * <p>
  *  Provides a Document Query class.
@@ -243,6 +245,7 @@ public class Query<T> {
     int limit;
     Map<String, String> pagingToken;
     final Class<T> type;
+    ObjectMapper objectMapper;
 
     // Constructor ------------------------------------------------------------
 
@@ -388,6 +391,17 @@ public class Query<T> {
     }
 
     /**
+     * Set the ResultDoc content object marshalling ObjectMapper.
+     *
+     * @param objectMapper the ResultDoc content object marshalling ObjectMapper
+     * @return the Query operation
+     */
+    public Query<T> objectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    /**
      * Return the string representation of this object.
      *
      * @return the string representation of this object
@@ -400,6 +414,7 @@ public class Query<T> {
                 + ", limit=" + limit
                 + ", pagingToken=" + pagingToken
                 + ", type=" + type
+                + ", objectMapper=" + objectMapper
                 + "]";
     }
 

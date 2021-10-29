@@ -18,17 +18,30 @@
  * #L%
  */
 
-package examples.storage;
+package examples.queues;
 // [START import]
-import io.nitric.api.storage.Storage;
+import io.nitric.api.queue.Queues;
+import io.nitric.api.queue.Task;
+
+import java.util.Map;
 // [END import]
 
-public class Delete {
+public class Failed {
     public static void Example() {
         // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
+        var queue = new Queues().queue("my-queue");
 
-        bucket.file("/path/to/file").delete();
+        // Send task, then process the failed task response
+        var failedTask = queue.send(Task.newBuilder()
+          .id("1234")
+          .payload(Map.of("example", "payload"))
+          .build()
+        );
+        if (failedTask != null){
+          System.out.println(failedTask.getMessage());
+          // Attempt to resend task
+          queue.send(failedTask.getTask());
+        }
         // [END snippet]
     }
 }

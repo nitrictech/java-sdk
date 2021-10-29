@@ -1,0 +1,55 @@
+# See: https://docs.github.com/en/actions/guides/building-and-testing-java-with-maven
+name: Publish to Maven on Github Release
+
+on: 
+  release:
+     types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      
+       # Remove leading 'v' from version string
+      - name: Normalize version string
+        id: normalize_version
+        run: |
+          version="${{ github.event.release.tag_name }}"
+          echo "::set-output name=VERSION::`echo ${version:1}`"
+
+      - name: Set Version Production
+        if: "!github.event.release.prerelease"
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ steps.normalize_version.outputs.VERSION }}
+
+      - name: Set Version Snapshot
+        if: "github.event.release.prerelease"
+        run: mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${{ steps.normalize_version.outputs.VERSION }}-SNAPSHOT
+
+
+      - name: Install gpg secret key
+        run: |
+          cat <(echo -e "${{ secrets.OSSRH_GPG_SECRET_KEY }}") | gpg --batch --import
+          gpg --list-secret-keys --keyid-format LONG
+
+      - name: Publish to Maven Central repository
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: |
+          cat ~/.m2/settings.xml
+          echo $MAVEN_USERNAME
+          echo $MAVEN_PASSWORD
+          mvn \
+          --no-transfer-progress \
+          --batch-mode \
+          -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} \
+          clean deploy

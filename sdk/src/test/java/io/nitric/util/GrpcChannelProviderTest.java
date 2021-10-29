@@ -33,6 +33,13 @@ public class GrpcChannelProviderTest {
     }
 
     @Test
+    public void test_getTarget() {
+        var target = GrpcChannelProvider.getTarget();
+        assertNotNull(target);
+        assertEquals("127.0.0.1:50051", target);
+    }
+
+    @Test
     public void test_getEnvVar() {
         var value = GrpcChannelProvider.getEnvVar("unknown", "default");
         assertEquals("default", value);

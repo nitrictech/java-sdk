@@ -18,22 +18,38 @@
  * #L%
  */
 
-package examples.events;
+package examples.faas;
+
 // [START import]
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.nitric.faas.Faas;
-import io.nitric.faas.http.HttpContext;
-import io.nitric.faas.http.HttpHandler;
-import io.nitric.api.event.Events;
-import io.nitric.api.event.Event;
+
+import java.io.IOException;
 import java.util.Map;
 // [END import]
 
-public class PublishExample {
-    public static void Example() {
-        // [START snippet]
-        var topic = new Events().topic("my-topic");
+public class Events {
 
-        topic.publish(Event.build(Map.of("Content", "of event")));
+    public static void main(String[] args) {
+        // [START snippet]
+        new Faas()
+            .event(context -> {
+                try {
+                    var json = context.getRequest().getDataAsText();
+                    var event = new ObjectMapper().readValue(json, Map.class);
+
+                    System.out.printf("Received nitric event: %s \n", event);
+
+                    context.getResponse().success(true);
+
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                    context.getResponse().success(false);
+                }
+
+                return context;
+            })
+            .start();
         // [END snippet]
     }
 }

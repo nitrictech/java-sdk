@@ -18,17 +18,24 @@
  * #L%
  */
 
-package examples.storage;
-// [START import]
-import io.nitric.api.storage.Storage;
-// [END import]
+package io.nitric.faas.http;
 
-public class Delete {
-    public static void Example() {
-        // [START snippet]
-        var bucket = new Storage().bucket("my-bucket");
+/**
+ * <p>
+ * Provides an HTTP Handler interface.
+ * </p>
+ *
+ * @see HttpContext
+ * @see HttpMiddleware
+ */
+public interface HttpHandler {
 
-        bucket.file("/path/to/file").delete();
-        // [END snippet]
-    }
+    /**
+     * Handle the HTTP request.
+     *
+     * @param context the HTTP request/response context
+     * @return the HttpContext response
+     */
+    public HttpContext handle(HttpContext context);
+
 }

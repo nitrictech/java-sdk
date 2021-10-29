@@ -20,22 +20,29 @@
 
 package io.nitric.faas;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import io.grpc.stub.StreamObserver;
+import io.nitric.faas.event.EventHandler;
+import io.nitric.faas.event.EventMiddleware;
+import io.nitric.faas.http.HttpHandler;
+import io.nitric.faas.http.HttpMiddleware;
+import io.nitric.faas.logger.Logger;
+import io.nitric.faas.logger.JUtilLogger;
 import io.nitric.proto.faas.v1.ClientMessage;
 import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.InitRequest;
-import io.nitric.proto.faas.v1.ServerMessage;
 import io.nitric.util.Contracts;
 import io.nitric.util.GrpcChannelProvider;
 
 /**
  * <p>
- *  Provides a Nitric FaaS (Function as a Service) server.
+ *  Provides a Nitric FaaS (Function as a Service) server for Event and HTTP handler functions and middleware. The
+ *  Faas server connects to the Nitric Membrane via a gRPC channel and then waits to process HTTP and Topic events
+ *  from the Membrane.
  * </p>
  *
  * <p>
@@ -43,44 +50,156 @@ import io.nitric.util.GrpcChannelProvider;
  * </p>
  *
  * <pre><code class="code">
- * package com.example;
- *
+ * import io.nitric.api.NotFoundException;
+ * import io.nitric.api.document.Documents;
  * import io.nitric.faas.Faas;
- * import io.nitric.faas.Trigger;
- * import io.nitric.faas.NitricFunction;
- * import io.nitric.faas.Response;
+ * import io.nitric.faas.http.HttpContext;
+ * import io.nitric.faas.http.HttpHandler;
  *
- * public class Handler implements NitricFunction {
+ * public class ReadHandler implements HttpHandler {
  *
- *     &commat;Override
- *     public Response handle(Trigger trigger) {
- *         return trigger.buildResponse("Hello World");
+ *     final Documents documents;
+ *
+ *     public ReadFunction(Documents documents) {
+ *         this.documents = documents;
  *     }
  *
- *     public static void main(String... args) {
- *         Faas.start(new Handler());
- *     }
- * }
- * </code></pre>
+ *     public HttpContext handle(HttpContext context) {
+ *         var paths = context.getRequest().getPath().split("/");
+ *         var id = paths[paths.length - 1];
  *
- * @see NitricFunction
+ *         try {
+ *             var json = documents.collection("examples")
+ *                 .doc(id)
+ *                 .getJson();
+ *
+ *             context.getResponse()
+ *                 .addHeader("Content-Type", "application/json")
+ *                 .data(json);
+ *
+ *         } catch (NotFoundException nfe) {
+ *             context.getResponse()
+ *                 .status(404)
+ *                 .data("Document not found: " + id);
+ *         }
+ *
+ *         return context;
+ *     }
+ *
+ *     public static void main(String[] args) {
+ *         var documents = new Documents();
+ *         var handler = new ReadHandler(documents);
+ *
+ *         new Faas().http(handler).start();
+ *     }
+ * } </code></pre>
+ *
+ * @see EventHandler
+ * @see EventMiddleware
+ * @see HttpHandler
+ * @see HttpMiddleware
  */
 public class Faas {
 
-    private static final Logger LOGGER = Logger.getLogger("Faas");
-
-    private FaasServiceGrpc.FaasServiceStub stub = null;
+    Logger logger = new JUtilLogger("Faa");
+    FaasServiceGrpc.FaasServiceStub stub = null;
+    TriggerProcessor triggerProcessor = new TriggerProcessor();
+    List<EventMiddleware> eventMiddlewares = new ArrayList<>();
+    List<HttpMiddleware> httpMiddlewares = new ArrayList<>();
 
     // Public Methods -------------------------------------------------------------------
 
     /**
+     * Add an Event handler function. Event middleware and handler functions are processed
+     * in the order they are added to the Faas.
+     *
+     * @param handler the EventHandler to add (required)
+     * @return this chainable Faas object
+     */
+    public Faas event(EventHandler handler) {
+        Contracts.requireNonNull(handler, "handler");
+
+        eventMiddlewares.add(new EventMiddleware.HandlerAdapter(handler));
+        return this;
+    }
+
+    /**
+     * Add an Event processing middleware. Event middleware and handler functions are processed
+     * in the order they are added to the Faas.
+     *
+     * @param middleware the EventMiddleware to add (required)
+     * @return this chainable Faas object
+     */
+    public Faas event(EventMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        eventMiddlewares.add(middleware);
+        return this;
+    }
+
+    /**
+     * Add an HTTP handler function. HTTP middleware and handler functions are processed
+     * in the order they are added to the Faas.
+     *
+     * @param handler the HttpHandler to add (required)
+     * @return this chainable Faas object
+     */
+    public Faas http(HttpHandler handler) {
+        Contracts.requireNonNull(handler, "handler");
+
+        httpMiddlewares.add(new HttpMiddleware.HandlerAdapter(handler));
+        return this;
+    }
+
+    /**
+     * Add an HTTP request processing middleware. HTTP middleware and handler functions
+     * are processed in the order they are added to the Faas.
+     *
+     * @param middleware the HttpMiddleware to add (required)
+     * @return this chainable Faas object
+     */
+    public Faas http(HttpMiddleware middleware) {
+        Contracts.requireNonNull(middleware, "middleware");
+
+        httpMiddlewares.add(middleware);
+        return this;
+    }
+
+    /**
+     * Configure the Faas server logger.
+     *
+     * @param logger the Faas server logger (required)
+     * @return this chainable Faas object
+     */
+    public Faas logger(Logger logger) {
+        Contracts.requireNonNull(logger, "logger");
+
+        this.logger = logger;
+        return this;
+    }
+
+    /**
+     * Configure the gRPC TriggerRequest processor.
+     *
+     * @param processor the gRPC TriggerRequest processor (required)
+     * @return this chainable Faas object
+     */
+    public Faas triggerProcessor(TriggerProcessor processor) {
+        Contracts.requireNonNull(processor, "processor");
+
+        this.triggerProcessor = processor;
+        return this;
+    }
+
+    /**
      * Start the FaaS server after configuring the given function.
      * This method will block until the stream has terminated.
-     *
-     * @param function the function handler (required)
      */
-    public void startFunction(NitricFunction function) {
-        Contracts.requireNonNull(function, "function");
+    public void start() {
+
+        triggerProcessor.setEventMiddlewares(eventMiddlewares);
+        triggerProcessor.setHttpMiddlewares(httpMiddlewares);
+        triggerProcessor.setLogger(logger);
 
         // FIXME: Uncoverable code without mocking static methods (need to include Powermock)
         // Once we've asserted that this interfaces with a mocked stream observer
@@ -98,7 +217,8 @@ public class Faas {
         CountDownLatch finishedLatch = new CountDownLatch(1);
 
         // Begin the stream
-        var observer = this.stub.triggerStream(new FaasStreamObserver(function, clientObserver, finishedLatch));
+        var fso = new FaasStreamObserver(triggerProcessor, clientObserver, finishedLatch, logger);
+        var observer = this.stub.triggerStream(fso);
 
         // Set atomic reference for the client to send messages back to the server
         // In the server message stream observer loop (see above)
@@ -114,31 +234,19 @@ public class Faas {
 
         try {
             finishedLatch.await();
+
         } catch (InterruptedException e) {
-            logException(e,
-                         "Stream was prematurely terminated for function: %s, error: %s \n",
-                         function.getClass().getSimpleName());
+            logger.error(e, "Stream was prematurely terminated, error: \n");
             // Restore thread interrupted state
             Thread.currentThread().interrupt();
+
         } finally {
             // Always ensure the client stream is closed
             observer.onCompleted();
         }
     }
 
-    /**
-     * Start a Nitric function server with the given function.
-     *
-     * @param function The function to start (required)
-     * @return a new started Nitric Function server
-     */
-    public static Faas start(NitricFunction function) {
-        var faas = new Faas();
-        faas.startFunction(function);
-        return faas;
-    }
-
-    // Package Methods --------------------------------------------------------
+    // Protected Methods ------------------------------------------------------
 
     /**
      * Set the gRPC stub to use for this FaaS instance.
@@ -150,90 +258,6 @@ public class Faas {
     protected Faas stub(FaasServiceGrpc.FaasServiceStub stub) {
         this.stub = stub;
         return this;
-    }
-
-    // Package Private Methods ------------------------------------------------
-
-    static void logError(String format, Object...args) {
-        String msg = String.format(format, args);
-        LOGGER.log(Level.SEVERE, msg);
-    }
-
-    static void logException(Throwable error, String format, Object...args) {
-        String msg = String.format(format, args);
-        LOGGER.log(Level.SEVERE, msg, error);
-    }
-
-    // Inner Classes ----------------------------------------------------------
-
-    /**
-     * Provides the FaaS GRCP function stream handler.
-     */
-    static class FaasStreamObserver implements StreamObserver<ServerMessage> {
-
-        final NitricFunction function;
-        final AtomicReference<StreamObserver<ClientMessage>> clientObserver;
-        final CountDownLatch finishedLatch;
-
-        FaasStreamObserver(
-            NitricFunction function,
-            AtomicReference<StreamObserver<ClientMessage>> clientObserver,
-            CountDownLatch finishedLatch
-        ) {
-            this.function = function;
-            this.clientObserver = clientObserver;
-            this.finishedLatch = finishedLatch;
-        }
-
-        @Override
-        public void onNext(ServerMessage serverMessage) {
-            // We got a new message from the server
-            switch (serverMessage.getContentCase()) {
-                case INIT_RESPONSE:
-                    // We have an init ack from the membrane
-                    // XXX: NO OP for now
-                    break;
-                case TRIGGER_REQUEST:
-                    Trigger trigger = null;
-                    try {
-                        // Call the function
-                        trigger = FunctionTrigger.buildTrigger(serverMessage.getTriggerRequest());
-                        var response = function.handle(trigger);
-
-                        // Write back the response to the server
-                        var grpcResponse = response.toGrpcTriggerResponse();
-                        clientObserver.get().onNext(
-                                ClientMessage
-                                        .newBuilder()
-                                        .setId(serverMessage.getId())
-                                        .setTriggerResponse(grpcResponse)
-                                        .build());
-                    } catch (Throwable error) {
-                        logException(error,
-                                     "onNext() error occurred handling trigger %s with function: %s",
-                                     trigger,
-                                     function.getClass().getName());
-                    }
-                    break;
-                default:
-                    logError("onNext() default case %s reached with function: %s \n",
-                             serverMessage.getContentCase(),
-                             function.getClass().getName());
-                    break;
-            }
-        }
-
-        @Override
-        public void onError(Throwable error) {
-            logException(error, "onError() occurred with function: %s", function.getClass().getName());
-        }
-
-        @Override
-        public void onCompleted() {
-            // The server has indicated that streaming is now over we can exit
-            // Unlock from exit
-            finishedLatch.countDown();
-        }
     }
 
 }

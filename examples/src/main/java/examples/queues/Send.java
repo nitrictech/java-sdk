@@ -29,6 +29,7 @@ public class Send {
     public static void Example() {
         // [START snippet]
         var queue = new Queues().queue("my-queue");
+
         queue.send(
             Task.newBuilder()
                 .id("1234")
