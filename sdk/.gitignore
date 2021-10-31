@@ -1,9 +1,0 @@
-# Ignore IDE files
-.classpath
-java-sdk.iml
-.idea/
-.project
-.settings/
-
-# Maven build
-/target/

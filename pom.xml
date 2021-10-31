@@ -4,23 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.nitric</groupId>
-    <artifactId>java-sdk-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>java-sdk</artifactId>
+    <packaging>jar</packaging>
     <version>SNAPSHOT</version>
-    <name>Nitric Java SDK Parent</name>
+    <name>Nitric Java SDK API</name>
     <url>https://github.com/nitrictech/java-sdk</url>    
 
     <properties>
-        <!-- Package versions managed with maven version plugin -->
-        <!-- This ensure all package versions are set with the parent pom version -->
-        <nitric-java-sdk-version>${project.version}</nitric-java-sdk-version>
-        <nitric-api-version>0.12.0</nitric-api-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <io.grpc.version>1.36.0</io.grpc.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <sonar.organization>nitrictech</sonar.organization>
+        <nitric-api-version>0.12.0</nitric-api-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.skip>true</sonar.skip>
+        <sonar.organization>nitrictech</sonar.organization>
+        <sonar.skip>false</sonar.skip>
     </properties>
 
     <licenses>
@@ -51,10 +49,57 @@
         </developer>
     </developers>
 
-    <modules>
-        <module>sdk</module>
-        <module>examples</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.nitric</groupId>
+            <artifactId>api</artifactId>
+            <version>${nitric-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-okhttp</artifactId>
+            <version>${io.grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${io.grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${io.grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <!-- necessary for Java 9+ -->
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>annotations-api</artifactId>
+            <version>6.0.53</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>3.12.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <scm>
         <connection>scm:git@github.com:nitrictech/java-sdk.git</connection>
@@ -85,5 +130,179 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>whitespace-maven-plugin</artifactId>
+                <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
+                <version>1.0.4</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>trim</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.1.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>8.41.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnViolation>true</failsOnViolation>
+                    <failsOnError>true</failsOnError>
+                    <violationSeverity>info</violationSeverity>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <licenseName>apache_v2</licenseName>
+                    <licenseResolver>${project.baseUri}/src/license</licenseResolver>
+                    <inceptionYear>2021</inceptionYear>
+                    <organizationName>Nitric Pty Ltd</organizationName>
+                    <projectName>Nitric Java SDK</projectName>
+                    <failOnMissingHeader>true</failOnMissingHeader>
+                    <excludes>
+                        <exclude>**/envoyproxy/**</exclude>
+                        <exclude>**/proto/**</exclude>
+                    </excludes>
+                    <excludedScopes>test,provided</excludedScopes>
+                    <includedLicenses>Apache 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0|The MIT License|MIT license|Apache License, Version 2.0|Apache-2.0|3-Clause BSD License</includedLicenses>
+                    <failOnBlacklist>true</failOnBlacklist>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check-file-header</goal>
+                            <goal>add-third-party</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <destDir>.</destDir>
+                    <notimestamp>true</notimestamp>
+                    <excludePackageNames>io.nitric.proto.*</excludePackageNames>
+                    <stylesheetfile>${basedir}/src/javadoc/stylesheet.css</stylesheetfile>
+                    <destDir>${project.basedir}/target/javadoc</destDir>
+                    <useStandardDocletOptions>true</useStandardDocletOptions>
+                    <additionalOptions>-html5 --allow-script-in-comments</additionalOptions>
+                    <doclint>none</doclint>
+                    <header><![CDATA[
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs.min.css">
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+                        <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+                    ]]></header>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
