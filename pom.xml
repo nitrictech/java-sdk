@@ -7,7 +7,8 @@
     <artifactId>java-sdk</artifactId>
     <packaging>jar</packaging>
     <version>SNAPSHOT</version>
-    <name>nitric-java-sdk</name>
+    <name>Nitric Java SDK</name>
+    <description>Nitric multi-cloud framework Java Software Developers Kit (SDK)</description>
     <url>https://github.com/nitrictech/java-sdk</url>    
 
     <properties>
