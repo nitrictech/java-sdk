@@ -18,7 +18,9 @@ jobs:
       - name: Create a GitHub release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use NITRIC_BOT_TOKEN here to
+          # trigger release 'published' workflows
+          GITHUB_TOKEN: ${{ secrets.NITRIC_BOT_TOKEN }}
         with:
           tag_name: ${{ steps.tag_version.outputs.new_tag }}
           release_name: Release ${{ steps.tag_version.outputs.new_tag }}
