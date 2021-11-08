@@ -75,12 +75,12 @@ import io.nitric.util.GrpcChannelProvider;
  *
  *             context.getResponse()
  *                 .addHeader("Content-Type", "application/json")
- *                 .data(json);
+ *                 .text(json);
  *
  *         } catch (NotFoundException nfe) {
  *             context.getResponse()
  *                 .status(404)
- *                 .data("Document not found: " + id);
+ *                 .text("Document not found: %s", id);
  *         }
  *
  *         return context;
