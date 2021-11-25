@@ -35,6 +35,7 @@ import io.nitric.proto.faas.v1.FaasServiceGrpc;
 import io.nitric.proto.faas.v1.ServerMessage;
 import io.nitric.proto.faas.v1.TopicTriggerContext;
 import io.nitric.proto.faas.v1.TriggerRequest;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -159,6 +160,18 @@ public class FaasTest {
             functionCompleteLatch.await(5, TimeUnit.SECONDS);
         } catch (Throwable t) {
             // Fail if it does not
+            fail();
+        }
+    }
+
+    @Test
+    public void shutdownImmediate() {
+        final HttpHandler handler = Mockito.mock(HttpHandler.class);
+        System.setProperty("appcds", "true");
+        try {
+            new Faas().http(handler).start();
+        } catch (Throwable t) {
+            t.printStackTrace();
             fail();
         }
     }
