@@ -114,44 +114,6 @@ import io.nitric.util.GrpcChannelProvider;
  *     }
  *  }
  * </code></pre>
- *
- * <h3>Native Builds</h3>
- *
- * <p>
- *  When building a native function using GraalVM compiler you will need to a reflection configuration file
- *  so that your custom POJO class is supported. To do this simply add the JSON file to your build path:
- * </p>
- *
- * <pre class="code">
- * src/main/resources/META-INF/native-image/reflect-config.json
- * </pre>
- *
- * <p>
- *  Include the following information for the compiler to enable object mapping by the Jackson data binding library.
- * </p>
- *
- * <pre class="code">
- * [
- *    {
- *       "name" : "com.example.entity.Customer",
- *       "allDeclaredConstructors" : true,
- *       "allPublicConstructors" : true,
- *       "allDeclaredMethods" : true,
- *       "allPublicMethods" : true,
- *       "allDeclaredFields" : true,
- *       "allPublicFields" : true
- *    }
- * ]
- * </pre>
- *
- * <p>
- *  If you forget to do this, you may get a runtime error like this:
- * </p>
- *
- * <pre class="code">
- * java.lang.IllegalArgumentException: No serializer found for class com.example.entity.Customer and no properties ...
- *         at com.fasterxml.jackson.databind.ObjectMapper._convert(ObjectMapper.java:4314)
- * </pre>
  */
 public class Documents {
 

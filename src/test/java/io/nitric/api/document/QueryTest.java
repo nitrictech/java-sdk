@@ -29,8 +29,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.gson.GsonBuilder;
 import io.nitric.api.NitricException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -282,11 +281,11 @@ public class QueryTest {
     public void test_objectMapper() {
         var collection = new Collection("customers", null);
         var query = new Query<Customer>(collection.toGrpcCollection(), Customer.class);
-        assertNull(query.objectMapper);
+        assertNull(query.gsonBuilder);
 
-        var objectMapper = new ObjectMapper();
-        query.objectMapper(objectMapper);
-        assertSame(objectMapper, query.objectMapper);
+        var gsonBuilder = new GsonBuilder();
+        query.gsonBuilder(gsonBuilder);
+        assertSame(gsonBuilder, query.gsonBuilder);
 
         var mock = Mockito.mock(DocumentServiceGrpc.DocumentServiceBlockingStub.class);
         Mockito.when(mock.query(Mockito.any())).thenReturn(
@@ -294,8 +293,8 @@ public class QueryTest {
         );
         Documents.setServiceStub(mock);
 
-        var results = newOrderQuery().objectMapper(objectMapper).fetch();
-        assertSame(objectMapper, results.objectMapper);
+        var results = newOrderQuery().gsonBuilder(gsonBuilder).fetch();
+        assertSame(gsonBuilder, results.gsonBuilder);
     }
 
     @Test
@@ -326,7 +325,6 @@ public class QueryTest {
 
         List<Document> results = new ArrayList<>();
 
-        var objectMapper = new ObjectMapper();
         customers.forEach(customer -> {
 
             var key = io.nitric.proto.document.v1.Key
@@ -373,7 +371,7 @@ public class QueryTest {
 
         List<Document> results = new ArrayList<>();
 
-        var objectMapper = new ObjectMapper();
+        var gson = new GsonBuilder().create();
         orders.forEach(order -> {
 
             var key = io.nitric.proto.document.v1.Key
@@ -382,7 +380,8 @@ public class QueryTest {
                     .setCollection(collection)
                     .build();
 
-            var contentMap = objectMapper.convertValue(order, Map.class);
+            var jsonTree = gson.toJsonTree(order);
+            var contentMap = gson.fromJson(jsonTree, Map.class);
             var contentStruct = ProtoUtils.toStruct(contentMap);
             var document = Document.newBuilder()
                     .setKey(key)

@@ -20,6 +20,7 @@
 
 package io.nitric.api.document;
 
+import com.google.gson.GsonBuilder;
 import io.nitric.proto.document.v1.Collection;
 import io.nitric.proto.document.v1.ExpressionValue;
 import io.nitric.util.Contracts;
@@ -31,8 +32,6 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * <p>
@@ -245,7 +244,7 @@ public class Query<T> {
     int limit;
     Map<String, String> pagingToken;
     final Class<T> type;
-    ObjectMapper objectMapper;
+    GsonBuilder gsonBuilder;
 
     // Constructor ------------------------------------------------------------
 
@@ -391,13 +390,13 @@ public class Query<T> {
     }
 
     /**
-     * Set the ResultDoc content object marshalling ObjectMapper.
+     * Set the ResultDoc content object marshalling GsonBuilder.
      *
-     * @param objectMapper the ResultDoc content object marshalling ObjectMapper
+     * @param gsonBuilder the ResultDoc content object marshalling GsonBuilder
      * @return the Query operation
      */
-    public Query<T> objectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public Query<T> gsonBuilder(GsonBuilder gsonBuilder) {
+        this.gsonBuilder = gsonBuilder;
         return this;
     }
 
@@ -414,7 +413,7 @@ public class Query<T> {
                 + ", limit=" + limit
                 + ", pagingToken=" + pagingToken
                 + ", type=" + type
-                + ", objectMapper=" + objectMapper
+                + ", gsonBuilder=" + gsonBuilder
                 + "]";
     }
 

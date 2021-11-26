@@ -230,7 +230,7 @@ public class Faas {
 
         if (immediateShutdown) {
             // Initialize dependencies to generate AppCDS class list
-            new com.fasterxml.jackson.databind.ObjectMapper();
+            new com.google.gson.GsonBuilder().create();
             logger.info("immediate shutdown");
 
         } else {

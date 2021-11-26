@@ -21,10 +21,9 @@
 package examples.faas;
 
 // [START import]
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.GsonBuilder;
 import io.nitric.faas.Faas;
 
-import java.io.IOException;
 import java.util.Map;
 // [END import]
 
@@ -34,18 +33,13 @@ public class Events {
         // [START snippet]
         new Faas()
             .event(context -> {
-                try {
-                    var json = context.getRequest().getDataAsText();
-                    var event = new ObjectMapper().readValue(json, Map.class);
+                var json = context.getRequest().getDataAsText();
 
-                    System.out.printf("Received nitric event: %s \n", event);
+                var event = new GsonBuilder().create().fromJson(json, Map.class);
 
-                    context.getResponse().success(true);
+                System.out.printf("Received nitric event: %s \n", event);
 
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                    context.getResponse().success(false);
-                }
+                context.getResponse().success(true);
 
                 return context;
             })

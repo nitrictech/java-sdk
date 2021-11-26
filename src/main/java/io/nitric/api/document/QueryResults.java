@@ -25,9 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.nitric.api.NitricException;
+import io.nitric.proto.document.v1.Document;
 import io.nitric.proto.document.v1.DocumentQueryRequest;
 import io.nitric.proto.document.v1.DocumentQueryResponse;
 import io.nitric.util.ProtoUtils;
@@ -44,7 +45,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
     final boolean paginateAll;
     Map<String, String> pagingToken;
     List<ResultDoc<T>> queryData;
-    ObjectMapper objectMapper;
+    GsonBuilder gsonBuilder;
 
     /**
      * Create a QueryResults object.
@@ -58,7 +59,7 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         this.query = query;
         this.pagingToken = query.pagingToken;
         this.paginateAll = paginateAll;
-        this.objectMapper = query.objectMapper;
+        this.gsonBuilder = query.gsonBuilder;
 
         // Perform initial query
         var request = buildDocQueryRequest(this.query.expressions);
@@ -129,7 +130,10 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
         // Marshall response data
         queryData = new ArrayList<>(response.getDocumentsCount());
 
-        response.getDocumentsList().forEach(doc -> {
+        // Cache gson object marshaller
+        Gson gson = null;
+
+        for (Document doc : response.getDocumentsList()) {
             var key = Key.buildFromGrpcKey(doc.getKey());
             var map = ProtoUtils.toMap(doc.getContent());
 
@@ -137,13 +141,17 @@ public class QueryResults<T> implements Iterable<ResultDoc<T>> {
                 queryData.add(new ResultDoc(key, map));
 
             } else {
-                if (objectMapper == null) {
-                    objectMapper = new ObjectMapper();
+                if (gson == null) {
+                    if (gsonBuilder == null) {
+                        gsonBuilder = new GsonBuilder();
+                    }
+                    gson = gsonBuilder.create();
                 }
-                var value = objectMapper.convertValue(map, query.type);
+                var jsonTree = gson.toJsonTree(map);
+                var value = gson.fromJson(jsonTree, query.type);
                 queryData.add(new ResultDoc<>(key, value));
             }
-        });
+        }
 
         this.pagingToken = response.getPagingTokenMap();
     }
