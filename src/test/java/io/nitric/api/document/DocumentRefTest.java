@@ -22,7 +22,7 @@ package io.nitric.api.document;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.GsonBuilder;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.nitric.api.NitricException;
@@ -58,7 +58,7 @@ public class DocumentRefTest {
         var collection = new Collection("customers", null);
         var key = new Key(collection, "123");
         var document = new DocumentRef<Map>(key, Map.class);
-        assertEquals("DocumentRef[key=Key[collection=Collection[name=customers, parent=null], id=123], type=interface java.util.Map, objectMapper=null]",
+        assertEquals("DocumentRef[key=Key[collection=Collection[name=customers, parent=null], id=123], type=interface java.util.Map, gsonBuilder=null]",
                 document.toString());
     }
 
@@ -92,7 +92,9 @@ public class DocumentRefTest {
         // Test get customer object
         Customer customer = new Customer();
         customer.setEmail("test@server.com");
-        custMap = new ObjectMapper().convertValue(customer, Map.class);
+        var gson = new GsonBuilder().create();
+        var jsonTree = gson.toJsonTree(customer);
+        custMap = gson.fromJson(jsonTree, Map.class);
         struct = ProtoUtils.toStruct(custMap);
 
         Mockito.when(mock.get(Mockito.any())).thenReturn(
@@ -210,7 +212,9 @@ public class DocumentRefTest {
 
         Order order = new Order();
         order.setSku("BYD EA-1");
-        orderMap = new ObjectMapper().convertValue(order, Map.class);
+        var gson = new GsonBuilder().create();
+        var jsonTree = gson.toJsonTree(order);
+        orderMap = gson.fromJson(jsonTree, Map.class);
         struct = ProtoUtils.toStruct(orderMap);
 
         Mockito.when(mock.get(Mockito.any())).thenReturn(
@@ -284,13 +288,14 @@ public class DocumentRefTest {
         }
     }
 
-    @Test void test_objectMapper() {
+    @Test
+    public void test_gsonBuilder() {
         var docRef = new Documents().collection("customers").doc("customer-1");
-        assertNull(docRef.objectMapper);
+        assertNull(docRef.gsonBuilder);
 
-        var objectMapper = new ObjectMapper();
-        docRef.objectMapper(objectMapper);
-        assertSame(objectMapper, docRef.objectMapper);
+        var gsonBuilder = new GsonBuilder();
+        docRef.gsonBuilder(gsonBuilder);
+        assertSame(gsonBuilder, docRef.gsonBuilder);
     }
 
 }

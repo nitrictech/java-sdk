@@ -75,12 +75,12 @@ import io.nitric.util.GrpcChannelProvider;
  *
  *             context.getResponse()
  *                 .addHeader("Content-Type", "application/json")
- *                 .data(json);
+ *                 .text(json);
  *
  *         } catch (NotFoundException nfe) {
  *             context.getResponse()
  *                 .status(404)
- *                 .data("Document not found: " + id);
+ *                 .text("Document not found: %s", id);
  *         }
  *
  *         return context;
@@ -192,8 +192,15 @@ public class Faas {
     }
 
     /**
+     * <p>
      * Start the FaaS server after configuring the given function.
      * This method will block until the stream has terminated.
+     * </p>
+     * <p>
+     * To support AppCDS (JEP 310) class list generation you can specify the
+     * System property <code>-Dappcds=true</code> and this method will shutdown
+     * immediately after loading classes.
+     * </p>
      */
     public void start() {
 
@@ -216,33 +223,44 @@ public class Faas {
         // Add a latch to block on while the stream is running
         CountDownLatch finishedLatch = new CountDownLatch(1);
 
-        // Begin the stream
         var fso = new FaasStreamObserver(triggerProcessor, clientObserver, finishedLatch, logger);
-        var observer = this.stub.triggerStream(fso);
 
-        // Set atomic reference for the client to send messages back to the server
-        // In the server message stream observer loop (see above)
-        clientObserver.set(observer);
+        // Support generating class list for AppCDS (JEP 310)
+        var immediateShutdown = Boolean.parseBoolean(System.getProperty("appcds", "false"));
 
-        // Send an init request to the server and let it know we're ready to receive work
-        observer.onNext(
-            ClientMessage
-                    .newBuilder()
-                    .setInitRequest(InitRequest.newBuilder().build())
-                    .build()
-        );
+        if (immediateShutdown) {
+            // Initialize dependencies to generate AppCDS class list
+            new com.google.gson.GsonBuilder().create();
+            logger.info("immediate shutdown");
 
-        try {
-            finishedLatch.await();
+        } else {
+            // Begin the stream
+            var observer = this.stub.triggerStream(fso);
 
-        } catch (InterruptedException e) {
-            logger.error(e, "Stream was prematurely terminated, error: \n");
-            // Restore thread interrupted state
-            Thread.currentThread().interrupt();
+            // Set atomic reference for the client to send messages back to the server
+            // In the server message stream observer loop (see above)
+            clientObserver.set(observer);
 
-        } finally {
-            // Always ensure the client stream is closed
-            observer.onCompleted();
+            // Send an init request to the server and let it know we're ready to receive work
+            observer.onNext(
+                ClientMessage
+                        .newBuilder()
+                        .setInitRequest(InitRequest.newBuilder().build())
+                        .build()
+            );
+
+            try {
+                finishedLatch.await();
+
+            } catch (InterruptedException e) {
+                logger.error(e, "Stream was prematurely terminated, error: \n");
+                // Restore thread interrupted state
+                Thread.currentThread().interrupt();
+
+            } finally {
+                // Always ensure the client stream is closed
+                observer.onCompleted();
+            }
         }
     }
 

@@ -20,8 +20,7 @@
 
 package io.nitric.api.document;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.gson.GsonBuilder;
 import io.nitric.api.NitricException;
 import io.nitric.api.NotFoundException;
 import io.nitric.proto.document.v1.DocumentDeleteRequest;
@@ -40,7 +39,7 @@ public class DocumentRef<T> {
 
     final Key key;
     final Class<T> type;
-    ObjectMapper objectMapper;
+    GsonBuilder gsonBuilder;
 
     // Constructor ------------------------------------------------------------
 
@@ -93,10 +92,12 @@ public class DocumentRef<T> {
                     return (T) map;
 
                 } else {
-                    if (objectMapper == null) {
-                        objectMapper = new ObjectMapper();
+                    if (gsonBuilder == null) {
+                        gsonBuilder = new GsonBuilder();
                     }
-                    return objectMapper.convertValue(map, type);
+                    var gson = gsonBuilder.create();
+                    var jsonTree = gson.toJsonTree(map);
+                    return gson.fromJson(jsonTree, type);
                 }
 
             } else {
@@ -121,10 +122,12 @@ public class DocumentRef<T> {
             contentMap = (Map) content;
 
         } else {
-            if (objectMapper == null) {
-                objectMapper = new ObjectMapper();
+            if (gsonBuilder == null) {
+                gsonBuilder = new GsonBuilder();
             }
-            contentMap = objectMapper.convertValue(content, Map.class);
+            var gson = gsonBuilder.create();
+            var jsonTree = gson.toJsonTree(content);
+            contentMap = gson.fromJson(jsonTree, Map.class);
         }
         var contentStruct = ProtoUtils.toStruct(contentMap);
 
@@ -211,13 +214,13 @@ public class DocumentRef<T> {
     }
 
     /**
-     * Set the Document content object marshalling ObjectMapper.
+     * Set the Document content object marshalling GsonBuilder.
      *
-     * @param objectMapper the Document content object marshalling ObjectMapper
+     * @param gsonBuilder the Document content object marshalling GsonBuilder
      * @return this Document Ref object
      */
-    public DocumentRef<T> objectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public DocumentRef<T> gsonBuilder(GsonBuilder gsonBuilder) {
+        this.gsonBuilder = gsonBuilder;
         return this;
     }
 
@@ -231,7 +234,7 @@ public class DocumentRef<T> {
         return getClass().getSimpleName()
             + "[key=" + key
             + ", type=" + type
-            + ", objectMapper=" + objectMapper
+            + ", gsonBuilder=" + gsonBuilder
             + "]";
     }
 
